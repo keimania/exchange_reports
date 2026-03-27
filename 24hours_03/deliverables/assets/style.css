@@ -1,0 +1,181 @@
+/* KRX 24시간 거래 프로젝트 - 공통 스타일 (완전 오프라인) */
+
+:root {
+  --primary: #1a365d;
+  --primary-light: #2c5282;
+  --accent: #dd6b20;
+  --bg: #ffffff;
+  --bg-alt: #f7fafc;
+  --text: #1a202c;
+  --text-secondary: #4a5568;
+  --border: #e2e8f0;
+  --code-bg: #edf2f7;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.8;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary);
+  line-height: 1.3;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 700;
+}
+
+h1 { font-size: 2rem; border-bottom: 3px solid var(--primary); padding-bottom: 0.5rem; }
+h2 { font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+h3 { font-size: 1.25rem; color: var(--primary-light); }
+h4 { font-size: 1.1rem; }
+
+p { margin: 0.8em 0; }
+
+a { color: var(--primary-light); text-decoration: underline; }
+a:hover { color: var(--accent); }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.9rem;
+}
+
+thead { background: var(--primary); color: #fff; }
+th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
+}
+td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tbody tr:nth-child(even) { background: var(--bg-alt); }
+tbody tr:hover { background: #ebf4ff; }
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  border-left: 4px solid var(--primary);
+}
+
+pre code { background: none; padding: 0; }
+
+/* Blockquote */
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin: 1.5em 0;
+  padding: 0.5em 1.5em;
+  background: #fffaf0;
+  color: var(--text-secondary);
+}
+
+/* Lists */
+ul, ol { margin: 0.8em 0; padding-left: 1.5em; }
+li { margin: 0.3em 0; }
+
+/* TOC */
+.toc {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.toc h2 { margin-top: 0; border: none; font-size: 1.2rem; }
+.toc ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1.5em; }
+.toc a { text-decoration: none; color: var(--text); }
+.toc a:hover { color: var(--accent); }
+
+/* Mermaid */
+.mermaid {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1rem;
+  background: var(--bg-alt);
+  border-radius: 8px;
+}
+
+/* Key metrics / highlight boxes */
+.highlight-box {
+  background: linear-gradient(135deg, #ebf4ff, #e9d8fd);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-left: 5px solid var(--primary);
+}
+
+/* Print */
+@media print {
+  body { font-size: 11pt; line-height: 1.6; }
+  .container { max-width: 100%; padding: 0; }
+  h1, h2 { page-break-after: avoid; }
+  table, pre { page-break-inside: avoid; }
+  a { color: var(--text); text-decoration: none; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #718096; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+  .container { padding: 1rem; }
+  h1 { font-size: 1.6rem; }
+  table { font-size: 0.8rem; }
+  th, td { padding: 0.4rem 0.6rem; }
+}
+
+/* Appendix links */
+.report-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.report-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--bg-alt);
+  transition: box-shadow 0.2s;
+}
+
+.report-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.report-card h4 { margin: 0 0 0.5rem; font-size: 1rem; }
+.report-card a { margin-right: 1rem; }
