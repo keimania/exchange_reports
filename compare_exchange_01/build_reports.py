@@ -65,6 +65,8 @@ sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
 sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
   border-bottom:1px dotted var(--accent)}
 sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+a[target="_blank"]::after{content:"";font-size:.7em;margin-left:2px}
+a[target="_blank"]{color:#666;word-break:break-all;font-size:.85em}
 footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
 @media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
 @media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
@@ -202,7 +204,7 @@ def render_bibliography(bib_md, ref_map, web_map):
         # Make URLs clickable
         rest = re.sub(
             r'(https?://\S+)',
-            lambda u: f'<a href="{u.group(1).rstrip(",.")}" target="_blank">{u.group(1).rstrip(",.")}</a>',
+            lambda u: f'<a href="{u.group(1).rstrip(",.")}" target="_blank" rel="noopener noreferrer">{u.group(1).rstrip(",.")} &#8599;</a>',
             rest
         )
         return f'<span{anchor}><strong>[REF:#{num}]</strong></span> {rest}'
@@ -222,7 +224,7 @@ def render_bibliography(bib_md, ref_map, web_map):
             anchor = ""
         rest = re.sub(
             r'(https?://\S+)',
-            lambda u: f'<a href="{u.group(1).rstrip(",.")}" target="_blank">{u.group(1).rstrip(",.")}</a>',
+            lambda u: f'<a href="{u.group(1).rstrip(",.")}" target="_blank" rel="noopener noreferrer">{u.group(1).rstrip(",.")} &#8599;</a>',
             rest
         )
         return f'<span{anchor}><strong>[WEB:{key}]</strong></span> {rest}'
@@ -285,7 +287,7 @@ def build_html():
         tm = re.search(r'^#\s+(.+)', md_text, re.MULTILINE)
         title = tm.group(1) if tm else md_path.stem
         if md_path == GLOSS_SRC:
-            out_name = "glossary.html"; back = "index.html"
+            out_name = "glossary.html"; back = "../index.html"
         else:
             out_name = md_path.stem + ".html"; back = "../index.html"
         full = md_to_full_html(md_text, title, back)
