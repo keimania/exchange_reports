@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRX 단일가매매 합치가격 산출 로직 & 예시</title>
+<style>
+:root{--p:#1a365d;--pl:#2b6cb0;--bg:#f7fafc;--card:#fff;--bdr:#e2e8f0;--txt:#2d3748;--txtl:#718096;--ok:#38a169;--warn:#d69e2e;--err:#e53e3e;--info:#3182ce}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--txt);line-height:1.65;font-size:14px}
+.hdr{background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;padding:1.5rem 2rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.hdr h1{font-size:1.4rem;font-weight:700}.hdr .sub{font-size:.8rem;opacity:.7;margin-top:.25rem}
+.nav{background:#fff;border-bottom:1px solid var(--bdr);position:sticky;top:68px;z-index:99;overflow-x:auto;white-space:nowrap}
+.nav a{display:inline-block;padding:.6rem .9rem;font-size:.78rem;color:var(--txtl);text-decoration:none;border-bottom:3px solid transparent;font-weight:500}
+.nav a:hover,.nav a.act{color:var(--p);border-bottom-color:var(--pl);background:rgba(43,108,176,.04)}
+.main{max-width:1200px;margin:0 auto;padding:2rem}
+.sec{margin-bottom:3rem;scroll-margin-top:130px}
+.stitle{font-size:1.2rem;font-weight:700;color:var(--p);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:3px solid var(--pl);display:flex;align-items:center;gap:.5rem}
+.snum{background:var(--p);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:1.25rem;margin-bottom:1rem;transition:box-shadow .2s}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.card h3 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+.badge-ok{background:#f0fff4;color:var(--ok)}.badge-warn{background:#fffff0;color:var(--warn)}.badge-err{background:#fff5f5;color:var(--err)}.badge-info{background:#ebf8ff;color:var(--info)}
+.art{font-size:.72rem;color:var(--pl);font-weight:500;padding:1px 6px;background:#ebf8ff;border-radius:3px;display:inline-block;margin:2px 0}
+.desc{font-size:.85rem;margin-bottom:.75rem;color:var(--txt)}
+.rule-box{padding:.75rem 1rem;border-radius:8px;margin:.5rem 0;font-size:.85rem}
+.rule-blue{background:#ebf8ff;border-left:4px solid var(--info)}.rule-green{background:#f0fff4;border-left:4px solid var(--ok)}.rule-yellow{background:#fffff0;border-left:4px solid var(--warn)}.rule-red{background:#fff5f5;border-left:4px solid var(--err)}
+.rule-box strong{color:var(--p)}
+
+/* Flow chart */
+.flow{display:flex;flex-direction:column;gap:.5rem;margin:1rem 0}
+.flow-node{padding:.6rem 1rem;border-radius:8px;font-size:.82rem;position:relative}
+.flow-decision{background:#ebf8ff;border:2px solid var(--info);text-align:center;font-weight:600}
+.flow-action{background:#f0fff4;border:2px solid var(--ok);margin-left:2rem}
+.flow-end{background:#fff5f5;border:2px solid var(--err);margin-left:2rem}
+.flow-arrow{text-align:center;color:var(--txtl);font-size:1.2rem;margin:-.1rem 0}
+.flow-branch{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-left:1rem}
+.flow-branch>div{padding:.5rem;border-radius:6px;font-size:.78rem}
+.flow-yes{background:#f0fff4;border:1px solid var(--ok)}.flow-no{background:#fff5f5;border:1px solid var(--err)}
+
+/* Order book visualization */
+.ob-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;margin:.75rem 0;font-size:.78rem}
+.ob-side{background:#fff;border:1px solid var(--bdr);border-radius:6px;padding:.5rem}
+.ob-side h4{font-size:.72rem;text-align:center;padding:.25rem;border-radius:4px;margin-bottom:.4rem;font-weight:700}
+.ob-sell h4{background:#fff5f5;color:var(--err)}.ob-buy h4{background:#f0fff4;color:var(--ok)}
+.ob-row{display:flex;justify-content:space-between;padding:2px 6px;border-bottom:1px solid #f0f0f0;font-size:.75rem}
+.ob-mid{display:flex;align-items:center;font-size:1.5rem;color:var(--pl);font-weight:700}
+.ob-result{text-align:center;padding:.5rem;background:var(--p);color:#fff;border-radius:6px;font-weight:700;margin-top:.5rem;font-size:.85rem}
+
+/* Example cards */
+.ex-card{border-left:4px solid var(--pl)}
+.ex-card h3 .ex-id{font-family:monospace;font-size:.7rem;color:var(--pl);background:#ebf8ff;padding:2px 6px;border-radius:3px}
+.ex-analysis{background:#f7fafc;border:1px solid var(--bdr);border-radius:6px;padding:.75rem;margin:.5rem 0;font-size:.82rem}
+.ex-analysis dt{font-weight:700;color:var(--p);margin-top:.3rem}.ex-analysis dd{margin-left:1rem;margin-bottom:.2rem}
+
+/* Table */
+.dtbl{width:100%;border-collapse:collapse;font-size:.8rem;margin:.5rem 0}
+.dtbl th{background:var(--p);color:#fff;padding:.4rem .6rem;text-align:left;font-weight:600}
+.dtbl td{padding:.35rem .6rem;border-bottom:1px solid var(--bdr)}
+.dtbl tr:hover td{background:rgba(43,108,176,.03)}
+
+/* Scenario tag */
+.scen-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:600;margin-left:.5rem}
+.scen-1{background:#dbeafe;color:#1e40af}.scen-4{background:#e0e7ff;color:#3730a3}.scen-5{background:#fef3c7;color:#92400e}
+.scen-6{background:#d1fae5;color:#065f46}.scen-7{background:#fce7f3;color:#9d174d}.scen-8{background:#ede9fe;color:#5b21b6}
+.scen-9{background:#ccfbf1;color:#134e4a}.scen-10{background:#fee2e2;color:#991b1b}
+
+@media(max-width:768px){.main{padding:1rem}.ob-wrap{grid-template-columns:1fr}.flow-branch{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hdr">
+<h1>KRX 단일가매매 합치가격 산출 로직 & 예시</h1>
+<div class="sub">규정 제23조, 제47조, 세칙 제35조~제36조, 제56조 등 | 전체 시나리오·증권그룹·특수 케이스 포함</div>
+</div>
+<div class="nav">
+<a href="#logic">산출 로직</a>
+<a href="#decision">의사결정 플로우</a>
+<a href="#market-price">시장가 간주가격</a>
+<a href="#scenarios">적용 시나리오</a>
+<a href="#exceptions">증권그룹별 예외</a>
+<a href="#examples">예시 (24개)</a>
+</div>
+<div class="main">
+
+<!-- Section 1: Core Logic -->
+<div class="sec" id="logic">
+<div class="stitle"><span class="snum">1</span>합치가격 핵심 산출 로직</div>
+
+<div class="card">
+<h3>합치가격(Equilibrium Price) 정의 <span class="art">규정 제23조제4항</span></h3>
+<div class="desc">매도호가의 <strong>누적합계수량</strong>과 매수호가의 <strong>누적합계수량</strong>이 일정한 가격에서 <strong>합치(일치)</strong>하는 가격</div>
+<div class="rule-box rule-blue">
+<strong>체결 조건 3가지 (모두 충족):</strong><br>
+<strong>MC-1</strong> (제4항제1호): 합치가격 미만 매도호가 + 합치가격 초과 매수호가 → <strong>전수량 체결</strong><br>
+<strong>MC-2a</strong> (제4항제2호가목): 합치가격 호가 중 매도 또는 매수 <strong>어느 일방 전수량 체결</strong><br>
+<strong>MC-2b</strong> (제4항제2호나목): 타방 호가수량 중 <strong>매매수량단위 이상</strong> 체결
+</div>
+</div>
+
+<div class="card">
+<h3>합치가격 복수 존재 시 최종 가격 선정 <span class="art">규정 제23조제5항 (2025.2.5 개정)</span></h3>
+<table class="dtbl">
+<thead><tr><th>우선순위</th><th>조건</th><th>결정 규칙</th><th>조항</th></tr></thead>
+<tbody>
+<tr><td>1순위</td><td>직전가격(기세 포함)과 동일한 합치가격이 존재</td><td><strong>직전가격 = 체결가격</strong></td><td>제5항제1호</td></tr>
+<tr><td>2순위-가</td><td>직전가격이 합치가격 범위 <strong>바깥</strong> (위 또는 아래)</td><td><strong>직전가격에 가장 가까운</strong> 합치가격</td><td>제5항제2호가목</td></tr>
+<tr><td>2순위-나</td><td>직전가격이 합치가격 범위 <strong>안쪽</strong></td><td>직전가격보다 <strong>높은</strong> 합치가격 중 가장 가까운 것</td><td>제5항제2호나목</td></tr>
+</tbody>
+</table>
+<div class="rule-box rule-yellow">
+<strong>2025.2.5 개정 핵심:</strong> 기존에는 "가장 가까운 가격" 한 가지였으나, 범위 안쪽에 있을 때 <strong>상향(upward) 편향</strong>이 명시됨 (제5항제2호나목 신설)
+</div>
+</div>
+
+<div class="card">
+<h3>제23조제6항 특수 케이스 <span class="art">규정 제23조제6항</span></h3>
+<div class="desc">MC-1 + MC-2a가 충족되나 <strong>MC-2b(타방 매매수량단위 이상)가 미충족</strong>인 가격이 정확히 <strong>2개</strong>일 때</div>
+<div class="rule-box rule-green">
+MC-2b를 <strong>무시</strong>하고 매매거래를 성립시킴. 가격은 제5항(복수 합치가격 규칙) 준용.
+</div>
+</div>
+</div>
+
+<!-- Section 2: Decision Flow -->
+<div class="sec" id="decision">
+<div class="stitle"><span class="snum">2</span>의사결정 플로우차트</div>
+<div class="card">
+<div class="flow">
+<div class="flow-node flow-decision">단일가매매 호가접수 종료 (+ 무작위 30초)</div>
+<div class="flow-arrow">&darr;</div>
+<div class="flow-node flow-decision">합치가격이 존재하는가?</div>
+<div class="flow-branch">
+<div class="flow-yes"><strong>YES</strong><br>&darr;<br>합치가격이 몇 개인가?</div>
+<div class="flow-no"><strong>NO</strong><br>&darr;<br>시나리오별 분기</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem">
+<div style="border:2px solid var(--ok);border-radius:8px;padding:.75rem">
+<h4 style="color:var(--ok);margin-bottom:.5rem">합치가격 존재</h4>
+<div class="flow">
+<div class="flow-node flow-decision" style="font-size:.75rem">1개?</div>
+<div class="flow-node flow-action" style="font-size:.75rem"><strong>&rarr; 해당 가격으로 즉시 결정</strong></div>
+<div class="flow-node flow-decision" style="font-size:.75rem">2개 이상?</div>
+<div class="flow-node flow-decision" style="font-size:.75rem">직전가격과 동일한 것이 있는가?</div>
+<div class="flow-node flow-action" style="font-size:.75rem">YES &rarr; <strong>직전가격 선택</strong> (제5항제1호)</div>
+<div class="flow-node flow-decision" style="font-size:.75rem">NO → 직전가격 위치는?</div>
+<div class="flow-node flow-action" style="font-size:.75rem">범위 밖 &rarr; <strong>가장 가까운 합치가격</strong> (제5항제2호가목)</div>
+<div class="flow-node flow-action" style="font-size:.75rem">범위 안 &rarr; 직전가격보다 <strong>높은 것 중 가장 가까운</strong> (제5항제2호나목)</div>
+</div>
+</div>
+<div style="border:2px solid var(--err);border-radius:8px;padding:.75rem">
+<h4 style="color:var(--err);margin-bottom:.5rem">합치가격 미존재</h4>
+<div class="flow">
+<div class="flow-node flow-decision" style="font-size:.75rem">시가/재개/VI 결정?</div>
+<div class="flow-node flow-action" style="font-size:.75rem">&rarr; <strong>접속매매(복수가격)로 전환</strong> (세칙 제35조제2항)</div>
+<div class="flow-node flow-decision" style="font-size:.75rem">종가 결정?</div>
+<div class="flow-node flow-end" style="font-size:.75rem">&rarr; <strong>기세 결정</strong> (규정 제2조제9항)<br>또는 종가 미결정</div>
+<div class="flow-node flow-decision" style="font-size:.75rem">시간외단일가/정리매매?</div>
+<div class="flow-node flow-end" style="font-size:.75rem">&rarr; <strong>해당 주기 미체결</strong> (다음 주기 대기)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Section 3: Market Price Conversion -->
+<div class="sec" id="market-price">
+<div class="stitle"><span class="snum">3</span>단일가매매 시 시장가호가 간주가격</div>
+<div class="card">
+<h3>시장가 → 지정가 간주 규칙 <span class="art">규정 제23조제3항</span></h3>
+<table class="dtbl">
+<thead><tr><th>케이스</th><th>조건</th><th>매도시장가 간주가격</th><th>매수시장가 간주가격</th></tr></thead>
+<tbody>
+<tr><td><strong>MP-1</strong><br>시장가만</td><td>양측 동일수량</td><td colspan="2" style="text-align:center">직전가격 (호가단위 올림)</td></tr>
+<tr><td><strong>MP-1a</strong><br>시장가만</td><td>매도수량 > 매수수량</td><td colspan="2" style="text-align:center">직전가격(올림) - 1틱 (하한가 한도)</td></tr>
+<tr><td><strong>MP-1b</strong><br>시장가만</td><td>매수수량 > 매도수량</td><td colspan="2" style="text-align:center">직전가격(내림) + 1틱 (상한가 한도)</td></tr>
+<tr><td><strong>MP-2</strong><br>혼합</td><td>지정가 존재</td><td>min(최저매도지정가-1틱, 최저매수지정가, 직전가격(내림))</td><td>-</td></tr>
+<tr><td><strong>MP-3</strong><br>혼합</td><td>지정가 존재</td><td>-</td><td>max(최고매수지정가+1틱, 최고매도지정가, 직전가격(올림))</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Section 4: Scenarios -->
+<div class="sec" id="scenarios">
+<div class="stitle"><span class="snum">4</span>단일가매매 적용 시나리오 (11개)</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem">
+<div class="card">
+<h3><span class="scen-tag scen-1">SCEN-1</span> 시가(개장가) 결정</h3>
+<div class="art">규정 제23조제1항제1호</div>
+<div class="desc" style="margin-top:.4rem"><strong>시간:</strong> 08:00 ~ 09:00 (+ 무작위 30초)<br><strong>기준가격:</strong> 전일 종가(기세 포함)<br><em style="color:var(--txtl);font-size:.78rem">합치가격 미형성시 접속매매로 전환 (세칙 제35조제2항)</em></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-1">SCEN-2</span> 시장 재개 후 최초 가격</h3>
+<div class="art">규정 제23조제1항제2호</div>
+<div class="desc" style="margin-top:.4rem"><strong>시간:</strong> 재개시점부터 10분 (+ 무작위 30초)<br><strong>기준가격:</strong> 재개 직전 가격<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-1">SCEN-3</span> 매매거래 재개 후 최초 가격 (CB, 매매정지 등)</h3>
+<div class="art">규정 제23조제1항제3호</div>
+<div class="desc" style="margin-top:.4rem"><strong>시간:</strong> 재개시점부터 10분 (+ 무작위 30초)<br><strong>기준가격:</strong> 재개 직전 가격<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-4">SCEN-4</span> 종가(장종료가) 결정</h3>
+<div class="art">규정 제23조제1항제4호</div>
+<div class="desc" style="margin-top:.4rem"><strong>시간:</strong> 15:20 ~ 15:30 (+ 무작위 30초)<br><strong>기준가격:</strong> 장중 최종 체결가격<br><em style="color:var(--txtl);font-size:.78rem">합치가격 미형성시 접속매매 전환 없이 기세 결정</em></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-5">SCEN-5</span> VI 발동 후 단일가매매</h3>
+<div class="art">규정 제23조제1항제5호</div>
+<div class="desc" style="margin-top:.4rem"><strong>시간:</strong> VI 발동시점부터 2분 (+ 무작위 30초)<br><strong>기준가격:</strong> VI 발동 직전 체결가격<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-6">SCEN-6</span> 시간외단일가매매</h3>
+<div class="art">규정 제34조의2</div>
+<div class="desc" style="margin-top:.4rem"><strong>시간:</strong> 16:00 ~ 18:00 (10분 주기)<br><strong>기준가격:</strong> 당일 종가<br><strong>가격제한:</strong> 종가 ±10% 이내 & 당일 상한가/하한가 이내<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-7">SCEN-7</span> 신규상장종목 최초 가격</h3>
+<div class="art">규정 제37조, 세칙 제55조</div>
+<div class="desc" style="margin-top:.4rem"><strong>기준가격:</strong> 별표1의4 기준가격<br><strong>가격제한:</strong> 상한가 400%, 하한가 60% (세칙 제31조제3항)<br><strong>복수합치가격 규칙:</strong> 세칙 제36조제2호 (기준가격 기준)<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-8">SCEN-8</span> 시가기준가종목 최초 가격</h3>
+<div class="art">규정 제37조, 세칙 제55조</div>
+<div class="desc" style="margin-top:.4rem"><strong>기준가격:</strong> 별표1 평가가격<br><strong>가격제한:</strong> 별표1 최저호가가격 ~ 최고호가가격<br><strong>복수합치가격 규칙:</strong> 세칙 제36조제1호 (평가가격 기준)<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-9">SCEN-9</span> 신주인수권증서/증권/ELW 신규상장 최초 가격</h3>
+<div class="art">세칙 제36조제3호</div>
+<div class="desc" style="margin-top:.4rem"><strong>기준가격:</strong> 없음 (기준가격 부재)<br><strong>복수합치가격 규칙:</strong> 최고·최저 합치가격의 단순산술평균 (호가단위 올림)<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-10">SCEN-10</span> 정리매매종목 단일가매매 (30분 간격)</h3>
+<div class="art">세칙 제56조</div>
+<div class="desc" style="margin-top:.4rem"><strong>기준가격:</strong> 직전 체결가격<br><strong>가격제한:</strong> 가격제한 없음 (규정 제20조제3항)<br></div></div>
+<div class="card">
+<h3><span class="scen-tag scen-10">SCEN-11</span> 단기과열/투자유의/이상급등/저유동성/종류주식 단일가매매</h3>
+<div class="art">세칙 제56조의2~제56조의4</div>
+<div class="desc" style="margin-top:.4rem"><strong>기준가격:</strong> 직전 체결가격<br><strong>가격제한:</strong> 일반 ±30%<br><em style="color:var(--txtl);font-size:.78rem">30분 간격 단일가, VI 비적용</em></div></div></div></div>
+
+<!-- Section 5: Security Group Exceptions -->
+<div class="sec" id="exceptions">
+<div class="stitle"><span class="snum">5</span>증권그룹별 합치가격 복수 시 예외 규칙</div>
+
+<div class="card" style="border-left:4px solid var(--err)">
+<h3>채무증권 <span class="badge badge-err">완전 별도 규칙</span> <span class="art">규정 제47조제4항</span></h3>
+<div class="rule-box rule-red">
+합치가격이 2개 이상 &rarr; <strong>최고·최저 합치가격의 단순산술평균</strong> (호가가격단위 미달 시 절상)<br>
+주권·ETF 등의 "직전가격 기준" 규칙과 <strong>완전히 다름</strong>
+</div>
+</div>
+
+<div class="card" style="border-left:4px solid #805ad5">
+<h3>시가기준가종목 (재상장, 변경상장, 자본금감소 등) <span class="art">세칙 제36조제1호</span></h3>
+<div class="rule-box rule-yellow">
+"직전가격" 대신 <strong>별표1 평가가격</strong>을 기준으로 사용<br>
+평가가격과 동일한 합치가격이 있으면 그 가격, 없으면 <strong>평가가격에 가장 가까운</strong> 가격<br>
+<em>적용: 재상장종목, 변경상장종목, 투자회사주권(분배초과), 자본금감소종목, ETN분할/병합, 30일이상 매매중단 후 재개</em>
+</div>
+</div>
+
+<div class="card" style="border-left:4px solid #805ad5">
+<h3>신규상장(주권/DR) + 배당락/권리락/분할병합 등 <span class="art">세칙 제36조제2호</span></h3>
+<div class="rule-box rule-blue">
+<strong>기준가격</strong>과 동일한 합치가격이 있으면 그 가격, 없으면 <strong>기준가격에 가장 가까운</strong> 가격<br>
+<em>적용: 세칙 제30조제1항제2호(나~마), 제4호~제6호, 제4항 해당 종목의 최초 가격 결정</em>
+</div>
+</div>
+
+<div class="card" style="border-left:4px solid var(--warn)">
+<h3>신주인수권증서 / 신주인수권증권 / ELW (신규상장 최초) <span class="badge badge-warn">기준가격 없음</span> <span class="art">세칙 제36조제3호</span></h3>
+<div class="rule-box rule-yellow">
+기준가격(직전가격)이 <strong>존재하지 않으므로</strong>, 합치가격이 복수일 때:<br>
+<strong>가장 높은 합치가격 + 가장 낮은 합치가격</strong>의 단순산술평균<br>
+(호가가격단위 불일치 시 올림)<br>
+<em>채무증권(규정 제47조제4항)과 동일한 방식이나, 적용 근거 조항이 다름</em>
+</div>
+</div>
+
+<div class="card" style="border-left:4px solid var(--info)">
+<h3>일반 주권 / ETF / ETN / DR / 수익증권 <span class="badge badge-ok">표준 규칙</span></h3>
+<div class="rule-box rule-green">
+규정 제23조제5항 표준 규칙 적용<br>
+직전가격(기세 포함) 기준으로 1순위(동일가격) → 2순위(범위밖: 가장 가까운 / 범위안: 상향 편향)
+</div>
+</div>
+</div>
+
+<!-- Section 6: Examples -->
+<div class="sec" id="examples">
+<div class="stitle"><span class="snum">6</span>예시 (24개 케이스)</div>
+
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-01</span>
+기본: 합치가격 1개 존재
+<span class="badge badge-ok">체결: 10,000원</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">종가 결정 단일가매매. 지정가호가만 있고 합치가격이 유일하게 결정되는 가장 기본적인 경우.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div class="ob-row"><span>10,200원</span><span>100주</span></div><div class="ob-row"><span>10,100원</span><span>200주</span></div><div class="ob-row"><span>10,000원</span><span>300주</span></div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>10,000원</span><span>500주</span></div><div class="ob-row"><span>9,900원</span><span>200주</span></div><div class="ob-row"><span>9,800원</span><span>100주</span></div></div></div><div class="ex-analysis"><dl><dt>cumulative sells at 10000</dt><dd>600</dd><dt>cumulative buys at 10000</dt><dd>500</dd><dt>cumulative sells at 10100</dt><dd>300</dd><dt>cumulative buys at 10100</dt><dd>0</dd><dt>matching price</dt><dd>10000</dd><dt>matching qty</dt><dd>500</dd><dt>reason</dt><dd>10,000원에서 매도누적(600) ≥ 매수누적(500)이고, 매수 전수량(500)이 체결됨</dd></dl></div><div class="ob-result">결정가격: 10,000원 | 체결수량: 500주</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-02</span>
+합치가격 2개 이상: 직전가격과 동일한 가격 존재
+<span class="badge badge-ok">체결: 10,000원</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">합치가격이 10,000원과 10,100원 두 개. 직전가격(10,000원)과 동일한 것이 존재하므로 10,000원 선택.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div class="ob-row"><span>10,200원</span><span>100주</span></div><div class="ob-row"><span>10,100원</span><span>200주</span></div><div class="ob-row"><span>10,000원</span><span>500주</span></div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>10,100원</span><span>500주</span></div><div class="ob-row"><span>10,000원</span><span>200주</span></div><div class="ob-row"><span>9,900원</span><span>100주</span></div></div></div><div class="ex-analysis"><dl><dt>matching prices</dt><dd>10000, 10100</dd><dt>previous price</dt><dd>10000</dd><dt>rule applied</dt><dd>규정 제23조제5항제1호: 직전가격과 동일한 합치가격 존재</dd><dt>selected</dt><dd>10000</dd></dl></div><div class="ob-result">결정가격: 10,000원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-03</span>
+합치가격 2개 이상: 직전가격이 합치가격 범위 밖(위)
+<span class="badge badge-ok">체결: 9,900원</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">합치가격이 9,800원과 9,900원. 직전가격(10,000원)이 가장 높은 합치가격(9,900)보다 높음. → 가장 가까운 합치가격(9,900원) 선택.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div class="ob-row"><span>10,000원</span><span>500주</span></div><div class="ob-row"><span>9,900원</span><span>300주</span></div><div class="ob-row"><span>9,800원</span><span>200주</span></div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>9,900원</span><span>300주</span></div><div class="ob-row"><span>9,800원</span><span>500주</span></div></div></div><div class="ex-analysis"><dl><dt>matching prices</dt><dd>9800, 9900</dd><dt>previous price</dt><dd>10000</dd><dt>rule applied</dt><dd>규정 제23조제5항제2호가목: 직전가격이 범위 밖(위) → 가장 가까운 합치가격</dd><dt>selected</dt><dd>9900</dd></dl></div><div class="ob-result">결정가격: 9,900원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-04</span>
+합치가격 2개 이상: 직전가격이 합치가격 범위 밖(아래)
+<span class="badge badge-ok">체결: 10,100원</span>
+<span class="scen-tag scen-1">SCEN-1</span>
+</h3>
+<div class="desc">합치가격이 10,100원과 10,200원. 직전가격(10,000원)이 가장 낮은 합치가격(10,100)보다 낮음. → 가장 가까운 합치가격(10,100원) 선택.</div>
+<div class="ex-analysis"><dl><dt>matching prices</dt><dd>10100, 10200</dd><dt>previous price</dt><dd>10000</dd><dt>rule applied</dt><dd>규정 제23조제5항제2호가목: 직전가격이 범위 밖(아래) → 가장 가까운 합치가격</dd><dt>selected</dt><dd>10100</dd></dl></div><div class="ob-result">결정가격: 10,100원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-05</span>
+합치가격 3개 이상: 직전가격이 합치가격 범위 안쪽 (2025.2.5 개정)
+<span class="badge badge-ok">체결: 10,050원</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">합치가격이 9,900, 10,050, 10,100원. 직전가격(10,000원)은 9,900~10,100 범위 안쪽. → 직전가격보다 높은 합치가격 중 가장 가까운 것(10,050원) 선택.</div>
+<div class="ex-analysis"><dl><dt>matching prices</dt><dd>9900, 10050, 10100</dd><dt>previous price</dt><dd>10000</dd><dt>rule applied</dt><dd>규정 제23조제5항제2호나목 (2025.2.5 신설): 직전가격이 범위 안쪽 → 직전가격보다 높은 합치가격 중 가장 가까운 것</dd><dt>candidates above</dt><dd>10050, 10100</dd><dt>selected</dt><dd>10050</dd></dl></div><div class="ob-result">결정가격: 10,050원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-06</span>
+합치가격 없음: 종가 결정 시 기세
+<span class="badge badge-warn">기세</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">장종료 단일가매매에서 합치가격이 형성되지 않음. 기준가격(10,000원) 대비 낮은 매도호가(9,800원)가 존재하므로 기세=9,800원.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div class="ob-row"><span>9,800원</span><span>100주</span></div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>9,500원</span><span>100주</span></div></div></div><div class="ex-analysis"><dl><dt>matching prices</dt><dd></dd><dt>reason</dt><dd>매도최저(9,800) > 매수최고(9,500)이므로 합치 불가</dd><dt>kise check</dt><dd>기준가격(10,000) 대비 낮은 매도호가(9,800) 존재 → 기세 = 9,800</dd><dt>rule applied</dt><dd>규정 제2조제9항</dd></dl></div><div class="ob-result">결정가격: 9,800원 (기세(氣勢))</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-07</span>
+합치가격 없음: 시가 결정 시 접속매매 전환
+<span class="badge badge-err">접속매매_전환</span>
+<span class="scen-tag scen-1">SCEN-1</span>
+</h3>
+<div class="desc">시가 결정 단일가매매에서 합치가격 미형성. 접속매매(복수가격)로 전환하여 시가 결정.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div class="ob-row"><span>10,500원</span><span>100주</span></div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>9,500원</span><span>100주</span></div></div></div><div class="ex-analysis"><dl><dt>matching prices</dt><dd></dd><dt>reason</dt><dd>호가 격차가 커서 합치 불가</dd><dt>rule applied</dt><dd>세칙 제35조제2항: 접속매매로 전환하여 결정</dd></dl></div><div class="ob-result" style="background:var(--warn)">접속매매_전환: 최초 매칭되는 호가 쌍에서 가격 결정</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-08</span>
+시장가호가만 존재 (양측 동일수량)
+<span class="badge badge-ok">체결: 10,000원</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">매도시장가 100주, 매수시장가 100주만 있고, 직전가격 10,000원. 양측 동일 → 간주가격 = 직전가격 = 10,000원.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div class="ob-row"><span>시장가</span><span>100주</span></div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>시장가</span><span>100주</span></div></div></div><div class="ex-analysis"><dl><dt>rule applied</dt><dd>규정 제23조제3항제1호 본문</dd><dt>market sell deemed price</dt><dd>10000</dd><dt>market buy deemed price</dt><dd>10000</dd></dl></div><div class="ob-result">결정가격: 10,000원 | 체결수량: 100주</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-09</span>
+시장가호가만 존재 (매도 > 매수)
+<span class="badge badge-ok">체결: 9,990원</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">매도시장가 200주 > 매수시장가 100주. 직전가격 10,000원. → 매도가 많으므로 간주가격 = 10,000 - 1틱(10원) = 9,990원.</div>
+<div class="ex-analysis"><dl><dt>rule applied</dt><dd>규정 제23조제3항제1호가목</dd><dt>deemed price</dt><dd>10,000 - 10 = 9,990원</dd><dt>note</dt><dd>하한가를 한도로 함</dd></dl></div><div class="ob-result">결정가격: 9,990원 | 체결수량: 100주</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-10</span>
+채무증권: 합치가격 복수 → 산술평균
+<span class="badge badge-ok">체결: 100,000원</span>
+<span class="scen-tag scen-1">채무증권 시가결정</span>
+</h3>
+<div class="desc">채무증권에서 합치가격이 99,500원과 100,500원 두 개. 주권과 달리 산술평균 방식 적용.</div>
+<div class="ex-analysis"><dl><dt>matching prices</dt><dd>99500, 100500</dd><dt>rule applied</dt><dd>규정 제47조제4항: 최고·최저 산술평균</dd><dt>calculation</dt><dd>(99,500 + 100,500) / 2 = 100,000원</dd></dl></div><div class="ob-result">결정가격: 100,000원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-11</span>
+신주인수권증서 최초가격: 기준가격 없음 → 산술평균
+<span class="badge badge-ok">체결: 5,500원</span>
+<span class="scen-tag scen-9">SCEN-9</span>
+</h3>
+<div class="desc">신주인수권증서 신규상장일 최초 가격결정. 직전가격/기준가격이 없으므로 합치가격이 복수일 때 최고·최저 산술평균.</div>
+<div class="ex-analysis"><dl><dt>matching prices</dt><dd>5000, 5500, 6000</dd><dt>rule applied</dt><dd>세칙 제36조제3호</dd><dt>calculation</dt><dd>(5,000 + 6,000) / 2 = 5,500원</dd><dt>tick adjustment</dt><dd>호가단위(5원) 일치하므로 조정 없음</dd></dl></div><div class="ob-result">결정가격: 5,500원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-12</span>
+시가기준가종목 최초가격: 평가가격 기준
+<span class="badge badge-ok">체결: 20,500원</span>
+<span class="scen-tag scen-8">SCEN-8</span>
+</h3>
+<div class="desc">재상장종목(시가기준가). 평가가격 20,000원. 합치가격이 19,500원과 20,500원. 평가가격과 동일한 것이 없으므로 가장 가까운 가격.</div>
+<div class="ex-analysis"><dl><dt>evaluation price</dt><dd>20000</dd><dt>matching prices</dt><dd>19500, 20500</dd><dt>rule applied</dt><dd>세칙 제36조제1호: 평가가격에 가장 가까운 합치가격</dd><dt>distance 19500</dt><dd>500</dd><dt>distance 20500</dt><dd>500</dd><dt>note</dt><dd>동일 거리일 경우 규정상 명시 없으나 실무적으로 상향 선택 경향</dd></dl></div><div class="ob-result">결정가격: 20,500원<br><span style="font-size:.75rem;opacity:.8">동일거리 시 상향</span></div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-13</span>
+시가기준가종목 최초가격: 합치가격에 평가가격 존재
+<span class="badge badge-ok">체결: 15,000원</span>
+<span class="scen-tag scen-8">SCEN-8</span>
+</h3>
+<div class="desc">변경상장종목. 평가가격 15,000원. 합치가격이 14,500, 15,000, 15,500원. 평가가격과 동일한 15,000원 선택.</div>
+<div class="ex-analysis"><dl><dt>evaluation price</dt><dd>15000</dd><dt>matching prices</dt><dd>14500, 15000, 15500</dd><dt>rule applied</dt><dd>세칙 제36조제1호: 평가가격과 동일한 합치가격 존재 → 해당 가격</dd><dt>selected</dt><dd>15000</dd></dl></div><div class="ob-result">결정가격: 15,000원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-14</span>
+신규상장(주권): 확대가격제한폭 + 기준가격 기준
+<span class="badge badge-ok">체결: 52,000원</span>
+<span class="scen-tag scen-7">SCEN-7</span>
+</h3>
+<div class="desc">신규상장 주권. 기준가격 50,000원 (공모가). 상한가 = 50,000×4 = 200,000원, 하한가 = 50,000×0.6 = 30,000원. 합치가격이 복수일 때 기준가격 기준.</div>
+<div class="ex-analysis"><dl><dt>base price</dt><dd>50000</dd><dt>upper limit</dt><dd>200000</dd><dt>lower limit</dt><dd>30000</dd><dt>matching prices</dt><dd>52000, 55000</dd><dt>rule applied</dt><dd>세칙 제36조제2호: 기준가격과 동일한 합치가격 없음 → 기준가격에 가장 가까운 가격</dd><dt>selected</dt><dd>52000</dd></dl></div><div class="ob-result">결정가격: 52,000원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-15</span>
+정리매매: 가격제한 없음 + 30분 단일가
+<span class="badge badge-ok">체결: 100원</span>
+<span class="scen-tag scen-10">SCEN-10</span>
+</h3>
+<div class="desc">정리매매종목. 가격제한 없음. 직전가격 500원. 합치가격이 100원에서 형성. 직전가격과 동일한 합치가격 없으므로 가장 가까운 가격.</div>
+<div class="ex-analysis"><dl><dt>previous price</dt><dd>500</dd><dt>matching prices</dt><dd>100</dd><dt>rule applied</dt><dd>합치가격 1개 → 해당 가격 직접 결정</dd><dt>note</dt><dd>가격제한 없으므로 -80% 하락도 유효</dd></dl></div><div class="ob-result">결정가격: 100원<br><span style="font-size:.75rem;opacity:.8">정리매매종목은 가격제한 없음</span></div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-16</span>
+시간외단일가매매: 종가 ±10% 제한 내
+<span class="badge badge-ok">체결: 10,500원</span>
+<span class="scen-tag scen-6">SCEN-6</span>
+</h3>
+<div class="desc">당일 종가 10,000원. 시간외단일가 호가범위 9,000~11,000원. 합치가격 10,500원.</div>
+<div class="ex-analysis"><dl><dt>closing price</dt><dd>10000</dd><dt>price range</dt><dd>9,000 ~ 11,000 (±10%)</dd><dt>matching prices</dt><dd>10500</dd><dt>reference price for multiple</dt><dd>당일 종가(10,000원)</dd></dl></div><div class="ob-result">결정가격: 10,500원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-17</span>
+VI 발동 후 단일가매매: 2분 호가접수
+<span class="badge badge-ok">체결: 10,800원</span>
+<span class="scen-tag scen-5">SCEN-5</span>
+</h3>
+<div class="desc">접속매매 중 동적VI 발동(직전가 10,000원 대비 +10%). 2분간 단일가매매 호가 접수 후 합치가격 결정.</div>
+<div class="ex-analysis"><dl><dt>vi trigger price</dt><dd>11000</dd><dt>previous price for matching</dt><dd>11000</dd><dt>matching prices</dt><dd>10800</dd><dt>note</dt><dd>VI 발동 후 최초 가격이 다시 VI 요건에 해당해도 연속 발동 안 함</dd></dl></div><div class="ob-result">결정가격: 10,800원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-18</span>
+ETF(코스피200): 시가결정 + 정적VI 기준 3%
+<span class="badge badge-ok">체결: 30,900원</span>
+<span class="scen-tag scen-1">SCEN-1</span>
+</h3>
+<div class="desc">코스피200 ETF. 전일종가(기준가격) 30,000원. 시가 단일가매매에서 합치가격이 30,900원(+3%)에서 결정되는 경우 정적VI 발동 여부 확인. 시가결정시는 동적VI 미적용이나 정적VI는 적용.</div>
+<div class="ex-analysis"><dl><dt>base price</dt><dd>30000</dd><dt>matching price</dt><dd>30900</dd><dt>change pct</dt><dd>+3.0%</dd><dt>static vi threshold</dt><dd>3%</dd><dt>vi triggered</dt><dd>True</dd><dt>note</dt><dd>시가결정 시에도 정적VI는 적용됨. 단, 시가결정 자체의 단일가매매에서 정적VI 참조가격은 당일 기준가격.</dd></dl></div><div class="ob-result">결정가격: 30,900원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-19</span>
+제23조제6항 특수: 완전합치(MC-1+MC-2a)만 2개 가격에서 성립
+<span class="badge badge-ok">체결: 10,000원</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">10,000원과 10,050원에서 각각 매도전수량=매수전수량이지만, MC-2b(타방 매매수량단위 이상) 조건 미충족. 이 경우에도 매매거래 성립.</div>
+<div class="ex-analysis"><dl><dt>matching at 10000</dt><dd><strong>sell_total:</strong> 100</dd><dd><strong>buy_total:</strong> 100</dd><dd><strong>MC1:</strong> True</dd><dd><strong>MC2a:</strong> True</dd><dd><strong>MC2b:</strong> False</dd><dt>matching at 10050</dt><dd><strong>sell_total:</strong> 100</dd><dd><strong>buy_total:</strong> 100</dd><dd><strong>MC1:</strong> True</dd><dd><strong>MC2a:</strong> True</dd><dd><strong>MC2b:</strong> False</dd><dt>rule applied</dt><dd>규정 제23조제6항: MC-2b 무시하고 매매 성립. 가격은 제5항 준용</dd><dt>selected by 5 1</dt><dd>직전가격(10,000)과 동일한 합치가격 존재 → 10,000원</dd></dl></div><div class="ob-result">결정가격: 10,000원</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-20</span>
+상한가 결정 시 동시호가 비례배분
+<span class="badge badge-ok">체결: 13,000원</span>
+<span class="scen-tag scen-1">SCEN-1</span>
+</h3>
+<div class="desc">시가가 상한가(13,000원)로 결정. 상한가 매수호가는 동시호가로 처리되어 비례배분 적용.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div class="ob-row"><span>13,000원</span><span>100주</span></div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>13,000원</span><span>500주</span></div><div class="ob-row"><span>13,000원</span><span>300주</span></div></div></div><div class="ex-analysis"><dl><dt>rule applied</dt><dd>규정 제22조제3항제1호 + 세칙 제34조</dd><dt>allocation</dt><dd><strong>total_sell:</strong> 100</dd><dd><strong>step1_100x:</strong> 매매수량단위(1주)×100=100주까지: A(500주)가 B(300주)보다 많으므로 A에 100주 배분</dd><dd><strong>result_A:</strong> 100</dd><dd><strong>result_B:</strong> 0</dd></dl></div><div class="ob-result">결정가격: 13,000원 | 체결수량: 100주</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-21</span>
+합치가격 없음: 종가 결정 시 기세(매수방향)
+<span class="badge badge-warn">기세</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">기준가격 10,000원. 매도호가 없이 매수호가만 존재(10,200원). 기준가격 대비 높은 매수호가이므로 기세=10,200원.</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div style="text-align:center;color:var(--txtl);font-size:.72rem">호가 없음</div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div class="ob-row"><span>10,200원</span><span>100주</span></div></div></div><div class="ex-analysis"><dl><dt>matching prices</dt><dd></dd><dt>kise check</dt><dd>기준가격(10,000) 대비 높은 매수호가(10,200) 존재 → 기세 = 10,200</dd><dt>rule applied</dt><dd>규정 제2조제9항</dd></dl></div><div class="ob-result">결정가격: 10,200원 (기세)</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-22</span>
+합치가격 없음: 호가 자체가 없는 경우
+<span class="badge badge-err">미결정</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">장종료 시 매도호가와 매수호가 모두 없음. 기세도 형성 불가. 종가 = 전일 종가(기세 없음).</div>
+<div class="ob-wrap"><div class="ob-side ob-sell"><h4>매도호가 (SELL)</h4><div style="text-align:center;color:var(--txtl);font-size:.72rem">호가 없음</div></div><div class="ob-mid">&harr;</div><div class="ob-side ob-buy"><h4>매수호가 (BUY)</h4><div style="text-align:center;color:var(--txtl);font-size:.72rem">호가 없음</div></div></div><div class="ex-analysis"><dl><dt>matching prices</dt><dd></dd><dt>kise check</dt><dd>매도·매수 호가 모두 없음 → 기세 미형성</dd><dt>rule applied</dt><dd>종가 = 전일 종가를 유지 (종가 미결정)</dd></dl></div><div class="ob-result" style="background:var(--warn)">미결정 (전일종가 유지)</div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-23</span>
+ETF 분배락: 기준가격 특수 산정
+<span class="badge badge-info">기준가격 49,500원 기반으로 합치가격 판정</span>
+<span class="scen-tag scen-1">SCEN-1</span>
+</h3>
+<div class="desc">ETF 분배락일. 2매매거래일 전일 종가 50,000원, 주당 분배금 500원. 기준가격 = 50,000 - 500 = 49,500원. 시가 단일가매매에서 합치가격 결정.</div>
+<div class="ex-analysis"><dl><dt>previous close 2days ago</dt><dd>50000</dd><dt>distribution per unit</dt><dd>500</dd><dt>base price</dt><dd>49500</dd><dt>upper limit</dt><dd>49,500 × 1.3 = 64,350원</dd><dt>lower limit</dt><dd>49,500 × 0.7 = 34,650원</dd></dl></div></div>
+<div class="card ex-card">
+<h3>
+<span class="ex-id">EX-24</span>
+기세결정 참여 제한: 매매중단 후 미재개
+<span class="badge badge-err">기세_참여제한</span>
+<span class="scen-tag scen-4">SCEN-4</span>
+</h3>
+<div class="desc">단일가매매 호가접수시간 중 매매거래가 중단되고 당일 미재개. 당일 접수된 호가는 기세 결정에 참여 불가.</div>
+<div class="ex-analysis"><dl><dt>rule applied</dt><dd>세칙 제37조: 매매중단 후 당일 미재개시 당일 접수 호가는 기세 참여 불가</dd><dt>result kise</dt><dd>전일 종가 유지 또는 기세 미형성</dd></dl></div><div class="ob-result" style="background:var(--warn)">기세_참여제한</div></div>
+</div>
+</div>
+
+<div style="background:var(--p);color:rgba(255,255,255,.6);padding:1rem 2rem;text-align:center;font-size:.72rem">
+KRX 유가증권시장 단일가매매 합치가격 산출 로직 | 규정 제23조, 제47조, 세칙 제35조~제36조 기반 | 2026.03.27
+</div>
+
+<script>
+// Scroll nav
+const secs=document.querySelectorAll('.sec'),nl=document.querySelectorAll('.nav a');
+window.addEventListener('scroll',()=>{let c='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-140)c=s.id});nl.forEach(l=>{l.classList.remove('act');if(l.getAttribute('href')==='#'+c)l.classList.add('act')})});
+document.querySelectorAll('.nav a').forEach(l=>{l.addEventListener('click',e=>{e.preventDefault();document.querySelector(l.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})})});
+</script>
+</body>
+</html>

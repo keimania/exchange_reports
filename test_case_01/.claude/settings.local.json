@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \":*)",
+      "Bash(python3 generate_combinatorial_tests.py)",
+      "Bash(open krx_combinatorial_viewer.html)",
+      "Bash(open krx_matching_price_logic.html)"
+    ]
+  }
+}

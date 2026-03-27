@@ -1,0 +1,623 @@
+{
+  "metadata": {
+    "title": "유가증권시장(KRX KOSPI) 매매거래 규정 요약",
+    "sources": [
+      "유가증권시장 업무규정_전문_20260129.txt",
+      "유가증권시장 업무규정 시행세칙_전문_20260209.txt"
+    ],
+    "last_updated": "2026-03-27"
+  },
+
+  "1_order_types": {
+    "title": "호가유형 목록 및 허용 시간대/조건",
+    "types": [
+      {
+        "name": "지정가호가",
+        "name_en": "Limit Order",
+        "article": "규정 제2조제4항제1호",
+        "definition": "종목, 수량 및 가격을 지정하는 호가",
+        "allowed_sessions": ["정규시장(단일가/접속매매)", "시간외종가매매", "시간외단일가매매", "시간외대량매매", "시간외바스켓매매", "시간외경쟁대량매매"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN", "신주인수권증서", "신주인수권증권", "주식워런트증권", "수익증권", "채무증권"],
+        "notes": "모든 증권종류에서 사용 가능한 기본 호가유형"
+      },
+      {
+        "name": "시장가호가",
+        "name_en": "Market Order",
+        "article": "규정 제2조제4항제2호",
+        "definition": "종목 및 수량은 지정하되, 가격은 지정하지 아니하는 호가",
+        "allowed_sessions": ["정규시장(단일가/접속매매)"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN"],
+        "restrictions": [
+          "정리매매종목 불가 (세칙 제14조제2항제1호아목)",
+          "단기과열종목 불가 (세칙 제14조제2항제1호자목의 취지)",
+          "시간외시장 불가"
+        ]
+      },
+      {
+        "name": "조건부지정가호가",
+        "name_en": "Conditional Limit Order",
+        "article": "규정 제2조제4항제3호",
+        "definition": "장종료시 단일가매매 시 시장가호가로 전환할 것을 조건으로 하는 지정가호가",
+        "allowed_sessions": ["정규시장 접속매매 시간 → 장종료 단일가매매 시 시장가 전환"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN"],
+        "restrictions": [
+          "IOC/FOK 조건 부여 불가 (세칙 제14조제2항제1호하목)",
+          "정리매매종목 불가",
+          "단기과열종목 불가 (세칙 제14조제2항제1호자목)",
+          "투자유의종목 불가"
+        ],
+        "conversion_rule": "세칙 제15조: 장종료 단일가매매 시 시장가호가로 전환. 전환 우선순위는 낮은 가격 매도 > 높은 가격 매도, 높은 가격 매수 > 낮은 가격 매수; 동가격이면 시간 선순위"
+      },
+      {
+        "name": "최유리지정가호가",
+        "name_en": "Best Limit Order",
+        "article": "규정 제2조제4항제4호, 세칙 제3조",
+        "definition": "종목·수량은 지정, 가격은 상대호가 최우선 가격으로 자동 지정",
+        "price_determination": {
+          "매도": "접수시점 가장 높은 매수호가 가격 (없으면 가장 낮은 매도호가 -1틱, 양쪽 없으면 직전가격)",
+          "매수": "접수시점 가장 낮은 매도호가 가격 (없으면 가장 높은 매수호가 +1틱, 양쪽 없으면 직전가격)"
+        },
+        "allowed_sessions": ["정규시장 접속매매"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN"],
+        "notes": "중간가호가로 제출된 호가는 판단 시 제외"
+      },
+      {
+        "name": "최우선지정가호가",
+        "name_en": "Most Preferred Limit Order",
+        "article": "규정 제2조제4항제5호, 세칙 제4조",
+        "definition": "종목·수량은 지정, 가격은 자기측 최우선 호가 가격으로 자동 지정",
+        "price_determination": {
+          "매도": "접수시점 가장 낮은 매도호가 가격 (없으면 직전 가격)",
+          "매수": "접수시점 가장 높은 매수호가 가격 (없으면 직전 가격)"
+        },
+        "allowed_sessions": ["정규시장 접속매매"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN"],
+        "restrictions": ["IOC/FOK 조건 부여 불가 (세칙 제14조제2항제2호다목)"],
+        "notes": "중간가호가로 제출된 호가는 판단 시 제외"
+      },
+      {
+        "name": "경쟁대량매매호가",
+        "name_en": "Competitive Bulk Trade Order",
+        "article": "규정 제2조제4항제6호",
+        "definition": "종목·수량을 지정, 가격은 거래량가중평균가격(VWAP) 등 규정 가격으로 매매",
+        "allowed_sessions": ["장중경쟁대량매매(09:00~15:00)", "시간외경쟁대량매매(08:00~09:00)"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN"],
+        "restrictions": [
+          "관리종목 불가 (세칙 제14조제2항제3호다목)",
+          "정리매매종목 불가 (세칙 제14조제2항제3호나목)"
+        ]
+      },
+      {
+        "name": "중간가호가",
+        "name_en": "Mid-Price Order",
+        "article": "규정 제2조제4항제7호, 세칙 제4조의2 (2025.2.27 신설)",
+        "definition": "종목·수량은 지정, 가격은 최우선매도호가와 최우선매수호가의 단순산술평균(1원 미만 절사)",
+        "allowed_sessions": ["정규시장 접속매매(복수가격 개별경쟁매매 시간)"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN"],
+        "restrictions": [
+          "정리매매종목 불가",
+          "장종료 단일가매매 호가접수시간 이전에 접수된 미체결 중간가호가는 효력 불인정 (세칙 제13조제1항제4호의2)",
+          "매도/매수 일방에 중간가호가 외 호가수량이 없으면 효력 정지 (세칙 제13조제2항제2호)"
+        ]
+      },
+      {
+        "name": "스톱지정가호가",
+        "name_en": "Stop Limit Order",
+        "article": "규정 제2조제4항제8호, 세칙 제4조의3 (2025.2.27 신설)",
+        "definition": "종목·수량·가격을 지정하되, 스톱가격 요건 충족 시 지정가호가로 효력 발생",
+        "trigger_conditions": {
+          "매도": "직전 체결가격(없으면 기준가격)이 스톱가격 이하일 때",
+          "매수": "직전 체결가격이 스톱가격 이상일 때"
+        },
+        "allowed_sessions": ["정규시장 접속매매"],
+        "allowed_securities": ["주권", "외국주식예탁증권", "ETF", "ETN"],
+        "priority_rule": "세칙 제15조의2: 매도는 스톱가격 높은 것 우선, 매수는 스톱가격 낮은 것 우선, 동일 스톱가격이면 시간 선순위",
+        "restrictions": ["정리매매종목 불가", "다른 호가유형에서 스톱지정가로 정정 불가"]
+      }
+    ]
+  },
+
+  "2_order_conditions": {
+    "title": "호가조건(IOC, FOK) 및 적용 가능 시간대",
+    "conditions": [
+      {
+        "name": "IOC (Immediate Or Cancel)",
+        "name_ko": "아이오씨 조건",
+        "article": "세칙 제13조제3항제1호, 제108조제12호가목(1)",
+        "definition": "호가 접수시점에서 매매계약 체결 가능 수량은 즉시 체결, 미체결 수량은 즉시 취소",
+        "applicable_order_types": ["지정가호가", "시장가호가", "최유리지정가호가", "경쟁대량매매호가", "중간가호가"],
+        "applicable_sessions": ["정규시장 접속매매"]
+      },
+      {
+        "name": "FOK (Fill Or Kill)",
+        "name_ko": "에프오케이 조건",
+        "article": "세칙 제13조제3항제2호, 제108조제12호가목(2)",
+        "definition": "호가 수량 전부가 체결 가능하면 전량 체결, 전량 체결 불가능하면 전량 취소",
+        "applicable_order_types": ["지정가호가", "시장가호가", "최유리지정가호가", "경쟁대량매매호가", "중간가호가"],
+        "applicable_sessions": ["정규시장 접속매매"]
+      }
+    ],
+    "ioc_fok_restrictions": {
+      "article": "세칙 제14조제2항",
+      "cannot_apply_to": [
+        "최우선지정가호가 (세칙 제14조제2항제2호다목)",
+        "조건부지정가호가 (세칙 제14조제2항제1호하목)",
+        "차입공매도 호가",
+        "유동성공급호가, 시장조성호가",
+        "자기주식 취득/처분 호가",
+        "시간외종가매매, 시간외단일가매매",
+        "대량매매, 바스켓매매",
+        "시가기준가종목/신규상장종목 최초 가격 결정시",
+        "정리매매종목",
+        "단일가매매 참여호가 접수시간"
+      ]
+    },
+    "special_rules": {
+      "자전거래방지조건_우선": "자전거래방지조건과 IOC 조건이 동시에 부여된 경우 자전거래방지조건을 IOC에 우선하여 적용 (세칙 제13조의2제3항)"
+    }
+  },
+
+  "3_trading_sessions": {
+    "title": "시간대별 매매방식(단일가/접속매매)",
+    "regular_market": {
+      "name": "정규시장",
+      "article": "규정 제4조제3항제1호",
+      "hours": "09:00 ~ 15:30",
+      "order_acceptance": "08:00 ~ 15:30 (장개시 30분전 부터)",
+      "sessions": [
+        {
+          "time": "08:00 ~ 09:00 (+ 무작위 30초)",
+          "method": "단일가매매(Single Price Auction)",
+          "purpose": "시가(개장가) 결정",
+          "article": "세칙 제35조제1항제1호"
+        },
+        {
+          "time": "09:00 ~ 15:20",
+          "method": "접속매매(Continuous Auction / 복수가격 개별경쟁매매)",
+          "purpose": "장중 가격 결정",
+          "article": "규정 제24조제1항"
+        },
+        {
+          "time": "15:20 ~ 15:30 (+ 무작위 30초)",
+          "method": "단일가매매(Single Price Auction)",
+          "purpose": "종가(장종료가) 결정",
+          "article": "세칙 제35조제1항제3호"
+        }
+      ],
+      "competitive_bulk_trade": {
+        "time": "09:00 ~ 15:00",
+        "method": "장중경쟁대량매매",
+        "article": "규정 제4조제3항제1호나목"
+      }
+    },
+    "pre_market": {
+      "name": "장개시전 시간외시장",
+      "article": "규정 제4조제3항제2호가목",
+      "sessions": [
+        {
+          "type": "시간외종가매매",
+          "time": "08:30 ~ 08:40",
+          "method": "전일 종가로 매매",
+          "article": "규정 제34조"
+        },
+        {
+          "type": "시간외대량매매",
+          "time": "08:00 ~ 09:00",
+          "article": "규정 제35조"
+        },
+        {
+          "type": "시간외바스켓매매",
+          "time": "08:00 ~ 09:00",
+          "article": "규정 제36조"
+        },
+        {
+          "type": "시간외경쟁대량매매",
+          "time": "08:00 ~ 09:00",
+          "method": "거래량가중평균가격(VWAP)",
+          "article": "규정 제34조의3"
+        }
+      ]
+    },
+    "post_market": {
+      "name": "장종료후 시간외시장",
+      "article": "규정 제4조제3항제2호나목",
+      "sessions": [
+        {
+          "type": "시간외종가매매",
+          "time": "15:40 ~ 16:00",
+          "method": "당일 종가로 매매",
+          "article": "규정 제34조"
+        },
+        {
+          "type": "시간외단일가매매",
+          "time": "16:00 ~ 18:00",
+          "method": "10분 간격 단일가매매, 종가 기준 ±10% 이내",
+          "article": "규정 제34조의2, 세칙 제51조의2"
+        },
+        {
+          "type": "시간외대량매매",
+          "time": "15:40 ~ 18:00",
+          "article": "규정 제35조"
+        },
+        {
+          "type": "시간외바스켓매매",
+          "time": "15:40 ~ 18:00",
+          "article": "규정 제36조"
+        }
+      ]
+    },
+    "single_price_auction_participation": {
+      "title": "단일가매매 참여호가 범위",
+      "article": "세칙 제35조제1항",
+      "rule": "접수시간 + 30초 이내 거래소 무작위 시점까지 접수된 호가",
+      "details": [
+        {"case": "시가 결정", "acceptance": "호가접수 개시 ~ 장개시시 + 무작위 30초"},
+        {"case": "매매거래 재개시", "acceptance": "재개시점부터 10분 + 무작위 30초"},
+        {"case": "종가 결정", "acceptance": "장종료 10분전 ~ 장종료시 + 무작위 30초"},
+        {"case": "VI 발동시", "acceptance": "변경시점부터 2분 + 무작위 30초"}
+      ]
+    }
+  },
+
+  "4_volatility_interruption": {
+    "title": "VI(변동성완화장치) 발동 기준 및 단일가 전환 규칙",
+    "article": "규정 제26조의2, 세칙 제41조의2",
+    "static_vi": {
+      "name": "정적 VI",
+      "article": "규정 제26조의2제1항제2호, 세칙 제41조의2제1항",
+      "reference_price": "직전 단일가매매 결정가격 (시가결정시는 당일 기준가격)",
+      "applicable_session": "정규시장 매매거래시간",
+      "thresholds": {
+        "stocks": {
+          "kospi200_constituents": "3%",
+          "other_stocks": "6%"
+        },
+        "etf_etn": {
+          "kospi200_kospi100_kospi50_krx100_bond_index_1x_or_less": "3%",
+          "others": "6%"
+        },
+        "foreign_dr_beneficiary_cert": "6%"
+      },
+      "closing_auction_special": {
+        "rule": "장종료시 가격결정 호가접수시간에는 기준비율 축소",
+        "kospi200_etf_etc": "3% → 2%",
+        "others": "6% → 4%"
+      },
+      "derivatives_expiry_special": {
+        "rule": "파생상품 최종거래일 기초자산의 장종료시 호가접수시간",
+        "threshold": "1%"
+      }
+    },
+    "dynamic_vi": {
+      "name": "동적 VI",
+      "article": "규정 제26조의2제1항제1호, 세칙 제41조의2제2항",
+      "reference_price": "호가 접수시점의 직전 체결가격",
+      "applicable_session": "정규시장(시가결정 제외) + 시간외단일가매매",
+      "threshold": "10% (모든 대상 증권 동일)"
+    },
+    "action_on_trigger": {
+      "article": "세칙 제41조의2제3항",
+      "during_continuous_auction": "단일가매매로 전환 (2분간 호가 접수 + 무작위 30초)",
+      "during_single_price_auction": "단일가매매 참여호가 범위 2분 연장"
+    },
+    "excluded_securities": {
+      "article": "세칙 제41조의2제4항",
+      "list": [
+        "정리매매종목",
+        "단기과열종목",
+        "이상급등 단일가매매종목",
+        "투자유의종목",
+        "단일가매매대상 저유동성종목",
+        "단일가매매대상 종류주식종목",
+        "신규상장종목 (상장일 당일, 코스닥 이전상장 제외)",
+        "매매거래 중단/정지 후 재개시 단일가매매 실시 시"
+      ]
+    },
+    "no_consecutive_trigger": "동일 VI 발동 후 최초 가격 결정 결과가 다시 VI 요건에 해당하더라도 연속 발동하지 않음",
+    "low_price_exception": "잠정 체결가격이 직전가격(1,000원 미만) 대비 3호가가격단위 이내인 경우 VI 미발동"
+  },
+
+  "5_price_limits": {
+    "title": "가격제한(상한가/하한가) 규정",
+    "general_rule": {
+      "article": "규정 제20조",
+      "limit_rate": "기준가격 × 30% (상하 ±30%)",
+      "upper_limit": "기준가격 + 가격제한폭",
+      "lower_limit": "기준가격 - 가격제한폭",
+      "rounding": "호가가격단위 미만 금액 절사",
+      "minimum": "가격제한폭이 최소 호가가격단위 미만이면 최소 호가가격단위로 적용"
+    },
+    "upper_lower_calculation": {
+      "article": "세칙 제31조제1항",
+      "upper_limit": "기준가격 + 가격제한폭. 호가가격단위 불일치 시 해당 가격보다 낮고 호가가격단위와 일치하는 가격 중 가장 가까운 가격",
+      "lower_limit": "기준가격 - 가격제한폭. 호가가격단위 불일치 시 해당 가격보다 높고 호가가격단위와 일치하는 가격 중 가장 가까운 가격"
+    },
+    "leveraged_etf_etn": {
+      "rule": "30% × 해당 배율 (음의 배율은 절대값 사용)",
+      "example": "2배 레버리지 ETF → ±60%, 인버스(-1배) → ±30%"
+    },
+    "new_listing_special": {
+      "article": "세칙 제31조제3항 (2023.4.12 신설)",
+      "upper_limit": "기준가격 × 400% (기준가격 + 기준가격 × 3)",
+      "lower_limit": "기준가격 × 60% (기준가격 - 기준가격 × 0.4)"
+    },
+    "after_hours_single_price": {
+      "article": "규정 제34조의2제3항",
+      "rule": "당일 종가 기준 ±10% 이내, 당일 상한가/하한가 이내"
+    },
+    "exceptions": {
+      "cleaning_trade": "정리매매종목은 가격제한 없음 (규정 제20조제3항)",
+      "bonds": {
+        "non_equity_linked": "전일종가 기준 ±30%",
+        "equity_linked_convertible": "전일종가 기준 ±50%"
+      }
+    },
+    "base_price_determination": {
+      "article": "세칙 제30조제1항",
+      "rules": [
+        {"case": "일반종목", "base_price": "전일 종가 (호가가격단위 불일치 시 올림)"},
+        {"case": "신규상장종목", "base_price": "별표 1의4 산출가격"},
+        {"case": "시가기준가종목", "base_price": "당일 최초 결정 가격"},
+        {"case": "배당락/권리락", "base_price": "별표2 산식에 따른 가격"},
+        {"case": "ETF/ETN 분배락", "base_price": "2매매거래일 전일 종가 - 주당 분배금액"}
+      ]
+    }
+  },
+
+  "6_tick_sizes": {
+    "title": "호가가격단위 규정",
+    "article": "세칙 제32조제2항",
+    "stocks_and_dr_etc": {
+      "name": "주권, 외국주식예탁증권, 신주인수권증서/증권, 수익증권",
+      "article": "세칙 제32조제2항제1호",
+      "ticks": [
+        {"price_range": "2,000원 미만", "tick_size": "1원"},
+        {"price_range": "2,000원 이상 ~ 5,000원 미만", "tick_size": "5원"},
+        {"price_range": "5,000원 이상 ~ 20,000원 미만", "tick_size": "10원"},
+        {"price_range": "20,000원 이상 ~ 50,000원 미만", "tick_size": "50원"},
+        {"price_range": "50,000원 이상 ~ 200,000원 미만", "tick_size": "100원"},
+        {"price_range": "200,000원 이상 ~ 500,000원 미만", "tick_size": "500원"},
+        {"price_range": "500,000원 이상", "tick_size": "1,000원"}
+      ]
+    },
+    "etf_etn": {
+      "name": "ETF 집합투자증권, ETN(상장지수증권)",
+      "article": "세칙 제32조제2항제2호",
+      "ticks": [
+        {"price_range": "2,000원 미만", "tick_size": "1원"},
+        {"price_range": "2,000원 이상", "tick_size": "5원"}
+      ]
+    },
+    "elw": {
+      "name": "주식워런트증권(ELW)",
+      "article": "세칙 제32조제2항제3호",
+      "tick_size": "5원 (일률 적용)"
+    },
+    "off_hours_block_trade": {
+      "name": "시간외대량매매",
+      "article": "세칙 제52조제4항",
+      "tick_size": "1원"
+    }
+  },
+
+  "7_allocation_logic": {
+    "title": "배분 로직(가격우선, 시간우선, 비례배분)",
+    "priority_principles": {
+      "article": "규정 제22조제2항",
+      "price_priority": {
+        "name": "가격우선 원칙",
+        "article": "규정 제22조제2항제1호",
+        "rule": "낮은 가격 매도호가가 높은 가격 매도호가에 우선, 높은 가격 매수호가가 낮은 가격 매수호가에 우선",
+        "market_order_priority": "시장가호가는 지정가호가에 가격적으로 우선 (다만, 매도시장가=하한가매도지정가, 매수시장가=상한가매수지정가로 봄)"
+      },
+      "time_priority": {
+        "name": "시간우선 원칙",
+        "article": "규정 제22조제2항제2호",
+        "rule": "동일가격 호가간, 시장가호가간에는 먼저 접수된 호가가 우선"
+      }
+    },
+    "simultaneous_order_allocation": {
+      "name": "동시호가(단일가매매) 배분",
+      "article": "세칙 제34조",
+      "when_applied": "시가/재개시가격/장종료가격이 상한가 또는 하한가로 결정되는 경우의 동시호가",
+      "proportional_allocation_steps": [
+        {
+          "step": 1,
+          "rule": "매매수량단위의 100배에 달할 때까지 수량이 많은 호가가 적은 호가보다 우선",
+          "tie_breaker": "동수량이면 거래소시스템 기록순위"
+        },
+        {
+          "step": 2,
+          "rule": "100배 초과분은 잔량의 1/2에 달할 때까지 배분 (매매수량단위 미만은 반올림)"
+        },
+        {
+          "step": 3,
+          "rule": "그 이후 잔량 전부 배분"
+        }
+      ],
+      "etf_etn_elw_special": "위탁매매호가가 자기매매호가에 우선 (세칙 제34조제2항)"
+    },
+    "single_price_matching": {
+      "name": "단일가매매 가격결정",
+      "article": "규정 제23조",
+      "rule": "매도호가 합계수량과 매수호가 합계수량이 일치하는 합치가격으로 결정",
+      "multiple_matches": "합치가격이 두 개 이상이면, 직전 가격과 동일한 가격이 있으면 그 가격, 없으면 직전 가격에 가장 가까운 가격"
+    },
+    "continuous_matching": {
+      "name": "접속매매 가격결정",
+      "article": "규정 제24조제3항",
+      "rule": "가장 낮은 매도호가와 가장 높은 매수호가가 합치되는 경우, 선행호가의 가격으로 결정"
+    }
+  },
+
+  "8_stock_status_restrictions": {
+    "title": "종목상태별 매매 제한사항",
+    "statuses": [
+      {
+        "status": "정리매매종목",
+        "name_en": "Cleaning/Delisting Trade",
+        "article": "규정 제38조, 세칙 제56조",
+        "restrictions": [
+          "단일가매매만 가능 (30분 간격 단위매매체결)",
+          "가격제한 없음 (규정 제20조제3항)",
+          "VI 비적용",
+          "시장가/조건부지정가/경쟁대량매매/중간가/스톱지정가 호가 불가",
+          "IOC/FOK 조건 부여 불가",
+          "자전거래방지조건 호가 불가"
+        ]
+      },
+      {
+        "status": "단기과열종목",
+        "name_en": "Short-term Overheated Stock",
+        "article": "규정 제38조의2제1호, 세칙 제56조의2, 제133조~제134조",
+        "designation_criteria": "주가상승률 130% 이상(40일 평균 대비), 거래회전율 600% 이상, 주가변동성 150% 이상 (세칙 제133조의2제3항)",
+        "restrictions": [
+          "단일가매매만 가능 (30분 간격)",
+          "VI 비적용",
+          "시장가호가/조건부지정가호가 불가"
+        ],
+        "designation_period": "지정일부터 3매매거래일. 종료일 종가가 지정일 직전일 종가의 120% 이상이면 추가 3매매거래일 연장 (세칙 제134조)"
+      },
+      {
+        "status": "이상급등 단일가매매종목",
+        "name_en": "Abnormally Surging Stock (Single Price Auction)",
+        "article": "규정 제38조의2제2호, 세칙 제56조의2제5항",
+        "restrictions": [
+          "단일가매매만 가능",
+          "VI 비적용"
+        ],
+        "designation_period": "시장감시규정에 따라 3매매거래일 또는 투자위험종목 해제일 전일까지"
+      },
+      {
+        "status": "투자유의종목 (ETF/ETN)",
+        "name_en": "Investment Caution Security (ETF/ETN)",
+        "article": "규정 제38조의2제1호의2, 세칙 제134조의5~7",
+        "designation_criteria": "ETF/ETN 괴리율 기반: 장종료시 실시간 괴리율이 기준비율의 2배 이상, 10매매거래일 이내 재발",
+        "restrictions": [
+          "단일가매매만 가능 (30분 간격)",
+          "VI 비적용",
+          "조건부지정가호가 불가",
+          "대용증권에서 제외 (규정 제88조제2항제2호나목)",
+          "매수시 위탁금액 전부(현금) 위탁증거금 징수 (규정 제89조제5항)"
+        ],
+        "designation_period": "3매매거래일 단위, 기간 중 괴리율 초과시 연장"
+      },
+      {
+        "status": "관리종목",
+        "name_en": "Administrative Issue",
+        "article": "규정 제88조제2항제1호가목",
+        "restrictions": [
+          "대용증권에서 제외",
+          "경쟁대량매매호가 불가 (세칙 제14조제2항제3호다목)",
+          "장중경쟁대량매매 불성립 (세칙 제48조의2제5항)"
+        ]
+      },
+      {
+        "status": "투자경고종목/투자위험종목",
+        "name_en": "Investment Warning / Investment Risk",
+        "article": "규정 제88조제2항제1호라목, 제89조제5항",
+        "restrictions": [
+          "대용증권에서 제외",
+          "매수시 위탁금액 전부(현금) 위탁증거금 징수"
+        ]
+      },
+      {
+        "status": "단일가매매대상 저유동성종목",
+        "name_en": "Low Liquidity Single-Price Auction Stock",
+        "article": "세칙 제56조의3",
+        "restrictions": [
+          "단일가매매만 가능 (30분 간격)",
+          "VI 비적용"
+        ]
+      },
+      {
+        "status": "단일가매매대상 종류주식종목",
+        "name_en": "Preferred/Class Stock Single-Price Auction",
+        "article": "세칙 제56조의4",
+        "designation_criteria": "상장주식수 50만주 미만인 종류주식",
+        "restrictions": [
+          "단일가매매만 가능",
+          "VI 비적용"
+        ],
+        "review_cycle": "분기마다 평가"
+      },
+      {
+        "status": "공매도 과열종목",
+        "name_en": "Short Selling Overheated Stock",
+        "article": "세칙 제24조의3",
+        "restrictions": [
+          "다음 매매거래일 1일간 차입공매도 호가 제한",
+          "제한 종료일 종가가 기준가격의 95% 이하이면 연장"
+        ],
+        "designation_criteria": "주가하락률 + 공매도비중 + 증가배율 조합 (3가지 유형)"
+      }
+    ],
+    "circuit_breaker": {
+      "name": "서킷브레이커 (시장 전체 매매중단)",
+      "article": "규정 제25조",
+      "levels": [
+        {"level": 1, "trigger": "KOSPI 8% 이상 하락 1분 지속", "action": "20분간 매매거래 중단 후 재개"},
+        {"level": 2, "trigger": "KOSPI 15% 이상 하락 1분 지속", "action": "20분간 매매거래 중단 후 재개"},
+        {"level": 3, "trigger": "KOSPI 20% 이상 하락 1분 지속", "action": "당일 매매거래 종결"}
+      ]
+    },
+    "sidecar": {
+      "name": "사이드카 (프로그램매매 효력정지)",
+      "article": "규정 제16조",
+      "trigger": "코스피200 선물 기준가격 대비 5% 이상 상승/하락 1분 지속",
+      "action": "해당 시점부터 5분간 프로그램매매 매수/매도 호가 효력 정지",
+      "exceptions": ["장종료 40분전 이후 미적용", "당일 중 최초 1회만 적용"]
+    }
+  },
+
+  "9_amendment_cancellation": {
+    "title": "정정/취소 호가의 제약조건",
+    "cancellation": {
+      "article": "규정 제13조, 세칙 제17조제1항",
+      "general_rule": "매매거래가 성립되지 아니한 수량에 한하여 전부 또는 일부 취소 가능",
+      "competitive_bulk": "경쟁대량매매호가 일부 취소 시, 취소 후 잔량이 수량요건을 충족해야 가능"
+    },
+    "amendment": {
+      "article": "세칙 제17조제2항",
+      "same_type_amendment": {
+        "rule": "지정가, 조건부지정가, 최유리지정가, 최우선지정가: 전부 또는 일부를 다른 가격으로 정정",
+        "condition": "최유리/최우선의 경우 정정 전후 가격이 달라야 함"
+      },
+      "stop_limit_amendment": {
+        "article": "세칙 제17조제2항제1호의2 (2025.2.27 신설)",
+        "before_trigger": "가격 또는 스톱가격이 달라야 함",
+        "after_trigger": "가격이 달라야 함"
+      },
+      "cross_type_amendment": {
+        "article": "세칙 제17조제2항제2호",
+        "rule": "지정가/시장가/조건부지정가/최유리지정가/최우선지정가 간 상호 정정 가능",
+        "restrictions": [
+          "중간가호가로는 정정 불가",
+          "스톱지정가호가로는 정정 불가",
+          "지정가↔최유리/최우선 간 정정 시 가격이 같으면 정정 불가"
+        ]
+      },
+      "time_priority_effect": "정정호가 접수 시점으로 새로운 효력 발생 (시간우선순위 상실) (세칙 제17조제3항)"
+    },
+    "batch_cancellation": {
+      "article": "세칙 제17조의2",
+      "rule": "고속 알고리즘거래번호별 위험관리 목적으로 신청 전 접수된 모든 호가 일괄 취소 가능",
+      "scope": "고속 알고리즘거래계좌를 통한 호가에 한함"
+    },
+    "disconnect_cancellation": {
+      "article": "세칙 제17조의3, 규정 제13조의2",
+      "rule": "회원시스템과 거래소시스템 연결 해제 시, 사전 신청된 세션을 통해 제출된 미체결 호가 자동 취소",
+      "scope": "정규거래시간 중"
+    },
+    "during_trading_halt": {
+      "article": "세칙 제13조제1항제1호",
+      "rule": "매매거래 중단/정지 기간 중 입력된 호가는 효력 불인정",
+      "exception": "취소호가(일괄호가취소 포함)는 중단/정지 기간에도 효력 인정"
+    },
+    "self_stock_trading": {
+      "article": "규정 제39조",
+      "amendment_allowed": "정규시장 매매거래시간 중 호가가격을 제39조제1항제2호 가격으로 정정 가능",
+      "time_restriction": "장종료 30분전 이후에는 호가 불가"
+    }
+  }
+}

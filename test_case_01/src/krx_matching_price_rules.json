@@ -1,0 +1,711 @@
+{
+  "metadata": {
+    "title": "KRX 유가증권시장 단일가매매 합치가격 산출 규칙",
+    "version": "1.0",
+    "generated": "2026-03-27",
+    "primary_article": "규정 제23조 (단일가격에 의한 개별경쟁매매)",
+    "description": "단일가매매에서 합치가격(Equilibrium Price) 결정을 위한 모든 규칙, 분기조건, 예외사항을 구조화한 규칙 베이스"
+  },
+
+  "core_definition": {
+    "article": "규정 제23조제4항",
+    "description": "매도호가의 누적합계수량과 매수호가의 누적합계수량이 일정한 가격에서 일치(합치)하는 가격",
+    "matching_conditions": [
+      {
+        "condition_id": "MC-1",
+        "article": "규정 제23조제4항제1호",
+        "rule": "합치가격 미만의 모든 매도호가와 합치가격 초과의 모든 매수호가의 전수량이 체결"
+      },
+      {
+        "condition_id": "MC-2a",
+        "article": "규정 제23조제4항제2호가목",
+        "rule": "합치가격 호가 중 매도호가 또는 매수호가 어느 일방의 전수량이 체결"
+      },
+      {
+        "condition_id": "MC-2b",
+        "article": "규정 제23조제4항제2호나목",
+        "rule": "타방 호가수량 중 매매수량단위 이상의 수량이 체결"
+      }
+    ]
+  },
+
+  "decision_tree": {
+    "step_1_check_matching_price_existence": {
+      "description": "합치가격 존재 여부 판정",
+      "branches": {
+        "case_A": {
+          "condition": "합치가격이 정확히 1개 존재",
+          "action": "해당 가격을 체결가격으로 결정",
+          "goto": "step_3_execution"
+        },
+        "case_B": {
+          "condition": "합치가격이 2개 이상 존재",
+          "action": "step_2로 진행하여 최종 가격 선정",
+          "goto": "step_2_multiple_matching_prices"
+        },
+        "case_C": {
+          "condition": "합치가격이 존재하지 않음",
+          "action": "step_2c로 진행 (미체결 또는 기세 처리)",
+          "goto": "step_2c_no_matching_price"
+        },
+        "case_D": {
+          "condition": "제23조제6항 특수: MC-1 + MC-2a 충족하나 MC-2b 미충족인 가격이 2개",
+          "action": "MC-2b를 무시하고 매매거래 성립, 가격은 step_2 규칙을 준용",
+          "article": "규정 제23조제6항",
+          "goto": "step_2_multiple_matching_prices"
+        }
+      }
+    },
+
+    "step_2_multiple_matching_prices": {
+      "description": "합치가격이 2개 이상일 때 최종 가격 선정",
+      "article": "규정 제23조제5항",
+      "sub_rules": {
+        "rule_2a": {
+          "condition": "직전 가격(기세 포함)과 동일한 합치가격이 존재",
+          "action": "직전 가격을 체결가격으로 결정",
+          "article": "규정 제23조제5항제1호"
+        },
+        "rule_2b": {
+          "condition": "직전 가격과 동일한 합치가격이 없을 때",
+          "sub_branches": {
+            "rule_2b_i": {
+              "condition": "직전 가격이 가장 높은 합치가격보다 높거나 가장 낮은 합치가격보다 낮음 (범위 바깥)",
+              "action": "직전 가격에 가장 가까운 합치가격을 선정",
+              "article": "규정 제23조제5항제2호가목 (2025.2.5 신설)"
+            },
+            "rule_2b_ii": {
+              "condition": "직전 가격이 가장 높은 합치가격보다 낮고 가장 낮은 합치가격보다 높음 (범위 안쪽)",
+              "action": "직전 가격보다 높은 합치가격 중 직전 가격에 가장 가까운 합치가격을 선정",
+              "article": "규정 제23조제5항제2호나목 (2025.2.5 신설)",
+              "note": "직전가격 기준으로 '상향(upward)' 편향 적용"
+            }
+          }
+        },
+        "rule_2_exception_by_security_group": {
+          "description": "증권그룹별 예외 규칙",
+          "exceptions": [
+            {
+              "group": "채무증권",
+              "rule": "최고합치가격과 최저합치가격을 단순산술평균한 가격 (호가가격단위 미달시 절상)",
+              "article": "규정 제47조제4항",
+              "note": "주권/ETF 등과 완전히 다른 규칙"
+            },
+            {
+              "group": "시가기준가종목 (최초가격결정시)",
+              "rule": "평가가격과 동일한 합치가격이 있으면 그 가격, 없으면 평가가격에 가장 가까운 가격",
+              "article": "세칙 제36조제1호",
+              "note": "직전가격 대신 '평가가격'을 기준으로 사용"
+            },
+            {
+              "group": "신규상장종목(주권/DR) 최초가격결정시 - 배당락/권리락/분할병합/분배락 해당 종목",
+              "rule": "기준가격과 동일한 합치가격이 있으면 그 가격, 없으면 기준가격에 가장 가까운 가격",
+              "article": "세칙 제36조제2호",
+              "applicable_to": "세칙 제30조제1항제2호(나~마), 제4호~제6호, 제4항 해당 종목"
+            },
+            {
+              "group": "신주인수권증서/신주인수권증권/ELW (신규상장 최초가격)",
+              "rule": "가장 높은 합치가격과 가장 낮은 합치가격을 단순산술평균한 가격 (호가가격단위 불일치시 올림)",
+              "article": "세칙 제36조제3호",
+              "note": "기준가격(직전가격)이 존재하지 않으므로 산술평균 방식 사용"
+            }
+          ]
+        }
+      }
+    },
+
+    "step_2c_no_matching_price": {
+      "description": "합치가격이 존재하지 않는 경우",
+      "branches": {
+        "case_C1_시가결정": {
+          "condition": "시가(개장가) 결정 시 합치가격 미형성",
+          "action": "접속매매(복수가격)로 전환하여 가격 결정",
+          "article": "세칙 제35조제2항",
+          "note": "종가 결정(제4호)은 접속매매 전환 대상에서 제외"
+        },
+        "case_C2_종가결정": {
+          "condition": "종가(장종료가) 결정 시 합치가격 미형성",
+          "action": "기세(氣勢) 결정",
+          "article": "규정 제2조제9항",
+          "sub_rules": {
+            "기세_매도": {
+              "condition": "기준가격 대비 낮은 매도호가가 존재",
+              "action": "가장 낮은 매도호가의 가격을 기세로 결정"
+            },
+            "기세_매수": {
+              "condition": "기준가격 대비 높은 매수호가가 존재",
+              "action": "가장 높은 매수호가의 가격을 기세로 결정"
+            },
+            "기세_제외": {
+              "note": "중간가호가는 기세 판단에서 제외 (2025.2.5 개정)",
+              "note2": "종류주식 중 보통주식 대비 1.5배 초과 괴리 종목의 매수호가도 제외 (세칙 제6조의3)"
+            }
+          }
+        },
+        "case_C3_재개가격": {
+          "condition": "매매재개 후 최초 가격 결정 시 합치가격 미형성",
+          "action": "접속매매(복수가격)로 전환하여 가격 결정",
+          "article": "세칙 제35조제2항"
+        },
+        "case_C4_VI단일가": {
+          "condition": "VI 발동 후 단일가매매에서 합치가격 미형성",
+          "action": "접속매매(복수가격)로 전환하여 가격 결정",
+          "article": "세칙 제35조제2항"
+        },
+        "case_C5_시간외단일가": {
+          "condition": "시간외단일가매매에서 합치가격 미형성",
+          "action": "해당 단위매매체결시점에서 체결 없음 (다음 10분 주기 대기)",
+          "article": "규정 제34조의2, 세칙 제51조의2"
+        },
+        "case_C6_정리매매": {
+          "condition": "정리매매종목 30분 간격 단일가매매에서 합치가격 미형성",
+          "action": "해당 단위매매체결시점에서 체결 없음 (다음 30분 주기 대기)",
+          "article": "세칙 제56조"
+        },
+        "case_C7_시가기준가종목_최초가격": {
+          "condition": "시가기준가종목 최초 가격결정에서 합치가격 미형성 & 장종료까지 미결정",
+          "action": "기세 결정 (평가가격 기준)",
+          "article": "세칙 제30조제1항제3호"
+        }
+      }
+    },
+
+    "step_3_execution": {
+      "description": "합치가격 결정 후 체결 실행",
+      "priority_rules": {
+        "price_priority": "규정 제22조제2항제1호: 가격우선 원칙",
+        "time_priority": "규정 제22조제2항제2호: 시간우선 원칙 (접속매매 시)",
+        "simultaneous_order": "규정 제22조제3항: 동시호가 비례배분 (상한가/하한가 결정 시)",
+        "proportional_allocation": "세칙 제34조: 100배→잔량1/2→잔량전부 3단계 배분"
+      }
+    }
+  },
+
+  "market_price_conversion_in_single_auction": {
+    "title": "단일가매매에서 시장가호가의 가격 간주 규칙",
+    "article": "규정 제23조제3항",
+    "rules": [
+      {
+        "rule_id": "MP-1",
+        "condition": "매도시장가호가와 매수시장가호가만 있는 경우 (지정가호가 없음)",
+        "sub_rules": [
+          {
+            "sub_condition": "양측 합계수량이 동일",
+            "action": "직전 가격 (호가단위 불일치시 올림)",
+            "article": "규정 제23조제3항제1호 본문"
+          },
+          {
+            "sub_condition": "매도시장가 합계수량이 더 많음",
+            "action": "직전 가격 (올림) - 1호가가격단위 (하한가 한도)",
+            "article": "규정 제23조제3항제1호가목"
+          },
+          {
+            "sub_condition": "매수시장가 합계수량이 더 많음",
+            "action": "직전 가격 (내림) + 1호가가격단위 (상한가 한도)",
+            "article": "규정 제23조제3항제1호나목"
+          }
+        ]
+      },
+      {
+        "rule_id": "MP-2",
+        "condition": "매도시장가 + 지정가호가가 있는 경우",
+        "action": "매도시장가 = min(가장 낮은 매도지정가 - 1틱(하한가 한도), 가장 낮은 매수지정가, 직전가격(내림))",
+        "article": "규정 제23조제3항제2호"
+      },
+      {
+        "rule_id": "MP-3",
+        "condition": "매수시장가 + 지정가호가가 있는 경우",
+        "action": "매수시장가 = max(가장 높은 매수지정가 + 1틱(상한가 한도), 가장 높은 매도지정가, 직전가격(올림))",
+        "article": "규정 제23조제3항제3호"
+      }
+    ]
+  },
+
+  "applicable_scenarios": {
+    "title": "단일가매매 적용 시나리오",
+    "scenarios": [
+      {
+        "id": "SCEN-1",
+        "name": "시가(개장가) 결정",
+        "article": "규정 제23조제1항제1호",
+        "session": "08:00 ~ 09:00 (+ 무작위 30초)",
+        "reference_price": "전일 종가(기세 포함)",
+        "note": "합치가격 미형성시 접속매매로 전환 (세칙 제35조제2항)"
+      },
+      {
+        "id": "SCEN-2",
+        "name": "시장 재개 후 최초 가격",
+        "article": "규정 제23조제1항제2호",
+        "session": "재개시점부터 10분 (+ 무작위 30초)",
+        "reference_price": "재개 직전 가격"
+      },
+      {
+        "id": "SCEN-3",
+        "name": "매매거래 재개 후 최초 가격 (CB, 매매정지 등)",
+        "article": "규정 제23조제1항제3호",
+        "session": "재개시점부터 10분 (+ 무작위 30초)",
+        "reference_price": "재개 직전 가격"
+      },
+      {
+        "id": "SCEN-4",
+        "name": "종가(장종료가) 결정",
+        "article": "규정 제23조제1항제4호",
+        "session": "15:20 ~ 15:30 (+ 무작위 30초)",
+        "reference_price": "장중 최종 체결가격",
+        "note": "합치가격 미형성시 접속매매 전환 없이 기세 결정"
+      },
+      {
+        "id": "SCEN-5",
+        "name": "VI 발동 후 단일가매매",
+        "article": "규정 제23조제1항제5호",
+        "session": "VI 발동시점부터 2분 (+ 무작위 30초)",
+        "reference_price": "VI 발동 직전 체결가격"
+      },
+      {
+        "id": "SCEN-6",
+        "name": "시간외단일가매매",
+        "article": "규정 제34조의2",
+        "session": "16:00 ~ 18:00 (10분 주기)",
+        "reference_price": "당일 종가",
+        "price_limit": "종가 ±10% 이내 & 당일 상한가/하한가 이내"
+      },
+      {
+        "id": "SCEN-7",
+        "name": "신규상장종목 최초 가격",
+        "article": "규정 제37조, 세칙 제55조",
+        "reference_price": "별표1의4 기준가격",
+        "price_limit": "상한가 400%, 하한가 60% (세칙 제31조제3항)",
+        "multiple_matching_rule": "세칙 제36조제2호 (기준가격 기준)"
+      },
+      {
+        "id": "SCEN-8",
+        "name": "시가기준가종목 최초 가격",
+        "article": "규정 제37조, 세칙 제55조",
+        "reference_price": "별표1 평가가격",
+        "price_limit": "별표1 최저호가가격 ~ 최고호가가격",
+        "multiple_matching_rule": "세칙 제36조제1호 (평가가격 기준)"
+      },
+      {
+        "id": "SCEN-9",
+        "name": "신주인수권증서/증권/ELW 신규상장 최초 가격",
+        "article": "세칙 제36조제3호",
+        "reference_price": "없음 (기준가격 부재)",
+        "multiple_matching_rule": "최고·최저 합치가격의 단순산술평균 (호가단위 올림)"
+      },
+      {
+        "id": "SCEN-10",
+        "name": "정리매매종목 단일가매매 (30분 간격)",
+        "article": "세칙 제56조",
+        "reference_price": "직전 체결가격",
+        "price_limit": "가격제한 없음 (규정 제20조제3항)"
+      },
+      {
+        "id": "SCEN-11",
+        "name": "단기과열/투자유의/이상급등/저유동성/종류주식 단일가매매",
+        "article": "세칙 제56조의2~제56조의4",
+        "reference_price": "직전 체결가격",
+        "price_limit": "일반 ±30%",
+        "note": "30분 간격 단일가, VI 비적용"
+      }
+    ]
+  },
+
+  "examples": [
+    {
+      "id": "EX-01",
+      "title": "기본: 합치가격 1개 존재",
+      "scenario": "SCEN-4",
+      "description": "종가 결정 단일가매매. 지정가호가만 있고 합치가격이 유일하게 결정되는 가장 기본적인 경우.",
+      "reference_price": 10000,
+      "order_book": {
+        "sells": [
+          {"price": 10200, "qty": 100},
+          {"price": 10100, "qty": 200},
+          {"price": 10000, "qty": 300}
+        ],
+        "buys": [
+          {"price": 10000, "qty": 500},
+          {"price": 9900, "qty": 200},
+          {"price": 9800, "qty": 100}
+        ]
+      },
+      "analysis": {
+        "cumulative_sells_at_10000": 600,
+        "cumulative_buys_at_10000": 500,
+        "cumulative_sells_at_10100": 300,
+        "cumulative_buys_at_10100": 0,
+        "matching_price": 10000,
+        "matching_qty": 500,
+        "reason": "10,000원에서 매도누적(600) ≥ 매수누적(500)이고, 매수 전수량(500)이 체결됨"
+      },
+      "result": {
+        "price": 10000,
+        "volume": 500
+      }
+    },
+    {
+      "id": "EX-02",
+      "title": "합치가격 2개 이상: 직전가격과 동일한 가격 존재",
+      "scenario": "SCEN-4",
+      "description": "합치가격이 10,000원과 10,100원 두 개. 직전가격(10,000원)과 동일한 것이 존재하므로 10,000원 선택.",
+      "reference_price": 10000,
+      "order_book": {
+        "sells": [
+          {"price": 10200, "qty": 100},
+          {"price": 10100, "qty": 200},
+          {"price": 10000, "qty": 500}
+        ],
+        "buys": [
+          {"price": 10100, "qty": 500},
+          {"price": 10000, "qty": 200},
+          {"price": 9900, "qty": 100}
+        ]
+      },
+      "analysis": {
+        "matching_prices": [10000, 10100],
+        "previous_price": 10000,
+        "rule_applied": "규정 제23조제5항제1호: 직전가격과 동일한 합치가격 존재",
+        "selected": 10000
+      },
+      "result": {"price": 10000}
+    },
+    {
+      "id": "EX-03",
+      "title": "합치가격 2개 이상: 직전가격이 합치가격 범위 밖(위)",
+      "scenario": "SCEN-4",
+      "description": "합치가격이 9,800원과 9,900원. 직전가격(10,000원)이 가장 높은 합치가격(9,900)보다 높음. → 가장 가까운 합치가격(9,900원) 선택.",
+      "reference_price": 10000,
+      "order_book": {
+        "sells": [
+          {"price": 10000, "qty": 500},
+          {"price": 9900, "qty": 300},
+          {"price": 9800, "qty": 200}
+        ],
+        "buys": [
+          {"price": 9900, "qty": 300},
+          {"price": 9800, "qty": 500}
+        ]
+      },
+      "analysis": {
+        "matching_prices": [9800, 9900],
+        "previous_price": 10000,
+        "rule_applied": "규정 제23조제5항제2호가목: 직전가격이 범위 밖(위) → 가장 가까운 합치가격",
+        "selected": 9900
+      },
+      "result": {"price": 9900}
+    },
+    {
+      "id": "EX-04",
+      "title": "합치가격 2개 이상: 직전가격이 합치가격 범위 밖(아래)",
+      "scenario": "SCEN-1",
+      "description": "합치가격이 10,100원과 10,200원. 직전가격(10,000원)이 가장 낮은 합치가격(10,100)보다 낮음. → 가장 가까운 합치가격(10,100원) 선택.",
+      "reference_price": 10000,
+      "analysis": {
+        "matching_prices": [10100, 10200],
+        "previous_price": 10000,
+        "rule_applied": "규정 제23조제5항제2호가목: 직전가격이 범위 밖(아래) → 가장 가까운 합치가격",
+        "selected": 10100
+      },
+      "result": {"price": 10100}
+    },
+    {
+      "id": "EX-05",
+      "title": "합치가격 3개 이상: 직전가격이 합치가격 범위 안쪽 (2025.2.5 개정)",
+      "scenario": "SCEN-4",
+      "description": "합치가격이 9,900, 10,050, 10,100원. 직전가격(10,000원)은 9,900~10,100 범위 안쪽. → 직전가격보다 높은 합치가격 중 가장 가까운 것(10,050원) 선택.",
+      "reference_price": 10000,
+      "analysis": {
+        "matching_prices": [9900, 10050, 10100],
+        "previous_price": 10000,
+        "rule_applied": "규정 제23조제5항제2호나목 (2025.2.5 신설): 직전가격이 범위 안쪽 → 직전가격보다 높은 합치가격 중 가장 가까운 것",
+        "candidates_above": [10050, 10100],
+        "selected": 10050
+      },
+      "result": {"price": 10050}
+    },
+    {
+      "id": "EX-06",
+      "title": "합치가격 없음: 종가 결정 시 기세",
+      "scenario": "SCEN-4",
+      "description": "장종료 단일가매매에서 합치가격이 형성되지 않음. 기준가격(10,000원) 대비 낮은 매도호가(9,800원)가 존재하므로 기세=9,800원.",
+      "reference_price": 10000,
+      "order_book": {
+        "sells": [{"price": 9800, "qty": 100}],
+        "buys": [{"price": 9500, "qty": 100}]
+      },
+      "analysis": {
+        "matching_prices": [],
+        "reason": "매도최저(9,800) > 매수최고(9,500)이므로 합치 불가",
+        "kise_check": "기준가격(10,000) 대비 낮은 매도호가(9,800) 존재 → 기세 = 9,800",
+        "rule_applied": "규정 제2조제9항"
+      },
+      "result": {"price": 9800, "type": "기세(氣勢)", "volume": 0}
+    },
+    {
+      "id": "EX-07",
+      "title": "합치가격 없음: 시가 결정 시 접속매매 전환",
+      "scenario": "SCEN-1",
+      "description": "시가 결정 단일가매매에서 합치가격 미형성. 접속매매(복수가격)로 전환하여 시가 결정.",
+      "reference_price": 10000,
+      "order_book": {
+        "sells": [{"price": 10500, "qty": 100}],
+        "buys": [{"price": 9500, "qty": 100}]
+      },
+      "analysis": {
+        "matching_prices": [],
+        "reason": "호가 격차가 커서 합치 불가",
+        "rule_applied": "세칙 제35조제2항: 접속매매로 전환하여 결정"
+      },
+      "result": {"type": "접속매매_전환", "note": "최초 매칭되는 호가 쌍에서 가격 결정"}
+    },
+    {
+      "id": "EX-08",
+      "title": "시장가호가만 존재 (양측 동일수량)",
+      "scenario": "SCEN-4",
+      "description": "매도시장가 100주, 매수시장가 100주만 있고, 직전가격 10,000원. 양측 동일 → 간주가격 = 직전가격 = 10,000원.",
+      "reference_price": 10000,
+      "order_book": {
+        "sells": [{"price": "시장가", "qty": 100}],
+        "buys": [{"price": "시장가", "qty": 100}]
+      },
+      "analysis": {
+        "rule_applied": "규정 제23조제3항제1호 본문",
+        "market_sell_deemed_price": 10000,
+        "market_buy_deemed_price": 10000
+      },
+      "result": {"price": 10000, "volume": 100}
+    },
+    {
+      "id": "EX-09",
+      "title": "시장가호가만 존재 (매도 > 매수)",
+      "scenario": "SCEN-4",
+      "description": "매도시장가 200주 > 매수시장가 100주. 직전가격 10,000원. → 매도가 많으므로 간주가격 = 10,000 - 1틱(10원) = 9,990원.",
+      "reference_price": 10000,
+      "tick_size": 10,
+      "analysis": {
+        "rule_applied": "규정 제23조제3항제1호가목",
+        "deemed_price": "10,000 - 10 = 9,990원",
+        "note": "하한가를 한도로 함"
+      },
+      "result": {"price": 9990, "volume": 100}
+    },
+    {
+      "id": "EX-10",
+      "title": "채무증권: 합치가격 복수 → 산술평균",
+      "scenario": "채무증권 시가결정",
+      "description": "채무증권에서 합치가격이 99,500원과 100,500원 두 개. 주권과 달리 산술평균 방식 적용.",
+      "reference_price": 100000,
+      "analysis": {
+        "matching_prices": [99500, 100500],
+        "rule_applied": "규정 제47조제4항: 최고·최저 산술평균",
+        "calculation": "(99,500 + 100,500) / 2 = 100,000원"
+      },
+      "result": {"price": 100000}
+    },
+    {
+      "id": "EX-11",
+      "title": "신주인수권증서 최초가격: 기준가격 없음 → 산술평균",
+      "scenario": "SCEN-9",
+      "description": "신주인수권증서 신규상장일 최초 가격결정. 직전가격/기준가격이 없으므로 합치가격이 복수일 때 최고·최저 산술평균.",
+      "analysis": {
+        "matching_prices": [5000, 5500, 6000],
+        "rule_applied": "세칙 제36조제3호",
+        "calculation": "(5,000 + 6,000) / 2 = 5,500원",
+        "tick_adjustment": "호가단위(5원) 일치하므로 조정 없음"
+      },
+      "result": {"price": 5500}
+    },
+    {
+      "id": "EX-12",
+      "title": "시가기준가종목 최초가격: 평가가격 기준",
+      "scenario": "SCEN-8",
+      "description": "재상장종목(시가기준가). 평가가격 20,000원. 합치가격이 19,500원과 20,500원. 평가가격과 동일한 것이 없으므로 가장 가까운 가격.",
+      "analysis": {
+        "evaluation_price": 20000,
+        "matching_prices": [19500, 20500],
+        "rule_applied": "세칙 제36조제1호: 평가가격에 가장 가까운 합치가격",
+        "distance_19500": 500,
+        "distance_20500": 500,
+        "note": "동일 거리일 경우 규정상 명시 없으나 실무적으로 상향 선택 경향"
+      },
+      "result": {"price": 20500, "note": "동일거리 시 상향"}
+    },
+    {
+      "id": "EX-13",
+      "title": "시가기준가종목 최초가격: 합치가격에 평가가격 존재",
+      "scenario": "SCEN-8",
+      "description": "변경상장종목. 평가가격 15,000원. 합치가격이 14,500, 15,000, 15,500원. 평가가격과 동일한 15,000원 선택.",
+      "analysis": {
+        "evaluation_price": 15000,
+        "matching_prices": [14500, 15000, 15500],
+        "rule_applied": "세칙 제36조제1호: 평가가격과 동일한 합치가격 존재 → 해당 가격",
+        "selected": 15000
+      },
+      "result": {"price": 15000}
+    },
+    {
+      "id": "EX-14",
+      "title": "신규상장(주권): 확대가격제한폭 + 기준가격 기준",
+      "scenario": "SCEN-7",
+      "description": "신규상장 주권. 기준가격 50,000원 (공모가). 상한가 = 50,000×4 = 200,000원, 하한가 = 50,000×0.6 = 30,000원. 합치가격이 복수일 때 기준가격 기준.",
+      "analysis": {
+        "base_price": 50000,
+        "upper_limit": 200000,
+        "lower_limit": 30000,
+        "matching_prices": [52000, 55000],
+        "rule_applied": "세칙 제36조제2호: 기준가격과 동일한 합치가격 없음 → 기준가격에 가장 가까운 가격",
+        "selected": 52000
+      },
+      "result": {"price": 52000}
+    },
+    {
+      "id": "EX-15",
+      "title": "정리매매: 가격제한 없음 + 30분 단일가",
+      "scenario": "SCEN-10",
+      "description": "정리매매종목. 가격제한 없음. 직전가격 500원. 합치가격이 100원에서 형성. 직전가격과 동일한 합치가격 없으므로 가장 가까운 가격.",
+      "analysis": {
+        "previous_price": 500,
+        "matching_prices": [100],
+        "rule_applied": "합치가격 1개 → 해당 가격 직접 결정",
+        "note": "가격제한 없으므로 -80% 하락도 유효"
+      },
+      "result": {"price": 100, "note": "정리매매종목은 가격제한 없음"}
+    },
+    {
+      "id": "EX-16",
+      "title": "시간외단일가매매: 종가 ±10% 제한 내",
+      "scenario": "SCEN-6",
+      "description": "당일 종가 10,000원. 시간외단일가 호가범위 9,000~11,000원. 합치가격 10,500원.",
+      "analysis": {
+        "closing_price": 10000,
+        "price_range": "9,000 ~ 11,000 (±10%)",
+        "matching_prices": [10500],
+        "reference_price_for_multiple": "당일 종가(10,000원)"
+      },
+      "result": {"price": 10500}
+    },
+    {
+      "id": "EX-17",
+      "title": "VI 발동 후 단일가매매: 2분 호가접수",
+      "scenario": "SCEN-5",
+      "description": "접속매매 중 동적VI 발동(직전가 10,000원 대비 +10%). 2분간 단일가매매 호가 접수 후 합치가격 결정.",
+      "analysis": {
+        "vi_trigger_price": 11000,
+        "previous_price_for_matching": 11000,
+        "matching_prices": [10800],
+        "note": "VI 발동 후 최초 가격이 다시 VI 요건에 해당해도 연속 발동 안 함"
+      },
+      "result": {"price": 10800}
+    },
+    {
+      "id": "EX-18",
+      "title": "ETF(코스피200): 시가결정 + 정적VI 기준 3%",
+      "scenario": "SCEN-1",
+      "description": "코스피200 ETF. 전일종가(기준가격) 30,000원. 시가 단일가매매에서 합치가격이 30,900원(+3%)에서 결정되는 경우 정적VI 발동 여부 확인. 시가결정시는 동적VI 미적용이나 정적VI는 적용.",
+      "analysis": {
+        "base_price": 30000,
+        "matching_price": 30900,
+        "change_pct": "+3.0%",
+        "static_vi_threshold": "3%",
+        "vi_triggered": true,
+        "note": "시가결정 시에도 정적VI는 적용됨. 단, 시가결정 자체의 단일가매매에서 정적VI 참조가격은 당일 기준가격."
+      },
+      "result": {"price": 30900, "vi_action": "정적VI 발동 → 추가 2분 단일가"}
+    },
+    {
+      "id": "EX-19",
+      "title": "제23조제6항 특수: 완전합치(MC-1+MC-2a)만 2개 가격에서 성립",
+      "scenario": "SCEN-4",
+      "description": "10,000원과 10,050원에서 각각 매도전수량=매수전수량이지만, MC-2b(타방 매매수량단위 이상) 조건 미충족. 이 경우에도 매매거래 성립.",
+      "reference_price": 10000,
+      "analysis": {
+        "matching_at_10000": {"sell_total": 100, "buy_total": 100, "MC1": true, "MC2a": true, "MC2b": false},
+        "matching_at_10050": {"sell_total": 100, "buy_total": 100, "MC1": true, "MC2a": true, "MC2b": false},
+        "rule_applied": "규정 제23조제6항: MC-2b 무시하고 매매 성립. 가격은 제5항 준용",
+        "selected_by_5_1": "직전가격(10,000)과 동일한 합치가격 존재 → 10,000원"
+      },
+      "result": {"price": 10000}
+    },
+    {
+      "id": "EX-20",
+      "title": "상한가 결정 시 동시호가 비례배분",
+      "scenario": "SCEN-1",
+      "description": "시가가 상한가(13,000원)로 결정. 상한가 매수호가는 동시호가로 처리되어 비례배분 적용.",
+      "reference_price": 10000,
+      "upper_limit": 13000,
+      "order_book": {
+        "sells": [{"price": 13000, "qty": 100}],
+        "buys": [
+          {"price": 13000, "qty": 500, "note": "동시호가A"},
+          {"price": 13000, "qty": 300, "note": "동시호가B"}
+        ]
+      },
+      "analysis": {
+        "rule_applied": "규정 제22조제3항제1호 + 세칙 제34조",
+        "allocation": {
+          "total_sell": 100,
+          "step1_100x": "매매수량단위(1주)×100=100주까지: A(500주)가 B(300주)보다 많으므로 A에 100주 배분",
+          "result_A": 100,
+          "result_B": 0
+        }
+      },
+      "result": {"price": 13000, "volume": 100}
+    },
+    {
+      "id": "EX-21",
+      "title": "합치가격 없음: 종가 결정 시 기세(매수방향)",
+      "scenario": "SCEN-4",
+      "description": "기준가격 10,000원. 매도호가 없이 매수호가만 존재(10,200원). 기준가격 대비 높은 매수호가이므로 기세=10,200원.",
+      "reference_price": 10000,
+      "order_book": {
+        "sells": [],
+        "buys": [{"price": 10200, "qty": 100}]
+      },
+      "analysis": {
+        "matching_prices": [],
+        "kise_check": "기준가격(10,000) 대비 높은 매수호가(10,200) 존재 → 기세 = 10,200",
+        "rule_applied": "규정 제2조제9항"
+      },
+      "result": {"price": 10200, "type": "기세", "volume": 0}
+    },
+    {
+      "id": "EX-22",
+      "title": "합치가격 없음: 호가 자체가 없는 경우",
+      "scenario": "SCEN-4",
+      "description": "장종료 시 매도호가와 매수호가 모두 없음. 기세도 형성 불가. 종가 = 전일 종가(기세 없음).",
+      "reference_price": 10000,
+      "order_book": {"sells": [], "buys": []},
+      "analysis": {
+        "matching_prices": [],
+        "kise_check": "매도·매수 호가 모두 없음 → 기세 미형성",
+        "rule_applied": "종가 = 전일 종가를 유지 (종가 미결정)"
+      },
+      "result": {"type": "미결정", "closing_price": "전일종가 유지"}
+    },
+    {
+      "id": "EX-23",
+      "title": "ETF 분배락: 기준가격 특수 산정",
+      "scenario": "SCEN-1",
+      "description": "ETF 분배락일. 2매매거래일 전일 종가 50,000원, 주당 분배금 500원. 기준가격 = 50,000 - 500 = 49,500원. 시가 단일가매매에서 합치가격 결정.",
+      "analysis": {
+        "previous_close_2days_ago": 50000,
+        "distribution_per_unit": 500,
+        "base_price": 49500,
+        "upper_limit": "49,500 × 1.3 = 64,350원",
+        "lower_limit": "49,500 × 0.7 = 34,650원"
+      },
+      "result": {"note": "기준가격 49,500원 기반으로 합치가격 판정"}
+    },
+    {
+      "id": "EX-24",
+      "title": "기세결정 참여 제한: 매매중단 후 미재개",
+      "scenario": "SCEN-4",
+      "description": "단일가매매 호가접수시간 중 매매거래가 중단되고 당일 미재개. 당일 접수된 호가는 기세 결정에 참여 불가.",
+      "analysis": {
+        "rule_applied": "세칙 제37조: 매매중단 후 당일 미재개시 당일 접수 호가는 기세 참여 불가",
+        "result_kise": "전일 종가 유지 또는 기세 미형성"
+      },
+      "result": {"type": "기세_참여제한"}
+    }
+  ]
+}

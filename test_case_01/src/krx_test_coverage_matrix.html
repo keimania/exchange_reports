@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRX 단일호가 테스트 커버리지 매트릭스</title>
+<style>
+:root{--p:#1a365d;--pl:#2b6cb0;--acc:#e53e3e;--bg:#f7fafc;--card:#fff;--bdr:#e2e8f0;--txt:#2d3748;--txtl:#718096;--pass:#38a169;--fail:#e53e3e;--skip:#d69e2e;--na:#a0aec0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5;font-size:14px}
+.hdr{background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;padding:1.5rem 2rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.hdr-in{max-width:1600px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.hdr h1{font-size:1.3rem}.hdr .sub{font-size:.8rem;opacity:.7;margin-top:.2rem}
+.stats-bar{display:flex;gap:1.5rem;flex-wrap:wrap}
+.stat{text-align:center}.stat-num{font-size:1.8rem;font-weight:800}.stat-lbl{font-size:.7rem;opacity:.7}
+.nav{background:#fff;border-bottom:1px solid var(--bdr);position:sticky;top:72px;z-index:99;overflow-x:auto;white-space:nowrap}
+.nav-in{max-width:1600px;margin:0 auto;padding:0 1rem;display:flex;gap:0}
+.nav a{padding:.6rem .8rem;font-size:.78rem;color:var(--txtl);text-decoration:none;border-bottom:3px solid transparent;font-weight:500;transition:.2s}
+.nav a:hover,.nav a.active{color:var(--p);border-bottom-color:var(--pl);background:rgba(43,108,176,.04)}
+.main{max-width:1600px;margin:0 auto;padding:1.5rem}
+.sec{margin-bottom:2.5rem;scroll-margin-top:130px}
+.sec-title{font-size:1.15rem;font-weight:700;color:var(--p);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--pl);display:flex;align-items:center;gap:.5rem}
+.sec-num{background:var(--p);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+
+/* Matrix table */
+.mtx-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;background:#fff;margin-bottom:1rem}
+.mtx{width:100%;border-collapse:collapse;font-size:.75rem}
+.mtx th{background:var(--p);color:#fff;padding:.4rem .5rem;text-align:center;font-weight:600;position:sticky;top:0;white-space:nowrap}
+.mtx th.row-hdr{background:#2d3748;text-align:left;min-width:120px}
+.mtx td{padding:.35rem .4rem;text-align:center;border:1px solid #edf2f7;white-space:nowrap}
+.mtx tr:hover td{background:rgba(43,108,176,.03)}
+.mtx td.rh{text-align:left;font-weight:600;background:#f7fafc;position:sticky;left:0;z-index:1;min-width:120px;border-right:2px solid var(--bdr)}
+.c-y{background:#f0fff4;color:var(--pass);font-weight:700}.c-y::before{content:'O'}
+.c-n{background:#fff5f5;color:var(--fail);font-weight:700}.c-n::before{content:'X'}
+.c-c{background:#fffff0;color:var(--skip);font-weight:600}.c-c::before{content:'C'}
+.c-na{background:#f7fafc;color:var(--na)}.c-na::before{content:'-'}
+.c-p{background:#ebf8ff;color:var(--pl);font-weight:600}
+
+/* Test case table */
+.tc-tbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.tc-tbl th{background:var(--p);color:#fff;padding:.45rem .6rem;text-align:left;font-weight:600;position:sticky;top:0}
+.tc-tbl td{padding:.4rem .6rem;border-bottom:1px solid #edf2f7;vertical-align:top}
+.tc-tbl tr:hover td{background:rgba(43,108,176,.03)}
+.tc-id{font-family:monospace;font-weight:700;color:var(--pl);white-space:nowrap;font-size:.72rem}
+.tc-exp{font-size:.72rem;padding:2px 6px;border-radius:3px;font-weight:600}
+.tc-pass{background:#f0fff4;color:var(--pass)}.tc-fail{background:#fff5f5;color:var(--fail)}.tc-cond{background:#fffff0;color:var(--skip)}
+.tc-art{font-size:.68rem;color:var(--txtl);white-space:nowrap}
+
+/* Coverage gauge */
+.gauge-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.gauge{flex:1;min-width:180px;background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:.8rem;text-align:center}
+.gauge-title{font-size:.75rem;font-weight:600;margin-bottom:.4rem;color:var(--txtl)}
+.gauge-bar{height:20px;background:#edf2f7;border-radius:10px;overflow:hidden;margin-bottom:.3rem}
+.gauge-fill{height:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:700;transition:width .5s}
+.gauge-val{font-size:.8rem;font-weight:700}
+
+/* Tags */
+.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.68rem;font-weight:600;margin:1px}
+.tag-b{background:#ebf8ff;color:#2b6cb0}.tag-r{background:#fff5f5;color:#c53030}.tag-g{background:#f0fff4;color:#276749}.tag-y{background:#fffff0;color:#975a16}.tag-p{background:#faf5ff;color:#6b46c1}
+
+/* Legend */
+.legend{display:flex;gap:1.5rem;flex-wrap:wrap;padding:.75rem 1rem;background:#fff;border:1px solid var(--bdr);border-radius:8px;margin-bottom:1.5rem;font-size:.78rem}
+.legend-item{display:flex;align-items:center;gap:.4rem}
+.legend-box{width:20px;height:14px;border-radius:3px;border:1px solid #e2e8f0}
+
+/* Filters */
+.filters{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.filters label{font-size:.78rem;font-weight:600;color:var(--txtl)}
+.filters select,.filters input{padding:.3rem .5rem;border:1px solid var(--bdr);border-radius:6px;font-size:.78rem;outline:none}
+.filters select:focus,.filters input:focus{border-color:var(--pl)}
+
+/* Summary card */
+.sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+.sum-card{background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:.8rem;text-align:center}
+.sum-card h4{font-size:.75rem;color:var(--txtl);margin-bottom:.3rem}
+.sum-card .num{font-size:1.5rem;font-weight:800}
+.sum-card .detail{font-size:.7rem;color:var(--txtl);margin-top:.2rem}
+
+@media(max-width:768px){.mtx{font-size:.65rem}.hdr h1{font-size:1.1rem}.main{padding:.75rem}}
+@media print{.hdr,.nav{position:static}.mtx-wrap{overflow:visible}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<div class="hdr-in">
+<div>
+<h1>KRX 단일호가 테스트 커버리지 매트릭스</h1>
+<div class="sub">krx_regulation_rules.json 기반 | 9개 규정 차원 조합</div>
+</div>
+<div class="stats-bar">
+<div class="stat"><div class="stat-num" id="totalCases">0</div><div class="stat-lbl">전체 테스트</div></div>
+<div class="stat"><div class="stat-num" style="color:#68d391" id="passCases">0</div><div class="stat-lbl">접수성공</div></div>
+<div class="stat"><div class="stat-num" style="color:#fc8181" id="failCases">0</div><div class="stat-lbl">접수거부</div></div>
+<div class="stat"><div class="stat-num" style="color:#f6e05e" id="condCases">0</div><div class="stat-lbl">조건부</div></div>
+</div>
+</div>
+</div>
+
+<div class="nav" id="mainNav">
+<div class="nav-in">
+<a href="#summary">요약</a>
+<a href="#dim-coverage">차원별 커버리지</a>
+<a href="#mtx-ot-session">호가유형x시간대</a>
+<a href="#mtx-ot-status">호가유형x종목상태</a>
+<a href="#mtx-ot-sec">호가유형x증권종류</a>
+<a href="#mtx-ot-cond">호가유형x호가조건</a>
+<a href="#mtx-vi">VI매트릭스</a>
+<a href="#mtx-price">가격제한매트릭스</a>
+<a href="#mtx-amend">정정/취소</a>
+<a href="#tc-list">전체TC목록</a>
+</div>
+</div>
+
+<div class="main">
+
+<!-- Summary -->
+<div class="sec" id="summary">
+<div class="sec-title"><span class="sec-num">S</span>테스트 커버리지 요약</div>
+<div class="sum-grid">
+<div class="sum-card"><h4>카테고리</h4><div class="num">8</div><div class="detail">TC-OT, OC, SS, VI, PL, AL, AC, COMBO + SEC</div></div>
+<div class="sum-card"><h4>호가유형 커버리지</h4><div class="num">8/8</div><div class="detail">지정가,시장가,조건부,최유리,최우선,경쟁대량,중간가,스톱지정가</div></div>
+<div class="sum-card"><h4>시간대 커버리지</h4><div class="num">9/9</div><div class="detail">시가단일가~시간외경쟁대량 전체</div></div>
+<div class="sum-card"><h4>종목상태 커버리지</h4><div class="num">12/12</div><div class="detail">일반~공매도과열 전체</div></div>
+<div class="sum-card"><h4>증권종류 커버리지</h4><div class="num">9/9</div><div class="detail">주권~채무증권 전체</div></div>
+<div class="sum-card"><h4>VI 시나리오</h4><div class="num">24</div><div class="detail">정적VI(9)+동적VI(5)+조치(4)+비적용(6)</div></div>
+<div class="sum-card"><h4>가격/호가단위</h4><div class="num">34</div><div class="detail">상하한가(7)+레버리지(3)+시간외(3)+호가단위(15)+채무(3)+기준가(3)</div></div>
+<div class="sum-card"><h4>정정/취소</h4><div class="num">29</div><div class="detail">취소(5)+동일정정(4)+스톱정정(4)+교차정정(8)+특수(8)</div></div>
+</div>
+</div>
+
+<!-- Dimension Coverage -->
+<div class="sec" id="dim-coverage">
+<div class="sec-title"><span class="sec-num">D</span>차원별 테스트 커버리지</div>
+<div class="gauge-row" id="gaugeContainer"></div>
+</div>
+
+<!-- Matrix: Order Type x Trading Session -->
+<div class="sec" id="mtx-ot-session">
+<div class="sec-title"><span class="sec-num">1</span>호가유형 x 매매시간대 허용 매트릭스</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-box" style="background:#f0fff4"></div>O = 허용</div>
+<div class="legend-item"><div class="legend-box" style="background:#fff5f5"></div>X = 거부</div>
+<div class="legend-item"><div class="legend-box" style="background:#fffff0"></div>C = 조건부</div>
+<div class="legend-item"><div class="legend-box" style="background:#f7fafc"></div>- = 해당없음</div>
+</div>
+<div class="mtx-wrap">
+<table class="mtx">
+<thead><tr>
+<th class="row-hdr">호가유형 \ 시간대</th>
+<th>시가단일가<br>08:00~09:00</th>
+<th>접속매매<br>09:00~15:20</th>
+<th>종가단일가<br>15:20~15:30</th>
+<th>VI단일가<br>(2분)</th>
+<th>시간외종가<br>장전 08:30~40</th>
+<th>시간외종가<br>장후 15:40~16</th>
+<th>시간외단일가<br>16:00~18:00</th>
+<th>장중경쟁대량<br>09:00~15:00</th>
+<th>시간외경쟁대량<br>08:00~09:00</th>
+</tr></thead>
+<tbody>
+<tr><td class="rh">지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">시장가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">조건부지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">최유리지정가</td><td class="c-n"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">최우선지정가</td><td class="c-n"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">경쟁대량매매</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">중간가</td><td class="c-n"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">스톱지정가</td><td class="c-n"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:.72rem;color:var(--txtl)">C(조건부): 조건부지정가는 종가단일가 시 시장가로 전환. 경쟁대량매매는 전용시간대만 해당.</p>
+</div>
+
+<!-- Matrix: Order Type x Stock Status -->
+<div class="sec" id="mtx-ot-status">
+<div class="sec-title"><span class="sec-num">2</span>호가유형 x 종목상태 허용 매트릭스</div>
+<div class="mtx-wrap">
+<table class="mtx">
+<thead><tr>
+<th class="row-hdr">호가유형 \ 종목상태</th>
+<th>일반</th><th>정리매매</th><th>단기과열</th><th>이상급등</th><th>투자유의<br>(ETF/ETN)</th><th>관리종목</th><th>투자경고</th><th>투자위험</th><th>저유동성</th><th>종류주식</th><th>공매도과열</th><th>신규상장</th>
+</tr></thead>
+<tbody>
+<tr><td class="rh">지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">시장가</td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">조건부지정가</td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-c"></td><td class="c-n"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">최유리지정가</td><td class="c-y"></td><td class="c-n"></td><td class="c-c"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">최우선지정가</td><td class="c-y"></td><td class="c-n"></td><td class="c-c"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">경쟁대량매매</td><td class="c-y"></td><td class="c-n"></td><td class="c-c"></td><td class="c-c"></td><td class="c-c"></td><td class="c-n"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">중간가</td><td class="c-y"></td><td class="c-n"></td><td class="c-c"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">스톱지정가</td><td class="c-y"></td><td class="c-n"></td><td class="c-c"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:.72rem;color:var(--txtl)">C(조건부): 해당 종목은 단일가매매 전환됨. 접속매매 전용 호가(최유리,최우선,중간가,스톱지정가)는 단일가 시간에는 사용 불가하므로 실질적으로 제한될 수 있음.</p>
+</div>
+
+<!-- Matrix: Order Type x Security Type -->
+<div class="sec" id="mtx-ot-sec">
+<div class="sec-title"><span class="sec-num">3</span>호가유형 x 증권종류 허용 매트릭스</div>
+<div class="mtx-wrap">
+<table class="mtx">
+<thead><tr>
+<th class="row-hdr">호가유형 \ 증권종류</th>
+<th>주권</th><th>외국주식<br>예탁증권</th><th>ETF</th><th>ETN</th><th>신주인수권<br>증서</th><th>신주인수권<br>증권</th><th>ELW</th><th>수익증권</th><th>채무증권</th>
+</tr></thead>
+<tbody>
+<tr><td class="rh">지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">시장가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+<tr><td class="rh">조건부지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+<tr><td class="rh">최유리지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+<tr><td class="rh">최우선지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+<tr><td class="rh">경쟁대량매매</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+<tr><td class="rh">중간가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+<tr><td class="rh">스톱지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:.72rem;color:var(--txtl)">신주인수권증서/증권, ELW, 수익증권, 채무증권은 지정가호가만 허용 (세칙 제10조제1항)</p>
+</div>
+
+<!-- Matrix: Order Type x IOC/FOK -->
+<div class="sec" id="mtx-ot-cond">
+<div class="sec-title"><span class="sec-num">4</span>호가유형 x 호가조건(IOC/FOK) 허용 매트릭스</div>
+<div class="mtx-wrap">
+<table class="mtx">
+<thead><tr>
+<th class="row-hdr">호가유형 \ 조건</th>
+<th>조건없음<br>접속매매</th><th>IOC<br>접속매매</th><th>FOK<br>접속매매</th><th>IOC<br>시가단일가</th><th>FOK<br>종가단일가</th><th>IOC<br>시간외종가</th><th>FOK<br>시간외단일가</th>
+</tr></thead>
+<tbody>
+<tr><td class="rh">지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td></tr>
+<tr><td class="rh">시장가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">조건부지정가</td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">최유리지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">최우선지정가</td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">경쟁대량매매</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">중간가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">스톱지정가</td><td class="c-y"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- VI Matrix -->
+<div class="sec" id="mtx-vi">
+<div class="sec-title"><span class="sec-num">5</span>VI 발동 매트릭스 (증권분류 x 시간대 x 기준비율)</div>
+<div class="mtx-wrap">
+<table class="mtx">
+<thead><tr>
+<th class="row-hdr">대상</th>
+<th>정적VI<br>접속매매</th><th>정적VI<br>종가단일가</th><th>정적VI<br>파생만기종가</th><th>동적VI<br>접속매매</th><th>동적VI<br>시가단일가</th><th>동적VI<br>시간외단일가</th>
+</tr></thead>
+<tbody>
+<tr><td class="rh">주권(코스피200)</td><td class="c-p">3%</td><td class="c-p">2%</td><td class="c-p">1%</td><td class="c-p">10%</td><td class="c-na"></td><td class="c-p">10%</td></tr>
+<tr><td class="rh">주권(비코스피200)</td><td class="c-p">6%</td><td class="c-p">4%</td><td class="c-p">1%</td><td class="c-p">10%</td><td class="c-na"></td><td class="c-p">10%</td></tr>
+<tr><td class="rh">ETF(코스피200등1x이하)</td><td class="c-p">3%</td><td class="c-p">2%</td><td class="c-p">1%</td><td class="c-p">10%</td><td class="c-na"></td><td class="c-p">10%</td></tr>
+<tr><td class="rh">ETF/ETN(기타)</td><td class="c-p">6%</td><td class="c-p">4%</td><td class="c-na"></td><td class="c-p">10%</td><td class="c-na"></td><td class="c-p">10%</td></tr>
+<tr><td class="rh">외국주식DR</td><td class="c-p">6%</td><td class="c-p">4%</td><td class="c-na"></td><td class="c-p">10%</td><td class="c-na"></td><td class="c-p">10%</td></tr>
+<tr><td class="rh">수익증권</td><td class="c-p">6%</td><td class="c-p">4%</td><td class="c-na"></td><td class="c-p">10%</td><td class="c-na"></td><td class="c-p">10%</td></tr>
+<tr><td class="rh">정리매매종목</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">단기과열종목</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+<tr><td class="rh">신규상장(당일)</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:.72rem;color:var(--txtl)">- = VI 비적용. 동적VI는 시가결정시 미적용. 정적VI 기준가격 = 직전 단일가매매 결정가격.</p>
+</div>
+
+<!-- Price Limit Matrix -->
+<div class="sec" id="mtx-price">
+<div class="sec-title"><span class="sec-num">6</span>가격제한폭 매트릭스</div>
+<div class="mtx-wrap">
+<table class="mtx">
+<thead><tr>
+<th class="row-hdr">대상</th><th>정규시장<br>상한가</th><th>정규시장<br>하한가</th><th>시간외<br>단일가</th><th>비고</th>
+</tr></thead>
+<tbody>
+<tr><td class="rh">일반주권/DR/수익증권</td><td class="c-p">+30%</td><td class="c-p">-30%</td><td class="c-p">종가±10%</td><td>기본</td></tr>
+<tr><td class="rh">ETF/ETN(1배)</td><td class="c-p">+30%</td><td class="c-p">-30%</td><td class="c-p">종가±10%</td><td></td></tr>
+<tr><td class="rh">ETF(레버리지2배)</td><td class="c-p">+60%</td><td class="c-p">-60%</td><td class="c-p">종가±10%</td><td>30%x배율</td></tr>
+<tr><td class="rh">ETF(인버스-1배)</td><td class="c-p">+30%</td><td class="c-p">-30%</td><td class="c-p">종가±10%</td><td>|배율|사용</td></tr>
+<tr><td class="rh">ETF(인버스-2배)</td><td class="c-p">+60%</td><td class="c-p">-60%</td><td class="c-p">종가±10%</td><td>|배율|사용</td></tr>
+<tr><td class="rh">신규상장종목</td><td class="c-p">+300%<br>(=400%)</td><td class="c-p">-40%<br>(=60%)</td><td class="c-na"></td><td>세칙 제31조제3항</td></tr>
+<tr><td class="rh">정리매매종목</td><td class="c-p" style="background:#fff5f5;color:#c53030">무제한</td><td class="c-p" style="background:#fff5f5;color:#c53030">무제한</td><td class="c-na"></td><td>가격제한없음</td></tr>
+<tr><td class="rh">채무증권(일반)</td><td class="c-p">+30%</td><td class="c-p">-30%</td><td class="c-na"></td><td></td></tr>
+<tr><td class="rh">채무증권(주식관련사채)</td><td class="c-p">+50%</td><td class="c-p">-50%</td><td class="c-na"></td><td></td></tr>
+<tr><td class="rh">ELW</td><td class="c-p">+30%</td><td class="c-p">-30%</td><td class="c-na"></td><td></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Amendment/Cancellation Matrix -->
+<div class="sec" id="mtx-amend">
+<div class="sec-title"><span class="sec-num">7</span>정정/취소 허용 매트릭스 (원래유형 → 정정대상유형)</div>
+<div class="mtx-wrap">
+<table class="mtx">
+<thead><tr>
+<th class="row-hdr">원래 \ 정정대상</th><th>지정가</th><th>시장가</th><th>조건부<br>지정가</th><th>최유리<br>지정가</th><th>최우선<br>지정가</th><th>중간가</th><th>스톱<br>지정가</th><th>동일유형<br>가격정정</th><th>부분취소</th><th>전량취소</th>
+</tr></thead>
+<tbody>
+<tr><td class="rh">지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-n"></td><td class="c-n"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">시장가</td><td class="c-y"></td><td class="c-na"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-na"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">조건부지정가</td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-c"></td><td class="c-n"></td><td class="c-n"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">최유리지정가</td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-y"></td><td class="c-n"></td><td class="c-n"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">최우선지정가</td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td><td class="c-y"></td><td class="c-c"></td><td class="c-n"></td><td class="c-n"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">경쟁대량매매</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-c"></td><td class="c-y"></td></tr>
+<tr><td class="rh">중간가</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">스톱지정가(발생전)</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+<tr><td class="rh">스톱지정가(발생후)</td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-na"></td><td class="c-c"></td><td class="c-y"></td><td class="c-y"></td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:.72rem;color:var(--txtl)">C(조건부): 가격이 동일하면 정정 거부. 경쟁대량매매 부분취소는 잔량이 수량요건 충족시에만. 스톱지정가 발생전은 가격 또는 스톱가 달라야, 발생후는 가격만 달라야 함.</p>
+</div>
+
+<!-- Full TC List -->
+<div class="sec" id="tc-list">
+<div class="sec-title"><span class="sec-num">T</span>전체 테스트 케이스 목록</div>
+<div class="filters">
+<label>카테고리:</label>
+<select id="filterCat" onchange="filterTCs()">
+<option value="">전체</option>
+<option value="TC-OT">호가유형(TC-OT)</option>
+<option value="TC-OC">호가조건(TC-OC)</option>
+<option value="TC-SS">종목상태(TC-SS)</option>
+<option value="TC-VI">VI(TC-VI)</option>
+<option value="TC-PL">가격/호가단위(TC-PL)</option>
+<option value="TC-AL">배분로직(TC-AL)</option>
+<option value="TC-AC">정정/취소(TC-AC)</option>
+<option value="TC-CB">서킷브레이커(TC-CB)</option>
+<option value="TC-COMBO">복합조합(TC-COMBO)</option>
+<option value="TC-SEC">증권종류(TC-SEC)</option>
+</select>
+<label>결과:</label>
+<select id="filterResult" onchange="filterTCs()">
+<option value="">전체</option>
+<option value="성공">접수성공</option>
+<option value="거부">접수거부</option>
+</select>
+<label>검색:</label>
+<input type="text" id="filterSearch" placeholder="TC ID, 이름, 조항..." oninput="filterTCs()">
+<span id="filterCount" style="font-size:.75rem;color:var(--txtl);margin-left:.5rem;"></span>
+</div>
+<div class="mtx-wrap">
+<table class="tc-tbl" id="tcTable">
+<thead><tr>
+<th style="width:90px">TC ID</th><th style="width:280px">테스트명</th><th>호가유형</th><th>매도/매수</th><th>시간대</th><th>종목상태</th><th>증권</th><th>가격</th><th>조건</th><th>기대결과</th><th>근거조항</th>
+</tr></thead>
+<tbody id="tcBody"></tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div style="background:var(--p);color:rgba(255,255,255,.6);padding:1rem 2rem;text-align:center;font-size:.72rem;">
+KRX 유가증권시장 단일호가 테스트 커버리지 매트릭스 | 규정 기반 자동생성 | 2026.03.27
+</div>
+
+<script>
+// Load test cases from JSON (embedded)
+const tcData = {"test_categories":[{"category_id":"TC-OT","category_name":"호가유형 기본 검증","test_cases":[{"id":"TC-OT-001","name":"지정가호가 매수 신규접수","order_type":"지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"적정가격","condition":"없음","expected":"접수성공","article":"규정 제2조제4항제1호"},{"id":"TC-OT-002","name":"지정가호가 매도 신규접수","order_type":"지정가","side":"매도","session":"접속매매","stock_status":"일반종목","security":"주권","price":"적정가격","condition":"없음","expected":"접수성공","article":"규정 제2조제4항제1호"},{"id":"TC-OT-003","name":"지정가호가 시가단일가 매수","order_type":"지정가","side":"매수","session":"시가단일가","stock_status":"일반종목","security":"주권","price":"적정가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-004","name":"지정가호가 종가단일가 매도","order_type":"지정가","side":"매도","session":"종가단일가","stock_status":"일반종목","security":"주권","price":"적정가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-005","name":"지정가호가 시간외종가(장전)","order_type":"지정가","side":"매수","session":"시간외종가_장전","stock_status":"일반종목","security":"주권","price":"전일종가","condition":"없음","expected":"접수성공"},{"id":"TC-OT-006","name":"지정가호가 시간외종가(장후)","order_type":"지정가","side":"매도","session":"시간외종가_장후","stock_status":"일반종목","security":"주권","price":"당일종가","condition":"없음","expected":"접수성공"},{"id":"TC-OT-007","name":"지정가호가 시간외단일가","order_type":"지정가","side":"매수","session":"시간외단일가","stock_status":"일반종목","security":"주권","price":"종가±10%이내","condition":"없음","expected":"접수성공"},{"id":"TC-OT-008","name":"지정가 채무증권","order_type":"지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"채무증권","price":"적정가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-009","name":"지정가 ELW","order_type":"지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"ELW","price":"적정가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-010","name":"지정가 수익증권","order_type":"지정가","side":"매도","session":"접속매매","stock_status":"일반종목","security":"수익증권","price":"적정가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-011","name":"시장가 매수 접속매매","order_type":"시장가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수성공"},{"id":"TC-OT-012","name":"시장가 매도 접속매매","order_type":"시장가","side":"매도","session":"접속매매","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수성공"},{"id":"TC-OT-013","name":"시장가 시가단일가","order_type":"시장가","side":"매수","session":"시가단일가","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수성공"},{"id":"TC-OT-014","name":"시장가 종가단일가","order_type":"시장가","side":"매도","session":"종가단일가","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수성공"},{"id":"TC-OT-015","name":"시장가 시간외종가 거부","order_type":"시장가","side":"매수","session":"시간외종가_장후","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수거부(시간외불가)"},{"id":"TC-OT-016","name":"시장가 시간외단일가 거부","order_type":"시장가","side":"매수","session":"시간외단일가","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수거부(시간외불가)"},{"id":"TC-OT-017","name":"시장가 채무증권 거부","order_type":"시장가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"채무증권","price":"N/A","condition":"없음","expected":"접수거부(증권종류불가)"},{"id":"TC-OT-018","name":"시장가 신주인수권증서 거부","order_type":"시장가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"신주인수권증서","price":"N/A","condition":"없음","expected":"접수거부(증권종류불가)"},{"id":"TC-OT-019","name":"시장가 ETF","order_type":"시장가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"ETF","price":"N/A","condition":"없음","expected":"접수성공"},{"id":"TC-OT-020","name":"시장가 ETN","order_type":"시장가","side":"매도","session":"접속매매","stock_status":"일반종목","security":"ETN","price":"N/A","condition":"없음","expected":"접수성공"},{"id":"TC-OT-021","name":"조건부지정가 접속매매","order_type":"조건부지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"적정가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-022","name":"조건부지정가 매도","order_type":"조건부지정가","side":"매도","session":"접속매매","stock_status":"일반종목","security":"주권","price":"적정가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-023","name":"조건부지정가 시장가전환","order_type":"조건부지정가","side":"매수","session":"종가단일가","stock_status":"일반종목","security":"주권","price":"적정가격","condition":"없음","expected":"시장가전환성공"},{"id":"TC-OT-028","name":"최유리지정가 매수","order_type":"최유리지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"최우선매도호가","condition":"없음","expected":"접수성공"},{"id":"TC-OT-029","name":"최유리지정가 매도","order_type":"최유리지정가","side":"매도","session":"접속매매","stock_status":"일반종목","security":"주권","price":"최우선매수호가","condition":"없음","expected":"접수성공"},{"id":"TC-OT-033","name":"최유리지정가 단일가시간 거부","order_type":"최유리지정가","side":"매수","session":"시가단일가","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수거부(접속매매전용)"},{"id":"TC-OT-035","name":"최우선지정가 매수","order_type":"최우선지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"최우선매수호가","condition":"없음","expected":"접수성공"},{"id":"TC-OT-038","name":"최우선지정가 단일가시간 거부","order_type":"최우선지정가","side":"매수","session":"종가단일가","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수거부(접속매매전용)"},{"id":"TC-OT-039","name":"경쟁대량매매 장중","order_type":"경쟁대량매매","side":"매수","session":"장중경쟁대량","stock_status":"일반종목","security":"주권","price":"VWAP","condition":"없음","expected":"접수성공"},{"id":"TC-OT-042","name":"중간가 매수 접속매매","order_type":"중간가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"중간가격","condition":"없음","expected":"접수성공"},{"id":"TC-OT-045","name":"중간가 단일가시간 거부","order_type":"중간가","side":"매수","session":"시가단일가","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수거부(접속매매전용)"},{"id":"TC-OT-048","name":"스톱지정가 매수 조건미충족","order_type":"스톱지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"지정가격","condition":"없음","expected":"접수성공(효력미발생대기)"},{"id":"TC-OT-049","name":"스톱지정가 매수 조건충족","order_type":"스톱지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"주권","price":"지정가격","condition":"없음","expected":"지정가호가효력발생"},{"id":"TC-OT-055","name":"스톱지정가 단일가시간 거부","order_type":"스톱지정가","side":"매수","session":"시가단일가","stock_status":"일반종목","security":"주권","price":"N/A","condition":"없음","expected":"접수거부(접속매매전용)"},{"id":"TC-OT-056","name":"스톱지정가 채무증권 거부","order_type":"스톱지정가","side":"매수","session":"접속매매","stock_status":"일반종목","security":"채무증권","price":"N/A","condition":"없음","expected":"접수거부(증권종류불가)"}]}]};
+
+// Flatten all test cases from JSON file
+let allTCs = [];
+
+// We'll load the full data via fetch, fallback to embedded subset
+async function loadData() {
+  try {
+    const resp = await fetch('krx_order_test_cases.json');
+    if (resp.ok) {
+      const data = await resp.json();
+      data.test_categories.forEach(cat => {
+        cat.test_cases.forEach(tc => {
+          tc.category = cat.category_id;
+          tc.category_name = cat.category_name;
+          allTCs.push(tc);
+        });
+      });
+    }
+  } catch(e) {
+    // Use embedded fallback - shouldn't happen if files are in same directory
+    tcData.test_categories.forEach(cat => {
+      cat.test_cases.forEach(tc => {
+        tc.category = cat.category_id;
+        tc.category_name = cat.category_name;
+        allTCs.push(tc);
+      });
+    });
+  }
+  renderAll();
+}
+
+function renderAll() {
+  // Stats
+  const total = allTCs.length;
+  const pass = allTCs.filter(t => t.expected && t.expected.includes('성공')).length;
+  const fail = allTCs.filter(t => t.expected && t.expected.includes('거부')).length;
+  const cond = total - pass - fail;
+  document.getElementById('totalCases').textContent = total;
+  document.getElementById('passCases').textContent = pass;
+  document.getElementById('failCases').textContent = fail;
+  document.getElementById('condCases').textContent = cond;
+
+  // Gauges
+  const dims = [
+    {name:'호가유형(8)', covered:8, total:8, color:'#4299e1'},
+    {name:'매도/매수(2)', covered:2, total:2, color:'#48bb78'},
+    {name:'호가조건(3)', covered:3, total:3, color:'#ed8936'},
+    {name:'매매시간대(9)', covered:9, total:9, color:'#9f7aea'},
+    {name:'종목상태(12)', covered:12, total:12, color:'#f56565'},
+    {name:'증권종류(9)', covered:9, total:9, color:'#38b2ac'},
+    {name:'가격조건(6)', covered:6, total:6, color:'#d69e2e'},
+    {name:'VI상태(4)', covered:4, total:4, color:'#667eea'},
+    {name:'정정/취소(6)', covered:6, total:6, color:'#e53e3e'}
+  ];
+  const gc = document.getElementById('gaugeContainer');
+  dims.forEach(d => {
+    const pct = Math.round(d.covered/d.total*100);
+    gc.innerHTML += `<div class="gauge">
+      <div class="gauge-title">${d.name}</div>
+      <div class="gauge-bar"><div class="gauge-fill" style="width:${pct}%;background:${d.color}">${pct}%</div></div>
+      <div class="gauge-val">${d.covered}/${d.total}</div>
+    </div>`;
+  });
+
+  // Render TC table
+  renderTCTable(allTCs);
+}
+
+function renderTCTable(tcs) {
+  const body = document.getElementById('tcBody');
+  body.innerHTML = '';
+  tcs.forEach(tc => {
+    const isPass = tc.expected && tc.expected.includes('성공');
+    const isFail = tc.expected && tc.expected.includes('거부');
+    const cls = isPass ? 'tc-pass' : (isFail ? 'tc-fail' : 'tc-cond');
+    body.innerHTML += `<tr data-cat="${tc.category}" data-exp="${tc.expected||''}">
+      <td><span class="tc-id">${tc.id}</span></td>
+      <td>${tc.name}</td>
+      <td><span class="tag tag-b">${tc.order_type||''}</span></td>
+      <td>${tc.side||''}</td>
+      <td><span class="tag tag-p">${tc.session||''}</span></td>
+      <td><span class="tag ${tc.stock_status==='일반종목'?'tag-g':'tag-y'}">${tc.stock_status||''}</span></td>
+      <td>${tc.security||''}</td>
+      <td style="font-size:.7rem">${tc.price||''}</td>
+      <td>${tc.condition||tc.action||''}</td>
+      <td><span class="tc-exp ${cls}">${tc.expected||''}</span></td>
+      <td><span class="tc-art">${tc.article||''}</span></td>
+    </tr>`;
+  });
+  document.getElementById('filterCount').textContent = `${tcs.length}건 표시`;
+}
+
+function filterTCs() {
+  const cat = document.getElementById('filterCat').value;
+  const res = document.getElementById('filterResult').value;
+  const q = document.getElementById('filterSearch').value.toLowerCase();
+  let filtered = allTCs;
+  if (cat) filtered = filtered.filter(t => t.category === cat);
+  if (res) filtered = filtered.filter(t => t.expected && t.expected.includes(res));
+  if (q) filtered = filtered.filter(t =>
+    (t.id+t.name+(t.article||'')+(t.expected||'')+(t.order_type||'')+(t.stock_status||'')+(t.security||'')).toLowerCase().includes(q)
+  );
+  renderTCTable(filtered);
+}
+
+// Scroll nav
+const sections = document.querySelectorAll('.sec');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 150) current = s.id; });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+  });
+});
+document.querySelectorAll('.nav a').forEach(l => {
+  l.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(l.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+loadData();
+</script>
+</body>
+</html>

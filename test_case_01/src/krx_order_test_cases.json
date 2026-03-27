@@ -1,0 +1,420 @@
+{
+  "metadata": {
+    "title": "KRX 유가증권시장 단일호가 테스트 케이스",
+    "version": "1.0",
+    "generated": "2026-03-27",
+    "source": "krx_regulation_rules.json",
+    "dimensions": {
+      "order_type": ["지정가", "시장가", "조건부지정가", "최유리지정가", "최우선지정가", "경쟁대량매매", "중간가", "스톱지정가"],
+      "side": ["매도", "매수"],
+      "order_condition": ["없음", "IOC", "FOK"],
+      "trading_session": ["시가단일가(08:00~09:00)", "접속매매(09:00~15:20)", "종가단일가(15:20~15:30)", "VI단일가", "시간외종가_장전(08:30~08:40)", "시간외종가_장후(15:40~16:00)", "시간외단일가(16:00~18:00)", "장중경쟁대량(09:00~15:00)", "시간외경쟁대량(08:00~09:00)"],
+      "stock_status": ["일반종목", "정리매매종목", "단기과열종목", "이상급등종목", "투자유의종목(ETF/ETN)", "관리종목", "투자경고종목", "투자위험종목", "저유동성종목", "종류주식종목", "공매도과열종목", "신규상장종목"],
+      "security_type": ["주권", "외국주식예탁증권", "ETF", "ETN", "신주인수권증서", "신주인수권증권", "주식워런트증권(ELW)", "수익증권", "채무증권"],
+      "price_condition": ["적정가격", "상한가", "하한가", "호가단위불일치", "가격제한초과", "기준가격경계"],
+      "vi_state": ["정상", "정적VI발동중", "동적VI발동중", "VI직후(연속발동테스트)"],
+      "action_type": ["신규주문", "동일유형정정", "교차유형정정", "부분취소", "전량취소", "일괄취소"]
+    },
+    "total_test_cases": 494
+  },
+
+  "test_categories": [
+
+    {
+      "category_id": "TC-OT",
+      "category_name": "호가유형 기본 검증",
+      "description": "각 호가유형별 기본 접수/거부 검증",
+      "test_cases": [
+        {"id": "TC-OT-001", "name": "지정가호가 매수 신규접수", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제1호"},
+        {"id": "TC-OT-002", "name": "지정가호가 매도 신규접수", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제1호"},
+        {"id": "TC-OT-003", "name": "지정가호가 시가단일가 매수", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제1호"},
+        {"id": "TC-OT-004", "name": "지정가호가 종가단일가 매도", "order_type": "지정가", "side": "매도", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제1호"},
+        {"id": "TC-OT-005", "name": "지정가호가 시간외종가(장전) 매수", "order_type": "지정가", "side": "매수", "session": "시간외종가_장전", "stock_status": "일반종목", "security": "주권", "price": "전일종가", "condition": "없음", "expected": "접수성공", "article": "규정 제34조"},
+        {"id": "TC-OT-006", "name": "지정가호가 시간외종가(장후) 매도", "order_type": "지정가", "side": "매도", "session": "시간외종가_장후", "stock_status": "일반종목", "security": "주권", "price": "당일종가", "condition": "없음", "expected": "접수성공", "article": "규정 제34조"},
+        {"id": "TC-OT-007", "name": "지정가호가 시간외단일가 매수", "order_type": "지정가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "종가±10%이내", "condition": "없음", "expected": "접수성공", "article": "규정 제34조의2"},
+        {"id": "TC-OT-008", "name": "지정가호가 채무증권", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "채무증권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "세칙 제10조제1항"},
+        {"id": "TC-OT-009", "name": "지정가호가 ELW", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주식워런트증권(ELW)", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "세칙 제10조제1항"},
+        {"id": "TC-OT-010", "name": "지정가호가 수익증권", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "수익증권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "세칙 제10조제1항"},
+
+        {"id": "TC-OT-011", "name": "시장가호가 매수 접속매매", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A(시장가)", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제2호"},
+        {"id": "TC-OT-012", "name": "시장가호가 매도 접속매매", "order_type": "시장가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A(시장가)", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제2호"},
+        {"id": "TC-OT-013", "name": "시장가호가 시가단일가", "order_type": "시장가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A(시장가)", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제2호"},
+        {"id": "TC-OT-014", "name": "시장가호가 종가단일가", "order_type": "시장가", "side": "매도", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A(시장가)", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제2호"},
+        {"id": "TC-OT-015", "name": "시장가호가 시간외종가 거부", "order_type": "시장가", "side": "매수", "session": "시간외종가_장후", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(시간외불가)", "article": "규정 제2조제4항제2호"},
+        {"id": "TC-OT-016", "name": "시장가호가 시간외단일가 거부", "order_type": "시장가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(시간외불가)", "article": "세칙 제14조"},
+        {"id": "TC-OT-017", "name": "시장가호가 채무증권 거부", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "채무증권", "price": "N/A", "condition": "없음", "expected": "접수거부(증권종류불가)", "article": "세칙 제10조제1항"},
+        {"id": "TC-OT-018", "name": "시장가호가 신주인수권증서 거부", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "신주인수권증서", "price": "N/A", "condition": "없음", "expected": "접수거부(증권종류불가)", "article": "세칙 제10조제1항"},
+        {"id": "TC-OT-019", "name": "시장가호가 ETF", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF", "price": "N/A(시장가)", "condition": "없음", "expected": "접수성공", "article": "세칙 제10조제1항"},
+        {"id": "TC-OT-020", "name": "시장가호가 ETN", "order_type": "시장가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "ETN", "price": "N/A(시장가)", "condition": "없음", "expected": "접수성공", "article": "세칙 제10조제1항"},
+
+        {"id": "TC-OT-021", "name": "조건부지정가 매수 접속매매", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제3호"},
+        {"id": "TC-OT-022", "name": "조건부지정가 매도 접속매매", "order_type": "조건부지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제3호"},
+        {"id": "TC-OT-023", "name": "조건부지정가 장종료시 시장가 전환", "order_type": "조건부지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "시장가전환성공", "article": "세칙 제15조"},
+        {"id": "TC-OT-024", "name": "조건부지정가 전환우선순위-낮은가격매도우선", "order_type": "조건부지정가", "side": "매도", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "저가격", "condition": "없음", "expected": "전환시낮은가격우선", "article": "세칙 제15조"},
+        {"id": "TC-OT-025", "name": "조건부지정가 전환우선순위-높은가격매수우선", "order_type": "조건부지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "고가격", "condition": "없음", "expected": "전환시높은가격우선", "article": "세칙 제15조"},
+        {"id": "TC-OT-026", "name": "조건부지정가 시간외 거부", "order_type": "조건부지정가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수거부(시간외불가)", "article": "세칙 제14조"},
+        {"id": "TC-OT-027", "name": "조건부지정가 ETF 접속매매", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "세칙 제10조제1항"},
+
+        {"id": "TC-OT-028", "name": "최유리지정가 매수-상대호가존재", "order_type": "최유리지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매도호가", "condition": "없음", "expected": "접수성공(최우선매도가격지정)", "article": "세칙 제3조"},
+        {"id": "TC-OT-029", "name": "최유리지정가 매도-상대호가존재", "order_type": "최유리지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매수호가", "condition": "없음", "expected": "접수성공(최우선매수가격지정)", "article": "세칙 제3조"},
+        {"id": "TC-OT-030", "name": "최유리지정가 매수-상대호가없음/동측존재", "order_type": "최유리지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매수+1틱", "condition": "없음", "expected": "접수성공(최우선매수+1틱)", "article": "세칙 제3조제2호단서"},
+        {"id": "TC-OT-031", "name": "최유리지정가 매도-상대호가없음/동측존재", "order_type": "최유리지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매도-1틱", "condition": "없음", "expected": "접수성공(최우선매도-1틱)", "article": "세칙 제3조제1호단서"},
+        {"id": "TC-OT-032", "name": "최유리지정가 매수-양측호가없음", "order_type": "최유리지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "직전가격", "condition": "없음", "expected": "접수성공(직전가격지정)", "article": "세칙 제3조제2호단서"},
+        {"id": "TC-OT-033", "name": "최유리지정가 단일가시간 거부", "order_type": "최유리지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(접속매매전용)", "article": "세칙 제14조"},
+        {"id": "TC-OT-034", "name": "최유리지정가 시간외 거부", "order_type": "최유리지정가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(접속매매전용)", "article": "세칙 제14조"},
+
+        {"id": "TC-OT-035", "name": "최우선지정가 매수-동측호가존재", "order_type": "최우선지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매수호가", "condition": "없음", "expected": "접수성공(최우선매수가격지정)", "article": "세칙 제4조"},
+        {"id": "TC-OT-036", "name": "최우선지정가 매도-동측호가존재", "order_type": "최우선지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매도호가", "condition": "없음", "expected": "접수성공(최우선매도가격지정)", "article": "세칙 제4조"},
+        {"id": "TC-OT-037", "name": "최우선지정가 매수-동측호가없음", "order_type": "최우선지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "직전가격", "condition": "없음", "expected": "접수성공(직전가격지정)", "article": "세칙 제4조제2호단서"},
+        {"id": "TC-OT-038", "name": "최우선지정가 단일가시간 거부", "order_type": "최우선지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(접속매매전용)", "article": "세칙 제14조"},
+
+        {"id": "TC-OT-039", "name": "경쟁대량매매 장중 매수", "order_type": "경쟁대량매매", "side": "매수", "session": "장중경쟁대량", "stock_status": "일반종목", "security": "주권", "price": "VWAP", "condition": "없음", "expected": "접수성공", "article": "규정 제2조제4항제6호"},
+        {"id": "TC-OT-040", "name": "경쟁대량매매 시간외경쟁대량", "order_type": "경쟁대량매매", "side": "매수", "session": "시간외경쟁대량", "stock_status": "일반종목", "security": "주권", "price": "VWAP", "condition": "없음", "expected": "접수성공", "article": "규정 제34조의3"},
+        {"id": "TC-OT-041", "name": "경쟁대량매매 접속매매시간 거부", "order_type": "경쟁대량매매", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(전용시간외)", "article": "세칙 제14조"},
+
+        {"id": "TC-OT-042", "name": "중간가호가 매수 접속매매", "order_type": "중간가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "중간가격(매도+매수)/2", "condition": "없음", "expected": "접수성공", "article": "세칙 제4조의2"},
+        {"id": "TC-OT-043", "name": "중간가호가 매도 접속매매", "order_type": "중간가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "중간가격(매도+매수)/2", "condition": "없음", "expected": "접수성공", "article": "세칙 제4조의2"},
+        {"id": "TC-OT-044", "name": "중간가호가 1원미만절사 확인", "order_type": "중간가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "홀수합평균(절사확인)", "condition": "없음", "expected": "접수성공(1원미만절사)", "article": "세칙 제4조의2"},
+        {"id": "TC-OT-045", "name": "중간가호가 단일가시간 거부", "order_type": "중간가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(접속매매전용)", "article": "세칙 제14조"},
+        {"id": "TC-OT-046", "name": "중간가호가 일방호가없음 효력정지", "order_type": "중간가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A(일방부재)", "condition": "없음", "expected": "효력정지", "article": "세칙 제13조제2항제2호"},
+        {"id": "TC-OT-047", "name": "중간가호가 장종료전 미체결분 효력소멸", "order_type": "중간가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "기접수미체결", "condition": "없음", "expected": "효력불인정", "article": "세칙 제13조제1항제4호의2"},
+
+        {"id": "TC-OT-048", "name": "스톱지정가 매수-조건미충족", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "지정가격", "condition": "없음", "expected": "접수성공(효력미발생대기)", "article": "세칙 제4조의3"},
+        {"id": "TC-OT-049", "name": "스톱지정가 매수-조건충족(직전가≥스톱가)", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "지정가격", "condition": "없음", "expected": "지정가호가효력발생", "article": "세칙 제4조의3제2호"},
+        {"id": "TC-OT-050", "name": "스톱지정가 매도-조건충족(직전가≤스톱가)", "order_type": "스톱지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "지정가격", "condition": "없음", "expected": "지정가호가효력발생", "article": "세칙 제4조의3제1호"},
+        {"id": "TC-OT-051", "name": "스톱지정가 매도-직전체결가없음(기준가격사용)", "order_type": "스톱지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "지정가격", "condition": "없음", "expected": "기준가격으로조건판단", "article": "세칙 제4조의3제1호"},
+        {"id": "TC-OT-052", "name": "스톱지정가 우선순위-매수 스톱가낮은것우선", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "복수스톱가", "condition": "없음", "expected": "스톱가낮은것우선발동", "article": "세칙 제15조의2"},
+        {"id": "TC-OT-053", "name": "스톱지정가 우선순위-매도 스톱가높은것우선", "order_type": "스톱지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "복수스톱가", "condition": "없음", "expected": "스톱가높은것우선발동", "article": "세칙 제15조의2"},
+        {"id": "TC-OT-054", "name": "스톱지정가 동일스톱가 시간선순위", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "동일스톱가복수", "condition": "없음", "expected": "시간선순위적용", "article": "세칙 제15조의2"},
+        {"id": "TC-OT-055", "name": "스톱지정가 단일가시간 거부", "order_type": "스톱지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(접속매매전용)", "article": "세칙 제14조"},
+        {"id": "TC-OT-056", "name": "스톱지정가 채무증권 거부", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "채무증권", "price": "N/A", "condition": "없음", "expected": "접수거부(증권종류불가)", "article": "세칙 제10조제1항"}
+      ]
+    },
+
+    {
+      "category_id": "TC-OC",
+      "category_name": "호가조건(IOC/FOK) 검증",
+      "description": "IOC/FOK 조건의 호가유형별·시간대별 허용/거부 및 동작 검증",
+      "test_cases": [
+        {"id": "TC-OC-001", "name": "지정가+IOC 접속매매 매수", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수성공(부분체결후잔량취소)", "article": "세칙 제13조제3항제1호"},
+        {"id": "TC-OC-002", "name": "지정가+FOK 접속매매 매수", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "FOK", "expected": "접수성공(전량체결가능시체결/불가시전량취소)", "article": "세칙 제13조제3항제2호"},
+        {"id": "TC-OC-003", "name": "지정가+IOC 체결불가시 즉시취소", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "하한가", "condition": "IOC", "expected": "즉시전량취소(체결불가)", "article": "세칙 제13조제3항제1호"},
+        {"id": "TC-OC-004", "name": "지정가+FOK 부분체결가능 전량취소", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "FOK", "expected": "전량취소(부분만체결가능)", "article": "세칙 제13조제3항제2호"},
+        {"id": "TC-OC-005", "name": "시장가+IOC 접속매매", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "IOC", "expected": "접수성공", "article": "세칙 제13조제3항제1호"},
+        {"id": "TC-OC-006", "name": "시장가+FOK 접속매매", "order_type": "시장가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "FOK", "expected": "접수성공", "article": "세칙 제13조제3항제2호"},
+        {"id": "TC-OC-007", "name": "최유리지정가+IOC 접속매매", "order_type": "최유리지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매도호가", "condition": "IOC", "expected": "접수성공", "article": "세칙 제13조제3항"},
+        {"id": "TC-OC-008", "name": "최유리지정가+FOK 접속매매", "order_type": "최유리지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매수호가", "condition": "FOK", "expected": "접수성공", "article": "세칙 제13조제3항"},
+        {"id": "TC-OC-009", "name": "중간가+IOC 접속매매", "order_type": "중간가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "중간가격", "condition": "IOC", "expected": "접수성공", "article": "세칙 제13조제3항"},
+        {"id": "TC-OC-010", "name": "중간가+FOK 접속매매", "order_type": "중간가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "중간가격", "condition": "FOK", "expected": "접수성공", "article": "세칙 제13조제3항"},
+
+        {"id": "TC-OC-011", "name": "최우선지정가+IOC 거부", "order_type": "최우선지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매수호가", "condition": "IOC", "expected": "접수거부(IOC불가)", "article": "세칙 제14조제2항제2호다목"},
+        {"id": "TC-OC-012", "name": "최우선지정가+FOK 거부", "order_type": "최우선지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최우선매도호가", "condition": "FOK", "expected": "접수거부(FOK불가)", "article": "세칙 제14조제2항제2호다목"},
+        {"id": "TC-OC-013", "name": "조건부지정가+IOC 거부", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수거부(IOC불가)", "article": "세칙 제14조제2항제1호하목"},
+        {"id": "TC-OC-014", "name": "조건부지정가+FOK 거부", "order_type": "조건부지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "FOK", "expected": "접수거부(FOK불가)", "article": "세칙 제14조제2항제1호하목"},
+
+        {"id": "TC-OC-015", "name": "지정가+IOC 시가단일가시간 거부", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수거부(단일가시간IOC불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-OC-016", "name": "지정가+FOK 종가단일가시간 거부", "order_type": "지정가", "side": "매도", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "FOK", "expected": "접수거부(단일가시간FOK불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-OC-017", "name": "지정가+IOC 시간외종가 거부", "order_type": "지정가", "side": "매수", "session": "시간외종가_장후", "stock_status": "일반종목", "security": "주권", "price": "당일종가", "condition": "IOC", "expected": "접수거부(시간외IOC불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-OC-018", "name": "지정가+FOK 시간외단일가 거부", "order_type": "지정가", "side": "매도", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "종가±10%이내", "condition": "FOK", "expected": "접수거부(시간외FOK불가)", "article": "세칙 제14조제2항"},
+
+        {"id": "TC-OC-019", "name": "지정가+IOC 정리매매종목 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수거부(정리매매IOC불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-OC-020", "name": "시장가+FOK 정리매매종목 거부(이중거부)", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "N/A", "condition": "FOK", "expected": "접수거부(시장가+FOK모두불가)", "article": "세칙 제14조제2항"},
+
+        {"id": "TC-OC-021", "name": "IOC+자전거래방지조건 동시부여시 우선순위", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "IOC+자전거래방지", "expected": "자전거래방지조건우선적용", "article": "세칙 제13조의2제3항"},
+        {"id": "TC-OC-022", "name": "지정가+IOC 신규상장종목 최초가격결정시 거부", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "신규상장종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수거부(최초가격결정시IOC불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-OC-023", "name": "경쟁대량매매+IOC 접수", "order_type": "경쟁대량매매", "side": "매수", "session": "장중경쟁대량", "stock_status": "일반종목", "security": "주권", "price": "VWAP", "condition": "IOC", "expected": "접수성공", "article": "세칙 제13조제3항"}
+      ]
+    },
+
+    {
+      "category_id": "TC-SS",
+      "category_name": "종목상태별 호가 제한 검증",
+      "description": "각 종목상태에서 호가유형별 허용/거부 검증",
+      "test_cases": [
+        {"id": "TC-SS-001", "name": "정리매매-지정가 매수 허용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(단일가매매)", "article": "세칙 제56조"},
+        {"id": "TC-SS-002", "name": "정리매매-시장가 거부", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조제2항제1호아목"},
+        {"id": "TC-SS-003", "name": "정리매매-조건부지정가 거부", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조제2항"},
+        {"id": "TC-SS-004", "name": "정리매매-경쟁대량매매 거부", "order_type": "경쟁대량매매", "side": "매수", "session": "장중경쟁대량", "stock_status": "정리매매종목", "security": "주권", "price": "VWAP", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조제2항제3호나목"},
+        {"id": "TC-SS-005", "name": "정리매매-중간가 거부", "order_type": "중간가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조"},
+        {"id": "TC-SS-006", "name": "정리매매-스톱지정가 거부", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조"},
+        {"id": "TC-SS-007", "name": "정리매매-가격제한없음 상한초과 허용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "일반상한가초과", "condition": "없음", "expected": "접수성공(가격제한없음)", "article": "규정 제20조제3항"},
+        {"id": "TC-SS-008", "name": "정리매매-IOC 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수거부(IOC불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-SS-009", "name": "정리매매-매매체결방법 단일가30분", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "30분간격단일가체결", "article": "세칙 제56조"},
+
+        {"id": "TC-SS-010", "name": "단기과열-지정가 허용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(단일가매매)", "article": "세칙 제56조의2"},
+        {"id": "TC-SS-011", "name": "단기과열-시장가 거부", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부", "article": "세칙 제56조의2"},
+        {"id": "TC-SS-012", "name": "단기과열-조건부지정가 거부", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조제2항제1호자목"},
+        {"id": "TC-SS-013", "name": "단기과열-최유리지정가 허용(단일가전환)", "order_type": "최유리지정가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "최우선매도호가", "condition": "없음", "expected": "접수성공(단일가매매)", "article": "세칙 제56조의2"},
+
+        {"id": "TC-SS-014", "name": "투자유의(ETF)-지정가 허용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "투자유의종목(ETF/ETN)", "security": "ETF", "price": "적정가격", "condition": "없음", "expected": "접수성공(단일가매매/현금증거금100%)", "article": "세칙 제134조의5"},
+        {"id": "TC-SS-015", "name": "투자유의(ETF)-조건부지정가 거부", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "투자유의종목(ETF/ETN)", "security": "ETF", "price": "적정가격", "condition": "없음", "expected": "접수거부", "article": "세칙 제134조의5"},
+
+        {"id": "TC-SS-016", "name": "관리종목-지정가 허용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "관리종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공", "article": "규정 제88조"},
+        {"id": "TC-SS-017", "name": "관리종목-경쟁대량매매 거부", "order_type": "경쟁대량매매", "side": "매수", "session": "장중경쟁대량", "stock_status": "관리종목", "security": "주권", "price": "VWAP", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조제2항제3호다목"},
+        {"id": "TC-SS-018", "name": "관리종목-시장가 허용", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "관리종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수성공", "article": "규정 제88조"},
+
+        {"id": "TC-SS-019", "name": "이상급등-지정가 허용(단일가)", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "이상급등종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(단일가매매)", "article": "세칙 제56조의2제5항"},
+        {"id": "TC-SS-020", "name": "이상급등-VI비적용 확인", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "이상급등종목", "security": "주권", "price": "VI발동범위가격", "condition": "없음", "expected": "VI미발동(단일가유지)", "article": "세칙 제41조의2제4항"},
+
+        {"id": "TC-SS-021", "name": "저유동성-지정가 허용(30분단일가)", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "저유동성종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(30분단일가)", "article": "세칙 제56조의3"},
+        {"id": "TC-SS-022", "name": "종류주식-지정가 허용(단일가)", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "종류주식종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(단일가)", "article": "세칙 제56조의4"},
+
+        {"id": "TC-SS-023", "name": "투자경고-매수 증거금100%현금", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "투자경고종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(현금증거금100%)", "article": "규정 제89조제5항"},
+        {"id": "TC-SS-024", "name": "투자위험-매수 증거금100%현금", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "투자위험종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(현금증거금100%)", "article": "규정 제89조제5항"},
+
+        {"id": "TC-SS-025", "name": "공매도과열-차입공매도 매도 거부", "order_type": "지정가", "side": "매도(차입공매도)", "session": "접속매매", "stock_status": "공매도과열종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수거부(차입공매도제한)", "article": "세칙 제24조의3"},
+        {"id": "TC-SS-026", "name": "공매도과열-일반매도 허용", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "공매도과열종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(일반매도)", "article": "세칙 제24조의3"},
+        {"id": "TC-SS-027", "name": "신규상장-지정가 시가결정 허용", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "신규상장종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수성공(확대가격제한폭)", "article": "세칙 제31조제3항"},
+        {"id": "TC-SS-028", "name": "신규상장-확대상한가(400%) 검증", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "신규상장종목", "security": "주권", "price": "기준가400%", "condition": "없음", "expected": "접수성공(확대상한가이내)", "article": "세칙 제31조제3항"},
+        {"id": "TC-SS-029", "name": "신규상장-확대상한가초과 거부", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "신규상장종목", "security": "주권", "price": "기준가400%초과", "condition": "없음", "expected": "접수거부(상한가초과)", "article": "세칙 제31조제3항"},
+        {"id": "TC-SS-030", "name": "신규상장-확대하한가(60%) 검증", "order_type": "지정가", "side": "매도", "session": "시가단일가", "stock_status": "신규상장종목", "security": "주권", "price": "기준가60%", "condition": "없음", "expected": "접수성공(확대하한가)", "article": "세칙 제31조제3항"},
+        {"id": "TC-SS-031", "name": "신규상장-VI비적용 확인", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "신규상장종목", "security": "주권", "price": "VI범위가격", "condition": "없음", "expected": "VI미발동(상장일당일)", "article": "세칙 제41조의2제4항"}
+      ]
+    },
+
+    {
+      "category_id": "TC-VI",
+      "category_name": "VI(변동성완화장치) 관련 검증",
+      "description": "정적/동적 VI 발동조건, 단일가전환, 비적용 종목 검증",
+      "test_cases": [
+        {"id": "TC-VI-001", "name": "정적VI-코스피200 3%상승 발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권(코스피200)", "price": "직전단일가+3%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동→단일가전환(2분)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-002", "name": "정적VI-코스피200 3%하락 발동", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권(코스피200)", "price": "직전단일가-3%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동→단일가전환(2분)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-003", "name": "정적VI-비코스피200 6%상승 발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권(비코스피200)", "price": "직전단일가+6%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동→단일가전환(2분)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-004", "name": "정적VI-비코스피200 6%미만 미발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권(비코스피200)", "price": "직전단일가+5.9%", "condition": "없음", "vi_state": "정상", "expected": "VI미발동(정상체결)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-005", "name": "정적VI-ETF(코스피200연동1배이하) 3%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF(코스피200연동)", "price": "직전단일가+3%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-006", "name": "정적VI-ETF(기타) 6%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF(기타)", "price": "직전단일가+6%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-007", "name": "정적VI-종가단일가시간 축소(코스피200→2%)", "order_type": "지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권(코스피200)", "price": "직전단일가+2%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동(종가시간축소기준)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-008", "name": "정적VI-종가단일가시간 축소(기타→4%)", "order_type": "지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권(비코스피200)", "price": "직전단일가+4%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동(종가시간축소기준)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-VI-009", "name": "정적VI-파생만기일 기초자산 종가시간 1%", "order_type": "지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권(파생기초자산)", "price": "직전단일가+1%", "condition": "없음", "vi_state": "정적VI발동", "expected": "VI발동(만기일1%기준)", "article": "세칙 제41조의2제1항"},
+
+        {"id": "TC-VI-010", "name": "동적VI-10%상승 발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "직전체결가+10%", "condition": "없음", "vi_state": "동적VI발동", "expected": "VI발동→단일가전환(2분)", "article": "세칙 제41조의2제2항"},
+        {"id": "TC-VI-011", "name": "동적VI-10%하락 발동", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "직전체결가-10%", "condition": "없음", "vi_state": "동적VI발동", "expected": "VI발동→단일가전환(2분)", "article": "세칙 제41조의2제2항"},
+        {"id": "TC-VI-012", "name": "동적VI-9.9% 미발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "직전체결가+9.9%", "condition": "없음", "vi_state": "정상", "expected": "VI미발동(정상체결)", "article": "세칙 제41조의2제2항"},
+        {"id": "TC-VI-013", "name": "동적VI-시간외단일가 발동", "order_type": "지정가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "직전체결가+10%", "condition": "없음", "vi_state": "동적VI발동", "expected": "VI발동→참여호가2분연장", "article": "세칙 제41조의2제2항"},
+        {"id": "TC-VI-014", "name": "동적VI-시가결정시 미적용", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "기준가+10%이상", "condition": "없음", "vi_state": "정상", "expected": "동적VI미적용(시가결정시)", "article": "세칙 제41조의2제2항"},
+
+        {"id": "TC-VI-015", "name": "VI-접속매매중 발동시 단일가전환", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "VI발동가격", "condition": "없음", "vi_state": "정적VI발동", "expected": "접속→단일가전환(2분+30초무작위)", "article": "세칙 제41조의2제3항"},
+        {"id": "TC-VI-016", "name": "VI-단일가중 발동시 범위연장", "order_type": "지정가", "side": "매수", "session": "VI단일가", "stock_status": "일반종목", "security": "주권", "price": "VI재발동가격", "condition": "없음", "vi_state": "정적VI발동중", "expected": "참여호가범위2분연장", "article": "세칙 제41조의2제3항"},
+        {"id": "TC-VI-017", "name": "VI-연속발동방지 확인", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "VI직후재발동가격", "condition": "없음", "vi_state": "VI직후", "expected": "연속발동안함(정상체결)", "article": "세칙 제41조의2"},
+        {"id": "TC-VI-018", "name": "VI-저가종목 3호가단위이내 미발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "직전가(900원)+3원(3틱)", "condition": "없음", "vi_state": "정상", "expected": "VI미발동(저가종목예외)", "article": "세칙 제41조의2"},
+
+        {"id": "TC-VI-019", "name": "VI비적용-정리매매종목", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "VI범위가격", "condition": "없음", "vi_state": "정상", "expected": "VI미발동", "article": "세칙 제41조의2제4항"},
+        {"id": "TC-VI-020", "name": "VI비적용-단기과열종목", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "VI범위가격", "condition": "없음", "vi_state": "정상", "expected": "VI미발동", "article": "세칙 제41조의2제4항"},
+        {"id": "TC-VI-021", "name": "VI비적용-투자유의종목", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "투자유의종목(ETF/ETN)", "security": "ETF", "price": "VI범위가격", "condition": "없음", "vi_state": "정상", "expected": "VI미발동", "article": "세칙 제41조의2제4항"},
+        {"id": "TC-VI-022", "name": "VI비적용-저유동성종목", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "저유동성종목", "security": "주권", "price": "VI범위가격", "condition": "없음", "vi_state": "정상", "expected": "VI미발동", "article": "세칙 제41조의2제4항"},
+        {"id": "TC-VI-023", "name": "VI비적용-종류주식종목", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "종류주식종목", "security": "주권", "price": "VI범위가격", "condition": "없음", "vi_state": "정상", "expected": "VI미발동", "article": "세칙 제41조의2제4항"},
+        {"id": "TC-VI-024", "name": "VI비적용-매매재개시 단일가", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목(매매재개)", "security": "주권", "price": "VI범위가격", "condition": "없음", "vi_state": "정상", "expected": "VI미발동(재개단일가시)", "article": "세칙 제41조의2제4항"}
+      ]
+    },
+
+    {
+      "category_id": "TC-PL",
+      "category_name": "가격제한·호가가격단위 검증",
+      "description": "상한가/하한가, 호가가격단위 정합성 검증",
+      "test_cases": [
+        {"id": "TC-PL-001", "name": "상한가 정확히 일치 매수 허용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "상한가(기준가+30%)", "condition": "없음", "expected": "접수성공", "article": "규정 제20조"},
+        {"id": "TC-PL-002", "name": "상한가 초과 매수 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "상한가+1틱", "condition": "없음", "expected": "접수거부(상한가초과)", "article": "규정 제20조"},
+        {"id": "TC-PL-003", "name": "하한가 정확히 일치 매도 허용", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "하한가(기준가-30%)", "condition": "없음", "expected": "접수성공", "article": "규정 제20조"},
+        {"id": "TC-PL-004", "name": "하한가 미만 매도 거부", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "하한가-1틱", "condition": "없음", "expected": "접수거부(하한가미만)", "article": "규정 제20조"},
+        {"id": "TC-PL-005", "name": "상한가 호가단위 보정(내림)", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "호가단위불일치상한", "condition": "없음", "expected": "접수성공(보정된상한가이내)", "article": "세칙 제31조제1항"},
+        {"id": "TC-PL-006", "name": "하한가 호가단위 보정(올림)", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "호가단위불일치하한", "condition": "없음", "expected": "접수성공(보정된하한가이내)", "article": "세칙 제31조제1항"},
+        {"id": "TC-PL-007", "name": "최저호가단위=가격제한폭 경우", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "기준가1원(하한가=1원)", "condition": "없음", "expected": "하한가=최소호가가격단위", "article": "규정 제20조"},
+
+        {"id": "TC-PL-008", "name": "레버리지2배 ETF 상한가 60%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF(레버리지2배)", "price": "기준가+60%", "condition": "없음", "expected": "접수성공(상한가=60%)", "article": "규정 제20조제2항"},
+        {"id": "TC-PL-009", "name": "레버리지2배 ETF 상한가 초과 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF(레버리지2배)", "price": "기준가+60%초과", "condition": "없음", "expected": "접수거부", "article": "규정 제20조제2항"},
+        {"id": "TC-PL-010", "name": "인버스(-1배) ETF 가격제한폭 30%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF(인버스1배)", "price": "기준가+30%", "condition": "없음", "expected": "접수성공(상한가=30%)", "article": "규정 제20조제2항"},
+
+        {"id": "TC-PL-011", "name": "시간외단일가 종가±10% 상한", "order_type": "지정가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "종가+10%", "condition": "없음", "expected": "접수성공", "article": "규정 제34조의2제3항"},
+        {"id": "TC-PL-012", "name": "시간외단일가 종가+10%초과 거부", "order_type": "지정가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "종가+10%초과", "condition": "없음", "expected": "접수거부", "article": "규정 제34조의2제3항"},
+        {"id": "TC-PL-013", "name": "시간외단일가 종가-10% 하한", "order_type": "지정가", "side": "매도", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "종가-10%", "condition": "없음", "expected": "접수성공", "article": "규정 제34조의2제3항"},
+
+        {"id": "TC-PL-014", "name": "주권 2000원미만 호가단위1원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "1,999원", "condition": "없음", "expected": "접수성공(1원단위)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-015", "name": "주권 2000~5000원 호가단위5원 정합", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "2,005원", "condition": "없음", "expected": "접수성공(5원단위)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-016", "name": "주권 2000~5000원 호가단위5원 부적합 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "2,003원", "condition": "없음", "expected": "접수거부(호가단위부적합)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-017", "name": "주권 5000~20000원 호가단위10원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "5,010원", "condition": "없음", "expected": "접수성공(10원단위)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-018", "name": "주권 5000~20000원 호가단위10원 부적합 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "5,005원", "condition": "없음", "expected": "접수거부(호가단위부적합)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-019", "name": "주권 20000~50000원 호가단위50원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "20,050원", "condition": "없음", "expected": "접수성공(50원단위)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-020", "name": "주권 50000~200000원 호가단위100원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "50,100원", "condition": "없음", "expected": "접수성공(100원단위)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-021", "name": "주권 200000~500000원 호가단위500원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "200,500원", "condition": "없음", "expected": "접수성공(500원단위)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-022", "name": "주권 500000원이상 호가단위1000원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "501,000원", "condition": "없음", "expected": "접수성공(1000원단위)", "article": "세칙 제32조제2항제1호"},
+        {"id": "TC-PL-023", "name": "주권 500000원이상 호가단위1000원 부적합", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "500,500원", "condition": "없음", "expected": "접수거부(호가단위부적합)", "article": "세칙 제32조제2항제1호"},
+
+        {"id": "TC-PL-024", "name": "ETF 2000원미만 호가단위1원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF", "price": "1,999원", "condition": "없음", "expected": "접수성공(1원단위)", "article": "세칙 제32조제2항제2호"},
+        {"id": "TC-PL-025", "name": "ETF 2000원이상 호가단위5원", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF", "price": "2,005원", "condition": "없음", "expected": "접수성공(5원단위)", "article": "세칙 제32조제2항제2호"},
+        {"id": "TC-PL-026", "name": "ETF 2000원이상 호가단위5원 부적합", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF", "price": "2,003원", "condition": "없음", "expected": "접수거부(호가단위부적합)", "article": "세칙 제32조제2항제2호"},
+        {"id": "TC-PL-027", "name": "ELW 호가단위5원 정합", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주식워런트증권(ELW)", "price": "105원", "condition": "없음", "expected": "접수성공(5원일률)", "article": "세칙 제32조제2항제3호"},
+        {"id": "TC-PL-028", "name": "ELW 호가단위5원 부적합", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주식워런트증권(ELW)", "price": "103원", "condition": "없음", "expected": "접수거부(호가단위부적합)", "article": "세칙 제32조제2항제3호"},
+
+        {"id": "TC-PL-029", "name": "채무증권(일반) 가격제한 ±30%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "채무증권", "price": "전일종가+30%", "condition": "없음", "expected": "접수성공", "article": "세칙 제14조"},
+        {"id": "TC-PL-030", "name": "채무증권(주식관련사채) 가격제한 ±50%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "채무증권(주식관련사채)", "price": "전일종가+50%", "condition": "없음", "expected": "접수성공", "article": "세칙 제14조"},
+        {"id": "TC-PL-031", "name": "채무증권(주식관련사채) 50%초과 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "채무증권(주식관련사채)", "price": "전일종가+50%초과", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조"},
+
+        {"id": "TC-PL-032", "name": "기준가격-전일종가 사용(일반)", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "기준가격=전일종가", "article": "세칙 제30조제1항"},
+        {"id": "TC-PL-033", "name": "기준가격-시가기준가종목(당일최초가격)", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권(시가기준가)", "price": "적정가격", "condition": "없음", "expected": "기준가격=당일최초결정가", "article": "세칙 제30조제1항"},
+        {"id": "TC-PL-034", "name": "기준가격-배당락 산식가격", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권(배당락)", "price": "적정가격", "condition": "없음", "expected": "기준가격=별표2산식", "article": "세칙 제30조제1항"}
+      ]
+    },
+
+    {
+      "category_id": "TC-AL",
+      "category_name": "배분 로직 검증",
+      "description": "가격우선, 시간우선, 동시호가 비례배분 검증",
+      "test_cases": [
+        {"id": "TC-AL-001", "name": "가격우선-매도:낮은가격 우선", "order_type": "지정가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "복수가격", "condition": "없음", "expected": "낮은가격매도호가우선체결", "article": "규정 제22조제2항제1호"},
+        {"id": "TC-AL-002", "name": "가격우선-매수:높은가격 우선", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "복수가격", "condition": "없음", "expected": "높은가격매수호가우선체결", "article": "규정 제22조제2항제1호"},
+        {"id": "TC-AL-003", "name": "가격우선-시장가>지정가", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "시장가호가가격적우선", "article": "규정 제22조제2항제1호"},
+        {"id": "TC-AL-004", "name": "가격우선-매도시장가=하한가지정가 동급", "order_type": "시장가", "side": "매도", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A(=하한가)", "condition": "없음", "expected": "하한가매도지정가와동가격", "article": "규정 제22조제2항제1호단서"},
+        {"id": "TC-AL-005", "name": "가격우선-매수시장가=상한가지정가 동급", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A(=상한가)", "condition": "없음", "expected": "상한가매수지정가와동가격", "article": "규정 제22조제2항제1호단서"},
+
+        {"id": "TC-AL-006", "name": "시간우선-동가격 선접수 우선", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "동일가격", "condition": "없음", "expected": "선접수호가우선체결", "article": "규정 제22조제2항제2호"},
+        {"id": "TC-AL-007", "name": "시간우선-시장가간 선접수 우선", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "선접수시장가우선", "article": "규정 제22조제2항제2호"},
+
+        {"id": "TC-AL-008", "name": "단일가-합치가격 결정", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "합치가격으로결정", "article": "규정 제23조"},
+        {"id": "TC-AL-009", "name": "단일가-합치가격 복수시 직전가격", "order_type": "지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "직전가격과동일한합치가격선택", "article": "규정 제23조제5항"},
+        {"id": "TC-AL-010", "name": "단일가-합치가격 복수시 직전가격에 가장가까운가격", "order_type": "지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "직전가격에가장가까운합치가격", "article": "규정 제23조제5항"},
+
+        {"id": "TC-AL-011", "name": "접속매매-선행호가가격으로체결", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "선행호가가격으로체결", "article": "규정 제24조제3항"},
+
+        {"id": "TC-AL-012", "name": "동시호가 배분-Step1(100배까지수량우선)", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "상한가", "condition": "없음", "expected": "수량많은호가100배까지우선", "article": "세칙 제34조"},
+        {"id": "TC-AL-013", "name": "동시호가 배분-Step1 동수량 시스템기록순위", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "상한가", "condition": "없음", "expected": "동수량시거래소시스템기록순위", "article": "세칙 제34조"},
+        {"id": "TC-AL-014", "name": "동시호가 배분-Step2(잔량1/2 배분)", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "상한가", "condition": "없음", "expected": "100배초과잔량1/2배분(반올림)", "article": "세칙 제34조"},
+        {"id": "TC-AL-015", "name": "동시호가 배분-Step3(잔량전부)", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주권", "price": "상한가", "condition": "없음", "expected": "잔량전부배분", "article": "세칙 제34조"},
+
+        {"id": "TC-AL-016", "name": "동시호가 ETF-위탁>자기매매 우선", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "ETF", "price": "상한가", "condition": "없음", "expected": "위탁매매호가자기매매호가에우선", "article": "세칙 제34조제2항"},
+        {"id": "TC-AL-017", "name": "동시호가 ETN-위탁>자기매매 우선", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "ETN", "price": "상한가", "condition": "없음", "expected": "위탁매매호가자기매매호가에우선", "article": "세칙 제34조제2항"},
+        {"id": "TC-AL-018", "name": "동시호가 ELW-위탁>자기매매 우선", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "주식워런트증권(ELW)", "price": "상한가", "condition": "없음", "expected": "위탁매매호가자기매매호가에우선", "article": "세칙 제34조제2항"}
+      ]
+    },
+
+    {
+      "category_id": "TC-AC",
+      "category_name": "정정/취소 호가 검증",
+      "description": "호가 정정·취소의 허용/제한 검증",
+      "test_cases": [
+        {"id": "TC-AC-001", "name": "미체결 전량취소", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "전량취소", "expected": "취소성공", "article": "규정 제13조"},
+        {"id": "TC-AC-002", "name": "미체결 일부취소", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "부분취소", "expected": "취소성공(잔량유지)", "article": "규정 제13조"},
+        {"id": "TC-AC-003", "name": "이미체결된수량 취소시도 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "체결분취소", "expected": "취소거부(체결분불가)", "article": "규정 제13조"},
+        {"id": "TC-AC-004", "name": "경쟁대량매매 일부취소-수량요건충족", "order_type": "경쟁대량매매", "side": "매수", "session": "장중경쟁대량", "stock_status": "일반종목", "security": "주권", "price": "VWAP", "action": "부분취소(잔량충족)", "expected": "취소성공", "article": "세칙 제17조제1항"},
+        {"id": "TC-AC-005", "name": "경쟁대량매매 일부취소-수량요건미달 거부", "order_type": "경쟁대량매매", "side": "매수", "session": "장중경쟁대량", "stock_status": "일반종목", "security": "주권", "price": "VWAP", "action": "부분취소(잔량미달)", "expected": "취소거부(수량요건미달)", "article": "세칙 제17조제1항"},
+
+        {"id": "TC-AC-006", "name": "지정가→지정가 가격정정", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "동일유형정정", "expected": "정정성공(시간우선순위상실)", "article": "세칙 제17조제2항제1호"},
+        {"id": "TC-AC-007", "name": "조건부지정가→조건부지정가 가격정정", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "동일유형정정", "expected": "정정성공", "article": "세칙 제17조제2항제1호"},
+        {"id": "TC-AC-008", "name": "최유리지정가→최유리지정가 가격동일 거부", "order_type": "최유리지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "동일가격", "action": "동일유형정정", "expected": "정정거부(가격변동없음)", "article": "세칙 제17조제2항제1호"},
+        {"id": "TC-AC-009", "name": "최우선지정가→최우선지정가 가격다름 허용", "order_type": "최우선지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "동일유형정정", "expected": "정정성공", "article": "세칙 제17조제2항제1호"},
+
+        {"id": "TC-AC-010", "name": "스톱지정가 효력발생전-가격정정", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "스톱지정가정정(발생전)", "expected": "정정성공(가격또는스톱가달라야함)", "article": "세칙 제17조제2항제1호의2"},
+        {"id": "TC-AC-011", "name": "스톱지정가 효력발생전-스톱가정정", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "동일가격/다른스톱가", "action": "스톱지정가정정(발생전)", "expected": "정정성공(스톱가변경)", "article": "세칙 제17조제2항제1호의2"},
+        {"id": "TC-AC-012", "name": "스톱지정가 효력발생후-가격정정", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "스톱지정가정정(발생후)", "expected": "정정성공(가격달라야함)", "article": "세칙 제17조제2항제1호의2"},
+        {"id": "TC-AC-013", "name": "스톱지정가 효력발생후-가격동일 거부", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "동일가격", "action": "스톱지정가정정(발생후)", "expected": "정정거부(가격동일)", "article": "세칙 제17조제2항제1호의2"},
+
+        {"id": "TC-AC-014", "name": "지정가→시장가 교차정정", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "action": "교차유형정정(→시장가)", "expected": "정정성공", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-AC-015", "name": "시장가→지정가 교차정정", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "교차유형정정(→지정가)", "expected": "정정성공", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-AC-016", "name": "지정가→최유리지정가 교차정정", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "최유리가격", "action": "교차유형정정(→최유리)", "expected": "정정성공", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-AC-017", "name": "지정가→최유리 가격동일시 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "동일가격", "action": "교차유형정정(→최유리/가격동일)", "expected": "정정거부(가격동일)", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-AC-018", "name": "지정가→중간가 교차정정 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "action": "교차유형정정(→중간가)", "expected": "정정거부(중간가로정정불가)", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-AC-019", "name": "지정가→스톱지정가 교차정정 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A", "action": "교차유형정정(→스톱지정가)", "expected": "정정거부(스톱지정가로정정불가)", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-AC-020", "name": "시장가→조건부지정가 교차정정", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "교차유형정정(→조건부지정가)", "expected": "정정성공", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-AC-021", "name": "최우선지정가→지정가 교차정정", "order_type": "최우선지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "교차유형정정(→지정가)", "expected": "정정성공", "article": "세칙 제17조제2항제2호"},
+
+        {"id": "TC-AC-022", "name": "정정시 시간우선순위 상실 확인", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "가격정정", "expected": "정정시점기준새순위부여", "article": "세칙 제17조제3항"},
+
+        {"id": "TC-AC-023", "name": "일괄호가취소-알고리즘거래", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "복수호가", "action": "일괄취소", "expected": "해당거래번호전호가취소", "article": "세칙 제17조의2"},
+        {"id": "TC-AC-024", "name": "일괄호가취소-비알고리즘 거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "복수호가", "action": "일괄취소(비알고리즘)", "expected": "취소거부(알고리즘전용)", "article": "세칙 제17조의2"},
+
+        {"id": "TC-AC-025", "name": "접속해제 자동취소-정규시간", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "접속해제", "expected": "사전신청세션호가자동취소", "article": "세칙 제17조의3"},
+        {"id": "TC-AC-026", "name": "매매중단시 취소호가 효력인정", "order_type": "지정가", "side": "매수", "session": "접속매매(중단중)", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "전량취소(중단중)", "expected": "취소성공(중단중에도효력)", "article": "세칙 제13조제1항제1호"},
+        {"id": "TC-AC-027", "name": "매매중단시 신규호가 효력불인정", "order_type": "지정가", "side": "매수", "session": "접속매매(중단중)", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "신규주문(중단중)", "expected": "효력불인정", "article": "세칙 제13조제1항제1호"},
+        {"id": "TC-AC-028", "name": "자기주식매매 가격정정 허용", "order_type": "지정가", "side": "매수(자기주식)", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "규정가격", "action": "가격정정", "expected": "정정성공", "article": "규정 제39조"},
+        {"id": "TC-AC-029", "name": "자기주식매매 장종료30분전이후 호가불가", "order_type": "지정가", "side": "매수(자기주식)", "session": "접속매매(15:00이후)", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "신규주문", "expected": "접수거부(장종료30분전이후불가)", "article": "규정 제39조"}
+      ]
+    },
+
+    {
+      "category_id": "TC-CB",
+      "category_name": "서킷브레이커·사이드카 검증",
+      "description": "시장 전체 안전장치 관련 검증",
+      "test_cases": [
+        {"id": "TC-CB-001", "name": "서킷브레이커 1단계(8%) 발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "20분매매중단→단일가재개", "article": "규정 제25조"},
+        {"id": "TC-CB-002", "name": "서킷브레이커 2단계(15%) 발동", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "20분매매중단→단일가재개", "article": "규정 제25조"},
+        {"id": "TC-CB-003", "name": "서킷브레이커 3단계(20%) 당일종결", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "당일매매종결", "article": "규정 제25조"},
+        {"id": "TC-CB-004", "name": "서킷브레이커 중단중 취소호가 허용", "order_type": "지정가", "side": "매수", "session": "접속매매(CB중단중)", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "전량취소", "expected": "취소성공", "article": "세칙 제13조제1항제1호"},
+        {"id": "TC-CB-005", "name": "사이드카 발동(선물+5%)", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권(프로그램매매)", "price": "적정가격", "condition": "없음", "expected": "5분간프로그램매매효력정지", "article": "규정 제16조"},
+        {"id": "TC-CB-006", "name": "사이드카 장종료40분전 미적용", "order_type": "지정가", "side": "매수", "session": "접속매매(14:50이후)", "stock_status": "일반종목", "security": "주권(프로그램매매)", "price": "적정가격", "condition": "없음", "expected": "사이드카미적용", "article": "규정 제16조"},
+        {"id": "TC-CB-007", "name": "사이드카 당일2회째 미적용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권(프로그램매매)", "price": "적정가격", "condition": "없음", "expected": "사이드카미적용(1회제한)", "article": "규정 제16조"}
+      ]
+    },
+
+    {
+      "category_id": "TC-COMBO",
+      "category_name": "복합 조건 조합 테스트",
+      "description": "여러 규정이 동시에 적용되는 복합 시나리오",
+      "test_cases": [
+        {"id": "TC-COMBO-001", "name": "정리매매+상한가초과+지정가→가격무제한접수", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "일반상한가150%", "condition": "없음", "expected": "접수성공(가격제한없음)", "article": "규정 제20조제3항, 세칙 제56조"},
+        {"id": "TC-COMBO-002", "name": "정리매매+시장가+IOC→이중거부", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "N/A", "condition": "IOC", "expected": "접수거부(시장가불가+IOC불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-COMBO-003", "name": "단기과열+시장가→거부", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(단기과열시장가불가)", "article": "세칙 제56조의2"},
+        {"id": "TC-COMBO-004", "name": "단기과열+조건부지정가→거부", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조제2항제1호자목"},
+        {"id": "TC-COMBO-005", "name": "투자유의ETF+조건부지정가→거부", "order_type": "조건부지정가", "side": "매수", "session": "접속매매", "stock_status": "투자유의종목(ETF/ETN)", "security": "ETF", "price": "적정가격", "condition": "없음", "expected": "접수거부", "article": "세칙 제134조의5"},
+        {"id": "TC-COMBO-006", "name": "투자유의ETF+매수+증거금100%현금", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "투자유의종목(ETF/ETN)", "security": "ETF", "price": "적정가격", "condition": "없음", "expected": "접수성공(현금증거금100%)", "article": "규정 제89조제5항"},
+        {"id": "TC-COMBO-007", "name": "관리종목+경쟁대량매매→거부", "order_type": "경쟁대량매매", "side": "매수", "session": "장중경쟁대량", "stock_status": "관리종목", "security": "주권", "price": "VWAP", "condition": "없음", "expected": "접수거부", "article": "세칙 제14조제2항제3호다목"},
+        {"id": "TC-COMBO-008", "name": "신규상장+IOC시가결정→거부", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "신규상장종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수거부(최초가격결정시IOC불가)", "article": "세칙 제14조제2항"},
+        {"id": "TC-COMBO-009", "name": "신규상장+확대가격(400%)+VI미적용", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "신규상장종목", "security": "주권", "price": "기준가350%", "condition": "없음", "expected": "접수성공(확대가격+VI미적용)", "article": "세칙 제31조제3항, 제41조의2제4항"},
+        {"id": "TC-COMBO-010", "name": "접속매매+동적VI발동중+지정가신규→단일가접수", "order_type": "지정가", "side": "매수", "session": "접속매매(VI발동중)", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "condition": "없음", "expected": "단일가매매방식으로접수", "article": "세칙 제41조의2제3항"},
+        {"id": "TC-COMBO-011", "name": "종가단일가+정적VI축소기준+코스피200(2%)", "order_type": "지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권(코스피200)", "price": "직전단일가+2%", "condition": "없음", "expected": "VI발동(축소기준2%적용)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-COMBO-012", "name": "시간외단일가+동적VI+종가±10%제한", "order_type": "지정가", "side": "매수", "session": "시간외단일가", "stock_status": "일반종목", "security": "주권", "price": "종가+10%(동적VI범위)", "condition": "없음", "expected": "가격제한이내+동적VI적용가능", "article": "규정 제34조의2, 세칙 제41조의2"},
+        {"id": "TC-COMBO-013", "name": "ETF레버리지2배+호가단위5원(2000원이상)+상한가60%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "ETF(레버리지2배)", "price": "기준가+60%(5원단위)", "condition": "없음", "expected": "접수성공(60%상한+5원단위정합)", "article": "규정 제20조, 세칙 제32조"},
+        {"id": "TC-COMBO-014", "name": "공매도과열+차입공매도+IOC→이중거부", "order_type": "지정가", "side": "매도(차입공매도)", "session": "접속매매", "stock_status": "공매도과열종목", "security": "주권", "price": "적정가격", "condition": "IOC", "expected": "접수거부(차입공매도제한)", "article": "세칙 제24조의3"},
+        {"id": "TC-COMBO-015", "name": "중간가+IOC+일방호가없음→효력정지후취소", "order_type": "중간가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "N/A(일방부재)", "condition": "IOC", "expected": "효력정지→IOC의해즉시취소", "article": "세칙 제13조제2항, 제13조제3항"},
+        {"id": "TC-COMBO-016", "name": "스톱지정가+효력미발생+취소요청→취소성공", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "지정가격", "action": "전량취소", "expected": "취소성공(미체결)", "article": "규정 제13조"},
+        {"id": "TC-COMBO-017", "name": "지정가→최우선지정가 정정+가격동일→거부", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주권", "price": "동일가격", "action": "교차정정(→최우선/동가격)", "expected": "정정거부(가격동일)", "article": "세칙 제17조제2항제2호"},
+        {"id": "TC-COMBO-018", "name": "조건부지정가+장종료전환+상한가단일가배분", "order_type": "조건부지정가", "side": "매수", "session": "종가단일가(상한가)", "stock_status": "일반종목", "security": "주권", "price": "적정가격→시장가전환", "condition": "없음", "expected": "시장가전환후상한가동시호가배분적용", "article": "세칙 제15조, 제34조"},
+        {"id": "TC-COMBO-019", "name": "파생만기일+코스피200+종가단일가+정적VI(1%)", "order_type": "지정가", "side": "매수", "session": "종가단일가", "stock_status": "일반종목", "security": "주권(코스피200파생기초자산)", "price": "직전단일가+1%", "condition": "없음", "expected": "VI발동(만기일1%기준)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-COMBO-020", "name": "저유동성+단일가30분+VI비적용+상한가배분", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "저유동성종목", "security": "주권", "price": "상한가", "condition": "없음", "expected": "30분단일가체결+VI미적용+동시호가배분", "article": "세칙 제56조의3, 제41조의2제4항, 제34조"},
+
+        {"id": "TC-COMBO-021", "name": "채무증권+지정가만+시가단일가", "order_type": "지정가", "side": "매수", "session": "시가단일가", "stock_status": "일반종목", "security": "채무증권", "price": "적정가격", "condition": "없음", "expected": "접수성공(지정가만허용)", "article": "세칙 제10조제1항"},
+        {"id": "TC-COMBO-022", "name": "ELW+지정가+5원단위+상한가30%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "주식워런트증권(ELW)", "price": "기준가+30%(5원단위)", "condition": "없음", "expected": "접수성공(5원단위+30%상한)", "article": "세칙 제32조제2항제3호, 규정 제20조"},
+        {"id": "TC-COMBO-023", "name": "CB중단후재개+단일가+VI비적용", "order_type": "지정가", "side": "매수", "session": "접속매매(CB재개후)", "stock_status": "일반종목", "security": "주권", "price": "VI범위가격", "condition": "없음", "expected": "재개단일가+VI미적용", "article": "규정 제25조, 세칙 제41조의2제4항"},
+        {"id": "TC-COMBO-024", "name": "VI단일가중+최유리지정가접수여부", "order_type": "최유리지정가", "side": "매수", "session": "VI단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(단일가시간접속전용불가)", "article": "세칙 제14조"},
+        {"id": "TC-COMBO-025", "name": "VI단일가중+스톱지정가접수여부", "order_type": "스톱지정가", "side": "매수", "session": "VI단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(단일가시간접속전용불가)", "article": "세칙 제14조"},
+        {"id": "TC-COMBO-026", "name": "VI단일가중+중간가호가접수여부", "order_type": "중간가", "side": "매수", "session": "VI단일가", "stock_status": "일반종목", "security": "주권", "price": "N/A", "condition": "없음", "expected": "접수거부(단일가시간접속전용불가)", "article": "세칙 제14조"},
+
+        {"id": "TC-COMBO-027", "name": "외국주식DR+시장가+접속매매", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "외국주식예탁증권", "price": "N/A", "condition": "없음", "expected": "접수성공", "article": "세칙 제10조"},
+        {"id": "TC-COMBO-028", "name": "외국주식DR+정적VI6%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "외국주식예탁증권", "price": "직전단일가+6%", "condition": "없음", "expected": "정적VI발동(6%기준)", "article": "세칙 제41조의2제1항"},
+        {"id": "TC-COMBO-029", "name": "수익증권+지정가만허용+정적VI6%", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "수익증권", "price": "직전단일가+6%", "condition": "없음", "expected": "정적VI발동(6%기준)", "article": "세칙 제41조의2"},
+        {"id": "TC-COMBO-030", "name": "수익증권+시장가→거부", "order_type": "시장가", "side": "매수", "session": "접속매매", "stock_status": "일반종목", "security": "수익증권", "price": "N/A", "condition": "없음", "expected": "접수거부(지정가만허용)", "article": "세칙 제10조제1항"},
+
+        {"id": "TC-COMBO-031", "name": "정리매매+스톱지정가+FOK→삼중거부", "order_type": "스톱지정가", "side": "매수", "session": "접속매매", "stock_status": "정리매매종목", "security": "주권", "price": "N/A", "condition": "FOK", "expected": "접수거부(스톱불가+FOK불가+정리매매)", "article": "세칙 제14조"},
+        {"id": "TC-COMBO-032", "name": "단기과열+최우선지정가+IOC→이중거부", "order_type": "최우선지정가", "side": "매수", "session": "접속매매", "stock_status": "단기과열종목", "security": "주권", "price": "N/A", "condition": "IOC", "expected": "접수거부(최우선IOC불가+단일가시간)", "article": "세칙 제14조제2항"},
+        {"id": "TC-COMBO-033", "name": "종류주식(50만주미만)+VI비적용+상한가단일가배분", "order_type": "지정가", "side": "매수", "session": "접속매매", "stock_status": "종류주식종목", "security": "주권", "price": "상한가", "condition": "없음", "expected": "단일가체결+VI비적용+배분적용", "article": "세칙 제56조의4, 제41조의2제4항"},
+
+        {"id": "TC-COMBO-034", "name": "접속매매+VI발동→정정호가가능여부", "order_type": "지정가", "side": "매수", "session": "접속매매(VI발동후)", "stock_status": "일반종목", "security": "주권", "price": "다른가격", "action": "가격정정", "expected": "단일가전환중정정가능", "article": "세칙 제17조, 제41조의2제3항"},
+        {"id": "TC-COMBO-035", "name": "접속매매+VI발동→취소호가가능여부", "order_type": "지정가", "side": "매수", "session": "접속매매(VI발동후)", "stock_status": "일반종목", "security": "주권", "price": "적정가격", "action": "전량취소", "expected": "단일가전환중취소가능", "article": "세칙 제17조, 세칙 제13조"}
+      ]
+    },
+
+    {
+      "category_id": "TC-SEC",
+      "category_name": "증권종류별 호가유형 허용 매트릭스",
+      "description": "증권종류와 호가유형의 모든 조합 검증",
+      "test_cases": [
+        {"id": "TC-SEC-001", "name": "신주인수권증서+지정가→허용", "order_type": "지정가", "security": "신주인수권증서", "expected": "접수성공", "article": "세칙 제10조"},
+        {"id": "TC-SEC-002", "name": "신주인수권증서+시장가→거부", "order_type": "시장가", "security": "신주인수권증서", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-003", "name": "신주인수권증서+조건부지정가→거부", "order_type": "조건부지정가", "security": "신주인수권증서", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-004", "name": "신주인수권증서+최유리지정가→거부", "order_type": "최유리지정가", "security": "신주인수권증서", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-005", "name": "신주인수권증서+최우선지정가→거부", "order_type": "최우선지정가", "security": "신주인수권증서", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-006", "name": "신주인수권증서+경쟁대량매매→거부", "order_type": "경쟁대량매매", "security": "신주인수권증서", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-007", "name": "신주인수권증서+중간가→거부", "order_type": "중간가", "security": "신주인수권증서", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-008", "name": "신주인수권증서+스톱지정가→거부", "order_type": "스톱지정가", "security": "신주인수권증서", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-009", "name": "신주인수권증권+지정가→허용", "order_type": "지정가", "security": "신주인수권증권", "expected": "접수성공", "article": "세칙 제10조"},
+        {"id": "TC-SEC-010", "name": "신주인수권증권+시장가→거부", "order_type": "시장가", "security": "신주인수권증권", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-011", "name": "ELW+시장가→거부", "order_type": "시장가", "security": "주식워런트증권(ELW)", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-012", "name": "ELW+최유리→거부", "order_type": "최유리지정가", "security": "주식워런트증권(ELW)", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-013", "name": "수익증권+지정가→허용", "order_type": "지정가", "security": "수익증권", "expected": "접수성공", "article": "세칙 제10조"},
+        {"id": "TC-SEC-014", "name": "수익증권+중간가→거부", "order_type": "중간가", "security": "수익증권", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-015", "name": "채무증권+스톱지정가→거부", "order_type": "스톱지정가", "security": "채무증권", "expected": "접수거부", "article": "세칙 제10조"},
+        {"id": "TC-SEC-016", "name": "ETF+모든호가유형 허용", "order_type": "중간가", "security": "ETF", "expected": "접수성공", "article": "세칙 제10조"},
+        {"id": "TC-SEC-017", "name": "ETN+모든호가유형 허용", "order_type": "스톱지정가", "security": "ETN", "expected": "접수성공", "article": "세칙 제10조"},
+        {"id": "TC-SEC-018", "name": "외국주식DR+모든호가유형 허용", "order_type": "중간가", "security": "외국주식예탁증권", "expected": "접수성공", "article": "세칙 제10조"}
+      ]
+    }
+  ]
+}
