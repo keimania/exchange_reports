@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Ocean ATS - 24시간 거래 체제 분석 리포트</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1a1a2e; --sidebar-bg: #f8f9fa; --border: #dee2e6;
+            --accent: #0066cc; --accent-light: #e7f1ff; --table-header: #0066cc;
+            --table-header-text: #ffffff; --table-border: #d0d7de; --code-bg: #f6f8fa;
+            --highlight: #fff3cd; --hover-bg: #e9ecef;
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f1a; --text: #d8d8e8; --sidebar-bg: #161625; --border: #2a2a45;
+            --accent: #4da6ff; --accent-light: #1a2a4a; --table-header: #1e3a5f;
+            --table-header-text: #e0e8f0; --table-border: #2a3a4a; --code-bg: #1e2a3a;
+            --highlight: #3a3520; --hover-bg: #1e1e35;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.75;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            overflow-y: auto; z-index: 100; transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-280px); }
+        .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 13px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-header select {
+            width: 100%; margin-top: 8px; padding: 7px 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+        }
+        .toc { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .toc a {
+            display: block; padding: 5px 16px; color: var(--text); text-decoration: none;
+            font-size: 12.5px; border-left: 3px solid transparent; transition: all 0.15s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toc a:hover { background: var(--hover-bg); }
+        .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: var(--accent-light); }
+        .toc a.depth-3 { padding-left: 30px; font-size: 11.5px; opacity: 0.85; }
+        .toc a.depth-4 { padding-left: 44px; font-size: 11px; opacity: 0.7; }
+
+        /* Top bar */
+        .topbar {
+            position: fixed; top: 0; right: 0; left: 280px; height: 48px;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 90;
+            transition: left 0.25s ease;
+        }
+        .topbar.expanded { left: 0; }
+        .topbar button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--sidebar-bg); color: var(--text); cursor: pointer; font-size: 13px;
+            white-space: nowrap;
+        }
+        .topbar button:hover { background: var(--hover-bg); }
+        .topbar input {
+            flex: 1; max-width: 350px; padding: 6px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--sidebar-bg); color: var(--text);
+        }
+        .search-count { font-size: 11px; color: var(--accent); min-width: 50px; }
+
+        /* Main content */
+        main {
+            margin-left: 280px; padding: 68px 50px 60px;
+            transition: margin-left 0.25s ease;
+        }
+        main.expanded { margin-left: 0; }
+        h1 { font-size: 26px; margin: 25px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+        h2 { font-size: 20px; margin: 28px 0 14px; color: var(--accent); }
+        h3 { font-size: 16px; margin: 22px 0 10px; }
+        h4 { font-size: 14px; margin: 18px 0 8px; }
+        p { margin: 8px 0; }
+        a { color: var(--accent); }
+
+        /* Tables - responsive */
+        .table-wrap {
+            overflow-x: auto; margin: 14px 0; border-radius: 8px;
+            border: 1px solid var(--table-border);
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        table { border-collapse: collapse; font-size: 12.5px; width: max-content; min-width: 100%; }
+        th { background: var(--table-header); color: var(--table-header-text); font-weight: 600;
+              padding: 9px 10px; text-align: left; border: 1px solid var(--table-border);
+              position: sticky; top: 0; white-space: nowrap; }
+        td { padding: 8px 10px; border: 1px solid var(--table-border); word-break: keep-all; }
+        tr:nth-child(even) { background: var(--sidebar-bg); }
+        tr:hover { background: var(--accent-light); }
+        /* First column sticky on wide tables */
+        th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: inherit; }
+        th:first-child { z-index: 2; }
+        tr:nth-child(odd) td:first-child { background: var(--bg); }
+        tr:nth-child(even) td:first-child { background: var(--sidebar-bg); }
+        tr:hover td:first-child { background: var(--accent-light); }
+        th:first-child { background: var(--table-header); }
+
+        code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        blockquote {
+            border-left: 4px solid var(--accent); padding: 10px 18px; margin: 14px 0;
+            background: var(--accent-light); border-radius: 0 8px 8px 0; font-size: 13px;
+        }
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 25px 0; }
+        mark { background: #ffe066; padding: 0 3px; border-radius: 2px; }
+        strong { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.mobile-show { transform: translateX(0); }
+            main { margin-left: 0 !important; padding: 60px 12px 40px; }
+            .topbar { left: 0 !important; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 7px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 17px; }
+            h3 { font-size: 14px; }
+        }
+        @media (max-width: 480px) {
+            main { padding: 56px 8px 30px; }
+            table { font-size: 10px; }
+            th, td { padding: 5px 5px; }
+            .topbar input { max-width: 150px; }
+        }
+        @media print {
+            .sidebar, .topbar { display: none !important; }
+            main { margin: 0 !important; padding: 10px !important; max-width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>24H Trading Report</h2>
+            <select onchange="if(this.value)location.href=this.value">
+                <option value="00_종합비교_요약.html">&#128202; 종합 비교 요약</option>
+<option value="01_KRX_한국거래소.html">&#127472;&#127479; KRX 한국거래소</option>
+<option value="02_NYSE_뉴욕증권거래소.html">&#127482;&#127480; NYSE 뉴욕증권거래소</option>
+<option value="03_NASDAQ_나스닥.html">&#127482;&#127480; NASDAQ 나스닥</option>
+<option value="04_24X_Exchange.html">&#127482;&#127480; 24X Exchange</option>
+<option value="05_CME_Group.html">&#127482;&#127480; CME Group</option>
+<option value="06_DTCC_청산결제.html">&#127482;&#127480; DTCC 청산결제</option>
+<option value="07_LSE_런던증권거래소.html">&#127466;&#127482; LSE 런던증권거래소</option>
+<option value="08_JPX_도쿄증권거래소.html">&#127471;&#127477; JPX 도쿄증권거래소</option>
+<option value="09_Blue_Ocean_ATS.html" selected>&#127482;&#127480; Blue Ocean ATS</option>
+<option value="10_유럽거래소_Eurex_Euronext.html">&#127466;&#127482; 유럽거래소 Eurex/Euronext</option>
+            </select>
+        </div>
+        <div class="toc" id="toc"></div>
+    </nav>
+
+    <div class="topbar" id="topbar">
+        <button id="toggleBtn" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="doSearch(this.value)">
+        <span class="search-count" id="searchCount"></span>
+        <button onclick="toggleTheme()" title="Toggle dark mode">&#9681;</button>
+        <button onclick="window.print()" title="Print">&#128424;</button>
+    </div>
+
+    <main id="main">
+        <h1 id="09-blue-ocean-ats-미국-야간-대체거래시스템">09. Blue Ocean ATS — 미국 야간 대체거래시스템</h1>
+<h2 id="1-개요">1. 개요</h2>
+<p>Blue Ocean ATS는 미국 최초의 야간(overnight) 대체거래시스템(Alternative Trading System)으로, 미국 정규 거래 시간 이후인 동부시간 오후 8시부터 오전 4시까지 미국 NMS(National Market System) 주식의 거래를 가능하게 한다. 2019년 설립된 Blue Ocean Technologies LLC가 운영하며, 미국 주식 거래를 글로벌 거래로 전환하겠다는 미션 아래 아시아태평양, 중동 등 다양한 시간대 투자자들에게 미국 주식 접근성을 제공하고 있다.</p>
+<hr />
+<h2 id="2-blue-ocean-technologies-llc-회사-개요">2. Blue Ocean Technologies LLC 회사 개요</h2>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>회사명</td>
+<td>Blue Ocean Technologies LLC (BOT)</td>
+</tr>
+<tr>
+<td>설립</td>
+<td>2019년</td>
+</tr>
+<tr>
+<td>본사</td>
+<td>미국</td>
+</tr>
+<tr>
+<td>CEO</td>
+<td>Brian Hyndman (2022년 5월 취임)</td>
+</tr>
+<tr>
+<td>핵심 서비스</td>
+<td>Blue Ocean ATS (야간 대체거래시스템)</td>
+</tr>
+<tr>
+<td>규제 등록</td>
+<td>SEC 등록 ATS, FINRA 회원</td>
+</tr>
+<tr>
+<td>미션</td>
+<td>미국 주식 거래를 글로벌 24시간 거래로 전환</td>
+</tr>
+</tbody>
+</table>
+<h3 id="설립-배경">설립 배경</h3>
+<p>Blue Ocean Technologies는 미국 정규 거래 시간(09:30~16:00 ET) 이후 시간대에 거래 인프라가 부재했던 공백을 메우기 위해 설립되었다. 특히 아시아태평양 지역의 현지 업무 시간(미국 야간)에 미국 주식을 거래할 수 있는 투명한 전자 거래 플랫폼이 필요하다는 인식에서 출발했다.</p>
+<hr />
+<h2 id="3-운영-시간-및-거래-구조">3. 운영 시간 및 거래 구조</h2>
+<h3 id="31-blue-ocean-session">3.1 Blue Ocean Session</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>거래 시간</td>
+<td><strong>20:00 ~ 04:00 ET</strong> (동부시간)</td>
+</tr>
+<tr>
+<td>운영 요일</td>
+<td><strong>일요일 ~ 목요일</strong> (주 5일)</td>
+</tr>
+<tr>
+<td>거래 대상</td>
+<td>미국 NMS 상장 주식 전체</td>
+</tr>
+<tr>
+<td>세션명</td>
+<td>Blue Ocean Session</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-미국-주식-거래-시간대별-배치">3.2 미국 주식 거래 시간대별 배치</h3>
+<table>
+<thead>
+<tr>
+<th>시간대 (ET)</th>
+<th>세션</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>04:00 ~ 09:30</td>
+<td>Pre-Market (프리마켓)</td>
+</tr>
+<tr>
+<td>09:30 ~ 16:00</td>
+<td>Regular Trading Hours (정규 거래)</td>
+</tr>
+<tr>
+<td>16:00 ~ 20:00</td>
+<td>After-Hours (애프터아워스)</td>
+</tr>
+<tr>
+<td><strong>20:00 ~ 04:00</strong></td>
+<td><strong>Blue Ocean Session (야간)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>이를 통해 미국 주식은 사실상 <strong>24시간 연속 거래</strong>가 가능해졌다. 프리마켓(04:00)에서 Blue Ocean Session(04:00)까지 하루 전체가 커버된다.</p>
+<h3 id="33-아시아태평양-현지-시간-환산">3.3 아시아태평양 현지 시간 환산</h3>
+<table>
+<thead>
+<tr>
+<th>지역</th>
+<th>Blue Ocean Session 시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>한국 (KST)</td>
+<td>09:00 ~ 17:00 (겨울) / 10:00 ~ 18:00 (여름)</td>
+</tr>
+<tr>
+<td>일본 (JST)</td>
+<td>09:00 ~ 17:00 (겨울) / 10:00 ~ 18:00 (여름)</td>
+</tr>
+<tr>
+<td>홍콩 (HKT)</td>
+<td>08:00 ~ 16:00 (겨울) / 09:00 ~ 17:00 (여름)</td>
+</tr>
+<tr>
+<td>시드니 (AEDT)</td>
+<td>11:00 ~ 19:00 (겨울) / 12:00 ~ 20:00 (여름)</td>
+</tr>
+</tbody>
+</table>
+<p>아시아태평양 투자자들에게 Blue Ocean Session은 정확히 현지 업무 시간대에 해당하여, 미국 주식을 "낮 시간"에 거래할 수 있다.</p>
+<hr />
+<h2 id="4-거래-규칙-및-메커니즘">4. 거래 규칙 및 메커니즘</h2>
+<h3 id="41-지정가-주문-전용-limit-order-only">4.1 지정가 주문 전용 (Limit Order Only)</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주문 유형</td>
+<td><strong>지정가(Limit) 주문만 허용</strong></td>
+</tr>
+<tr>
+<td>시장가 주문</td>
+<td>불가</td>
+</tr>
+<tr>
+<td>이유</td>
+<td>야간 시간대 낮은 유동성에서 투자자 보호</td>
+</tr>
+<tr>
+<td>가격 범위 제한</td>
+<td>기준 가격 대비 <strong>±20% 가격 밴드</strong> 적용</td>
+</tr>
+</tbody>
+</table>
+<p>시장가 주문을 금지하고 지정가 주문만 허용함으로써, 유동성이 상대적으로 얇은 야간 시간대에 급격한 가격 변동으로부터 투자자를 보호한다.</p>
+<h3 id="42-매칭-시스템-boats">4.2 매칭 시스템 (BOATS)</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>시스템명</td>
+<td>BOATS (Blue Ocean Alternative Trading System)</td>
+</tr>
+<tr>
+<td>매칭 방식</td>
+<td>가격-시간 우선 (Price-Time Priority)</td>
+</tr>
+<tr>
+<td>가격 밴드</td>
+<td>기준가 대비 ±20%</td>
+</tr>
+<tr>
+<td>대상 종목</td>
+<td>미국 NMS 주식 전체</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-청산-및-결제">5. 청산 및 결제</h2>
+<h3 id="51-청산결제-인프라">5.1 청산/결제 인프라</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>청산 기관</td>
+<td><strong>NSCC (National Securities Clearing Corporation)</strong></td>
+</tr>
+<tr>
+<td>결제 기관</td>
+<td><strong>DTCC (Depository Trust &amp; Clearing Corporation)</strong></td>
+</tr>
+<tr>
+<td>결제 주기</td>
+<td>T+1 (미국 표준)</td>
+</tr>
+<tr>
+<td>특징</td>
+<td>미국 정규 거래소와 동일한 청산/결제 인프라 사용</td>
+</tr>
+</tbody>
+</table>
+<p>Blue Ocean ATS의 거래는 NSCC/DTCC를 통해 청산 및 결제되므로, 정규 거래소(NYSE, Nasdaq) 거래와 동일한 수준의 결제 안전성을 보장한다. 이는 ATS의 신뢰성을 담보하는 핵심 요소이다.</p>
+<hr />
+<h2 id="6-데이터-유통-및-기술-파트너십">6. 데이터 유통 및 기술 파트너십</h2>
+<h3 id="61-bloomberg-terminal-통합-2025년-9월">6.1 Bloomberg Terminal 통합 (2025년 9월)</h3>
+<p>2025년 9월 29일, Blue Ocean Technologies는 Bloomberg과 협업하여 실시간 시장 데이터를 Bloomberg Terminal에서 제공하기 시작했다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>거래소 코드</td>
+<td><strong>"OC"</strong> (Bloomberg Terminal)</td>
+</tr>
+<tr>
+<td>제공 데이터</td>
+<td>Level 1 (Top-of-Book) + Level 2 (Market Depth)</td>
+</tr>
+<tr>
+<td>유통 채널</td>
+<td>Bloomberg Terminal, B-PIPE (실시간 데이터 피드), Bloomberg Data License</td>
+</tr>
+<tr>
+<td>구독자</td>
+<td>실시간 데이터, 비구독자는 15분 지연 데이터</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-nyse-cloud-streaming-통합-2025년-10월">6.2 NYSE Cloud Streaming 통합 (2025년 10월)</h3>
+<p>2025년 10월 7일, Blue Ocean Technologies의 실시간 야간 데이터가 NYSE Cloud Streaming에 통합되었다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>데이터 피드</td>
+<td>BOT Top of Book + Last Sale 실시간 데이터</td>
+</tr>
+<tr>
+<td>유통 채널</td>
+<td>NYSE Cloud Streaming (NYSE BQT 피드와 병행)</td>
+</tr>
+<tr>
+<td>의의</td>
+<td>NYSE라는 전통적 거래소 인프라와의 연결</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-pyth-network-파트너십">6.3 Pyth Network 파트너십</h3>
+<p>Blue Ocean ATS는 2025년 9월 Pyth Network에 마켓 데이터 제공자로 합류했다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>파트너</td>
+<td>Pyth Network (온체인 오라클)</td>
+</tr>
+<tr>
+<td>독점 기간</td>
+<td>2026년 말까지</td>
+</tr>
+<tr>
+<td>데이터</td>
+<td>야간 미국 주식 거래 데이터를 온체인으로 퍼블리싱</td>
+</tr>
+<tr>
+<td>의의</td>
+<td>DeFi/블록체인 생태계와 전통 금융시장의 연결</td>
+</tr>
+</tbody>
+</table>
+<p>Pyth Network는 Blue Ocean ATS의 야간 미국 주식 데이터를 온체인에 퍼블리싱하는 유일한 데이터 배포자로, 2026년 말까지 독점 파트너십을 유지한다.</p>
+<h3 id="64-기타-데이터-유통-파트너">6.4 기타 데이터 유통 파트너</h3>
+<table>
+<thead>
+<tr>
+<th>파트너</th>
+<th>유형</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ICE (Intercontinental Exchange)</td>
+<td>데이터 벤더</td>
+</tr>
+<tr>
+<td>LSEG (Refinitiv)</td>
+<td>데이터 벤더</td>
+</tr>
+<tr>
+<td>TradingView</td>
+<td>차트/데이터 플랫폼</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-거래량-및-성장-지표">7. 거래량 및 성장 지표</h2>
+<h3 id="71-주요-거래량-지표">7.1 주요 거래량 지표</h3>
+<table>
+<thead>
+<tr>
+<th>지표</th>
+<th>수치</th>
+<th>시점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>일평균 명목 거래대금</td>
+<td><strong>$1.2B+ (약 1.6조 원)</strong></td>
+<td>2025년 8월</td>
+</tr>
+<tr>
+<td>역대 최고 일일 거래대금</td>
+<td>기록 갱신</td>
+<td>2025년 4월 7일</td>
+</tr>
+<tr>
+<td>야간 보고 거래대금</td>
+<td>약 $1B/야간</td>
+<td>2025년 기준</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-성장-추이">7.2 성장 추이</h3>
+<p>Blue Ocean ATS는 2019년 설립 이후 지속적으로 거래량이 증가하고 있으며, 특히 2024~2025년 글로벌 야간 거래 수요 급증과 함께 폭발적 성장세를 보이고 있다. 2025년 8월 기준 일평균 $1.2B 이상의 명목 거래대금을 기록했다.</p>
+<hr />
+<h2 id="8-브로커-파트너십">8. 브로커 파트너십</h2>
+<h3 id="81-주요-브로커기관-파트너">8.1 주요 브로커/기관 파트너</h3>
+<table>
+<thead>
+<tr>
+<th>파트너</th>
+<th>유형</th>
+<th>파트너십 시기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Robinhood</strong></td>
+<td>리테일 브로커</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Charles Schwab</strong></td>
+<td>리테일/기관 브로커</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Interactive Brokers</strong></td>
+<td>글로벌 브로커</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>삼성증권 (Samsung Securities)</strong></td>
+<td>한국 증권사</td>
+<td><strong>2022년 2월</strong></td>
+</tr>
+<tr>
+<td><strong>Virtu Financial</strong></td>
+<td>마켓 메이커/트레이딩 펌</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Jane Street</strong></td>
+<td>퀀트 트레이딩 펌</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Score Priority Corp.</strong></td>
+<td>브로커</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Firstrade</strong></td>
+<td>리테일 브로커</td>
+<td>2025년 2월</td>
+</tr>
+<tr>
+<td><strong>Clear Street</strong></td>
+<td>프라임 브로커</td>
+<td>2025년 3월</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-기술인프라-파트너">8.2 기술/인프라 파트너</h3>
+<table>
+<thead>
+<tr>
+<th>파트너</th>
+<th>유형</th>
+<th>통합 시기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FlexTrade</td>
+<td>OMS/EMS 벤더</td>
+<td>—</td>
+</tr>
+<tr>
+<td>LiquidityBook</td>
+<td>거래 기술 플랫폼</td>
+<td>2025년</td>
+</tr>
+<tr>
+<td>Broadridge (NYFIX)</td>
+<td>주문 라우팅 네트워크</td>
+<td>2022년</td>
+</tr>
+<tr>
+<td>GTN</td>
+<td>글로벌 핀테크</td>
+<td>2024년 3월</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83-삼성증권-파트너십-상세">8.3 삼성증권 파트너십 상세</h3>
+<p>2022년 2월 7일, Blue Ocean Technologies와 삼성증권은 MOU를 체결하여 전략적 파트너십을 구축했다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>서비스 개시</td>
+<td>2022년 2월 6일 (미국 ET 기준)</td>
+</tr>
+<tr>
+<td>서비스명</td>
+<td>미국 주식 주간 거래 서비스</td>
+</tr>
+<tr>
+<td>한국 거래 시간</td>
+<td>10:00 ~ 18:00 KST</td>
+</tr>
+<tr>
+<td>역사적 의의</td>
+<td><strong>세계 최초로 한국 현지 업무 시간에 미국 주식 거래 개시</strong></td>
+</tr>
+<tr>
+<td>일일 거래 가능 시간</td>
+<td>20시간 30분 (애프터아워스 종료 3시간 후 ~ 프리마켓 시작 30분 전)</td>
+</tr>
+</tbody>
+</table>
+<p>삼성증권은 Blue Ocean ATS를 통해 한국에서 유일하게 미국 주식의 "주간 거래"를 제공하는 증권사가 되었으며, 이는 한국 투자자들의 미국 주식 접근성을 혁신적으로 개선했다.</p>
+<hr />
+<h2 id="9-krx-및-한국-시장과의-비교-및-시사점">9. KRX 및 한국 시장과의 비교 및 시사점</h2>
+<h3 id="91-blue-ocean-ats-vs-nextrade-비교">9.1 Blue Ocean ATS vs Nextrade 비교</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>Blue Ocean ATS</th>
+<th>Nextrade (한국)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>유형</td>
+<td>미국 ATS (야간 전문)</td>
+<td>한국 ATS (시간외 거래 포함)</td>
+</tr>
+<tr>
+<td>거래 대상</td>
+<td>미국 NMS 주식</td>
+<td>한국 상장 주식</td>
+</tr>
+<tr>
+<td>시간외 거래 시간</td>
+<td>20:00~04:00 ET (8시간)</td>
+<td>08:00~08:50 + 15:30~20:00 (5.3시간)</td>
+</tr>
+<tr>
+<td>주문 유형</td>
+<td>지정가 전용</td>
+<td>지정가 전용 (시간외)</td>
+</tr>
+<tr>
+<td>청산</td>
+<td>NSCC/DTCC</td>
+<td>한국예탁결제원</td>
+</tr>
+<tr>
+<td>시장 점유율</td>
+<td>미국 야간 거래의 지배적 점유율</td>
+<td>약 30%+ (2025년 7월)</td>
+</tr>
+<tr>
+<td>출범</td>
+<td>2019년</td>
+<td>2025년 3월</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-한국-투자자에-대한-영향">9.2 한국 투자자에 대한 영향</h3>
+<table>
+<thead>
+<tr>
+<th>영향 영역</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>미국 주식 접근성</td>
+<td>삼성증권 등을 통해 한국 업무 시간에 미국 주식 거래 가능</td>
+</tr>
+<tr>
+<td>리스크 관리</td>
+<td>미국 장 마감 후 발생하는 이벤트에 즉각 대응 가능</td>
+</tr>
+<tr>
+<td>글로벌 포트폴리오</td>
+<td>24시간에 가까운 미국 주식 거래로 글로벌 분산투자 편의성 향상</td>
+</tr>
+<tr>
+<td>시차 문제 해소</td>
+<td>한국 투자자의 미국 주식 거래 시 야간 거래 부담 대폭 감소</td>
+</tr>
+</tbody>
+</table>
+<h3 id="93-krx에-대한-시사점">9.3 KRX에 대한 시사점</h3>
+<ol>
+<li>
+<p><strong>ATS 시간외 거래의 글로벌 추세</strong>: Blue Ocean ATS의 성공은 야간/시간외 거래에 대한 글로벌 수요가 실재함을 입증한다. KRX도 Nextrade와의 경쟁에서 시간외 거래 확대가 불가피하다.</p>
+</li>
+<li>
+<p><strong>지정가 전용 정책의 타당성</strong>: Blue Ocean ATS의 지정가 전용 정책은 유동성이 낮은 시간대의 투자자 보호에 효과적임이 검증되었다. KRX/Nextrade의 시간외 거래에서도 유사한 투자자 보호 장치가 필요하다.</p>
+</li>
+<li>
+<p><strong>데이터 유통의 중요성</strong>: Bloomberg, NYSE Cloud Streaming, Pyth Network 등 다양한 채널을 통한 데이터 유통은 시장의 투명성과 신뢰성을 높인다. 한국 시장도 시간외 거래 데이터의 글로벌 유통을 확대할 필요가 있다.</p>
+</li>
+<li>
+<p><strong>글로벌 브로커 네트워크</strong>: Robinhood, Schwab, Interactive Brokers 등 글로벌 브로커와의 파트너십은 유동성의 핵심이다. 한국 시장의 해외 투자자 접근성 확대에도 유사한 전략이 필요하다.</p>
+</li>
+<li>
+<p><strong>블록체인/DeFi 연결</strong>: Pyth Network와의 파트너십은 전통 금융과 분산 금융의 융합이라는 새로운 패러다임을 보여준다. 한국 시장도 블록체인 기반 데이터 유통 및 토큰화된 증권(STO) 인프라 구축을 가속화해야 한다.</p>
+</li>
+<li>
+<p><strong>삼성증권의 선제적 행보</strong>: 삼성증권이 Blue Ocean ATS의 첫 해외 파트너가 된 것은 한국 증권업의 글로벌 혁신 역량을 보여준다. 이러한 파트너십 모델을 다른 한국 증권사들도 확대 적용할 수 있다.</p>
+</li>
+</ol>
+<hr />
+<h2 id="10-참고-자료">10. 참고 자료</h2>
+<ul>
+<li>Blue Ocean Technologies 공식: <a href="https://blueocean-tech.io/">blueocean-tech.io/</a></li>
+<li>Blue Ocean ATS 개요: <a href="https://blueocean-tech.io/blue-ocean-ats/">blueocean-tech.io/blue-ocean-ats/</a></li>
+<li>Blue Ocean ATS FAQ: <a href="https://blueocean-tech.io/faq/">blueocean-tech.io/faq/</a></li>
+<li>Bloomberg 통합 발표: <a href="https://blueocean-tech.io/2025/09/30/pr-newswire-blue-ocean-technologies-real-time-overnight-trading-data-now-available-via-bloomberg-solutions/">blueocean-tech.io/2025/09/30/pr-newswire-blue-o...</a></li>
+<li>NYSE Cloud Streaming 통합: <a href="https://blueocean-tech.io/2025/10/07/pr-newswire-blue-ocean-technologies-integrates-real-time-overnight-data/">blueocean-tech.io/2025/10/07/pr-newswire-blue-o...</a></li>
+<li>Pyth Network 파트너십: <a href="https://www.pyth.network/blog/blue-ocean-ats-joins-pyth-network-institutional-overnight-hours-us-equity-data">pyth.network/blog/blue-ocean-ats-joins-pyt...</a></li>
+<li>삼성증권 파트너십: <a href="https://blueocean-tech.io/2022/02/08/partnership-with-samsung-securities-offering-us-equity-trading-during-asia-pacific-business-hours/">blueocean-tech.io/2022/02/08/partnership-with-s...</a></li>
+<li>Firstrade 파트너십: <a href="https://www.firstrade.com/press/20250212">firstrade.com/press/20250212</a></li>
+<li>MarketsWiki 프로필: <a href="https://www.marketswiki.com/wiki/Blue_Ocean_ATS">marketswiki.com/wiki/Blue_Ocean_ATS</a></li>
+<li>LiquidityBook 통합 (The TRADE): <a href="https://www.thetradenews.com/liquiditybook-leverages-blue-ocean-ats-to-extend-overnight-trading/">thetradenews.com/liquiditybook-leverages-blue-...</a></li>
+<li>NYSE Cloud Streaming (Yahoo Finance): <a href="https://finance.yahoo.com/news/blue-ocean-technologies-integrates-real-123000633.html">finance.yahoo.com/news/blue-ocean-technologies-...</a></li>
+<li>Bloomberg 통합 (PR Newswire): <a href="https://www.prnewswire.com/news-releases/blue-ocean-technologies-real-time-overnight-trading-data-now-available-via-bloomberg-solutions-302569666.html">prnewswire.com/news-releases/blue-ocean-tech...</a></li>
+</ul>
+    </main>
+
+    <script>
+    (function() {
+        // --- Wrap tables ---
+        document.querySelectorAll('main table').forEach(t => {
+            if (!t.parentElement.classList.contains('table-wrap')) {
+                const w = document.createElement('div');
+                w.className = 'table-wrap';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            }
+        });
+
+        // --- Build TOC ---
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h1, main h2, main h3');
+        const tocLinks = [];
+        headings.forEach(h => {
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent;
+            a.dataset.id = h.id;
+            const depth = parseInt(h.tagName[1]);
+            if (depth >= 3) a.classList.add('depth-' + depth);
+            toc.appendChild(a);
+            tocLinks.push({ el: h, link: a });
+        });
+
+        // --- Scroll spy ---
+        let ticking = false;
+        function updateActive() {
+            const scrollY = window.scrollY + 100;
+            let current = tocLinks[0];
+            for (const item of tocLinks) {
+                if (item.el.offsetTop <= scrollY) current = item;
+            }
+            tocLinks.forEach(i => i.link.classList.remove('active'));
+            if (current) {
+                current.link.classList.add('active');
+                current.link.scrollIntoView({ block: 'nearest' });
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+        });
+        updateActive();
+
+        // --- Smooth scroll for TOC links ---
+        toc.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', e.target.href);
+            }
+        });
+
+        // --- Smooth scroll for in-content anchor links ---
+        document.querySelectorAll('main a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = decodeURIComponent(a.getAttribute('href').slice(1));
+                const target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    })();
+
+    // --- Sidebar toggle ---
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const tb = document.getElementById('topbar');
+        sb.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        tb.classList.toggle('expanded');
+    }
+
+    // --- Search ---
+    let searchTimeout;
+    function doSearch(q) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => _search(q), 200);
+    }
+    function _search(query) {
+        const main = document.getElementById('main');
+        // Remove old marks
+        main.querySelectorAll('mark[data-search]').forEach(m => {
+            const parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+        });
+        const countEl = document.getElementById('searchCount');
+        if (!query || query.length < 2) { countEl.textContent = ''; return; }
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+                regex.test(walker.currentNode.textContent)) {
+                nodes.push(walker.currentNode);
+                regex.lastIndex = 0;
+            }
+        }
+        let count = 0;
+        nodes.forEach(node => {
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            regex.lastIndex = 0;
+            let m;
+            while ((m = regex.exec(node.textContent)) !== null) {
+                frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+                const mark = document.createElement('mark');
+                mark.setAttribute('data-search', '');
+                mark.textContent = m[0];
+                frag.appendChild(mark);
+                last = regex.lastIndex;
+                count++;
+            }
+            frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+            node.parentNode.replaceChild(frag, node);
+        });
+        countEl.textContent = count > 0 ? count + '건' : '0건';
+        const first = main.querySelector('mark[data-search]');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- Theme ---
+    function toggleTheme() {
+        const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        document.body.dataset.theme = d;
+        try { localStorage.setItem('theme', d); } catch(e) {}
+    }
+    try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>

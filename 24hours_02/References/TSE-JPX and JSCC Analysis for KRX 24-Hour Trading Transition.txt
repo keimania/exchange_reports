@@ -1,0 +1,960 @@
+TSE/JPX AND JSCC ANALYSIS FOR KRX 24-HOUR TRADING TRANSITION
+Comprehensive Technical and Operational Research
+March 2026
+
+================================================================================
+PART I: TOKYO STOCK EXCHANGE (TSE) / JAPAN EXCHANGE GROUP (JPX)
+================================================================================
+
+1. CURRENT TRADING HOURS
+--------------------------------------------------------------------------------
+
+Since November 5, 2024, the TSE cash equity market operates under the following
+schedule (all times JST):
+
+  Pre-Opening Order Acceptance:  08:00 - 09:00
+  Morning Session (Zenba):      09:00 - 11:30 (Zaraba continuous trading)
+  Lunch Break:                   11:30 - 12:30
+  Afternoon Session (Goba):     12:30 - 15:25 (Zaraba continuous trading)
+  Pre-Closing Session:          15:25 - 15:30 (order acceptance only, no execution)
+  Closing Auction (Itayose):    15:30 (single-price determination)
+
+  Total Continuous Trading Time: 5 hours 25 minutes per day
+
+KEY 2024 CHANGE: On November 5, 2024, the TSE extended afternoon trading by 30
+minutes (from the previous close at 15:00 to 15:25) and introduced a 5-minute
+Closing Auction session. This was the first extension of market close in 70 years
+(since 1954) and the first trading hours change in 13 years.
+
+CLOSING AUCTION MECHANISM (introduced Nov 5, 2024):
+  - At 15:25, Zaraba (continuous) trading halts
+  - 15:25-15:30: Pre-closing session where only orders are accepted; no matching
+    occurs. Order book information is disseminated but prices remain unchanged.
+  - Investors can place new orders, modify existing orders, or cancel orders
+  - At 15:30: Itayose (call auction) determines the closing price
+  - Closing price must fall within a range of twice the "renewal price interval"
+    from the last traded price at 15:25
+  - Example: For a stock at JPY 100 with a 5-yen interval, closing price range
+    would be JPY 90-110
+  - "Funari" orders (limit orders that convert to market orders for the closing
+    auction if unfilled) and "on-close" orders are automatically registered
+
+RATIONALE: Passive index-tracking now represents approximately 15% of daily
+volume on TSE, creating heavy demand concentration at market close. The closing
+auction improves transparency and fairness of closing price formation.
+
+OSAKA EXCHANGE (OSE) CORRESPONDING CHANGES:
+  - Intraday derivatives closing shifted to 15:45
+  - Night session opening shifted to 17:00
+
+2. ARROWHEAD MATCHING ENGINE
+--------------------------------------------------------------------------------
+
+ARROWHEAD 4.0 (Fourth Generation) - Launched November 5, 2024
+
+Developer: Fujitsu Limited (partnership since original 2010 system)
+Platform: 462 x Fujitsu PRIMERGY RX2540 M6 servers (x86 architecture)
+Software: Fujitsu Software Primesoft Server (ultra-high-speed in-memory
+          data management)
+
+VERSION HISTORY:
+  arrowhead 1.0  January 4, 2010    - Order response: ~5ms (order execution),
+                                       ~3ms (information distribution)
+                                     - In-memory processing at microsecond level
+                                     - Replaced previous system with 200x speed
+                                       improvement
+  arrowhead 2.0  September 2015     - Performance improvements
+  arrowhead 3.0  November 5, 2019   - Full system overhaul
+                                     - Enhanced performance and functionality
+  arrowhead 4.0  November 5, 2024   - Latest generation
+                                     - Closing auction capability
+                                     - Extended trading hours support
+                                     - Bulk order cancellation function
+                                     - Per-order market data distribution
+
+TECHNICAL SPECIFICATIONS (arrowhead 4.0):
+  - Order Processing: Microsecond-level data access via in-memory architecture
+  - Architecture: Triple-redundant (3-node) synchronized data servers for
+    processing orders, executions, and order book information
+  - Latency: Sub-millisecond order processing. Historical data suggests order
+    processing in the range of ~200 microseconds for individual orders.
+    arrowhead 4.0 achieves "ultra-high-speed data access at the microsecond
+    (one millionth of a second) level"
+  - Throughput: Capacity and throughput improved over arrowhead 3.0 through
+    hardware upgrade to 462 PRIMERGY RX2540 M6 servers. System capacity is
+    "flexibly and swiftly scalable to accommodate an increase in the number
+    of orders"
+  - Reliability: Enhanced resilience through hardware upgrade and middleware
+    incorporating high-speed technologies
+  - Operating System: Red Hat Enterprise Linux (historically)
+
+NEW FEATURES IN 4.0:
+  1. Closing Auction session support
+  2. Extended trading hours (30 min extension)
+  3. Per-order market data distribution service (granular market information)
+  4. Bulk order cancellation function (institutional investor feature)
+  5. Improved system capacity, throughput, and resilience
+
+COMPARISON TO OTHER EXCHANGES:
+  - NYSE Pillar: ~20 microseconds order processing
+  - NASDAQ INET: ~10 microseconds
+  - KRX Exture+: ~70 microseconds, 20,000 TPS
+  - arrowhead 4.0: ~200 microseconds range (estimated), microsecond-class access
+
+3. PRE-MARKET AND AFTER-HOURS TRADING (ToSTNeT SYSTEM)
+--------------------------------------------------------------------------------
+
+ToSTNeT (Tokyo Stock Exchange Trading NeTwork System) provides off-auction
+trading capabilities outside the regular continuous trading sessions.
+
+TYPES OF ToSTNeT TRADING:
+  - ToSTNeT-1: Single-issue basket trading
+    * Designated counterpart transactions
+    * Price must be within +/- 7% of last regular session price
+    * Minimum: one trading unit
+  - ToSTNeT-2: Portfolio basket trading
+    * For basket trades of multiple issues
+  - ToSTNeT-3: Treasury stock repurchase system
+    * Buy side exclusively reserved for the listed company itself
+    * Sell orders distributed according to TSE allocation methods
+    * Executed at 08:45 (before market open at 09:00)
+    * Company announces program around 16:30 after afternoon session
+
+ToSTNeT TRADING HOURS:
+  Session 1: 08:20 - 09:00 (pre-market)
+  Session 2: 11:30 - 12:30 (lunch break)
+  Session 3: 15:30 - 16:00 (post-close, adjusted from previous 15:00)
+
+NOTE: ToSTNeT is for negotiated trades with predetermined counterparties, not
+for anonymous continuous matching. It serves institutional needs for large-lot
+and basket transactions.
+
+4. ORDER TYPES SUPPORTED ON TSE
+--------------------------------------------------------------------------------
+
+BASIC ORDER TYPES:
+  - Limit Order (指値注文): Specify maximum buy / minimum sell price
+  - Market Order (成行注文): Execute at best available price
+
+EXECUTION CONDITIONS:
+  - Day Order: Valid for current trading day only
+  - IOC (Immediate-or-Cancel): Execute immediately at limit or better; cancel
+    any unfilled portion
+  - Note: FOK (Fill-or-Kill) and Iceberg orders are NOT available on TSE
+    (these are available on PTS venues like Japannext)
+
+SPECIAL ORDER TYPES:
+  - Funari Order (引成注文): Submitted as limit order during continuous trading;
+    converts to market order at the closing auction if unfilled
+  - Limit-on-Close (LOC): Limit order executed only during closing auction
+  - Market-on-Close (MOC): Market order submitted for closing auction
+  - Limit-on-Open (LOO): Limit order for opening auction only
+  - Market-on-Open (MOO): Market order for opening auction only
+
+ORDER PRIORITY RULES:
+  1. Price Priority: Better-priced orders execute first (lower sell / higher buy)
+  2. Time Priority: Earlier orders at the same price execute first (except during
+     Itayose auctions, where all orders are treated as simultaneous)
+
+SHORT SELLING:
+  - Uptick rule applies: Short sale price must be at least 1 tick higher than
+    the last traded price
+
+5. VOLATILITY CONTROLS
+--------------------------------------------------------------------------------
+
+TSE employs a multi-layered volatility control framework:
+
+A) DAILY PRICE LIMITS (値幅制限):
+   The TSE sets absolute yen price limits based on the previous day's closing
+   price (Base Price). Stocks cannot trade beyond these limits.
+
+   Sample Price Limit Table:
+   Base Price Range          Daily Limit (each direction)
+   Under JPY 200             JPY 80
+   JPY 200 - 500             JPY 100
+   JPY 500 - 700             JPY 150
+   JPY 700 - 1,000           JPY 200
+   JPY 1,000 - 1,500         JPY 300
+   JPY 1,500 - 2,000         JPY 400
+   JPY 2,000 - 3,000         JPY 500
+   JPY 3,000 - 5,000         JPY 700
+   JPY 5,000 - 7,000         JPY 1,000
+   JPY 7,000 - 10,000        JPY 1,500
+   JPY 10,000 - 15,000       JPY 3,000
+   (continues for higher price ranges)
+
+   PRICE LIMIT EXPANSION: Limits widen on the third business day if, for two
+   consecutive days:
+   (1) Price reaches the upper/lower limit AND no closing auction at that limit
+       price is carried out AND trading volume remains zero; OR
+   (2) No shares traded until end of afternoon session, but some traded at the
+       closing auction at the limit price with bids/offers remaining at the limit.
+
+B) SPECIAL QUOTES (特別気配, Tokubetsu Kehai):
+   When prices are likely to jump beyond the "special quote renewal price
+   interval" from the last execution price, a special quote is indicated and
+   continuous trading is temporarily halted.
+
+   Mechanism:
+   - A special quote is displayed when order imbalance would cause the next
+     execution to exceed the renewal price interval
+   - The special quote price is updated every 3 minutes in the direction of
+     the imbalance, moving by the renewal price interval each time
+   - This provides time for market participants to submit offsetting orders
+   - Once sufficient orders accumulate, an Itayose (call auction) determines
+     the new price
+   - Example: Stock at JPY 500 with 10-yen interval - next execution must be
+     within JPY 490-510; if it would exceed this, a special quote is triggered
+
+   Renewal Price Intervals (sample):
+   Last Price Range           Renewal Interval
+   Under JPY 200              JPY 5
+   JPY 200 - 500              JPY 5-10
+   JPY 500 - 1,000            JPY 10
+   JPY 1,000 - 2,000          JPY 20-30
+   JPY 5,000 - 10,000         JPY 50-100
+
+C) CIRCUIT BREAKERS:
+   Two types operate on TSE:
+
+   1. Static Circuit Breaker (Price Limits / Circuit Breaker Rule):
+      - Applied to index futures and options on OSE
+      - Temporarily halts all trading when the market moves excessively
+      - Based on predefined absolute price change thresholds
+
+   2. Dynamic Circuit Breaker (Immediately Executable Price Range):
+      - Similar to the special quotation mechanism in cash equities
+      - Prevents execution outside a dynamic price range around the last
+        traded price
+      - Triggers a brief trading halt and call auction
+
+COMPARISON TO KRX:
+  KRX uses Volatility Interruption (VI) as its primary mechanism, which
+  triggers a 2-minute call auction on individual stocks. TSE's special quote
+  system is conceptually similar but operates with a gradual price discovery
+  mechanism (3-minute renewal cycles) rather than a fixed-duration call auction.
+
+6. EXTENDED HOURS / 24-HOUR TRADING DISCUSSIONS
+--------------------------------------------------------------------------------
+
+CURRENT STATE OF JPX EQUITY TRADING HOURS:
+  - Cash equities: 09:00-15:30 (5h 25m) after November 2024 extension
+  - No nighttime session for cash equities exists
+
+JPX DERIVATIVES NIGHT SESSION (existing):
+  - OSE/TOCOM Night Session: 17:00 - 05:30 (next day) JST
+  - Night session captures >40% of total derivatives volume (2024: 168.5
+    million contracts, up from 39% ratio)
+  - Timeline of extensions:
+    September 2007: Evening session launched (16:30-19:00)
+    2011: Extended to 03:00, renamed "Night Session"
+    July 2016: Extended to 05:30 (overlaps 20:30 London / 14:30 Chicago)
+  - Nikkei 225 mini has become the third most actively traded index futures
+    globally, largely driven by night session popularity
+  - Foreign investors dominate night session; Japanese retail participation
+    growing via online brokerages
+
+EQUITY EXTENDED HOURS PLANS:
+  As of March 2026, JPX has NOT announced concrete plans for nighttime cash
+  equity trading sessions or 24-hour equity trading. The November 2024
+  extension to 15:30 was described as a significant step, but further
+  extension plans have not been publicly formalized.
+
+  Key considerations:
+  - The derivatives night session demonstrates proven demand for extended hours
+  - Clearing and settlement infrastructure (JSCC, JASDEC, BOJ-NET) operates
+    on T+2 batch processing cycles that would require fundamental redesign
+  - PTS venues (Japannext) already provide de facto extended hours for equities
+    (08:20-16:30 daytime, 17:00-06:00 nighttime)
+  - The "division of labor" between TSE (primary venue) and PTS (extended hours)
+    may be JPX's preferred model rather than TSE itself going 24-hour
+
+7. PTS (PROPRIETARY TRADING SYSTEMS) LANDSCAPE
+--------------------------------------------------------------------------------
+
+Japan's PTS framework was established under the Financial System Reformation
+Law of 1998, allowing securities firms to operate electronic trading systems
+outside traditional stock exchanges.
+
+A) JAPANNEXT (SBI JAPANNEXT)
+   Established: 2006
+   Founders: SBI Securities, Rakuten Securities, Orix Securities, Click Securities
+   Market Share: ~5% of Japanese equity trading (second to TSE's ~90%+)
+   Technology: NASDAQ matching technology (deployed September 26, 2011)
+
+   TRADING HOURS (JST):
+     J-Market (Daytime):  08:20 - 16:30
+     X-Market (Daytime):  08:20 - 16:30 (separate matching with DLP rules)
+     U-Market (Daytime):  08:20 - 16:30 (index arbitrage with flexible tick sizes)
+     N-Market (Night):    17:00 - 06:00
+
+   Total Coverage: 08:20-06:00 (next day) = ~21.5 hours
+
+   MATCHING METHOD: Continuous matching based on price-time priority
+   No pre-open or closing auctions conducted
+
+   ORDER TYPES:
+     - Limit Orders
+     - IOC (Immediate-or-Cancel)
+     - FOK (Fill-or-Kill)
+     - Short Sell / Short Sell Exempt
+
+   PROTOCOLS: OUCH, ITCH, FIX
+
+   RISK CONTROLS:
+     - Fat Finger Limits: Max order quantity = 5% of outstanding shares
+     - Max order value: JPY 100 million (extendable to JPY 2.5 billion)
+     - Price range restrictions
+
+   SIGNIFICANCE FOR KRX COMPARISON:
+   Japannext's Night Market (17:00-06:00) provides Japanese equity trading
+   coverage that overlaps with US and European market hours. This is analogous
+   to what Nextrade provides in Korea (08:00-20:00) but with significantly
+   longer overnight hours.
+
+B) CBOE JAPAN (CEASED OPERATIONS)
+   Status: Cboe Global Markets announced discontinuation of Japanese equities
+   business; operations ended August 29, 2025.
+
+   Former Trading Hours: 08:20-16:00
+
+   Background: In August 2024, Cboe acquired a minority stake in Japannext
+   from SBI Holdings before deciding to close its own PTS operations.
+
+   IMPACT: With Cboe Japan's closure, TSE is effectively the only multilateral
+   exchange venue in Japan, with Japannext as the sole remaining PTS. This
+   concentration raises questions about competition and extended-hours access.
+
+8. MARKET SURVEILLANCE SYSTEMS
+--------------------------------------------------------------------------------
+
+ORGANIZATIONAL STRUCTURE:
+  JPX-R (Japan Exchange Regulation) handles self-regulatory operations:
+  - Listing examination
+  - Listed company compliance
+  - Market surveillance
+  - Inspections of trading participants
+
+MARKET SURVEILLANCE & COMPLIANCE:
+  - Staffing: ~80 members across 3 groups and one office
+  - Continuous real-time monitoring for unfair trading
+  - Suspicious activity reported to SESC (Securities and Exchange Surveillance
+    Commission)
+  - Investigation process: Request client trading data from participants;
+    market analysts analyze order placement and executions
+
+AI-POWERED SURVEILLANCE (deployed March 2018):
+  - NEC Corporation's "NEC Advanced Analytics - RAPID machine learning"
+  - Hitachi, Ltd.'s "Hitachi AI Technology/H"
+  - Purpose: Detect market manipulation and misconduct
+  - AI enables faster preliminary investigations, allowing personnel to focus
+    on detailed investigations
+
+PARTNERSHIP WITH NASDAQ:
+  - Osaka Exchange has a long-lasting partnership with Nasdaq for market
+    surveillance capabilities (Nasdaq Market Surveillance technology)
+
+9. RECENT DEVELOPMENTS (2024-2026)
+--------------------------------------------------------------------------------
+
+  November 5, 2024:
+    - arrowhead 4.0 launched
+    - Trading hours extended to 15:30
+    - Closing Auction introduced
+    - 462 new PRIMERGY servers deployed
+
+  August 2024:
+    - Cboe acquired minority stake in Japannext from SBI Holdings
+
+  August 29, 2025:
+    - Cboe Japan PTS ceased operations
+    - Japanese equity PTS landscape reduced to Japannext only
+
+  2024-2025:
+    - JSCC VaR margin methodology (launched November 6, 2023) fully operational
+    - Listed Derivatives May 2025 Project go-live on May 26, 2025
+    - Night derivatives session captures >40% of total derivatives volume
+
+  Ongoing (2025-2026):
+    - Informal discussions on T+1 equity settlement led by JFSA
+    - No concrete transition timeline announced
+
+
+================================================================================
+PART II: JSCC (JAPAN SECURITIES CLEARING CORPORATION)
+================================================================================
+
+1. CCP ROLE AND STRUCTURE
+--------------------------------------------------------------------------------
+
+CORPORATE OVERVIEW:
+  - Full Name: Japan Securities Clearing Corporation (日本証券クリアリング機構)
+  - Status: Wholly-owned subsidiary of Japan Exchange Group, Inc. (JPX)
+  - Role: Central Counterparty (CCP) for Japanese financial markets
+  - Regulatory Status: Licensed as a Financial Instruments Clearing Organization
+    under Japan's Financial Instruments and Exchange Act (FIEA)
+
+CLEARING BUSINESSES (Products Cleared):
+  1. Cash Products: Listed equities, ETFs, REITs
+  2. Listed Derivatives: Futures and options on OSE and TOCOM
+  3. Listed Commodity Derivatives: Merged into JSCC in July 2020
+  4. OTC Derivatives - IRS: Interest Rate Swaps clearing
+  5. OTC Derivatives - CDS: Credit Default Swaps clearing
+  6. OTC JGB: Japanese Government Bond transactions
+
+KEY STATISTICS (2024):
+  - IRS clearing volume doubled in 2024 vs. 2023, driven by Japan's changing
+    interest-rate environment
+  - 80% of domestic JGB trades cleared at JSCC (despite no regulatory mandate)
+
+PARTICIPANTS:
+  - As of February 2026, 32+ domestic securities firms participate
+  - International clearing members include major global banks
+
+2. SETTLEMENT CYCLE
+--------------------------------------------------------------------------------
+
+CURRENT SETTLEMENT CYCLES:
+  - Listed Equities: T+2 (trade date basis) - implemented July 16, 2019
+  - Japanese Government Bonds (domestic): T+1 - implemented May 1, 2018
+  - Japanese Government Bonds (cross-border): T+2
+  - Corporate Bonds: T+2
+
+T+1 MIGRATION FOR EQUITIES - STATUS:
+  As of March 2026, Japan has NOT set a concrete timeline for equity T+1
+  migration. The situation is as follows:
+
+  - The Financial System Council's Working Group on Market Systems has been
+    discussing T+1 migration since 2024
+  - The July 2024 report "Toward Establishing Product Governance, etc."
+    indicated a policy of "beginning practical consideration of approaches
+    and issues for T+1 migration"
+  - JFSA and industry bodies have begun "informal discussions on the potential
+    impacts of a shift for Japanese securities to T+1"
+  - No formal transition date or schedule has been announced
+
+  KEY CHALLENGES IDENTIFIED:
+  - 50% of settlement fails in Japan are reportedly due to late instructions,
+    meaning T+2 is already insufficient time for many participants
+  - Fundamental market structure change would be required (messaging, funding,
+    reconciliation gaps)
+  - Japan's current settlement model is "highly unlikely to survive a move to
+    T+1" without major infrastructure overhaul (Broadridge analysis)
+  - Pre-settlement matching via JASDEC's PSMS system would need acceleration
+  - Cross-border settlement timelines present particular challenges
+
+  GLOBAL CONTEXT:
+  - US: T+1 implemented May 28, 2024
+  - UK: T+1 targeted for October 11, 2027
+  - EU: T+1 targeted for October 11, 2027
+  - South Korea (KRX): Planning T+1 alongside 24-hour trading transition
+
+3. CLEARING HOURS AND BATCH PROCESSING
+--------------------------------------------------------------------------------
+
+DAILY CLEARING TIMELINE (for equities, all times JST):
+
+  Trading Day:
+    09:00 - 15:30    Trading on TSE (trades submitted to JSCC for clearing)
+    After close       JSCC processes netting calculations
+
+  Settlement Day (T+2):
+    07:00 - 12:30    Securities settlement window at JASDEC
+    By 12:20         Pre-settlement matching deadline (via JASDEC PSMS)
+    13:00            Settlement Cutoff Time for securities delivery
+                     (delivering participants must transfer securities to
+                     JSCC account at JASDEC)
+                     Net paying participants deposit provisional funds
+                     settlement amount as cash collateral
+    13:00 - 14:15    Securities received from JSCC account
+    14:15            Cutoff for additional fund payment (cash collateral)
+    15:10            Cash settlement deadline for participants
+    15:30            JDCC completes cash settlement
+    17:00            Latest fund confirmation
+
+  Failed Settlement:
+    - If delivery not completed by 13:00, postponed to next business day
+    - Failed settlement is netted with next day's transactions
+
+NETTING PROCESS:
+  - JSCC performs multilateral netting on a product-by-product basis
+  - Calculates net balance of selling/buying volume per participant
+  - Cash payment amounts are netted across products
+  - Net securities transfer instructions sent to JASDEC
+  - Net funds transfer instructions sent to settlement banks or BOJ
+
+IMPLICATIONS FOR EXTENDED HOURS:
+  The current batch-oriented clearing schedule with fixed cutoff times
+  (13:00 securities, 14:15 cash) is designed around a single daily trading
+  session ending by 15:30. Extended or 24-hour trading would require:
+  - Multiple netting cycles or continuous netting
+  - Extended settlement bank operating hours
+  - Modified JASDEC processing windows
+  - Potential real-time or near-real-time clearing capabilities
+
+4. MARGIN AND COLLATERAL MANAGEMENT
+--------------------------------------------------------------------------------
+
+MARGIN METHODOLOGY TRANSITION:
+  - Previous: SPAN (Standard Portfolio Analysis of Risk) - 16 simplified scenarios
+  - Current: VaR (Value at Risk) - implemented November 6, 2023
+  - VaR uses 1,250+ data points for margin calculation (vs. SPAN's 16 scenarios)
+
+VaR CALCULATION METHODS:
+  1. Historical Simulation Method (HS-VaR):
+     - Portfolio profit/loss obtained from scenarios based on historical market
+       data
+     - More market-sensitive than SPAN
+  2. Alternative Simulation Method (AS-VaR):
+     - Parameters (e.g., expected price fluctuations) set in advance
+     - Used as fallback or supplement
+
+MARGIN REQUIREMENTS:
+  - Confidence level: At least 99% of potential future exposures
+  - Calculated for each Clearing Business using appropriate methodology
+  - Open positions marked-to-market using most recent price at least once daily
+  - Variation margin exchanged with Clearing Participants after mark-to-market
+
+CLEARING FUND (DEFAULT FUND):
+  - Separate clearing funds for each clearing business
+  - Commodity Derivatives Clearing Fund: JPY 20.4 billion (as of June 28, 2024)
+  - JSCC is considering reorganization/consolidation of default fund structure
+  - 2024 initial margin methodology reforms welcomed by clearing members
+
+DEFAULT WATERFALL:
+  Standard CCP waterfall structure:
+  1. Defaulting member's margin
+  2. Defaulting member's clearing fund contribution
+  3. JSCC's own skin-in-the-game capital
+  4. Non-defaulting members' clearing fund contributions
+  5. Additional assessment powers
+
+5. DVP SETTLEMENT VIA BOJ-NET
+--------------------------------------------------------------------------------
+
+DVP (Delivery versus Payment) settlement ensures simultaneous exchange of
+securities and cash, eliminating principal risk.
+
+STRUCTURE BY PRODUCT:
+
+A) Listed Equities, ETFs, REITs:
+   - Securities leg: Book-entry transfer at JASDEC (Japan Securities
+     Depository Center)
+   - Cash leg: Settlement via Fund Settlement Banks
+   - Method: Multilateral netting through JSCC as CCP
+   - Securities transferred on net basis; cash payment netted across products
+
+B) Listed JGBs and OTC JGBs:
+   - Gross-Gross DVP settlement via BOJ RTGS (Real-Time Gross Settlement)
+   - Settlement of cash and securities between Clearing Participant and JSCC
+     fulfilled simultaneously on a gross basis
+   - Settlement is final at the time of transfer (irrevocable)
+   - BOJ acts as CSD (Central Securities Depository) for JGBs
+
+C) OTC Derivatives (IRS, CDS):
+   - All JPY settlements conducted through BOJ account
+   - CDS clearing: Once per week on 3-day cycle; clearing at 16:00 on
+     third business day
+
+BOJ-NET INTEGRATION:
+  - JSCC uses BOJ accounts for all clearing businesses wherever possible
+  - Specifically: All JPY settlements for CDS, IRS, and OTC JGB Clearing
+    Businesses are conducted through BOJ accounts
+  - This provides settlement finality backed by central bank money
+
+6. INTEGRATION WITH JPX CLEARING FOR DERIVATIVES
+--------------------------------------------------------------------------------
+
+JSCC serves as the unified CCP across all JPX-operated markets:
+
+  - TSE (Tokyo Stock Exchange): Cash equities clearing
+  - OSE (Osaka Exchange): Listed derivatives clearing
+  - TOCOM (Tokyo Commodity Exchange): Commodity derivatives clearing
+    (merged into JSCC in July 2020)
+
+DERIVATIVES CLEARING SPECIFICS:
+  - Listed Derivatives May 2025 Project went live on May 26, 2025
+  - IRS clearing experienced exponential growth in 2024 (volume doubled)
+  - Sponsored clearing for Japanese money reserve funds introduced June 2025
+  - Agency clearing model being revamped for offshore customers
+
+CROSS-PRODUCT MARGINING:
+  - Margin calculated per Clearing Business using VaR methodology
+  - Cash payment amounts netted across products (cross-product netting)
+  - Default fund maintained separately per clearing business (potential
+    consolidation under review)
+
+7. HOW JSCC WOULD NEED TO ADAPT FOR EXTENDED TRADING HOURS
+--------------------------------------------------------------------------------
+
+If TSE were to implement extended trading hours (12-hour or 24-hour), JSCC
+would face the following challenges:
+
+A) SETTLEMENT CYCLE COMPRESSION:
+   - Current T+2 batch processing assumes single daily trading window
+   - Extended hours increase the volume of trades requiring settlement
+   - Multiple clearing cycles per day may be needed
+   - Trade date assignment becomes complex for overnight sessions
+
+B) NETTING WINDOW EXPANSION:
+   - Current netting occurs after market close (post-15:30)
+   - 24-hour trading would require either:
+     (a) Multiple intraday netting cycles
+     (b) Continuous real-time netting
+     (c) Extended batch windows with modified cutoff times
+
+C) SETTLEMENT BANK COORDINATION:
+   - Fund Settlement Banks currently process within fixed hours
+   - BOJ-NET operating hours would need extension
+   - JASDEC processing windows (07:00-12:30) would need expansion
+
+D) MARGIN MANAGEMENT:
+   - Intraday margin calls may be needed for overnight positions
+   - VaR calculations would need to account for extended session volatility
+   - Mark-to-market frequency would need to increase beyond once daily
+
+E) FAIL MANAGEMENT:
+   - Current 50% fail rate due to late instructions would worsen
+   - Extended hours = more trades = more settlement complexity
+   - Fail resolution processes would need acceleration
+
+F) TECHNOLOGY INFRASTRUCTURE:
+   - Batch processing windows (currently overnight) would shrink
+   - System maintenance windows would be compressed
+   - Real-time or near-real-time clearing capabilities may be required
+
+8. RECENT JSCC DEVELOPMENTS
+--------------------------------------------------------------------------------
+
+  November 6, 2023:   VaR margin methodology replaced SPAN for derivatives
+  2024:               IRS clearing volume doubled year-over-year
+  2024:               80% of domestic JGB trades cleared at JSCC
+  2024:               Initial margin reforms implemented
+  May 26, 2025:       Listed Derivatives May 2025 Project go-live
+  June 2025:          Sponsored clearing for money reserve funds introduced
+  Ongoing 2025-2026:  Default fund consolidation under consideration
+                      Agency clearing model revamp for offshore customers
+                      Informal T+1 equity settlement discussions
+
+
+================================================================================
+PART III: NEXTRADE (넥스트레이드) - KOREAN ALTERNATIVE TRADING SYSTEM
+================================================================================
+
+1. LAUNCH AND REGULATORY APPROVAL
+--------------------------------------------------------------------------------
+
+  February 5, 2025:  Final approval from Financial Services Commission (FSC)
+  March 4, 2025:     Operations commenced (Korea's first ATS, ending KRX monopoly)
+  March 3, 2026:     First anniversary
+
+SHAREHOLDERS/BACKERS:
+  - Major Korean securities companies
+  - Technology partners including Naver and Kakao
+  - Technology infrastructure built by SK Inc. C&C (matching engine and
+    core trading systems)
+
+GRADUAL ROLLOUT:
+  - Week 1: 10 tradable items
+  - Week 2: 110 tradable items
+  - Week 3: 410 tradable items
+  - Week 4: 800 tradable items
+  - Currently: Full range of listed equities
+
+PARTICIPATING FIRMS:
+  - Launch: 21 brokerage firms
+  - As of February 2026: 32 domestic securities firms (89% of the 36 firms
+    active on KRX)
+
+2. TRADING HOURS
+--------------------------------------------------------------------------------
+
+  Pre-Market Session:   08:00 - 08:50
+  Regular Trading:      09:00 - 15:30 (identical to KRX)
+  After-Market Session: 15:30 - 20:00
+
+  Total Daily Trading:  ~12 hours (08:00 - 20:00)
+
+  Compared to KRX: 09:00-15:30 = 6 hours 30 minutes
+  Nextrade extends: 5.5 additional hours (1 hour pre-market + 4.5 hours post)
+
+3. TRADING VOLUMES AND MARKET SHARE
+--------------------------------------------------------------------------------
+
+FIRST DAY (March 4, 2025):
+  - 213,983 shares traded
+  - Transaction value: KRW 8.83 billion
+
+GROWTH TRAJECTORY:
+  - March 2025 (launch): <4% market share
+  - By October 2025: ~30% of total trading value
+  - Average daily trading value: ~KRW 10 trillion
+  - Average daily trading volume: ~300 million shares
+
+ONE-YEAR CUMULATIVE (as of March 2026):
+  - Cumulative trading volume: 47.3 billion shares
+  - Cumulative trading value: KRW 2,338 trillion (~USD 1.66 trillion)
+  - Share of total trading volume (Nextrade + KRX combined): 11.8%
+  - Share of total trading value (Nextrade + KRX combined): 28.8%
+
+EXTENDED HOURS CONTRIBUTION:
+  - Pre- and after-market trades: 38.9% of Nextrade's total daily average
+    trading value
+  - Extended-hours share of combined (Nextrade + KRX) market: 12.9%
+  - Extended-hours average daily value surged from KRW 1.1 trillion at launch
+    to KRW 8.9 trillion (~USD 6.1 billion) by early 2026
+
+REGULATORY CONSTRAINT:
+  - 15% cap: Nextrade cannot account for more than 15% of total trading
+    volume on KRX
+  - Foreign investors have complained about this cap
+  - Regulatory scrutiny of ATS caps ongoing
+
+4. TECHNOLOGY AND MATCHING ENGINE
+--------------------------------------------------------------------------------
+
+BUILDER: SK Inc. C&C (SK C&C)
+  - Constructed entire trading system including:
+    * Channel and matching engine system for transaction processing
+    * Information distribution system (integrated with KRX and Korea Securities
+      Depository)
+    * Trading support system for statistics and management
+
+MATCHING ENGINE:
+  - High-performance engine designed for 12-hour trading sessions
+  - Continuous matching with price-time priority
+  - Specific latency and throughput figures not publicly disclosed
+
+ORDER TYPES:
+  - Market Orders
+  - Limit Orders
+  - Mid-Point Orders (NEW): Execute at average of best bid and ask prices;
+    designed to reduce market impact and improve execution quality
+  - Stop-Limit Orders (NEW): Triggered when stock reaches investor-specified
+    price; provides conditional execution capability
+
+CONNECTIVITY:
+  - Colt Technology Services partnership (December 2025) for institutional
+    connectivity
+  - Low-latency access for international institutional investors
+
+5. FEE STRUCTURE
+--------------------------------------------------------------------------------
+
+  - Execution fees: 20% to 40% lower than KRX
+  - This competitive pricing has been a major driver of rapid adoption
+
+6. SIGNIFICANCE FOR KRX 24-HOUR TRANSITION
+--------------------------------------------------------------------------------
+
+Nextrade's rapid success has directly accelerated KRX's extended hours plans:
+
+  - Nextrade's 30% market value share within months forced KRX to respond
+  - KRX announced 12-hour trading plans (8:00-20:00) for June 2026
+  - KRX announced 24-hour trading target for December 2026/2027
+  - Nextrade demonstrated that Korean investors have strong demand for
+    pre-market and after-market trading
+  - Extended hours account for nearly 39% of Nextrade's trading value,
+    validating the business case
+
+
+================================================================================
+PART IV: KRX RESPONSE - EXTENDED HOURS AND 24-HOUR PLANS
+================================================================================
+
+ANNOUNCED TIMELINE (as of January 2026):
+
+  Phase 1 - June 2026:
+    - Pre-market session: 07:00 - 08:00 (one hour earlier than Nextrade)
+    - After-hours session: 16:00 - 20:00
+    - Total: ~12 hours of trading
+    - Note: KRX plans to open one hour earlier than Nextrade (07:00 vs 08:00)
+
+  Phase 2 - December 2026 (target):
+    - Full 24-hour trading regime
+    - Building technical systems since early 2026
+
+INDUSTRY CONCERNS:
+  - "Significant burdens from system modifications" (brokerage firms)
+  - Additional personnel needed across settlement, fund management, withdrawals
+  - "Goes far beyond simply expanding IT staffing" - requires infrastructure
+    adjustment across multiple operational areas
+  - Labor unions formally opposed, citing excessive workload
+  - Rising operating costs for brokerage firms
+  - System error risks (referencing Nextrade's early technical issues)
+
+SURVEY PROCESS:
+  - June 2025: KRX sent initial survey to brokerage firms
+  - July 31, 2025: Original response deadline
+  - Low submission rates led to deadline extension
+  - August 2025: Extended deadline for feedback
+
+
+================================================================================
+PART V: COMPARATIVE ANALYSIS - JAPAN PTS vs. KRX PLANS
+================================================================================
+
+                        Japannext         Nextrade          KRX (Planned)
+                        (Japan PTS)       (Korea ATS)       (Phase 1, Jun 2026)
+---------------------------------------------------------------------------
+Daytime Hours           08:20-16:30       08:00-15:30       07:00-15:30*
+Extended Hours          17:00-06:00       08:00-08:50 (pre) 07:00-08:00 (pre)
+                        (Night Market)    15:30-20:00 (post) 16:00-20:00 (post)
+Total Daily Hours       ~21.5 hours       ~12 hours          ~13 hours
+Overnight Coverage      Yes (to 06:00)    No                 No (Phase 1)
+                                                             Yes (Phase 2, Dec 2026)
+US Market Overlap       Yes               Partial (pre-mkt)  Partial
+Market Share            ~5%               ~29% (value)       ~70%+ (remaining)
+Matching Engine         NASDAQ tech       SK C&C custom      Exture+ (current)
+Order Types             Limit, IOC, FOK   Limit, Market,     Limit, Market, VI
+                                          Mid-Point, Stop    (to be expanded)
+Closing Auction         No                No                 Yes (existing)
+Surveillance            Self + FSA/SESC   FSC oversight      KRX + FSC
+Settlement              JSCC T+2          KSD T+2            KSD T+2 -> T+1
+
+* KRX regular session currently 09:00-15:30
+
+KEY OBSERVATIONS:
+
+1. JAPANNEXT'S NIGHT MARKET provides the most extensive extended-hours coverage
+   in Asia (17:00-06:00, ~13 hours overnight), significantly exceeding both
+   Nextrade and KRX's initial plans.
+
+2. NEXTRADE'S RAPID GROWTH (0% to ~29% value share in <12 months) demonstrates
+   strong Korean investor demand for extended hours, which Japan's PTS market
+   took over a decade to build (Japannext: ~5% after 18+ years).
+
+3. KRX'S AGGRESSIVE TIMELINE (Phase 2: 24-hour by December 2026) is far more
+   ambitious than anything JPX has announced for cash equities. JPX appears
+   content to let Japannext handle extended hours while TSE focuses on the
+   core session.
+
+4. CLEARING INFRASTRUCTURE is the binding constraint for both markets:
+   - Japan: JSCC batch processing, T+2 settlement, no concrete T+1 plan
+   - Korea: KSD T+2 settlement, planning T+1 alongside 24-hour transition
+   - The KRX approach of combining settlement cycle compression with trading
+     hour extension is more aggressive but also more risky
+
+5. THE "DIVISION OF LABOR" MODEL (Japan) vs. "SINGLE VENUE" MODEL (KRX):
+   - Japan: TSE handles core hours; Japannext handles extended hours
+   - Korea: KRX plans to handle all hours itself (while Nextrade also operates)
+   - Japan's model distributes risk but fragments liquidity
+   - KRX's model centralizes liquidity but increases operational burden
+
+
+================================================================================
+SOURCES
+================================================================================
+
+TSE/JPX:
+- Fujitsu arrowhead 4.0 press release (Nov 5, 2024)
+  https://www.fujitsu.com/global/about/resources/news/press-releases/2024/1105-01.html
+- JPX Trading Hours
+  https://www.jpx.co.jp/english/equities/trading/domestic/01.html
+- JPX Daily Price Limits
+  https://www.jpx.co.jp/english/equities/trading/domestic/06.html
+- JPX Transaction Methods
+  https://www.jpx.co.jp/english/equities/trading/domestic/04.html
+- JPX arrowhead Services
+  https://www.jpx.co.jp/english/systems/equities-trading/01.html
+- JPX Closing Auction announcement (Sep 20, 2023)
+  https://www.jpx.co.jp/english/news/1030/20230920-01.html
+- JPX Cash Market Trading Hours Extension (Nov 5, 2024)
+  https://www.jpx.co.jp/english/corporate/news/news-releases/1030/20241105-01.html
+- JPX ToSTNeT Overview
+  https://www.jpx.co.jp/english/equities/trading/tostnet/index.html
+- JPX Derivatives Price Limits/Circuit Breaker
+  https://www.jpx.co.jp/english/derivatives/rules/price-limit-cb/index.html
+- JPX Preventing Unfair Trading (Surveillance)
+  https://www.jpx.co.jp/english/regulation/ensuring/preventing/outline/index.html
+- JPX AI in Market Surveillance (Mar 19, 2018)
+  https://www.jpx.co.jp/english/corporate/news/news-releases/0060/20180319-01.html
+- FIA: The Market Never Sleeps - JPX Extended Hours
+  https://www.fia.org/marketvoice/articles/market-never-sleeps-success-extended-trading-hours-jpx
+- QUICK: TSE Trading Hours Extension Analysis
+  https://corporate.quick.co.jp/en/japanmarketsview/equity/one-month-to-extension-of-tokyo-stock-exchange-trading-hours-new-market-close-system-to-be-introduced/
+- Fujitsu arrowhead 3.0 press release (Nov 5, 2019)
+  https://www.fujitsu.com/global/about/resources/news/press-releases/2019/1105-01.html
+- Fujitsu arrowhead 2.0 press release (Sep 24, 2015)
+  https://www.fujitsu.com/global/about/resources/news/press-releases/2015/0924-01.html
+- Options Technology: arrowhead Upgrade Go-Live
+  https://www.options-it.com/2024/11/27/options-celebrates-successful-go-live-of-tokyo-stock-exchanges-arrowhead-upgrade/
+
+PTS:
+- Exegy: Profiling Japannext
+  https://www.exegy.com/sbi-japannext-japan-largest-pts-trading-venue/
+- Japannext PTS Technology
+  https://www.japannext.co.jp/en/pts
+- Japannext About Us
+  https://www.japannext.co.jp/en/aboutus
+- Cboe Japan Overview
+  https://www.cboe.com/jp/equities/overview/
+- Cboe Japan Closure Announcement
+  https://ir.cboe.com/news/news-details/2025/Cboe-Plans-to-Cease-Japanese-Equities-Operations/default.aspx
+- The TRADE: Cboe Japan Disbands
+  https://www.thetradenews.com/cboe-global-markets-to-disband-japanese-equities-business/
+- JSRI: Implications of Cboe Japan Withdrawal
+  https://www.jsri.or.jp/upload/topics_2511_01_en.pdf
+
+JSCC:
+- JSCC Official Homepage
+  https://www.jpx.co.jp/jscc/en/
+- JSCC Company Profile
+  https://www.jpx.co.jp/jscc/en/company/profile.html
+- JSCC DVP Settlement System
+  https://www.jpx.co.jp/jscc/en/cash/cash/assumption-obligation/dvp.html
+- JSCC Netting
+  https://www.jpx.co.jp/jscc/en/cash/cash/assumption-obligation/netting.html
+- JSCC VaR Margin Method
+  https://www.jpx.co.jp/jscc/en/cash/futures/marginsystem/VaR.html
+- JSCC Clearing Fund
+  https://www.jpx.co.jp/jscc/en/cash/futures/clearing-fund.html
+- Clearstream: Japan Settlement Process
+  https://www.clearstream.com/clearstream-en/res-library/market-coverage/settlement-process-japan-1283556
+- Risk.net: JSCC Clearing House of the Year
+  https://www.risk.net/awards/7959892/clearing-house-of-the-year-jscc
+- Risk.net: JSCC Default Fund Consolidation
+  https://www.risk.net/risk-management/7963158/jscc-considers-default-fund-consolidation
+- CFTC: JSCC DCO Exemption (PFMI Disclosure)
+  https://www.cftc.gov/sites/default/files/idc/groups/public/@otherif/documents/ifdocs/jsccdcoexemptpetitionexc-1.pdf
+- CCP Global: Year in Clearing 2024 Report
+  https://ccp-global.org/sites/default/files/2025-07/CCPG_2024_Clearing%20Report_17.07.2025.pdf
+- JSDA: Shortening Stock Settlement Cycle
+  https://www.jsda.or.jp/en/activities/research-studies/html/t2_final_report.html
+- Broadridge: T+1 in Japan
+  https://www.broadridge.com/resource/capital-markets/t-plus-1-in-japan-forging-a-new-industry-model
+
+Nextrade:
+- FSC Press Release: ATS Approval
+  https://www.fsc.go.kr/eng/pr010101/83967
+- Korea Times: Nextrade ATS Launch
+  https://www.koreatimes.co.kr/www/biz/2024/10/602_371756.html
+- Korea Herald: First Alternative Stock Exchange
+  https://www.koreaherald.com/article/10433160
+- Korea Herald: 12-Hour Trading Sessions
+  https://www.koreaherald.com/article/10414841
+- Businesskorea: Nextrade Debuts with Extended Hours
+  https://www.businesskorea.co.kr/news/articleView.html?idxno=236585
+- Mitrade: Nextrade 30% Market Share
+  https://www.mitrade.com/insights/news/live-news/article-3-1205964-20251020
+- Korea Times: Foreign Investor 15% Cap Complaints
+  https://www.koreatimes.co.kr/economy/policy/20251119/koreas-alternative-stock-exchange-faces-foreign-investor-complaints-over-15-trading-cap
+- Nextrade 1st Anniversary
+  https://www.newsarticleinsiders.com/news/articleView.html?idxno=3629
+- Colt/Nextrade Partnership
+  https://www.colt.net/resources/colt-expands-asia-pacific-alternative-trading-access-with-nextrade-partnership-in-korea/
+- KCMI: Emergence of Korea's Multi-Market Trading System
+  https://www.kcmi.re.kr/en/publications/pub_detail_view?syear=2025&zcd=002001017&zno=1857&cno=6573
+- East Asia Forum: Can Nextrade Cut Korea Discount?
+  https://eastasiaforum.org/2025/05/31/can-nextrade-help-cut-the-korea-discount/
+
+KRX Extended Hours:
+- Korea Times: KRX Pushes for Extended Hours (Jan 16, 2026)
+  https://www.koreatimes.co.kr/economy/20260116/krx-pushes-for-extended-trading-hours-amid-global-24-hour-trading-trend
+- Korea Herald: KRX Eyes 12-Hour Trading
+  https://www.koreaherald.com/article/10548345
+- KCMI: Trends and Challenges in Extending Trading Hours
+  https://www.kcmi.re.kr/en/publications/pub_detail_view?syear=2025&zcd=002001017&zno=1878&cno=6647
+- CryptoTimes: KRX 24/7 Trading Plans
+  https://www.cryptotimes.io/2026/01/03/south-koreas-krx-to-boost-24-7-trading-and-virtual-asset-products/

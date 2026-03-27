@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="pandoc">
+  <title>TSE_JPX_Analysis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Mobile TOC toggle button -->
+<button class="toc-toggle" id="tocToggle" aria-label="목차 열기/닫기">
+  <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+  <span class="toc-toggle-label">목차</span>
+</button>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar TOC -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-home" title="리포트 인덱스">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      전체 리포트
+    </a>
+    <div class="sidebar-title">목차</div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <ul>
+    <li><a href="#도쿄증권거래소tsejpx-심층-분석" id="toc-도쿄증권거래소tsejpx-심층-분석">도쿄증권거래소(TSE/JPX) 심층 분석</a>
+    <ul>
+    <li><a href="#기관-개요-및-시장-내-위상" id="toc-기관-개요-및-시장-내-위상">1. 기관 개요 및 시장 내 위상</a></li>
+    <li><a href="#현행-거래-제도" id="toc-현행-거래-제도">2. 현행 거래 제도</a>
+    <ul>
+    <li><a href="#거래-세션-구조" id="toc-거래-세션-구조">2.1 거래 세션 구조</a></li>
+    <li><a href="#주문-유형-및-체결-메커니즘" id="toc-주문-유형-및-체결-메커니즘">2.2 주문 유형 및 체결 메커니즘</a></li>
+    <li><a href="#가격제한-및-변동성-통제-3중-구조" id="toc-가격제한-및-변동성-통제-3중-구조">2.3 가격제한 및 변동성 통제 (3중 구조)</a></li>
+    <li><a href="#tostnet-시스템" id="toc-tostnet-시스템">2.4 ToSTNeT 시스템</a></li>
+    </ul></li>
+    <li><a href="#핵심-시스템-인프라" id="toc-핵심-시스템-인프라">3. 핵심 시스템 인프라</a>
+    <ul>
+    <li><a href="#arrowhead-4.0-매칭-엔진" id="toc-arrowhead-4.0-매칭-엔진">3.1 arrowhead 4.0 매칭 엔진</a></li>
+    <li><a href="#데이터센터-및-재해복구" id="toc-데이터센터-및-재해복구">3.2 데이터센터 및 재해복구</a></li>
+    </ul></li>
+    <li><a href="#청산결제-체계-jscc" id="toc-청산결제-체계-jscc">4. 청산·결제 체계 (JSCC)</a>
+    <ul>
+    <li><a href="#jscc-ccp-구조" id="toc-jscc-ccp-구조">4.1 JSCC CCP 구조</a></li>
+    <li><a href="#결제-주기-및-t1-논의" id="toc-결제-주기-및-t1-논의">4.2 결제 주기 및 T+1 논의</a></li>
+    <li><a href="#증거금-관리-var" id="toc-증거금-관리-var">4.3 증거금 관리 (VaR)</a></li>
+    </ul></li>
+    <li><a href="#시간-거래-관련-현황" id="toc-시간-거래-관련-현황">5. 24시간 거래 관련 현황</a>
+    <ul>
+    <li><a href="#pts를-활용한-분업-모델-japannext" id="toc-pts를-활용한-분업-모델-japannext">5.1 PTS를 활용한 “분업 모델” (Japannext)</a></li>
+    <li><a href="#blue-ocean-ats-투자" id="toc-blue-ocean-ats-투자">5.2 Blue Ocean ATS 투자</a></li>
+    <li><a href="#거래시간-연장-논의" id="toc-거래시간-연장-논의">5.3 거래시간 연장 논의</a></li>
+    </ul></li>
+    <li><a href="#nextrade와-일본-pts-비교" id="toc-nextrade와-일본-pts-비교">6. Nextrade와 일본 PTS 비교</a></li>
+    <li><a href="#krx-현행-제도와의-비교-분석" id="toc-krx-현행-제도와의-비교-분석">7. KRX 현행 제도와의 비교 분석</a>
+    <ul>
+    <li><a href="#주요-시사점" id="toc-주요-시사점">주요 시사점</a></li>
+    </ul></li>
+    </ul></li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- Main content -->
+<div class="main-content" id="mainContent">
+  <div class="content-wrapper">
+
+    <header>
+      <h1>TSE_JPX_Analysis</h1>
+      <div class="subtitle">KRX 24시간 거래 전환 전략 리서치 시리즈</div>
+      <div class="date">2026년 3월 | Confidential</div>
+    </header>
+
+    <article>
+      <h1 id="도쿄증권거래소tsejpx-심층-분석">도쿄증권거래소(TSE/JPX) 심층 분석</h1>
+      <blockquote>
+      <p>작성일: 2026-03-27</p>
+      </blockquote>
+      <hr />
+      <h2 id="기관-개요-및-시장-내-위상">1. 기관 개요 및 시장 내 위상</h2>
+      <p>도쿄증권거래소(Tokyo Stock Exchange, TSE)는 일본거래소그룹(Japan Exchange Group, JPX)의 핵심 현물시장 운영 자회사로, 시가총액 기준 아시아 최대이자 세계 3위 규모의 증권거래소이다. JPX는 2013년 도쿄증권거래소와 오사카증권거래소의 합병을 통해 설립되었으며, 현재 현물시장(TSE), 파생상품시장(오사카거래소, OSE), 그리고 청산기관(JSCC)을 통합 운영하는 지주회사 구조를 갖추고 있다.</p>
+      <p>TSE는 2022년 4월 시장 구조 개편을 단행하여 기존 5개 시장(1부, 2부, JASDAQ 스탠다드, JASDAQ 그로스, Mothers)을 <strong>프라임(Prime)</strong>, <strong>스탠다드(Standard)</strong>, <strong>그로스(Growth)</strong> 3개 시장으로 재편하였다. 프라임시장은 글로벌 투자자를 대상으로 한 최상위 거버넌스 기준을 요구하며, 이는 일본 자본시장의 국제 경쟁력 강화 전략의 일환이다.</p>
+      <hr />
+      <h2 id="현행-거래-제도">2. 현행 거래 제도</h2>
+      <h3 id="거래-세션-구조">2.1 거래 세션 구조</h3>
+      <p>TSE의 정규 거래시간은 총 <strong>5시간 25분</strong>으로, 선진국 주요 거래소 중 상대적으로 짧은 편에 속한다. 2024년 11월 5일부터 <strong>70년 만에 처음으로</strong> 폐장 시간이 연장되어 Closing Auction(이타요세, 板寄せ) 세션이 신설되었다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 26%" />
+      <col style="width: 47%" />
+      <col style="width: 26%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>세션</th>
+      <th>시간(JST)</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>오전장 (前場)</strong></td>
+      <td>09:00 - 11:30</td>
+      <td>연속매매(자라바, ザラバ)</td>
+      </tr>
+      <tr>
+      <td><strong>점심 휴장</strong></td>
+      <td>11:30 - 12:30</td>
+      <td>1시간 휴장 유지</td>
+      </tr>
+      <tr>
+      <td><strong>오후장 (後場)</strong></td>
+      <td>12:30 - 15:25</td>
+      <td>연속매매</td>
+      </tr>
+      <tr>
+      <td><strong>Closing Auction (이타요세)</strong></td>
+      <td>15:25 - 15:30</td>
+      <td>2024.11.5 신설, 단일가매매</td>
+      </tr>
+      <tr>
+      <td><strong>합계</strong></td>
+      <td><strong>5시간 25분</strong></td>
+      <td>기존 5시간에서 25분 연장</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>Closing Auction의 도입 배경은 다음과 같다. 기존에는 15:00 종가가 단일 시점의 체결로 결정되어 대량주문에 의한 종가 왜곡 가능성이 있었다. 신설된 5분간의 Closing Auction 세션에서는 15:25~15:30 동안 주문을 접수한 후 이타요세(板寄せ) 방식으로 단일가를 산출함으로써, 종가 형성의 투명성과 안정성을 대폭 강화하였다. 이는 MSCI 등 글로벌 지수 리밸런싱 시 대규모 주문 처리의 효율성을 높이기 위한 조치이기도 하다.</p>
+      <h3 id="주문-유형-및-체결-메커니즘">2.2 주문 유형 및 체결 메커니즘</h3>
+      <p>TSE는 가격-시간 우선순위(price-time priority)에 기반한 주문 체결 시스템을 운영하며, 다양한 주문 유형을 지원한다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 47%" />
+      <col style="width: 26%" />
+      <col style="width: 26%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>주문 유형</th>
+      <th>설명</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>지정가(Limit)</strong></td>
+      <td>가격 지정 주문</td>
+      <td>가장 기본적인 주문 유형</td>
+      </tr>
+      <tr>
+      <td><strong>시장가(Market)</strong></td>
+      <td>최우선 가격으로 즉시 체결</td>
+      <td>가격 미지정</td>
+      </tr>
+      <tr>
+      <td><strong>IOC (Immediate or Cancel)</strong></td>
+      <td>즉시 체결 가능한 수량만 체결, 잔여 취소</td>
+      <td>부분 체결 허용</td>
+      </tr>
+      <tr>
+      <td><strong>Funari (不成)</strong></td>
+      <td>장중 지정가 → 종가 시 시장가로 전환</td>
+      <td>TSE 고유 주문 유형</td>
+      </tr>
+      <tr>
+      <td><strong>LOC (Limit on Close)</strong></td>
+      <td>종가 세션에서 지정가 주문</td>
+      <td>Closing Auction 대응</td>
+      </tr>
+      <tr>
+      <td><strong>MOC (Market on Close)</strong></td>
+      <td>종가 세션에서 시장가 주문</td>
+      <td>Closing Auction 대응</td>
+      </tr>
+      <tr>
+      <td><strong>LOO (Limit on Open)</strong></td>
+      <td>시가 세션에서 지정가 주문</td>
+      <td>개장 이타요세</td>
+      </tr>
+      <tr>
+      <td><strong>MOO (Market on Open)</strong></td>
+      <td>시가 세션에서 시장가 주문</td>
+      <td>개장 이타요세</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>주목할 점은 TSE에서 <strong>FOK(Fill or Kill)</strong> 및 <strong>아이스버그(Iceberg)</strong> 주문이 제공되지 않는다는 것이다. 이러한 주문 유형은 PTS(사설거래시스템)에서만 이용 가능하며, 이는 기관투자자들이 대량주문 집행 시 PTS를 병행 활용하는 요인 중 하나이다.</p>
+      <h3 id="가격제한-및-변동성-통제-3중-구조">2.3 가격제한 및 변동성 통제 (3중 구조)</h3>
+      <p>TSE는 3중 레이어의 변동성 통제 체계를 운용하여 시장의 급격한 가격 변동을 방지한다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 44%" />
+      <col style="width: 34%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>통제 레이어</th>
+      <th>메커니즘</th>
+      <th>상세</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>1층: 일일 가격제한폭</strong></td>
+      <td>절대 엔화 기준 밴드</td>
+      <td>전일 종가 기준, 가격대별 차등 적용 (예: ¥10,000~¥15,000 주식은 ±¥3,000)</td>
+      </tr>
+      <tr>
+      <td><strong>2층: 특별기배 (特別気配)</strong></td>
+      <td>3분 주기 갱신</td>
+      <td>주문 불균형 발생 시 연속매매 중단, 3분마다 기준가격을 단계적으로 조정</td>
+      </tr>
+      <tr>
+      <td><strong>3층: 서킷브레이커</strong></td>
+      <td>정적(Static) + 동적(Dynamic)</td>
+      <td>시장 전체 또는 개별 종목에 대한 거래 일시 중단</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>특별기배(tokubetsu kehai) 제도는 TSE의 독특한 변동성 통제 수단이다. 매수 또는 매도 측에 과도한 주문 불균형이 발생하면 연속매매를 일시 중지하고, 3분 간격으로 기준가격을 갱신하며 상대방 주문을 유인한다. 이 과정에서 투자자들은 특별기배 표시를 통해 가격 변동 방향을 사전에 인지할 수 있어, 급격한 가격 변동에 대한 완충 역할을 수행한다.</p>
+      <h3 id="tostnet-시스템">2.4 ToSTNeT 시스템</h3>
+      <p>ToSTNeT(Tokyo Stock Exchange Trading NeTwork)은 경매 외(off-auction) 거래를 위한 전용 시스템으로, 대량 거래 및 바스켓 거래에 활용된다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>ToSTNeT 세션</th>
+      <th>시간(JST)</th>
+      <th>용도</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>세션 1</td>
+      <td>08:20 - 09:00</td>
+      <td>정규장 개시 전 대량거래</td>
+      </tr>
+      <tr>
+      <td>세션 2</td>
+      <td>11:30 - 12:30</td>
+      <td>점심 휴장 시간대 활용</td>
+      </tr>
+      <tr>
+      <td>세션 3</td>
+      <td>15:30 - 16:00</td>
+      <td>정규장 종료 후 잔여 거래</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>ToSTNeT은 사전 합의된 가격과 수량으로 거래를 체결하는 방식으로, 대량 블록거래가 정규 시장의 가격에 미치는 영향(market impact)을 최소화하는 역할을 한다.</p>
+      <hr />
+      <h2 id="핵심-시스템-인프라">3. 핵심 시스템 인프라</h2>
+      <h3 id="arrowhead-4.0-매칭-엔진">3.1 arrowhead 4.0 매칭 엔진</h3>
+      <p>2024년 11월 5일, TSE는 <strong>arrowhead 4.0</strong> 매칭 엔진을 가동하였다. 이는 Closing Auction 도입과 동시에 이루어진 시스템 전면 업그레이드로, 후지쯔(Fujitsu)가 개발을 담당하였다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>사양</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>개발사</strong></td>
+      <td>Fujitsu (후지쯔)</td>
+      </tr>
+      <tr>
+      <td><strong>서버 구성</strong></td>
+      <td>PRIMERGY 서버 462대</td>
+      </tr>
+      <tr>
+      <td><strong>처리 방식</strong></td>
+      <td>마이크로초 단위 인메모리(in-memory) 처리</td>
+      </tr>
+      <tr>
+      <td><strong>주문 처리 속도</strong></td>
+      <td>약 200마이크로초(μs)</td>
+      </tr>
+      <tr>
+      <td><strong>이중화 구조</strong></td>
+      <td>삼중 이중화(Triple redundancy)</td>
+      </tr>
+      <tr>
+      <td><strong>데이터 복제</strong></td>
+      <td>삼중 데이터 복제 + 자동 페일오버</td>
+      </tr>
+      <tr>
+      <td><strong>처리량(throughput)</strong></td>
+      <td>비공개 (구체적 수치 미공시)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>arrowhead 시스템은 2010년 1세대 도입 이래 약 5년 주기로 세대 교체가 이루어져 왔으며(2015년 2.0, 2019년 3.0, 2024년 4.0), 각 세대마다 처리 속도와 안정성이 대폭 개선되었다. 4.0 버전의 핵심 특징은 삼중 이중화 아키텍처로, 주 시스템(primary), 백업 시스템(secondary), 그리고 재해복구(DR) 시스템이 실시간으로 데이터를 동기화하며, 장애 발생 시 자동 페일오버를 통해 서비스 연속성을 보장한다.</p>
+      <h3 id="데이터센터-및-재해복구">3.2 데이터센터 및 재해복구</h3>
+      <p>JPX는 도쿄 근교에 주 데이터센터를 운영하며, 삼중 데이터 복제 구조를 통해 물리적 재해에 대비한다. 462대의 PRIMERGY 서버는 인메모리 처리 아키텍처를 기반으로 하여, 디스크 I/O 병목 없이 마이크로초 단위의 초저지연 주문 처리를 구현한다. 자동 페일오버 기능은 주 시스템 장애 시 수초 이내에 백업 시스템으로 전환되어, 2020년 10월 발생했던 전일 거래 중단 사태의 재발을 방지하기 위한 설계가 반영되어 있다.</p>
+      <hr />
+      <h2 id="청산결제-체계-jscc">4. 청산·결제 체계 (JSCC)</h2>
+      <h3 id="jscc-ccp-구조">4.1 JSCC CCP 구조</h3>
+      <p>일본증권청산기관(Japan Securities Clearing Corporation, JSCC)은 JPX 그룹의 100% 자회사로, 일본 자본시장의 중앙거래상대방(CCP) 역할을 수행한다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>청산 대상</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>주식(Equities)</strong></td>
+      <td>TSE 상장 주식 전종목</td>
+      </tr>
+      <tr>
+      <td><strong>파생상품(Derivatives)</strong></td>
+      <td>OSE 상장 선물·옵션</td>
+      </tr>
+      <tr>
+      <td><strong>국채(JGBs)</strong></td>
+      <td>일본국채 거래</td>
+      </tr>
+      <tr>
+      <td><strong>CDS</strong></td>
+      <td>신용부도스왑</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>JSCC는 매수자에게는 매도자로, 매도자에게는 매수자로 기능하는 CCP 구조를 통해 거래상대방 리스크를 집중 관리하며, 시장 참가자 간 결제 불이행 위험을 차단한다.</p>
+      <h3 id="결제-주기-및-t1-논의">4.2 결제 주기 및 T+1 논의</h3>
+      <table>
+      <thead>
+      <tr>
+      <th>상품</th>
+      <th>결제 주기</th>
+      <th>시행 시점</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>주식</strong></td>
+      <td>T+2</td>
+      <td>2019년 7월 시행</td>
+      </tr>
+      <tr>
+      <td><strong>국채(JGBs)</strong></td>
+      <td>T+1</td>
+      <td>2018년 5월 시행</td>
+      </tr>
+      <tr>
+      <td><strong>주식 T+1</strong></td>
+      <td>미정</td>
+      <td>비공식 논의 단계, 구체적 일정 없음</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>JSCC의 결제 업무는 <strong>고정 배치 윈도우(fixed batch windows)</strong> 방식으로 운영된다. 증권 결제 마감은 13:00, 자금 결제 마감은 14:15로 설정되어 있다. 주식의 경우 JASDEC(일본증권예탁결제기구)과 결제은행을 통한 DVP(Delivery versus Payment) 방식으로, 국채의 경우 일본은행 BOJ-NET RTGS(실시간총액결제)를 통해 결제가 이루어진다.</p>
+      <p>주식 T+1 결제로의 전환은 미국(2024년 5월 T+1 시행), 한국(논의 중) 등 글로벌 추세에 따라 비공식적으로 논의되고 있으나, JSCC의 배치 기반 청산 구조 개편, 야간 결제 프로세스 도입 필요성 등 기술적 과제로 인해 구체적인 시행 일정은 아직 확정되지 않았다.</p>
+      <h3 id="증거금-관리-var">4.3 증거금 관리 (VaR)</h3>
+      <p>JSCC는 2023년 11월 기존 SPAN(Standard Portfolio Analysis of Risk) 방식에서 <strong>VaR(Value at Risk) 모델</strong>로 증거금 산출 방식을 전환하였다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>상세</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>모델</strong></td>
+      <td>VaR (Value at Risk)</td>
+      </tr>
+      <tr>
+      <td><strong>신뢰구간</strong></td>
+      <td>99%</td>
+      </tr>
+      <tr>
+      <td><strong>데이터 포인트</strong></td>
+      <td>1,250개 이상 (약 5년치 일일 데이터)</td>
+      </tr>
+      <tr>
+      <td><strong>전환 시점</strong></td>
+      <td>2023년 11월 (기존 SPAN에서 이행)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>VaR 모델은 과거 시장 데이터를 기반으로 99% 신뢰수준에서의 잠재적 손실을 추정하여 증거금을 산출하며, SPAN 대비 포트폴리오 상관관계를 보다 정밀하게 반영할 수 있어 증거금 효율성이 개선되었다.</p>
+      <hr />
+      <h2 id="시간-거래-관련-현황">5. 24시간 거래 관련 현황</h2>
+      <h3 id="pts를-활용한-분업-모델-japannext">5.1 PTS를 활용한 “분업 모델” (Japannext)</h3>
+      <p>일본 증권시장은 TSE가 정규 거래시간을, PTS(Proprietary Trading System, 사설거래시스템)가 시간외 거래를 담당하는 <strong>“분업 모델(division of labor)”</strong> 구조로 운영된다.</p>
+      <p>2025년 8월 Cboe Japan(구 Chi-X Japan)이 폐업한 이후, <strong>Japannext</strong>가 일본의 유일한 PTS로 남게 되었다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>Japannext</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>야간 거래시간</strong></td>
+      <td>17:00 - 06:00 (익일)</td>
+      </tr>
+      <tr>
+      <td><strong>전체 거래시간</strong></td>
+      <td>08:20 - 06:00 (약 21.5시간)</td>
+      </tr>
+      <tr>
+      <td><strong>시장 점유율</strong></td>
+      <td>TSE 거래량 대비 약 8~10%</td>
+      </tr>
+      <tr>
+      <td><strong>커버리지</strong></td>
+      <td>미국·유럽 거래시간대 중첩</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>Japannext의 야간시장(17:00~06:00)은 미국과 유럽 시장의 거래시간과 중첩되어, 해외 시장 이벤트에 대한 실시간 대응이 가능하다. 다만, TSE 대비 유동성이 제한적이어서 대량 주문 집행에는 한계가 있으며, 주로 소규모 거래 및 헤지 수요에 활용된다.</p>
+      <h3 id="blue-ocean-ats-투자">5.2 Blue Ocean ATS 투자</h3>
+      <p>2023년 9월, JPX는 미국의 야간 거래 플랫폼인 <strong>Blue Ocean ATS</strong>에 <strong>5% 지분투자</strong>를 단행하였다. Blue Ocean ATS는 미국 시장에서 정규 거래시간 외 야간 거래를 제공하는 대체거래시스템이다.</p>
+      <p>이 투자는 JPX가 국내 TSE의 거래시간을 직접 연장하기보다는, 해외 야간 거래 인프라에 대한 전략적 투자를 통해 글로벌 24시간 거래 생태계에 간접적으로 참여하려는 의도로 해석된다. 즉, JPX는 자체 거래소의 24시간 운영보다는 글로벌 파트너십을 통한 접근법을 선호하는 것으로 보인다.</p>
+      <h3 id="거래시간-연장-논의">5.3 거래시간 연장 논의</h3>
+      <p>현재 TSE/JPX 차원에서 <strong>24시간 주식 거래에 대한 구체적인 계획은 없다</strong>. JPX는 다음과 같은 입장을 견지하고 있는 것으로 파악된다:</p>
+      <ul>
+      <li><strong>분업 모델 유지</strong>: TSE는 정규 거래시간의 유동성과 가격 발견 기능에 집중하고, 시간외 수요는 PTS(Japannext)가 흡수하는 구조를 선호</li>
+      <li><strong>비용 대비 효과 고려</strong>: 24시간 거래 운영에 따른 시스템 유지비용, 인력 운영비용, 청산·결제 체계 개편 비용 대비 추가 유동성 확보 효과가 제한적이라는 판단</li>
+      <li><strong>해외 투자 전략</strong>: Blue Ocean ATS 투자에서 보듯, 국내 시간 연장보다는 해외 시장 접근성 확대에 초점</li>
+      </ul>
+      <p>2024년 11월 Closing Auction 도입으로 70년 만에 거래시간을 25분 연장한 것은, TSE가 거래시간 변경에 얼마나 신중한 접근을 취하는지를 단적으로 보여준다.</p>
+      <hr />
+      <h2 id="nextrade와-일본-pts-비교">6. Nextrade와 일본 PTS 비교</h2>
+      <p>한국의 Nextrade(넥스트레이드)는 2025년 3월 4일 출범한 대체거래시스템으로, 일본의 PTS와 유사한 역할을 수행한다. 출범 후 약 12개월 만에 놀라운 성장세를 보여주고 있다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 39%" />
+      <col style="width: 39%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>비교 항목</th>
+      <th>Japannext (일본 PTS)</th>
+      <th>Nextrade (한국 ATS)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>출범</strong></td>
+      <td>2007년</td>
+      <td>2025년 3월</td>
+      </tr>
+      <tr>
+      <td><strong>전체 거래시간</strong></td>
+      <td>08:20 - 06:00 (약 21.5시간)</td>
+      <td>08:00 - 20:00 (12시간)</td>
+      </tr>
+      <tr>
+      <td><strong>시간외 거래</strong></td>
+      <td>17:00 - 06:00 (13시간)</td>
+      <td>08:00-09:00, 15:30-20:00</td>
+      </tr>
+      <tr>
+      <td><strong>시장 점유율</strong></td>
+      <td>TSE 대비 ~8-10%</td>
+      <td>합산 거래대금의 약 39%</td>
+      </tr>
+      <tr>
+      <td><strong>참여 증권사</strong></td>
+      <td>다수</td>
+      <td>32개사</td>
+      </tr>
+      <tr>
+      <td><strong>고유 주문유형</strong></td>
+      <td>-</td>
+      <td>중간가(mid-point), 스톱리밋</td>
+      </tr>
+      <tr>
+      <td><strong>수수료 수준</strong></td>
+      <td>TSE 대비 할인</td>
+      <td>KRX 대비 20-40% 할인</td>
+      </tr>
+      <tr>
+      <td><strong>시간외 비중</strong></td>
+      <td>야간 중심</td>
+      <td>시간외 거래가 전체의 38.9%</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>Nextrade의 가장 주목할 만한 점은 2026년 1월 기준 합산 거래대금의 약 39%(일평균 약 20.35조 원)를 차지하며 급성장했다는 것이다. 이는 Japannext가 약 18년간 운영하면서 8~10%의 점유율에 머무르고 있는 것과 대비된다. Nextrade의 급속한 성장 요인으로는 KRX 대비 20~40% 저렴한 수수료, 중간가 주문 등 차별화된 주문 유형, 그리고 08:00~20:00의 확장된 거래시간이 꼽힌다.</p>
+      <p>한국거래소(KRX)는 Nextrade의 성장에 대응하여 <strong>2026년 9월 14일</strong> 1단계 거래시간 연장을 계획하고 있다. 구체적으로 프리마켓(07:00~08:00)과 애프터마켓(16:00~20:00)을 도입할 예정이며, 이는 일본의 TSE+PTS 분업 모델과 유사한 경쟁 구도가 한국에서도 형성되고 있음을 보여준다.</p>
+      <hr />
+      <h2 id="krx-현행-제도와의-비교-분석">7. KRX 현행 제도와의 비교 분석</h2>
+      <p>TSE/JPX와 KRX는 아시아 선진 시장의 양대 거래소로서, 유사한 과제와 상이한 접근 방식을 보여주고 있다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 28%" />
+      <col style="width: 39%" />
+      <col style="width: 31%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>비교 항목</th>
+      <th>TSE/JPX (일본)</th>
+      <th>KRX (한국)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>정규 거래시간</strong></td>
+      <td>5시간 25분 (09:00-15:30)</td>
+      <td>6시간 30분 (09:00-15:30)</td>
+      </tr>
+      <tr>
+      <td><strong>점심 휴장</strong></td>
+      <td>있음 (11:30-12:30)</td>
+      <td>없음 (2000년 폐지)</td>
+      </tr>
+      <tr>
+      <td><strong>매칭엔진 속도</strong></td>
+      <td>arrowhead 4.0: ~200μs</td>
+      <td>EXTURE 3.0: ~50μs</td>
+      </tr>
+      <tr>
+      <td><strong>주식 결제 주기</strong></td>
+      <td>T+2 (2019년~)</td>
+      <td>T+2 (2024년~)</td>
+      </tr>
+      <tr>
+      <td><strong>T+1 전환 계획</strong></td>
+      <td>비공식 논의, 일정 미정</td>
+      <td><strong>2027년 10월</strong> 목표 (KSD 워킹그룹 구성)</td>
+      </tr>
+      <tr>
+      <td><strong>CCP</strong></td>
+      <td>JSCC</td>
+      <td>KRX CCP</td>
+      </tr>
+      <tr>
+      <td><strong>증거금 모델</strong></td>
+      <td>VaR (2023년 SPAN에서 전환)</td>
+      <td>SPAN 기반</td>
+      </tr>
+      <tr>
+      <td><strong>ATS/PTS 시장</strong></td>
+      <td>Japannext (~21.5시간)</td>
+      <td>Nextrade (12시간)</td>
+      </tr>
+      <tr>
+      <td><strong>ATS 점유율</strong></td>
+      <td>~8-10%</td>
+      <td>~39% (2026년 1월)</td>
+      </tr>
+      <tr>
+      <td><strong>24시간 거래</strong></td>
+      <td>구체적 계획 없음</td>
+      <td>구체적 계획 없음</td>
+      </tr>
+      <tr>
+      <td><strong>분업 모델</strong></td>
+      <td>성숙 (TSE + PTS)</td>
+      <td>형성 중 (KRX + Nextrade)</td>
+      </tr>
+      <tr>
+      <td><strong>청산 구조</strong></td>
+      <td>고정 배치 윈도우</td>
+      <td>배치 의존형 아키텍처</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="주요-시사점">주요 시사점</h3>
+      <p><strong>1) 거래시간 — 선진시장 중 단축 운영 그룹</strong></p>
+      <p>TSE(5시간 25분)와 KRX(6시간 30분) 모두 NYSE(6.5시간), LSE(8.5시간) 등 서구 거래소에 비해 상대적으로 짧은 정규 거래시간을 운영하고 있다. 다만 양국 모두 ATS/PTS를 통해 실질적인 거래 가능 시간을 대폭 확장하고 있어, 정규시장 시간만으로는 전체 시장 접근성을 평가하기 어렵다.</p>
+      <p><strong>2) 매칭엔진 성능 — KRX가 약간 우위</strong></p>
+      <p>KRX의 EXTURE 3.0(50μs)가 TSE의 arrowhead 4.0(200μs)보다 약 4배 빠른 주문 처리 속도를 보이고 있다. 다만 TSE는 구체적인 처리량(throughput) 수치를 공개하지 않고 있어, 총 처리 용량 측면의 직접 비교에는 한계가 있다.</p>
+      <p><strong>3) 청산·결제 — 유사한 구조적 제약</strong></p>
+      <p>양국 모두 배치 기반 청산 구조를 운영하고 있으며, 이는 T+1 결제로의 전환 및 거래시간 연장 시 공통적인 기술적 제약 요인으로 작용한다. JSCC의 13:00 증권 마감, 14:15 자금 마감이라는 고정 배치 윈도우는 KRX의 배치 의존형 아키텍처와 유사한 구조적 한계를 갖고 있다.</p>
+      <p><strong>4) ATS 생태계 — 일본 성숙 vs 한국 급성장</strong></p>
+      <p>일본은 Japannext를 중심으로 약 18년간 PTS 생태계를 발전시켜 왔으나, 시장 점유율은 8~10%에 머물러 있다. 반면 한국의 Nextrade는 2026년 1월 기준 39%의 점유율(일평균 약 20.35조 원)을 기록하며 폭발적으로 성장하고 있다. 이는 한국 시장 참가자들의 수수료 민감도와 시간외 거래 수요가 일본보다 높다는 점, 그리고 Nextrade가 출범 시점에 중간가 주문 등 차별화된 기능을 적극 제공한 전략이 주효했음을 시사한다.</p>
+      <p><strong>5) 분업 모델의 수렴</strong></p>
+      <p>일본의 “TSE + PTS” 분업 모델은 한국에서도 “KRX + Nextrade” 형태로 재현되고 있다. 정규 거래소가 핵심 유동성과 가격 발견 기능을 담당하고, ATS가 시간외 거래와 수수료 경쟁을 통한 보완적 역할을 수행하는 구조는 아시아 선진 시장의 공통적인 발전 방향으로 자리잡고 있다. KRX의 2026년 9월 14일 거래시간 연장(07:00~08:00, 16:00~20:00) 계획은 이러한 경쟁적 분업 구도를 더욱 심화시킬 것으로 전망된다.</p>
+      <hr />
+      <blockquote>
+      <p><strong>면책 조항</strong>: 본 보고서는 공개된 정보를 기반으로 작성된 분석 자료이며, 투자 권유를 목적으로 하지 않습니다. 수치 및 제도 정보는 작성 시점 기준이며, 이후 변경될 수 있습니다.</p>
+      </blockquote>
+    </article>
+
+    <hr>
+    <footer>
+      <p>본 보고서는 KRX 24시간 거래 전환 전략 리서치 프로젝트의 일환으로 작성되었습니다.</p>
+      <p>&copy; 2026 | Generated from Markdown source</p>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  // Mobile toggle
+  var toggle = document.getElementById('tocToggle');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  var iconMenu = toggle ? toggle.querySelector('.icon-menu') : null;
+  var iconClose = toggle ? toggle.querySelector('.icon-close') : null;
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    if (iconMenu) iconMenu.style.display = 'none';
+    if (iconClose) iconClose.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    if (iconMenu) iconMenu.style.display = 'block';
+    if (iconClose) iconClose.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      if (sidebar && sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+
+  // Close sidebar on link click (mobile)
+  if (sidebar) {
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth < 1100) {
+          closeSidebar();
+        }
+      });
+    });
+  }
+
+  // Scroll spy: highlight active section in TOC
+  var headings = document.querySelectorAll('article h1[id], article h2[id], article h3[id]');
+  var tocLinks = sidebar ? sidebar.querySelectorAll('a[href^="#"]') : [];
+
+  if (headings.length > 0 && tocLinks.length > 0) {
+    var tocMap = {};
+    tocLinks.forEach(function(link) {
+      tocMap[link.getAttribute('href')] = link;
+    });
+
+    function updateActive() {
+      var scrollPos = window.scrollY + 120;
+      var current = null;
+
+      headings.forEach(function(h) {
+        if (h.offsetTop <= scrollPos) {
+          current = h;
+        }
+      });
+
+      tocLinks.forEach(function(link) {
+        link.classList.remove('active');
+      });
+
+      if (current) {
+        var activeLink = tocMap['#' + current.id];
+        if (activeLink) {
+          activeLink.classList.add('active');
+          // Scroll TOC to keep active item visible
+          var nav = document.getElementById('sidebarNav');
+          if (nav && window.innerWidth >= 1100) {
+            var linkTop = activeLink.offsetTop - nav.offsetTop;
+            var navScroll = nav.scrollTop;
+            var navHeight = nav.clientHeight;
+            if (linkTop < navScroll + 40 || linkTop > navScroll + navHeight - 40) {
+              nav.scrollTo({ top: linkTop - navHeight / 3, behavior: 'smooth' });
+            }
+          }
+        }
+      }
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    updateActive();
+  }
+
+  // Progress bar
+  var progressBar = document.createElement('div');
+  progressBar.className = 'reading-progress';
+  document.body.appendChild(progressBar);
+
+  window.addEventListener('scroll', function() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = (window.scrollY / docHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  });
+})();
+</script>
+
+</body>
+</html>

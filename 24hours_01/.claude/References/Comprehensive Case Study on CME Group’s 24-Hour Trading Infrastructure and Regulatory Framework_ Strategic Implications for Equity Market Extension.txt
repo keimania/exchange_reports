@@ -1,0 +1,172 @@
+CME 그룹의 24시간 거래 인프라 및 규제 프레임워크에 대한 종합 사례 연구: 주식 시장 연장에 대한 전략적 시사점
+연속 시장 미시구조의 소개
+현대 금융 생태계의 진화는 시간적 시장 경계의 점진적인 해체라는 특징을 보이고 있습니다. 글로벌 자본 배분이 본질적으로 국경을 초월함에 따라, 전통적인 거래소 운영 시간에 의해 부과된 구조적 한계는 상당한 마찰 비용, 오버나이트 갭 리스크(overnight gap risks), 그리고 유동성 분절화를 초래합니다. 현물 주식 시장에서 연속적인 24시간 거래 도입의 타당성을 평가하고 있는 한국거래소(KRX)와 같은 기관에게, 선도적인 글로벌 파생상품 시장이 확립한 아키텍처, 규제 및 운영 프레임워크는 필수적이고 검증된 청사진을 제공합니다.
+CME Globex 전자 거래 플랫폼을 운영하는 CME 그룹은 연속 시장 운영의 정점을 보여줍니다. 매일 수천만 건의 거래를 매우 다양한 자산군에 걸쳐 처리하는 Globex 플랫폼은 글로벌 시간대를 가로질러 유연하게 작동하며 하루 거의 24시간 내내 풍부한 유동성을 유지합니다.1 이처럼 전례 없는 수준의 연속적인 가용성을 달성하는 것은 단순히 운영 시간을 연장하는 것 이상의 노력이 필요합니다. 이는 비동기식 처리 아키텍처, 세션 경계를 넘어 완벽하게 상태 무결성을 유지할 수 있는 결정론적 체결(matching) 알고리즘, 그리고 마이크로초(microsecond) 수준의 지연 시간 내에 작동하는 엄격한 체결 전 신용 통제 시스템의 정교한 결합을 요구합니다.1
+본 심층 연구 보고서는 CME 그룹의 인프라, 규제 수명주기, 거래 후 결제 메커니즘 및 특화된 기술 자산에 대한 세밀한 분석을 제공합니다. MSGW(Market Segment Gateway)의 구조적 패러다임, SBE(Simple Binary Encoding) 프로토콜, GC2(Globex Credit Controls) 프레임워크, 그리고 전반적인 "Follow-the-Sun(해를 따라가는)" 운영 인력 배치 모델을 해부함으로써, 본 분석은 현물 주식 거래를 24시간 연속 수명주기로 확장하기 위한 핵심 전제 조건과 2차적 파급 효과를 규명합니다. 도출된 인사이트는 거래소 시스템 아키텍트 및 정책 입안자들이 복원력 있고 유동성이 높은 연장 시간대 주식 시장을 설계하도록 돕기 위해 종합되었습니다.
+규제 및 운영 프레임워크
+시장 세션 수명주기 및 상태 관리
+연속 시장의 운영 수명주기는 전 세계 참가자의 접근을 방해하지 않으면서 유동성 집중, 가격 발견(price discovery) 및 필수적인 시스템 유지보수를 관리하기 위해 세션 상태(session states)에 대한 정확한 정의를 필요로 합니다. CME Globex 전자 거래 플랫폼은 일반적으로 일요일 오후 5시(미국 중부 표준시, CT)에 개장하여 금요일 오후 4시(CT)에 마감하는 형태로 거의 24시간 연속 운영됩니다. 이 과정에서 CME Globex 플랫폼은 글로벌 참여를 촉진하는 동시에 핵심 시스템 운영, 시퀀스 리셋(sequence resets) 및 거래일 이월(trade date rolling)을 위한 마이크로 윈도우(micro-windows)를 허용하도록 고안된 고도로 구조화된 일일 및 주간 수명주기를 활용합니다.5
+24/7 및 24/5 거래 모델을 지원하기 위해, CME Globex는 전통적인 현물 주식 시장의 특징인 장시간의 야간 휴장 대신 특정 유지보수 시간(maintenance windows)을 운영합니다. 표준 일일 유지보수 시간은 정확히 미국 중부 표준시(CT) 기준 오후 4:00부터 오후 4:01까지 1분 동안만 발생합니다. 이 짧은 1분간의 중단 동안 시스템은 장시간의 휴장 없이 논리적인 '하루'를 마감하고 다음 날을 준비합니다.
+가장 핵심적인 작업은 현재 거래일(Trade Date)을 다음 영업일(Business Date)로 전환하는 거래일 이월(Trade Date Roll)입니다. 오후 4:00 정각에 시장이 일시 정지(Close)되면, CME Globex는 MDP 3.0 시장 데이터 플랫폼을 통해 Security Status 메시지(tag 35=f)를 전송하여 글로벌 클라이언트 시스템에 거래일 이월 및 시장 상태 변경을 브로드캐스트합니다. 이 60초간의 종료 후, 오후 4:01이 되면 시장은 별도의 유동성 집중을 위한 경매 시간인 'Pre-Open(개장 전)' 상태를 거치지 않고 연속 거래가 가능한 'Open(개장)' 상태로 즉시 전환됩니다.5
+보다 광범위한 시스템 업그레이드, 시퀀스 리셋 및 연장된 데이터베이스 유지보수를 위해, CME Globex는 연속 거래 상품에 맞춘 두 가지 주요 연장 유지보수 창을 도입했습니다. 이 시간 동안 체결 엔진은 질서 있는 시장 재개를 보장하기 위해 뚜렷한 운영 상태로 전환됩니다.
+유지보수 창
+운영 시간 (CT)
+Pre-Open/Open 상태 (CT)
+시퀀스 리셋
+화요일 연장
+2:00 a.m. to 3:45 a.m.
+3:45 a.m. to 4:00 a.m.
+아니요
+토요일 연장
+2:00 a.m. to 3:45 a.m.
+3:45 a.m. to 4:00 a.m.
+예
+월요일 - 금요일 일일
+4:00 p.m. to 4:01 p.m.
+Open 상태만 - 4:01 p.m.
+아니요
+화요일과 토요일의 연장 유지보수 시간 동안 시장은 CT 기준 오전 3:45부터 4:00까지 "Pre-Open(개장 전)" 상태로 전환됩니다.5 이 Pre-Open 상태는 일시 정지 후 복구되는 연속 시장에서 중요한 미시구조 메커니즘입니다. 이 15분 동안 시장 참여자들은 주문을 입력, 수정, 취소할 수 있으며, 이를 통해 중앙 지정가 주문장(central limit order book)이 체결 거래를 실행하지 않고도 유동성을 모으고 예상 개장가(indicative opening prices)를 계산할 수 있습니다.6 이 상태는 정지된 시장이 즉시 연속 체결로 전환될 경우 발생할 수 있는 극심한 변동성과 가격 괴리를 방지하며, 연속 거래 재개 전 가격 발견을 위한 결정론적인 환경을 제공합니다. 특히, 토요일 유지보수 시간에는 FIX 시퀀스 번호의 하드 리셋(hard reset)이 수반되는 반면, 화요일 주중 유지보수 시간은 그렇지 않기 때문에, 고객 시스템은 짧은 중단 시간 동안 세션 영속성과 연속 시퀀스 로직을 유지해야만 합니다.5
+주문 유형, 조건(Qualifiers), 미니 경매 로직
+24시간 거래 환경에서는 유동성이 낮은 기간이나 세션 전환 시 비정상적인 체결을 방지하기 위해 특정 주문 유형 및 체결 조건의 동작이 엄격하게 정의되어야 합니다. CME Globex는 변동성이 큰 기간 동안 참가자를 보호하도록 설계된 지정가 주문(Limit Orders), 시장-지정가 주문(Market-Limit Orders), 보호 시장 주문(Market Orders with Protection) 등 다양한 주문 유형의 분류 체계를 지원합니다.7
+전통적인 주식 시장에서 연속 거래로의 전환은 기존의 시가 지정가 주문(LOO), 시가 시장가 주문(MOO), 종가 지정가 주문(LOC), 종가 시장가 주문(MOC)의 효용성에 근본적인 도전 과제를 제시합니다. 24시간 시장에는 물리적인 개장이나 폐장 벨이 없기 때문에, 현물 개장 및 현물 종가 노출은 BTIC(Basis Trade at Index Close) 및 TACO(Trade at Cash Open)로 알려진 고도로 특화된 파생상품 메커니즘을 통해 관리됩니다.8
+BTIC 메커니즘은 시장 참가자가 기초 현물 지수의 공식 종가를 기준으로 베이시스(basis) 거래를 체결할 수 있게 해줍니다.9 참가자들은 선물 가격을 그대로 거래하는 대신 미래의 현물 종가에 대한 개별 지수 포인트 스프레드(베이시스)를 협상합니다. 기초 현물 주식 시장이 공식적으로 마감되고 지수 수준이 발표되면, 선물 거래는 종가 지수 수준에 합의된 베이시스를 더한 가격으로 청산됩니다.9 TACO 메커니즘 역시 동일하게 기능하지만 현물 시장의 시초가 경매에 대한 확실성을 제공하여, 주식 시장이 물리적으로 개장하기 한참 전에 해당 날짜의 공식 현물 지수 시가를 기준으로 베이시스 거래를 할 수 있게 합니다.10 또한, CME는 실제 선물 계약으로 구조화되어 T-plus(T+) 거래를 도입한 BTIC+ 및 TACO+를 제공하여, 참가자들이 수일 전에 시가 또는 종가의 확실성을 확보할 수 있도록 합니다.9 운영 시간을 연장하는 주식 거래소의 경우, BTIC/TACO와 유사한 베이시스 거래 메커니즘을 도입하는 것은 24시간 야간 세션과 주요 일일 유동성 이벤트 간의 가격 차이를 해소하는 데 필수적입니다.
+베이시스 거래 외에도, FAK(Fill-and-Kill) 및 FOK(Fill-or-Kill)와 같은 파생상품 특화 조건(qualifiers)의 기술적 행동은 시장 상태에 의해 엄격하게 통제됩니다. FAK 주문은 대기 유동성에 대해 즉시 체결되도록 설계되었으며, 체결되지 않은 잔여 물량은 체결 엔진에 의해 즉각적이고 자동으로 취소됩니다.6 참가자는 FAK 주문에 대해 최소 체결 수량(minimum execution quantity)을 지정할 수 있으며, 주문 도달 시 이 최소 수량을 충족할 수 없는 경우 전체 주문이 거부됩니다.6 FOK 주문은 전체 주문 수량의 즉각적이고 절대적인 체결을 요구합니다. 기술적으로, CME Globex에서 FOK 주문은 최소 체결 수량 매개변수를 전체 주문 수량과 정확히 동일하게 설정한 FAK 주문을 제출함으로써 생성됩니다.6
+FAK 및 FOK 주문은 모두 "Open(개장)" 시장 상태에서만 독점적으로 허용됩니다. 참가자가 "Pre-Open(개장 전)" 상태나 정지 상태 중에 이러한 공격적인 조건을 제출하려고 시도하면, 체결 엔진은 예상 시초가 계산의 무결성을 보존하기 위해 시스템적으로 이를 거부합니다.6 iLink 3 프로토콜을 통해 통신하는 선물 및 옵션의 경우, FOK 주문은 tag 59-TimeInForce=3인 동시에 tag 110-MinQty를 tag 38-OrderQty 값과 동일하게 설정하는 특정한 FIX 태그 조합을 사용하여 제출됩니다.13
+거래 후(Post-Trade) 수명주기 및 청산소 통합
+실행 장소(거래소)와 중앙청산소(CCP) 간의 통합은 연속 시장에서 가장 복잡한 시스템적 과제입니다. CME Clearing은 매일 2천만 건 이상의 거래에 대한 중앙청산소로 운영되며, 매칭된 모든 거래의 이행을 보장합니다.14 거래 후(post-trade) 아키텍처는 글로벌 법정 화폐 시스템과 연계된 일괄 처리(batch) 기반의 은행 및 결제 주기의 필요성과, 연속 체결이라는 현실을 조화시켜야 합니다.
+CME Clearing은 엄격하게 정의된 거래 제출 시간(Trade Submission windows) 및 일괄 처리 일정을 통해 이러한 복잡한 이분법을 관리합니다. 이 사이클에는 시스템 리스크를 분리하도록 설계된 여러 건의 일중(intraday) 및 장마감(end-of-day) 결제 프로세스가 포함됩니다.16 선물 및 옵션의 경우 프런트엔드 청산(FEC) 마감 시간이 현재 청산 주기에 대해 거래를 제출할 수 있는 마지막 순간을 지시합니다. 전자 CME 및 CBOT 거래의 절대적인 제출 마감 시간은 오후 6:00 CT이며, 비전자 거래 및 양도(give-up) 거래는 오후 7:00 CT까지 허용됩니다.16 이러한 마감 시간 이후 일괄 처리 마감 및 행사/포기(E/A) 프로세스가 시작됩니다. CME 및 CBOT 상품의 경우 핵심적인 E/A 프로세스가 오후 6:15 CT에 실행되어 최종 청산 보고서를 생성하며, 최종적으로 청산 보증 모듈(CGM) 마감 시간이 오후 8:00 CT에 주기를 마무리합니다.16
+장외거래(OTC) 상품과 CME ClearPort 인터페이스를 통해 청산되는 특화된 양자 간 거래의 경우, 시스템은 현지 시장 시간(예: JPY는 도쿄 오후 4:00, EUR는 런던 오후 4:00)에 맞춰 연속적으로 호가를 캡처합니다.16 당일 OTC 처리를 위한 종합 거래 제출 마감은 오후 7:00 동부 표준시(ET)로 엄격하게 강제됩니다. 바로 이 시점에 일괄 처리 마감이 트리거되어 통합된 Trade Register가 생성됩니다.16 이후 포트폴리오 전체에 대한 개시 증거금 요구 사항이 오후 8:00에 계산되며, 최종 결제 지시는 오후 10:00에 각 결제 은행으로 안전하게 전송됩니다.16
+담보 관리 및 예탁결제원 인터페이스
+연속 24시간 시장에서 담보는 거시경제적 충격으로 인한 야간의 급작스러운 마진 콜(margin calls)을 충당할 수 있도록 높은 유동성을 유지해야 합니다. CME Clearing은 예탁결제원(DTC)과 같은 중앙 예탁 기관과 매끄럽게 연동되며, 정교한 뱅킹 및 증거금 시스템(BAMS)을 FIXML 기반 API를 통해 운영하여 담보 예치 및 인출을 완전 자동화합니다.16
+뱅킹 타임라인은 글로벌 법정 화폐 결제의 현실과 일치하도록 엄격한 일중 및 장마감 마감 시간에 따라 운영되며, 이를 통해 청산소가 항상 완전한 자본을 유지할 수 있도록 보장합니다.
+이벤트 시간 (CT)
+뱅킹 및 담보 관리 작업
+8:30 a.m.
+외화(CAD, EUR, GBP, MXN)의 당일 가치 결제를 위한 BAMS 입출금 요청 마감일.16
+10:30 a.m.
+외화(AUD, JPY, SEK, SGD)의 익일 가치 결제를 위한 BAMS 요청 마감일.16
+11:00 a.m.
+일중 정산 처리 전 모든 담보 요청 마감. 지연 항목은 일중 처리가 완료될 때까지 대기함.16
+11:30 a.m. - 1:00 p.m.
+일중 정산 주기에 따른 예상 및 최종 결제 의무 사항(결과보고서) 확인 시간.50
+2:00 p.m.
+BAMS 시스템 내 모든 비현금 담보 입출금 요청의 최종 마감.16
+2:30 p.m.
+USD 현금 입금(CME 결제 은행 계좌에 자금이 물리적으로 예치되어야 함) 및 DTC로의 주식, ETF, 회사채 인출 요청 마감.16
+BAMS API는 청산 회원이 안전한 FTP(SFTP)를 통해 고도로 구조화된 FIXML 메시지를 사용하여 프로그래밍 방식으로 요청 파일(Request Files)을 업로드할 수 있도록 지원합니다.18 예를 들어, 담보 할당 메시지는 CollAsgn 요소를 사용합니다. 이 메시지 내에서 BizDt 속성은 영업일을 지시하고, AsgnRsn 속성은 흐름의 방향(증거금 입금의 경우 Reason 3, 인출의 경우 Reason 4)을 결정하며, PxQteCcy 속성은 거래의 정확한 통화를 지정합니다.19 이처럼 자동화된 무인(no-touch) 프로세스는 기존 업무 외 시간으로 거래를 확장하는 주식 시장에서 백오피스의 수동 개입 없이 야간 변동성에 대응하여 마진 요구 사항을 신속하게 충족시킬 수 있도록 하는 필수적인 기능입니다.
+시스템 및 기술 아키텍처
+체결 엔진 로직 및 보드 구성(Board Configuration)
+완벽하게 결정론적인 마이크로초 대의 지연 시간을 유지하면서 거대한 트랜잭션 처리량을 감당하기 위해, CME Globex 체결 엔진은 단일한 모놀리식(monolithic) 엔티티로 작동하지 않습니다. 대신 아키텍처는 "마켓 세그먼트(Market Segments)"로 알려진 개별 거래 엔진 인스턴스로 수평적으로 분할(Partitioning)되어 있습니다. 현재 CME Globex는 17개의 분리된 마켓 세그먼트로 구성되어 있으며, 각 자산군을 격리하여 한 시장에서 거래량이 급증하더라도 다른 시장의 체결 엔진 성능에 영향을 주지 않도록 시스템을 격리하여 전체적인 24시간 안정성을 보장합니다.4
+CME는 참가자 주문을 이러한 세그먼트로 라우팅하기 위한 두 가지 구조적 모델을 제공합니다: 편리성 게이트웨이(Convenience Gateway, CGW)와 마켓 세그먼트 게이트웨이(Market Segment Gateway, MSGW)입니다. CGW는 중앙 집중식 라우팅 허브 역할을 합니다. 참가자는 단일 TCP 연결을 통해 접속하며, CGW는 모든 하위 마켓 세그먼트에 대한 모든 주문 입력 메시지의 라우팅을 투명하게 관리합니다. 이 기존(legacy) 모델에서 iLink Session ID는 단일하고 통합된 시퀀스 스트림을 활용하며 오직 하나의 CGW에만 존재합니다.4
+반면 MSGW는 초저지연(ultra-low latency) 참가자와 구조적 결정론을 위해 설계되었습니다. MSGW는 참가자가 전용 마켓 세그먼트에 직접 연결할 수 있도록 합니다.4 이 모델에서 세션 ID는 여러 MSGW 간에 공유됩니다. 참가자는 단일 세션 ID, 비밀번호, 포트를 사용하지만 특정 마켓 세그먼트의 기본 및 백업 게이트웨이에 해당하는 최대 17개의 고유 IP 주소에 각각 연결해야 합니다.4
+MSGW 모델은 시퀀스 번호 관리를 극적으로 바꿉니다. 시퀀스 스트림은 MarketSegmentID와 Session ID의 정확한 조합에 따라 고유하므로, 여러 세그먼트에 로그인한 고객은 메시지 시퀀스 번호(tag 34-MsgSeqNum)가 완전히 동일한 다수의 체결 보고서(execution reports)를 동시에 수신할 수 있습니다.4 이 아키텍처를 탐색하기 위해 클라이언트 시스템은 주문을 정확하게 라우팅하고 개별 시퀀스 흐름을 재구성하기 위해 (MDP Security Definition 메시지를 통해 배포되는) tag 1300-MarketSegmentID에 엄격하게 의존해야 합니다.4
+또한, MSGW는 엄격하게 정의된 1420바이트의 최대 전송 단위(MTU)로 제한되는 엄격한 선입선출(FIFO) 메시지 처리 모델을 강제합니다.4 게이트웨이는 들어오는 데이터를 패킷 수준에서 평가합니다. 네트워크 패킷에 불완전한 FIX 메시지가 포함된 경우, 엔진은 페이로드를 완성할 후속 패킷이 도착할 때까지 대기하며 해당 메시지를 FIFO 대기열 밖에 체계적으로 보류합니다. 패킷에 완전한 메시지들이 있고 그 뒤에 부분적인 메시지가 포함된 경우, 완전한 메시지는 즉시 실행됩니다. 결정적으로 후속 패킷의 데이터가 수학적으로 보류 중인 부분 메시지를 완성하지 못할 경우 게이트웨이는 조각들을 병합하고, tag 10에서 잘못된 체크섬(CheckSum)을 식별한 후, 핵심 엔진의 무결성을 보호하기 위해 생성된 데이터를 공격적으로 폐기합니다.4
+세션 경계를 넘나드는 주문 우선순위와 영속성
+CME Globex는 개별 상품의 특정 유동성 프로필에 맞춘 정교한 매칭 알고리즘 매트릭스를 활용합니다. 여기에는 엄격한 선입선출(FIFO), 비례 배분(Pro-Rata), 그리고 주도 시장 조성자(LMM) 또는 최우선 주문(TOP) 우선순위를 포함하는 복잡한 변형들이 포함됩니다.2
+연속 시장에서 타임스탬프 우선순위는 신성불가침으로 간주됩니다. 참가자가 주문의 작업 수량(working quantity)을 늘리거나, 절대 가격을 변경하거나, 계좌 번호를 수정할 경우 우선순위는 즉시 취소되고 대기열의 맨 뒤로 이동합니다.3 그러나 취소 전 유효 주문(GTC) 및 지정일자 유효 주문(GTD)에 대해서는 타임스탬프 우선순위가 세션 경계를 넘어 엄격하게 유지됩니다.3
+시장이 오후 4:00 CT에 잠시 정지했다가 오후 4:01 CT에 거래일이 이월되며 다시 열릴 때, 이 1분간의 중단 중에도 이러한 영속적인 주문들은 취소되지 않으며 대기열 내의 타임스탬프 우선순위를 정확하게 보존합니다.3 이러한 논리적 영속성은 장기적인 대기 유동성을 장려하는 데 필수적이며, 참가자들이 끊임없이 주문을 다시 제출하여 대기 위치를 잃을 위험을 겪지 않고도 며칠에 걸친 구조적 무결성을 보장합니다.
+연속 가동(Continuous Uptime)을 위한 인프라 및 애플리케이션 계층
+23시간 이상의 연속 가동 시간을 제공하려면 주말 내내 이어지는 전통적인 유지보수 중단 시간을 완전히 제거하는 고급 배포 방법론이 필요합니다. 수천만 건의 주문 상태를 유지한 채 1분이라는 짧은 유지보수 창 내에 시스템 전환 및 소프트웨어 업데이트를 완료하기 위해, CME 그룹은 병렬 환경과 격리된 아키텍처를 적극적으로 활용합니다.
+듀얼 존 아키텍처(Dual Zones Architecture) 교대 운영: CME는 프로덕션 거래를 두 개의 완전히 격리된 존(Zone)에서 번갈아 가며 운영하는 듀얼 존 시스템을 채택하고 있습니다. 활성 존(Active Zone)이 라이브 시장 거래를 처리하는 동안, 트래픽이 차단된 대체 존(Alternate Zone)에서는 소프트웨어 패치 및 인프라 업그레이드가 백그라운드에서 사전에 수행됩니다. 이후 지정된 1분간의 유지보수 윈도우에 프로덕션 트래픽을 대체 존으로 스위칭함으로써 시장의 성능 저하 없이 즉각적으로 업데이트를 반영합니다.
+블루-그린 배포(Blue-Green Deployments): 애플리케이션 릴리스 시 로드 밸런서 뒤에 현재 운영 중인 '블루' 환경과 동일한 '그린' 환경을 동시에 구축합니다.21 그린 환경에서 업데이트와 모의 부하 테스트를 완료한 후 라이브 트래픽을 블루에서 그린으로 순식간에 라우팅하므로, 유지보수로 인한 다운타임(Zero-downtime)을 없애고 문제 발생 시 즉각적인 롤백이 가능합니다.21
+무중단 데이터베이스 마이그레이션과 기능 플래그(Dynamic Feature Flags): 데이터베이스 스키마 변경 등 시스템 깊숙한 곳의 유지보수가 필요할 경우, 시스템을 멈추는 대신 동적 기능 플래그를 활용합니다.51 새로운 데이터베이스로의 읽기/쓰기 로직을 기능 플래그로 래핑하여, 기존 운영 데이터베이스에서 트랜잭션이 자연스럽게 처리되는 동안 백그라운드에서 비동기적이고 점진적으로 데이터 마이그레이션을 수행합니다.51
+FIXP 기반 세션 영속성(Session Persistence): 네트워크 스위치 등 물리적 인프라의 찰나적인 유지보수로 인해 1분 윈도우 동안 TCP 연결이 잠시 끊어질 수 있습니다. 하지만 CME의 주문 프로토콜인 iLink 3는 FIXP(FIX Performance) 세션 계층을 사용하여, 물리적 연결이 단절되더라도 범용 고유 식별자(UUID)를 기반으로 논리적인 세션 상태를 소멸시키지 않고 유지합니다.52 오후 4:01에 클라이언트가 재연결하면, 시스템은 끊어진 시점 이후의 시퀀스 번호만 동기화하여 완벽한 상태 무결성을 가지고 주문 대기열 우선순위를 유지한 채 거래를 즉각 재개할 수 있도록 지원합니다.52
+연결 및 인터페이스 프로토콜
+글로벌 24시간 시장의 거대한 대역폭과 지연 시간(latency) 요구 사항을 촉진하기 위해 CME는 전통적인 ASCII 기반의 FIX 프로토콜 사용을 중단하고 주문 입력에 대해서는 iLink 3, 시장 데이터에 대해서는 MDP 3.0과 같은 고도로 최적화된 바이너리 프레임워크를 도입했습니다.
+iLink 3 프로토콜은 세션 계층 관리를 위해 앞서 언급한 FIX 성능(FIXP) 프로토콜을 활용하고, 애플리케이션 계층의 비즈니스 페이로드를 위해서는 단순 이진 인코딩(SBE, Simple Binary Encoding)을 활용합니다.23 FIXP는 기존 ASCII FIX에 내재된 장황한 헤더 및 트레일러 오버헤드를 제거하는 매우 가벼운 포인트-투-포인트 세션 프로토콜입니다.4
+애플리케이션 계층에서 SBE는 메시지의 인코딩 및 디코딩 속도를 극적으로 높여줍니다. SBE는 고정 길이 필드, 고정 위치 및 기본 리틀 엔디안(little-endian) 바이트 순서를 활용하여, 클라이언트 거래 시스템이 복잡하고 순차적인 상태 기반의 파싱 없이 수신되는 네트워크 데이터를 애플리케이션 메모리 버퍼에 직접 매핑할 수 있게 합니다.25
+시장 데이터 플랫폼(MDP) 3.0 역시 이와 같은 효율성을 반영하여, 이중 피드(dual-feed) 사용자 데이터그램 프로토콜(UDP) 멀티캐스트 아키텍처를 활용합니다.27 극단적인 변동성 기간 동안 네트워크 대역폭을 효율적으로 관리하기 위해, MDP 3.0은 네트워크 패킷, FIX 메시지, 매칭 이벤트라는 개념을 분리합니다. 단일하고 복잡한 매칭 이벤트가 여러 순차적 UDP 패킷에 걸쳐 있을 수도 있고, 반대로 단일 UDP 패킷에 여러 고유한 매칭 이벤트가 포함될 수도 있습니다.26
+알고리즘 트레이더의 절대적인 상태 무결성을 보장하기 위해 MDP 3.0은 tag 5799-MatchEventIndicator를 활용합니다.26 이 특정 태그는 매칭 이벤트 경계의 명확한 끝을 명시적으로 신호하여, 클라이언트 애플리케이션이 부분적으로 업데이트된 주문장에 기초하여 자동화된 실행 로직을 섣불리 발동하는 것을 방지합니다.26
+특화된 파생상품 인프라 및 물리적 자산
+데이터 센터 운영 및 근접 호스팅(Proximity Hosting)
+연속적인 24시간 시장은 파편화되고 지리적으로 분산된 체결 엔진에 의존할 수 없습니다. 대신 완벽하게 결정론적인 지연 시간으로 막대한 글로벌 처리량을 감당할 수 있도록 설계된, 고도로 집중된 물리적 유동성 허브가 필요합니다. CME Globex는 CyrusOne과의 파트너십을 통해 관리되는 오로라 데이터 센터(Aurora Data Center)에서 운영됩니다. 이 시설은 시카고에서 서쪽으로 약 40마일 떨어진 428,000평방피트 이상의 Tier-3 데이터 센터입니다.28
+특히, CME 그룹은 일상적인 24시간 거래 처리나 야간 시스템 유지보수를 위해 지리적으로 다른 데이터 센터로 트래픽을 이동시키지 않으며, 운영 서버는 오로라 데이터 센터 내에서 24시간 연속으로 구동됩니다. 오로라 시설 내의 시스템들은 각 계층(네트워크, 서버, 애플리케이션)마다 여러 겹의 다중 이중화(Multiple layers of redundancy)로 구축되어 있어, 물리적 결함이 발생하더라도 운영 환경 내에서 대기(Standby) 컴포넌트로 즉각적인 페일오버(Failover)가 이루어져 무중단 서비스를 이어갑니다.53 뉴욕 데이터 센터(NYDC)와 같은 외부 지역의 백업 데이터 센터는 오직 오로라 데이터 센터에 심각한 물리적 재해가 발생하여 정상적인 서비스가 불가능한 '재해 복구(Disaster Recovery)' 상황에서만 예외적으로 활성화됩니다.44
+이 시설 내에서 CME는 전용 코로케이션(Co-Location) 서비스를 제공하여 시장 참가자에게 맞춤형 캐비닛(최대 17kW의 고밀도 전력 부하 지원)을 제공하고 Globex 매칭 엔진과 직접적인 근접성을 보장합니다.30 이 코로케이션 전략의 초석은 CME GLink 아키텍처입니다. GLink는 10GBase-LR(Long Reach) 싱글 모드 광케이블을 활용하여 초당 10기가비트(Gbps)의 교차 연결(cross-connect)을 제공합니다.32 결정적으로 CME는 엄격한 등거리 케이블링(equidistant cabling) 프로토콜을 통해 아키텍처적 중립성을 보장합니다. 클라이언트의 캐비닛에서 출발하여 CME Active Edge Device에 이르는 모든 단일 교차 연결 케이블은 정확히 동일한 광학적 길이로 엔지니어링, 스풀링 및 테스트되어, 물리적 근접성만으로 마이크로초의 지연 시간 이점을 얻을 수 없도록 방지합니다.28
+기술적 안전장치 및 야간 리스크 관리
+연장된 거래 시간은 필연적으로 미국 시장 폐장과 아시아 시장 개장 사이의 시간적 간격에서 특히 글로벌 유동성이 낮은 시기를 발생시킵니다. CME 그룹은 이러한 취약한 야간 시간대 동안의 플래시 크래시(flash crashes), 잘못된 알고리즘 동작, 재앙적인 신용 한도 위반을 방지하기 위해 광범위하고 다층적인 기술적 안전장치 제품군을 활용합니다.
+Globex 신용 통제(Globex Credit Controls, GC2)
+Globex 신용 통제(GC2) 시스템은 청산 회사가 고객의 거래 활동에 대해 수학적으로 결정론적인 신용 한도를 실시간으로 설정할 수 있도록 하는 체결 전(pre-execution) 리스크 관리 프레임워크입니다.1 리스크 관리자는 실행 회사 ID(Executing Firm ID)와 거래소 그룹(Exchange Group)의 정확한 교차점에서 이러한 한도를 설정합니다.35
+노출 한도(Exposure Limits): 선물 및 옵션 계약 전반의 매수 및 매도 포지션 모두에 시스템적으로 적용되는 통화 기반 한도.35
+최대 수량 한도(Maximum Quantity Limits): 단일 주문의 최대 허용 크기에 대한 절대적인 상한선. 노출 한도와 수량 한도가 동시에 활성화된 경우, 매칭 엔진은 두 제약 조건 중 가장 엄격한 것을 적용하는 "보수적 논리(Conservative Logic)"를 시행합니다.35
+포지션 논리(Position Logic): 미결제 및 체결 포지션은 지속적으로 계산됩니다. 회사의 "Total Futures Long"은 전체 작동 중인 매수 수량과 체결된 매수 주문의 합에서 체결된 매도 주문을 뺀 값으로 계산됩니다.35 끊임없는 포지션 누적을 방지하기 위해, 체결된 포지션은 매일 정확히 오후 4:30 CT에 시스템적으로 '0'으로 재설정됩니다.35
+GC2 프레임워크에는 그래픽 사용자 인터페이스(GUI)를 통한 반응성이 뛰어난 킬 스위치(Kill Switch) 메커니즘이 포함되어 있습니다. 1초 이내에 완전히 작동할 수 있는 킬 스위치는 지정된 SenderComp ID와 관련된 모든 새로운 주문 입력을 즉시 차단하고, 대기 중인 모든 주문에 대량 취소 명령을 하달합니다.1 또한 GC2에는 자동화된 주말 제한 토글 기능이 통합되어 있습니다. 청산 회사가 고객의 주말 거래를 제한하면, 주말 시간이 시작될 때 시스템이 자동으로 모든 노출 및 수량 한도를 절대적인 '0'으로 덮어써 수동 개입 없이 즉시 모든 활동을 종료하며, 일요일 저녁에 다시 정상 주중 한도로 되돌립니다.35
+자기 거래 방지(Self-Match Prevention, SMP)
+자동화 수준이 높은 시장에서는 정확히 동일한 회사 내의 여러 트레이딩 데스크에서 관리하는 독립적인 알고리즘이 의도치 않게 서로 거래할 위험이 있습니다. 이는 허위 거래량을 발생시키고 자전거래(wash-trade) 위반과 관련한 심각한 규제 조사를 유발합니다. 이를 완화하기 위해 Globex는 의무적인 자기 거래 방지(SMP) 메커니즘을 채택합니다.37 회사는 발신 주문에 고유한 SMP ID(예: iLink 3의 tag 2362에 기입됨)를 추가합니다. 매칭 엔진이 체결 가능한 가격 수준에서 동일한 SMP ID를 가진 매수 및 매도 주문을 감지하면, 시스템적으로 해당 체결을 가로챕니다.37 사전 구성된 SMP 지시어에 따라, 엔진은 대기 주문, 진입하는 공격적 주문 또는 둘 다를 체계적으로 취소하여 자전거래를 구조적이고 수학적으로 불가능하게 만듭니다.37
+동적 가격 밴딩(Dynamic Price Banding)
+얇은 야간 시장에서 극심한 변동성과 잘못된 주문 입력을 억제하기 위해 Globex는 동적 가격 밴드(dynamic price bands)를 강제합니다. 이러한 알고리즘 대역은 롤링 기준 가격(일반적으로 최근 거래가 또는 이론적 시초가)을 기준으로 주문 입력에 대한 절대 상한 및 하한을 지정합니다.38 이 제한적인 밴드를 벗어나 제출된 주문은 게이트웨이에서 즉시 거부됩니다. 글로벌 커맨드 센터(GCC)는 합법적인 거시경제 뉴스 이벤트(예: 아시아 거래 시간 중 예상치 못한 중앙은행 금리 발표)를 수용하기 위해 실시간으로 이러한 대역을 수동으로 넓힐 수 있는 규제 권한을 유지하며, 유동성이 정상화되면 이를 표준 제한 수준으로 되돌립니다.38
+주식 시장 시간 연장에 대한 전략적 권고사항
+한국거래소(KRX)가 24시간 현물 주식 운영을 위한 타당성 조사를 수립함에 있어, 파생상품 시장의 기술 표준을 채택하는 것은 필요한 조건의 절반에 불과합니다. 연속적인 패러다임을 지속하려면 운영, 인력 및 시스템적 거래 후(post-trade) 인프라 역시 동등하게 진화해야 합니다. 다음의 전략적 권고사항은 24시간 주기의 복잡성을 직접적으로 다루면서, KRX의 거래시간 연장 이니셔티브를 위한 핵심적인 초점 영역을 목표로 합니다.
+1. "Follow-the-Sun" 운영 인력 배치 모델 도입
+24시간 매칭 엔진은 복원력이 높을 수 있지만, 시장 운영, 고객 접속성 및 비상 대응을 관리하는 데 필요한 인간의 통제 역시 동등하게 연속적이어야 합니다. 순수하게 현지 일과 시간(daylight hours)에만 운영되는 전통적인 거래소의 중앙 집중식 시장 운영 데스크 모델은 연속 거래에 전적으로 불충분합니다.
+KRX는 CME의 글로벌 커맨드 센터(GCC) 설계를 밀접하게 모방한 "Follow-the-Sun"(FTS) 운영 인력 모델을 구축해야 합니다.39 FTS 모델은 지리적으로 분산된 운영 센터—일반적으로 3개의 주요 지역(예: 미주, 유럽/중동/아프리카(EMEA), 아시아 태평양(APAC))으로 분할—에 의존합니다.41
+구조화된 지역 인수인계: 각 지역 센터는 현지의 표준 영업 시간 동안 운영됩니다. 중요한 점은, 이러한 일정에 교차 근무(overlapping shifts)가 설계되어 정보의 원활한 인수인계를 촉진해야 한다는 것입니다. 이는 진행 중인 사고 대응 노력, 사이버 보안 모니터링 또는 복잡한 기술적 이상 현상이 정보의 손실 없이 한 지역 팀에서 다음 팀으로 원활하게 이전되도록 보장합니다.41
+통합된 사고 지휘 체계: CME의 운영에서 입증되었듯, 모든 지역 팀은 통합된 운영 표준에 보고해야 하며, 글로벌 사고 대응 및 재해 복구(DR) 실행을 위한 확정적인 에스컬레이션 지점(escalation point) 역할을 수행해야 합니다.42
+보편적 고객 커뮤니케이션: 지원 채널은 보편적으로 접근 가능해야 합니다. CME는 통합된 GCC로 연결되는 현지화된 지원 전화번호와 더불어 통합 발권(ticketing) 시스템 및 회사 수준의 관리 포털(보안 토큰 접근이 필요한 FirmSoft 등)을 활용합니다. 이를 통해 글로벌 고객이 어느 물리적 시간대에 있든 상관없이 주문 상태나 비상 취소와 관련하여 즉각적이고 인증된 지원을 받을 수 있도록 보장합니다.43
+2. 파생상품과의 교차 증거금(Cross-Margining) 시너지 개발
+마진 콜이 야간 파생상품 노출과 분리되어 독립적으로 평가될 경우, 현물 주식 거래 시간의 연장은 필연적으로 청산 시스템 내에 막대한 양의 초과 담보를 묶이게 만들 것입니다. 청산 회사의 자본 효율성을 최적화하고 깊은 야간 유동성을 장려하기 위해, KRX는 현물 주식과 주식 파생상품 시장을 잇는 교차 증거금(cross-margining) 시스템을 적극적으로 추진해야 합니다.
+CME 그룹과 예탁결제원 소속의 고정수익 청산회사(DTCC-FICC) 간의 협업은 교차 시장 시너지에 대한 결정적인 템플릿을 제공합니다.46 이 선진적인 약정 하에, CME 금리 선물과 FICC 청산 미국 국채에서 상쇄되는 리스크 노출을 보유한 청산 회원 및 적격 최종 사용자는 통합된 순 리스크 계산 혜택을 받습니다.46 파생 상품과 기초 현물 자산 간의 수학적 상관관계를 법적으로 인정함으로써, 청산소는 요구되는 이행 보증금을 대폭 줄일 수 있습니다.46
+KRX의 경우, 중앙 예탁기관이 야간 KOSPI 선물 포지션과 이와 동일한 기초 자산인 연속 현물 주식 간의 마진 요구 사항을 동적으로 상쇄할 수 있도록 하는 정교한 교차 증거금 API를 개발하는 것이 중요합니다. 이는 자본의 마찰 비용을 크게 줄여 글로벌 유동성 제공자들이 연장된 야간 시간 동안 촘촘한 스프레드를 유지하도록 강력하게 동기를 부여합니다.48 나아가, FIXML을 통한 API 기반의 자동화된 담보 할당(CME의 BAMS와 DTC 통합과 유사)을 활성화하면, 참가자들이 정규 업무 시간 외에도 백오피스의 수동 개입 없이 긴급한 마진 예치를 실행할 수 있게 보장합니다.16
+3. 결정론적 재해 복구(DR) 프로토콜 설계
+24시간 연속 환경에서 "재해"에 대한 시스템적 정의는 크게 압축됩니다. 불과 몇 분 동안의 중단이 전 세계적인 파급 효과를 지닌 재앙적 실패를 구성할 수 있습니다. KRX는 표준적인 액티브-패시브 데이터 센터 모델을 넘어 클라이언트 동기화 및 상태 복구에 강력하게 초점을 맞춘 고도로 결정론적인 재해 복구 프로토콜을 도입해야 합니다.
+CME의 재해 복구 인프라는 기본 시설(오로라)과 외부 지역의 보조 시설(뉴욕 데이터 센터, NYDC)에 의존합니다.44 페일오버 프로세스는 사전 이벤트(Pre-Event), 재해 복구(DR), 복구(Recovery), 사후 복구(Post-Recovery)라는 4가지의 명시적으로 정의된 상태로 엄격하게 구조화되어 있습니다.44
+상태 투명성 및 커뮤니케이션: 파국적인 사고로 인해 페일오버가 발생할 경우, KRX는 자동화된 API와 글로벌 커맨드 센터를 통해 상태 전환을 명시적으로 알려야 합니다. 클라이언트는 DR 데이터베이스에 성공적으로 저장된 대기 주문이 무엇이고, 다시 제출해야 하는 주문이 무엇인지 정확히 알아야 합니다.
+필수 대기 시간(Staging Period): DR 환경으로 전환 시, CME는 매칭 엔진이 연속 실행을 재개하기 전에 45분의 엄격한 주문 대기 시간을 강제합니다.49 이는 모든 글로벌 참여자가 FIX 세션을 다시 연결하고 누락된 시퀀스 번호를 동기화하며 주문장을 조정할 수 있는 충분한 시간을 제공하여, 시장 참여자들 간의 비대칭적인 재연결 속도로 인해 유발되는 심각하고 국지적인 가격 혼란을 방지합니다.
+연결 끊김 시 취소(Cancel on Disconnect, CoD) 의무화: KRX는 연장 시간대 시장에 연결하는 모든 연속 세션에 대해 '연결 끊김 시 취소' 기능을 의무화해야 합니다. 고객이 거래소에 대한 네트워크 연결이 예상치 않게 끊어질 경우, 매칭 엔진은 자동으로 끊어진 TCP 연결을 식별하고 해당 세션과 관련된 대기 중인 모든 주문을 체계적으로 취소해야 합니다.4 담당 트레이더가 다른 시간대에서 잠들어 있을 수 있는 24시간 시장에서, CoD는 네트워크 장애 중 낡은 의도(stale intent)에 기반한 체결을 방지하는 궁극적이고 필수적인 안전장치입니다.
+결론
+연속적인 24시간 현물 주식 거래를 향한 구조적 진화는 단순히 운영 시계를 시간적으로 연장하는 것이 아니라, 근본적인 아키텍처적 패러다임의 전환입니다. CME Globex 인프라에 대한 본 심층 기술 분석에서 입증되었듯, 국경이 없는 연속 세션 전반에 걸쳐 완벽한 시장 무결성을 유지하려면 전통적인 일괄 처리(batch-processing) 사고방식을 완전히 버리고, 이벤트 중심(event-driven)의 지속적인 가용성을 가진 마이크로 아키텍처를 도입해야 합니다.
+한국거래소의 주식 시장 운영을 연장하는 타당성은 FIX 성능(FIXP) 및 단순 이진 인코딩(SBE)과 같은 진보된 초저지연 연결 프로토콜의 채택, 하드웨어 등거리 코로케이션 패러다임 구현, 그리고 자동화된 초단위 이하(sub-second) 시행이 가능한 결정론적인 체결 전 위험 제어 도입에 크게 의존합니다. 나아가, 기술적 성과는 "Follow-the-Sun" 인력 배치 모델의 도입과 야간 갭 리스크 관리를 위해 중앙 예탁기관과 깊이 통합된 고도의 자동화된 API 기반 담보 관리 인터페이스 구현 등 근본적인 운영 현대화와 반드시 맞물려야 합니다.
+선도적인 글로벌 파생상품 플랫폼의 강력하고 스트레스 테스트를 거친 프레임워크를 운영의 기준으로 활용함으로써, KRX는 복원력 있고 유동성이 높은 24시간 주식 시장을 자신 있게 설계할 수 있습니다. 이러한 아키텍처적 변혁은 오버나이트 갭 리스크를 최소화하고 글로벌 참여자를 위한 자본 효율성을 최적화하며, 궁극적으로 현대 금융 시장 인프라의 치열한 경쟁 환경 속에서 거래소의 입지를 확고히 보장할 것입니다.
+참고 자료
+CME GLOBEX REFERENCE GUIDE, 2월 19, 2026에 액세스, https://www.cmegroup.com/globex/files/GlobexRefGd.pdf
+CME matching algorithms explained | Databento Blog, 2월 19, 2026에 액세스, https://databento.com/blog/cme-matching-algorithms-explained
+CME Globex Matching Algorithm Steps - Spaces - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457218521
+CME Globex Market Segment - CME Group Client Systems Wiki ..., 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457220437/iLink+Architecture
+Swap-Based+Event+Contracts+and+24-7+Trading - CME Group Client Systems Wiki - Confluence - Atlassian, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/988020743
+Order Qualifiers - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/display/EPICSANDBOX/Order+Qualifiers
+Market Order with Protection - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/display/EPICSANDBOX/Order+Types+for+Futures+and+Options
+Basis Trade at Cash Open - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/display/EPICSANDBOX/Basis+Trade+at+Cash+Open
+Basis Trade at Index Close (BTIC) and BTIC+ - CME, 2월 19, 2026에 액세스, https://www.cmegroup.com/trading/equity-index/btic-transactions.html
+Trade at Cash Open (TACO) and TACO+ - CME, 2월 19, 2026에 액세스, https://www.cmegroup.com/trading/equity-index/trade-at-cash-open.html
+Basis Trade at Index Close (BTIC) - CME, 2월 19, 2026에 액세스, https://www.cmegroup.com/trading/equity-index/files/btic-block-trades-apac.pdf
+FAQ: BTIC+ and TACO+ - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/trading/equity-index/faq-btic-and-taco.html
+CME Globex Notices: March 2, 2020, 2월 19, 2026에 액세스, https://www.cmegroup.com/notices/electronic-trading/2020/03/20200305.html
+CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457215607/CME+Clearing+Services
+Clearing - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/solutions/clearing.html
+Transaction Timelines - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/solutions/clearing/operations-and-deliveries/transaction-timelines.html
+CME Clearing: Principles for Financial Market Infrastructures Disclosure, 2월 19, 2026에 액세스, https://www.cmegroup.com/clearing/risk-management/files/cme-clearing-principles-for-financial-market-infrastructures-disclosure.pdf
+CME Clearing Collateral API Specifications CSV Format, 2월 19, 2026에 액세스, https://www.cmegroup.com/clearing/financial-and-collateral-management/files/cme-collateral-api-csv.pdf
+CME Clearing's Collateral API via FIXML, 2월 19, 2026에 액세스, https://www.cmegroup.com/clearing/risk-management/files/cme-collateral-api-fixml.pdf
+Matching Algorithms - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457218479
+Blue-Green Deployments: A Definition and Introductory Guide - LaunchDarkly, 2월 19, 2026에 액세스, https://launchdarkly.com/blog/blue-green-deployments-a-definition-and-introductory/
+Blue-green deployments: Zero-downtime deployments for software and database updates - Liquibase, 2월 19, 2026에 액세스, https://www.liquibase.com/blog/blue-green-deployments-liquibase
+20200330a - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/notices/electronic-trading/2020/03/20200330a.html
+Session Layer Management Tests - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/tools-information/webhelp/acp-cgw-fo/Content/session-layer.html
+CME Globex - iLink 3 for CGW Session Guidelines, 2월 19, 2026에 액세스, https://www.cmegroup.com/globex/files/ilink-3-cgw-session-guidelines.pdf
+White Paper: CME MDP 3.0 - B2BITS, 2월 19, 2026에 액세스, https://www.b2bits.com/product_support/e-library/white-paper-cme-mdp-30
+Data Directly from the Market Data Platform - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/market-data/distributor/market-data-platform.html
+CME's Aurora Co-Lo: Quick Facts - A-Team Insight, 2월 19, 2026에 액세스, https://a-teaminsight.com/blog/cmes-aurora-co-lo-quick-facts/?brand=tti
+CME Group Announces Agreement to Sell Aurora, Ill. Data Center to CyrusOne, 2월 19, 2026에 액세스, https://investor.cmegroup.com/news-releases/news-release-details/cme-group-announces-agreement-sell-aurora-ill-data-center
+CME Co-Location Services, 2월 19, 2026에 액세스, https://www.cmegroup.com/globex/files/CME-Co-Location-Services-Overview.pdf
+Co-Location and Data Center Services - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/solutions/co-location.html
+FEE SCHEDULE TO DATA CENTER CONNECTION AGREEMENT CME Network Access Charges CME LNet CME EConnect 165 Halsey/111 8th & EConn, 2월 19, 2026에 액세스, https://www.cmegroup.com/globex/files/cme-globex-datacenterfeeschedule.pdf
+CME GLink - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457415665/CME+GLink
+GLink Cross Connect Specifications for Secaucus and Slough - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/globex/files/ebs/ebs-glink-cross-connect.pdf
+CME Globex Credit Controls (GC2), 2월 19, 2026에 액세스, https://www.cmegroup.com/tools-information/webhelp/globex-credit-controls/Content/CME-Globex-Credit-Controls-Management.html
+CME Globex Credit Controls - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457219125/CME+Globex+Credit+Controls
+FAQ: Globex Self-Match Prevention Functionality - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/faq-self-match.html
+CME Globex Reference Sheet - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457086986/GCC+Product+Resources
+Follow the sun trading: More trades, processing and reporting - a major data management headache | FOW, 2월 19, 2026에 액세스, https://www.fow.com/insights/follow-the-sun-trading-more-trades-processing-and-reporting
+About the Global Command Center (GCC) - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/solutions/market-access/globex/trade-on-globex/about-the-global-command-center.html
+Strategies to take your customer support global - Intercom, 2월 19, 2026에 액세스, https://www.intercom.com/blog/global-customer-support/
+Staff Security Engineer - Operations - CME Group - | Dice.com, 2월 19, 2026에 액세스, https://www.dice.com/job-detail/eaca6dcf-8a09-44b1-b688-0ec8e292d504?q=NICE
+API Development Requirements and Assistance - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/solutions/market-access/globex/develop-to-globex/api-development-requirements-and-assistance.html
+CME Globex Disaster Recovery Process - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457412471/CME+Globex+Disaster+Recovery+Process
+CME Customer Center Services Guide, 2월 19, 2026에 액세스, https://www.cmegroup.com/education/files/cme-customer-center-services-guide.pdf
+DTCC Files to Expand CME Group Cross-Margining Arrangement to End User Clients, 2월 19, 2026에 액세스, https://www.dtcc.com/news/2025/december/15/dtcc-files-to-expand-cme-group-cross-margining-arrangement
+CME-FICC Cross Margining for Customers - Clearing Member Firms, 2월 19, 2026에 액세스, https://www.cmegroup.com/markets/interest-rates/files/cme-ficc-cross-margining-for-indirect-users.pdf
+Fixed-income cross-margin opportunities: A driver of change | CME, 2월 19, 2026에 액세스, https://www.cmegroup.com/articles/files/2025/fixed-income-cross-margin-opportunities-driver-change.pdf
+CME Globex Disaster Recovery - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457412050/CME+Globex+Disaster+Recovery
+101 Overview: Settlement - CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/articles/brochures-and-handbooks/101-overview-settlement.html
+3 Best Practices For Zero-Downtime Database Migrations - LaunchDarkly, 2월 19, 2026에 액세스, https://launchdarkly.com/blog/3-best-practices-for-zero-downtime-database-migrations/
+iLink - CME Group Client Systems Wiki - Confluence, 2월 19, 2026에 액세스, https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/714145834
+Business Continuity Management at CME Group, 2월 19, 2026에 액세스, https://www.cmegroup.com/globex/files/business-continuity-management-cme-group.pdf

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSE 런던증권거래소 - 24시간 거래 체제 분석 리포트</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1a1a2e; --sidebar-bg: #f8f9fa; --border: #dee2e6;
+            --accent: #0066cc; --accent-light: #e7f1ff; --table-header: #0066cc;
+            --table-header-text: #ffffff; --table-border: #d0d7de; --code-bg: #f6f8fa;
+            --highlight: #fff3cd; --hover-bg: #e9ecef;
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f1a; --text: #d8d8e8; --sidebar-bg: #161625; --border: #2a2a45;
+            --accent: #4da6ff; --accent-light: #1a2a4a; --table-header: #1e3a5f;
+            --table-header-text: #e0e8f0; --table-border: #2a3a4a; --code-bg: #1e2a3a;
+            --highlight: #3a3520; --hover-bg: #1e1e35;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.75;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            overflow-y: auto; z-index: 100; transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-280px); }
+        .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 13px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-header select {
+            width: 100%; margin-top: 8px; padding: 7px 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+        }
+        .toc { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .toc a {
+            display: block; padding: 5px 16px; color: var(--text); text-decoration: none;
+            font-size: 12.5px; border-left: 3px solid transparent; transition: all 0.15s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toc a:hover { background: var(--hover-bg); }
+        .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: var(--accent-light); }
+        .toc a.depth-3 { padding-left: 30px; font-size: 11.5px; opacity: 0.85; }
+        .toc a.depth-4 { padding-left: 44px; font-size: 11px; opacity: 0.7; }
+
+        /* Top bar */
+        .topbar {
+            position: fixed; top: 0; right: 0; left: 280px; height: 48px;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 90;
+            transition: left 0.25s ease;
+        }
+        .topbar.expanded { left: 0; }
+        .topbar button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--sidebar-bg); color: var(--text); cursor: pointer; font-size: 13px;
+            white-space: nowrap;
+        }
+        .topbar button:hover { background: var(--hover-bg); }
+        .topbar input {
+            flex: 1; max-width: 350px; padding: 6px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--sidebar-bg); color: var(--text);
+        }
+        .search-count { font-size: 11px; color: var(--accent); min-width: 50px; }
+
+        /* Main content */
+        main {
+            margin-left: 280px; padding: 68px 50px 60px;
+            transition: margin-left 0.25s ease;
+        }
+        main.expanded { margin-left: 0; }
+        h1 { font-size: 26px; margin: 25px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+        h2 { font-size: 20px; margin: 28px 0 14px; color: var(--accent); }
+        h3 { font-size: 16px; margin: 22px 0 10px; }
+        h4 { font-size: 14px; margin: 18px 0 8px; }
+        p { margin: 8px 0; }
+        a { color: var(--accent); }
+
+        /* Tables - responsive */
+        .table-wrap {
+            overflow-x: auto; margin: 14px 0; border-radius: 8px;
+            border: 1px solid var(--table-border);
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        table { border-collapse: collapse; font-size: 12.5px; width: max-content; min-width: 100%; }
+        th { background: var(--table-header); color: var(--table-header-text); font-weight: 600;
+              padding: 9px 10px; text-align: left; border: 1px solid var(--table-border);
+              position: sticky; top: 0; white-space: nowrap; }
+        td { padding: 8px 10px; border: 1px solid var(--table-border); word-break: keep-all; }
+        tr:nth-child(even) { background: var(--sidebar-bg); }
+        tr:hover { background: var(--accent-light); }
+        /* First column sticky on wide tables */
+        th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: inherit; }
+        th:first-child { z-index: 2; }
+        tr:nth-child(odd) td:first-child { background: var(--bg); }
+        tr:nth-child(even) td:first-child { background: var(--sidebar-bg); }
+        tr:hover td:first-child { background: var(--accent-light); }
+        th:first-child { background: var(--table-header); }
+
+        code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        blockquote {
+            border-left: 4px solid var(--accent); padding: 10px 18px; margin: 14px 0;
+            background: var(--accent-light); border-radius: 0 8px 8px 0; font-size: 13px;
+        }
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 25px 0; }
+        mark { background: #ffe066; padding: 0 3px; border-radius: 2px; }
+        strong { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.mobile-show { transform: translateX(0); }
+            main { margin-left: 0 !important; padding: 60px 12px 40px; }
+            .topbar { left: 0 !important; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 7px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 17px; }
+            h3 { font-size: 14px; }
+        }
+        @media (max-width: 480px) {
+            main { padding: 56px 8px 30px; }
+            table { font-size: 10px; }
+            th, td { padding: 5px 5px; }
+            .topbar input { max-width: 150px; }
+        }
+        @media print {
+            .sidebar, .topbar { display: none !important; }
+            main { margin: 0 !important; padding: 10px !important; max-width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>24H Trading Report</h2>
+            <select onchange="if(this.value)location.href=this.value">
+                <option value="00_종합비교_요약.html">&#128202; 종합 비교 요약</option>
+<option value="01_KRX_한국거래소.html">&#127472;&#127479; KRX 한국거래소</option>
+<option value="02_NYSE_뉴욕증권거래소.html">&#127482;&#127480; NYSE 뉴욕증권거래소</option>
+<option value="03_NASDAQ_나스닥.html">&#127482;&#127480; NASDAQ 나스닥</option>
+<option value="04_24X_Exchange.html">&#127482;&#127480; 24X Exchange</option>
+<option value="05_CME_Group.html">&#127482;&#127480; CME Group</option>
+<option value="06_DTCC_청산결제.html">&#127482;&#127480; DTCC 청산결제</option>
+<option value="07_LSE_런던증권거래소.html" selected>&#127466;&#127482; LSE 런던증권거래소</option>
+<option value="08_JPX_도쿄증권거래소.html">&#127471;&#127477; JPX 도쿄증권거래소</option>
+<option value="09_Blue_Ocean_ATS.html">&#127482;&#127480; Blue Ocean ATS</option>
+<option value="10_유럽거래소_Eurex_Euronext.html">&#127466;&#127482; 유럽거래소 Eurex/Euronext</option>
+            </select>
+        </div>
+        <div class="toc" id="toc"></div>
+    </nav>
+
+    <div class="topbar" id="topbar">
+        <button id="toggleBtn" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="doSearch(this.value)">
+        <span class="search-count" id="searchCount"></span>
+        <button onclick="toggleTheme()" title="Toggle dark mode">&#9681;</button>
+        <button onclick="window.print()" title="Print">&#128424;</button>
+    </div>
+
+    <main id="main">
+        <h1 id="07-런던증권거래소-london-stock-exchange-lseg">07. 런던증권거래소 (London Stock Exchange / LSEG)</h1>
+<h2 id="1-개요">1. 개요</h2>
+<p>런던증권거래소(London Stock Exchange, LSE)는 1801년 공식 설립된 세계에서 가장 오래된 증권거래소 중 하나로, 현재 런던증권거래소그룹(London Stock Exchange Group, LSEG)의 핵심 거래소로 운영되고 있다. LSEG는 단순한 거래소를 넘어 데이터, 분석, 청산, 결제까지 아우르는 글로벌 금융 인프라 기업으로 성장했다.</p>
+<h3 id="주요-재무-지표-20252026">주요 재무 지표 (2025~2026)</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>수치</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>연간 매출 (2025년 12월 기준)</td>
+<td>약 $12.3B (약 16조 원)</td>
+</tr>
+<tr>
+<td>시가총액 (2026년 2월 기준)</td>
+<td>약 $58.1B (약 76조 원)</td>
+</tr>
+<tr>
+<td>주가 (2026년 2월 26일)</td>
+<td>$115.24</td>
+</tr>
+<tr>
+<td>발행주식수</td>
+<td>약 5.04억 주</td>
+</tr>
+<tr>
+<td>임직원 수</td>
+<td>약 25,000명 이상</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-lseg-그룹-구조">2. LSEG 그룹 구조</h2>
+<p>LSEG는 크게 세 가지 핵심 사업 부문으로 구성된다.</p>
+<h3 id="21-데이터-amp-애널리틱스-data-amp-analytics-매출-비중-약-70">2.1 데이터 &amp; 애널리틱스 (Data &amp; Analytics) — 매출 비중 약 70%</h3>
+<table>
+<thead>
+<tr>
+<th>사업부</th>
+<th>주요 기능</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Refinitiv</td>
+<td>실시간 시장 데이터, 뉴스, 거래 플랫폼 (Eikon/Workspace)</td>
+</tr>
+<tr>
+<td>FTSE Russell</td>
+<td>글로벌 지수 산출 (FTSE 100, FTSE All-Share, Russell 2000 등)</td>
+</tr>
+<tr>
+<td>Risk Intelligence</td>
+<td>World-Check 등 컴플라이언스/리스크 관리 솔루션</td>
+</tr>
+</tbody>
+</table>
+<p>2021년 Refinitiv 인수(약 $27B)를 통해 LSEG는 데이터 사업 비중을 대폭 확대하였으며, Bloomberg Terminal과 경쟁하는 Workspace 플랫폼을 운영하고 있다.</p>
+<h3 id="22-자본시장-거래-capital-markets-trading">2.2 자본시장 / 거래 (Capital Markets / Trading)</h3>
+<table>
+<thead>
+<tr>
+<th>거래소/플랫폼</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>London Stock Exchange (LSE)</td>
+<td>영국 주요 주식 거래소, Main Market 및 AIM 운영</td>
+</tr>
+<tr>
+<td>Turquoise</td>
+<td>범유럽 다자간 거래 시설(MTF), 다크풀 포함</td>
+</tr>
+<tr>
+<td>LSEG FX</td>
+<td>외환 거래 플랫폼 (FXall 포함)</td>
+</tr>
+<tr>
+<td>Tradeweb</td>
+<td>채권, 파생상품 전자거래 플랫폼 (LSEG 지분 보유)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-포스트-트레이드-post-trade">2.3 포스트 트레이드 (Post Trade)</h3>
+<table>
+<thead>
+<tr>
+<th>사업부</th>
+<th>주요 기능</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LCH Group</td>
+<td>글로벌 중앙청산소(CCP), 금리스왑 청산 세계 1위</td>
+</tr>
+<tr>
+<td>Acadia</td>
+<td>마진 관리, 담보 관리</td>
+</tr>
+<tr>
+<td>Quantile</td>
+<td>포트폴리오 압축, 자본 최적화</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2025년-포스트-트레이드-사업부-은행-투자">2025년 포스트 트레이드 사업부 은행 투자</h4>
+<p>2025년 Q3 실적 발표와 함께, LSEG는 Post Trade Solutions 사업부의 20% 지분을 11개 글로벌 은행(Bank of America, Barclays, BNP Paribas, Citi, Deutsche Bank, HSBC, J.P. Morgan, Morgan Stanley, Nomura, Societe Generale, UBS)에 매각했다. 해당 사업부 기업가치는 약 £850M(약 1.4조 원)으로 평가되었다.</p>
+<p>SwapClear 수익 배분 구조도 변경되어, 창립 은행들의 수익 배분 비율이 2025년 30%에서 15%로, 2026년에는 10%로 축소되며, LSEG가 이에 대해 2년간 £1.15B를 지급하고 성과 연동 추가 £200M을 지불하기로 했다.</p>
+<hr />
+<h2 id="3-turquoise-범유럽-거래-플랫폼">3. Turquoise — 범유럽 거래 플랫폼</h2>
+<h3 id="31-역사와-구조">3.1 역사와 구조</h3>
+<p>Turquoise는 2008년 주요 투자은행들이 공동 설립한 다자간 거래 시설(MTF)로, 2009년 12월 LSE가 60% 지분을 인수하면서 LSEG 산하로 편입되었다. 기존 LSE의 Baikal Global 거래 시설과 통합 운영된다.</p>
+<h3 id="32-주요-서비스">3.2 주요 서비스</h3>
+<table>
+<thead>
+<tr>
+<th>서비스</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Turquoise Lit</td>
+<td>공개 주문장(lit order book) 기반 거래</td>
+</tr>
+<tr>
+<td>Turquoise Plato</td>
+<td>대형 블록 거래용 다크풀(dark pool)</td>
+</tr>
+<tr>
+<td>Turquoise Plato Block Discovery</td>
+<td>기관 투자자 간 대량 거래 매칭</td>
+</tr>
+<tr>
+<td>Turquoise Plato Uncross</td>
+<td>정기적 경매 기반 거래</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-유럽-운영">3.3 유럽 운영</h3>
+<p>EU 내에서 LSEG는 다음과 같은 금융 인프라를 운영한다:
+- <strong>프랑스</strong>: LCH S.A., BeyonRatings
+- <strong>네덜란드</strong>: Turquoise Europe, Regulatory Reporting, Quantile
+- <strong>아일랜드</strong>: Refinitiv MTF, FXAll</p>
+<hr />
+<h2 id="4-거래-시간-및-세션-구조">4. 거래 시간 및 세션 구조</h2>
+<h3 id="41-lse-거래-시간표">4.1 LSE 거래 시간표</h3>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간 (GMT/BST)</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>프리 트레이딩 (Pre-Trading)</td>
+<td>05:05 ~ 07:50</td>
+<td>주문 입력/수정/취소만 가능, 실제 체결 없음</td>
+</tr>
+<tr>
+<td>개장 경매 (Opening Auction)</td>
+<td>07:50 ~ 08:00</td>
+<td>주문 수집 후 단일가 매매</td>
+</tr>
+<tr>
+<td>연속 거래 (Continuous Trading)</td>
+<td>08:00 ~ 16:30</td>
+<td>SETS 기반 연속 매매</td>
+</tr>
+<tr>
+<td>폐장 경매 (Closing Auction)</td>
+<td>16:30 ~ 16:35</td>
+<td>종가 결정을 위한 단일가 매매</td>
+</tr>
+<tr>
+<td>포스트 트레이딩 (Post-Trading)</td>
+<td>~17:15까지</td>
+<td>미체결 주문 처리, 포지션 정리</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-경매auction-시스템">4.2 경매(Auction) 시스템</h3>
+<p>LSE는 세 가지 유형의 경매를 운영한다:</p>
+<ol>
+<li><strong>개장 경매 (Opening Auction, 1997년 도입)</strong>: 장 시작 전 주문을 수집하여 단일 가격으로 체결</li>
+<li><strong>폐장 경매 (Closing Auction, 2000년 도입)</strong>: 종가 결정의 투명성을 위해 도입</li>
+<li><strong>장중 경매 (Intra-day Auction, 2016년 도입)</strong>: 가격 변동성 관리를 위한 추가 경매</li>
+</ol>
+<p>경매에서 신뢰할 수 있는 가격이 형성되지 않을 경우, Price Monitoring Extension이 자동으로 발동되어 호가 수집 기간이 5분씩 최대 2회 연장된다.</p>
+<hr />
+<h2 id="5-sets-setsqx-매칭-시스템">5. SETS / SETSqx 매칭 시스템</h2>
+<h3 id="51-sets-stock-exchange-electronic-trading-service">5.1 SETS (Stock Exchange Electronic Trading Service)</h3>
+<p>SETS는 LSE의 핵심 전자 주문 매칭 시스템으로, FTSE 100, FTSE 250을 포함한 유동성이 높은 종목을 처리한다.</p>
+<table>
+<thead>
+<tr>
+<th>특성</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>거래 방식</td>
+<td>연속 양방향 경매(continuous double auction)</td>
+</tr>
+<tr>
+<td>거래 시간</td>
+<td>08:00 ~ 16:30 GMT</td>
+</tr>
+<tr>
+<td>대상 종목</td>
+<td>FTSE 100, FTSE 250, 주요 ETF, GDR 등</td>
+</tr>
+<tr>
+<td>주문 유형</td>
+<td>지정가, 시장가, 빙산(iceberg), 숨김(hidden) 주문 등</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-setsqx-stock-exchange-electronic-trading-service-quotes-and-crosses">5.2 SETSqx (Stock Exchange Electronic Trading Service — Quotes and Crosses)</h3>
+<p>SETSqx는 유동성이 낮은 종목을 위한 하이브리드 거래 시스템으로, 정기 경매와 마켓 메이커의 연속 호가를 결합한다.</p>
+<table>
+<thead>
+<tr>
+<th>특성</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>거래 방식</td>
+<td>정기 경매 + 마켓 메이커 호가</td>
+</tr>
+<tr>
+<td>경매 시간</td>
+<td>08:00, 09:00, 11:00, 14:00, 16:30 (2014년 도입)</td>
+</tr>
+<tr>
+<td>대상 종목</td>
+<td>AIM 종목, 소형주 등 저유동성 종목</td>
+</tr>
+<tr>
+<td>마켓 메이커</td>
+<td>등록 마켓 메이커가 스프레드 의무와 함께 양방향 확정 호가 제공</td>
+</tr>
+</tbody>
+</table>
+<p>SETSqx의 정기 경매는 유동성이 얇아 실제 참여가 활발하지 않은 경우가 많다.</p>
+<h3 id="53-seaq-stock-exchange-automated-quotations">5.3 SEAQ (Stock Exchange Automated Quotations)</h3>
+<p>SEAQ는 가장 유동성이 낮은 종목을 위한 순수 마켓 메이커 기반 호가 시스템이다.</p>
+<hr />
+<h2 id="6-millennium-exchange-기술-플랫폼">6. Millennium Exchange 기술 플랫폼</h2>
+<h3 id="61-도입-배경">6.1 도입 배경</h3>
+<p>LSE는 기존 TradElect 시스템의 성능 한계를 극복하기 위해 새로운 매칭 엔진을 모색했다. 자체 개발 대신 2009년 스리랑카 소재 MillenniumIT를 £18M에 인수하여 Linux 기반 Millennium Exchange 플랫폼을 도입했다.</p>
+<h3 id="62-기술-사양">6.2 기술 사양</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>사양</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>운영체제</td>
+<td>Linux 기반</td>
+</tr>
+<tr>
+<td>지연시간(Latency)</td>
+<td>126 마이크로초 (2010년 세계 기록)</td>
+</tr>
+<tr>
+<td>아키텍처</td>
+<td>수평 확장 가능한 분산 처리</td>
+</tr>
+<tr>
+<td>주요 특징</td>
+<td>서브 밀리초(sub-millisecond) 거래 속도</td>
+</tr>
+</tbody>
+</table>
+<p>2010년 10월, Turquoise 다크풀에서 126 마이크로초 거래 속도를 기록하며 당시 세계 최고 속도를 달성했다.</p>
+<h3 id="63-글로벌-판매">6.3 글로벌 판매</h3>
+<p>Millennium Exchange 플랫폼은 LSE 외에도 다수의 글로벌 거래소에 판매되었다:
+- BYMA (아르헨티나)
+- 요하네스버그 증권거래소 (남아프리카공화국)
+- 리마 증권거래소 (페루)</p>
+<hr />
+<h2 id="7-lch-청산-및-결제">7. LCH 청산 및 결제</h2>
+<h3 id="71-lch-그룹-구조">7.1 LCH 그룹 구조</h3>
+<p>LCH는 세계 최대의 금리스왑(Interest Rate Swap) 청산 기관으로, LSEG가 과반 지분을 보유하고 있다.</p>
+<table>
+<thead>
+<tr>
+<th>법인</th>
+<th>관할</th>
+<th>주요 청산 자산</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LCH Ltd</td>
+<td>영국</td>
+<td>주식, 채권, FX, 금리, 레포</td>
+</tr>
+<tr>
+<td>LCH SA</td>
+<td>프랑스/EU</td>
+<td>CDS, CDS 옵션, 레포, 채권, 디지털 자산</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-청산-대상-자산-클래스-7개">7.2 청산 대상 자산 클래스 (7개)</h3>
+<table>
+<thead>
+<tr>
+<th>자산 클래스</th>
+<th>서비스명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>금리스왑</td>
+<td>SwapClear</td>
+</tr>
+<tr>
+<td>신용부도스왑(CDS)</td>
+<td>CDSClear</td>
+</tr>
+<tr>
+<td>주식</td>
+<td>EquityClear</td>
+</tr>
+<tr>
+<td>채권</td>
+<td>RepoClear</td>
+</tr>
+<tr>
+<td>외환(FX)</td>
+<td>ForexClear</td>
+</tr>
+<tr>
+<td>상장 파생상품</td>
+<td>Listed Derivatives Clearing</td>
+</tr>
+<tr>
+<td>디지털 자산</td>
+<td>Digital Asset Clearing</td>
+</tr>
+</tbody>
+</table>
+<p>SwapClear는 글로벌 금리스왑 시장의 지배적인 청산 서비스로, 은행 부도 시 시장 전체의 붕괴를 방지하는 금융 시스템의 핵심 인프라 역할을 수행한다.</p>
+<h3 id="73-영국-t1-결제-전환-계획-2027년">7.3 영국 T+1 결제 전환 계획 (2027년)</h3>
+<table>
+<thead>
+<tr>
+<th>시기</th>
+<th>주요 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2022년 12월</td>
+<td>영국 재무장관, 결제 가속화 태스크포스(AST) 출범</td>
+</tr>
+<tr>
+<td>2024년 3월</td>
+<td>AST 보고서: 2027년 말까지 T+1 전환 권고</td>
+</tr>
+<tr>
+<td>2025년 2월</td>
+<td>기술그룹 보고서 발간 (12개 '필수' + 26개 '강력 권고' 조치)</td>
+</tr>
+<tr>
+<td>2025년</td>
+<td>계획 수립 및 예산 편성 단계</td>
+</tr>
+<tr>
+<td>2026년</td>
+<td>솔루션 구축 및 구현 단계</td>
+</tr>
+<tr>
+<td>2027년 10월 11일</td>
+<td><strong>T+1 결제 공식 시행일</strong></td>
+</tr>
+</tbody>
+</table>
+<p>영국의 T+1 전환은 EU 및 스위스와 동일한 날짜(2027년 10월 11일)로 조율되었다. 이는 미국이 2024년 5월 이미 T+1을 시행한 것에 대응하는 조치이다.</p>
+<p>현재 Euroclear UK &amp; International의 CREST 시스템이 결제를 담당하고 있으며, 영국 국채(Gilts)는 이미 T+1로 결제되고 있다. 2025년 Q3 설문조사에 따르면 95%의 금융사가 T+1 전환 준비에 착수했다.</p>
+<hr />
+<h2 id="8-거래-시간-연장-논의">8. 거래 시간 연장 논의</h2>
+<h3 id="81-24시간-거래-검토">8.1 24시간 거래 검토</h3>
+<p>LSEG는 영국 상장 주식의 24시간 거래를 가능하게 하는 급진적인 계획을 검토 중이다. CEO David Schwimmer은 런던 시장의 매력을 높이기 위한 의지를 지속적으로 표명해왔다.</p>
+<h3 id="82-추진-배경">8.2 추진 배경</h3>
+<table>
+<thead>
+<tr>
+<th>요인</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>리테일 투자자 수요</td>
+<td>미국에서 Gen Z 세대의 스마트폰 기반 장외 시간 거래 증가</td>
+</tr>
+<tr>
+<td>암호화폐 경쟁</td>
+<td>24/7 거래되는 암호화폐 시장과의 경쟁</td>
+</tr>
+<tr>
+<td>영국 시장 침체</td>
+<td>거래량 감소, 신규 상장 부족</td>
+</tr>
+<tr>
+<td>글로벌 경쟁</td>
+<td>NYSE, Nasdaq, Cboe 등 미국 거래소들의 시간 연장 추진</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83-과제와-반대-의견">8.3 과제와 반대 의견</h3>
+<ul>
+<li><strong>종가 기준 문제</strong>: 기관 투자자들이 종가를 기준으로 펀드 가치를 산정하는데, 24시간 거래 시 종가 설정이 복잡해짐</li>
+<li><strong>유동성 분산</strong>: 장외 시간대의 낮은 유동성으로 인한 급격한 가격 변동 우려</li>
+<li><strong>성과 측정</strong>: 24/7 데이터로 인한 포트폴리오 성과 측정의 복잡성 증가</li>
+<li><strong>규제 조율</strong>: 영국 FCA 등 규제 기관과의 협의 필요</li>
+</ul>
+<h3 id="84-타임라인">8.4 타임라인</h3>
+<p>LSEG는 아직 24시간 거래의 구체적인 일정을 확인하지 않았으나, 유럽 및 영국에서 최초로 24시간 거래를 도입하는 거래소가 될 가능성이 있다. 기술적, 규제적 함의를 면밀히 검토 중이다.</p>
+<hr />
+<h2 id="9-krx와의-비교">9. KRX와의 비교</h2>
+<h3 id="91-기본-구조-비교">9.1 기본 구조 비교</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>LSE / LSEG</th>
+<th>KRX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>설립</td>
+<td>1801년</td>
+<td>2005년 (통합)</td>
+</tr>
+<tr>
+<td>그룹 구조</td>
+<td>LSEG (데이터 70% + 거래 + 포스트트레이드)</td>
+<td>KRX (유가증권 + 코스닥 + 파생상품)</td>
+</tr>
+<tr>
+<td>매칭 시스템</td>
+<td>Millennium Exchange (126μs)</td>
+<td>EXTURE 3.0 (50µs)</td>
+</tr>
+<tr>
+<td>청산 기관</td>
+<td>LCH (별도 법인, 다자산 클래스)</td>
+<td>KRX 자체 청산</td>
+</tr>
+<tr>
+<td>결제 주기</td>
+<td>T+2 → T+1 (2027.10)</td>
+<td>T+2</td>
+</tr>
+<tr>
+<td>시가총액</td>
+<td>약 $3.4T (FTSE All-Share)</td>
+<td>약 $1.8T (KOSPI + KOSDAQ)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-거래-시간-비교">9.2 거래 시간 비교</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>LSE</th>
+<th>KRX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>정규 거래 시간</td>
+<td>08:00~16:30 GMT (8.5시간)</td>
+<td>09:00~15:30 KST (6.5시간)</td>
+</tr>
+<tr>
+<td>개장 경매</td>
+<td>07:50~08:00</td>
+<td>08:30~09:00 (동시호가)</td>
+</tr>
+<tr>
+<td>폐장 경매</td>
+<td>16:30~16:35</td>
+<td>15:20~15:30 (동시호가)</td>
+</tr>
+<tr>
+<td>시간외 거래</td>
+<td>프리/포스트 트레이딩 세션</td>
+<td>시간외 종가매매, 시간외 단일가매매</td>
+</tr>
+<tr>
+<td>24시간 거래 논의</td>
+<td>LSEG 24시간 거래 플랫폼 검토 중</td>
+<td>Nextrade ATS 등장으로 12시간 거래 검토</td>
+</tr>
+</tbody>
+</table>
+<h3 id="93-경쟁-환경-비교">9.3 경쟁 환경 비교</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>LSE</th>
+<th>KRX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>대체 거래소</td>
+<td>Turquoise, Cboe Europe, Aquis</td>
+<td>Nextrade (2025년 3월 출범)</td>
+</tr>
+<tr>
+<td>ATS 시장 점유율</td>
+<td>Turquoise 등 MTF가 상당 점유율 보유</td>
+<td>Nextrade가 빠르게 30% 이상 점유율 확보</td>
+</tr>
+<tr>
+<td>대응 전략</td>
+<td>24시간 거래 검토</td>
+<td>12시간 거래(08:00~20:00) 검토</td>
+</tr>
+</tbody>
+</table>
+<h3 id="94-시사점">9.4 시사점</h3>
+<ol>
+<li>
+<p><strong>데이터 사업의 중요성</strong>: LSEG 매출의 70%가 데이터/분석에서 발생하는 점은 KRX에도 중요한 시사점을 제공한다. KRX도 시장 데이터의 상업적 가치를 극대화할 필요가 있다.</p>
+</li>
+<li>
+<p><strong>독립적 청산 기관</strong>: LCH는 다자산 클래스 글로벌 청산을 수행하는 반면, KRX는 자체 청산을 수행한다. 글로벌 상호운용성 측면에서 KRX 청산 시스템의 개방성 확대를 검토할 필요가 있다.</p>
+</li>
+<li>
+<p><strong>T+1 전환 대비</strong>: 영국, EU, 스위스가 2027년 10월 T+1로 동시 전환 예정이므로, 한국도 글로벌 정합성을 고려한 결제 주기 단축을 검토해야 한다.</p>
+</li>
+<li>
+<p><strong>거래 시간 연장 경쟁</strong>: LSE가 24시간 거래를 검토하고, KRX가 Nextrade에 대응하여 12시간 거래를 검토하는 것은 글로벌적으로 거래 시간 연장이 불가피한 추세임을 보여준다.</p>
+</li>
+</ol>
+<hr />
+<h2 id="10-참고-자료">10. 참고 자료</h2>
+<ul>
+<li>LSEG 그룹 구조: <a href="https://www.lseg.com/en/post-trade/clearing/about-lch/structure-and-governance/company-structure">lseg.com/en/post-trade/clearing/about-...</a></li>
+<li>LSEG Wikipedia: <a href="https://en.wikipedia.org/wiki/London_Stock_Exchange_Group">en.wikipedia.org/wiki/London_Stock_Exchange_Gr...</a></li>
+<li>Millennium Exchange: <a href="https://en.wikipedia.org/wiki/Millennium_Exchange">en.wikipedia.org/wiki/Millennium_Exchange</a></li>
+<li>SETS/SETSqx 설명: <a href="https://www.shiftingshares.com/sets-setsqx-seaq/">shiftingshares.com/sets-setsqx-seaq/</a></li>
+<li>LSE 거래 시간: <a href="https://www.tradinghours.com/markets/lse">tradinghours.com/markets/lse</a></li>
+<li>LSE 경매 설명: <a href="https://aim-watch.com/project/lse-auctions-explained/">aim-watch.com/project/lse-auctions-explaine...</a></li>
+<li>LSE 24시간 거래 검토: <a href="https://fstech.co.uk/fst/London_Stock_Exchange_Considers_24_Hour_Trading.php">fstech.co.uk/fst/London_Stock_Exchange_Con...</a></li>
+<li>LSEG 24시간 거래 (The TRADE): <a href="https://www.thetradenews.com/is-lseg-set-to-become-first-venue-to-move-to-24-hour-in-europe-and-the-uk/">thetradenews.com/is-lseg-set-to-become-first-v...</a></li>
+<li>영국 T+1 전환: <a href="https://www.gov.uk/government/publications/accelerated-settlement-t1">gov.uk/government/publications/accel...</a></li>
+<li>UK T+1 최종 계획: <a href="https://acceleratedsettlement.co.uk/">acceleratedsettlement.co.uk/</a></li>
+<li>UK T+1 2027년 10월: <a href="https://www.grip.globalrelay.com/uk-will-move-to-t1-cycle-for-securities-settlement-from-october-2027/">grip.globalrelay.com/uk-will-move-to-t1-cycle-for-...</a></li>
+<li>LCH 청산 서비스: <a href="https://www.lseg.com/en/post-trade/clearing">lseg.com/en/post-trade/clearing</a></li>
+<li>KRX 12시간 거래 검토: <a href="https://www.koreaherald.com/article/10548345">koreaherald.com/article/10548345</a></li>
+<li>Nextrade 승인: <a href="https://www.fsc.go.kr/eng/pr010101/83967">fsc.go.kr/eng/pr010101/83967</a></li>
+</ul>
+    </main>
+
+    <script>
+    (function() {
+        // --- Wrap tables ---
+        document.querySelectorAll('main table').forEach(t => {
+            if (!t.parentElement.classList.contains('table-wrap')) {
+                const w = document.createElement('div');
+                w.className = 'table-wrap';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            }
+        });
+
+        // --- Build TOC ---
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h1, main h2, main h3');
+        const tocLinks = [];
+        headings.forEach(h => {
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent;
+            a.dataset.id = h.id;
+            const depth = parseInt(h.tagName[1]);
+            if (depth >= 3) a.classList.add('depth-' + depth);
+            toc.appendChild(a);
+            tocLinks.push({ el: h, link: a });
+        });
+
+        // --- Scroll spy ---
+        let ticking = false;
+        function updateActive() {
+            const scrollY = window.scrollY + 100;
+            let current = tocLinks[0];
+            for (const item of tocLinks) {
+                if (item.el.offsetTop <= scrollY) current = item;
+            }
+            tocLinks.forEach(i => i.link.classList.remove('active'));
+            if (current) {
+                current.link.classList.add('active');
+                current.link.scrollIntoView({ block: 'nearest' });
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+        });
+        updateActive();
+
+        // --- Smooth scroll for TOC links ---
+        toc.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', e.target.href);
+            }
+        });
+
+        // --- Smooth scroll for in-content anchor links ---
+        document.querySelectorAll('main a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = decodeURIComponent(a.getAttribute('href').slice(1));
+                const target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    })();
+
+    // --- Sidebar toggle ---
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const tb = document.getElementById('topbar');
+        sb.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        tb.classList.toggle('expanded');
+    }
+
+    // --- Search ---
+    let searchTimeout;
+    function doSearch(q) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => _search(q), 200);
+    }
+    function _search(query) {
+        const main = document.getElementById('main');
+        // Remove old marks
+        main.querySelectorAll('mark[data-search]').forEach(m => {
+            const parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+        });
+        const countEl = document.getElementById('searchCount');
+        if (!query || query.length < 2) { countEl.textContent = ''; return; }
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+                regex.test(walker.currentNode.textContent)) {
+                nodes.push(walker.currentNode);
+                regex.lastIndex = 0;
+            }
+        }
+        let count = 0;
+        nodes.forEach(node => {
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            regex.lastIndex = 0;
+            let m;
+            while ((m = regex.exec(node.textContent)) !== null) {
+                frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+                const mark = document.createElement('mark');
+                mark.setAttribute('data-search', '');
+                mark.textContent = m[0];
+                frag.appendChild(mark);
+                last = regex.lastIndex;
+                count++;
+            }
+            frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+            node.parentNode.replaceChild(frag, node);
+        });
+        countEl.textContent = count > 0 ? count + '건' : '0건';
+        const first = main.querySelector('mark[data-search]');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- Theme ---
+    function toggleTheme() {
+        const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        document.body.dataset.theme = d;
+        try { localStorage.setItem('theme', d); } catch(e) {}
+    }
+    try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>

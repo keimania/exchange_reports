@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="pandoc">
+  <title>LSE_Analysis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Mobile TOC toggle button -->
+<button class="toc-toggle" id="tocToggle" aria-label="목차 열기/닫기">
+  <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+  <span class="toc-toggle-label">목차</span>
+</button>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar TOC -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-home" title="리포트 인덱스">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      전체 리포트
+    </a>
+    <div class="sidebar-title">목차</div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <ul>
+    <li><a href="#런던증권거래소lse-심층-분석" id="toc-런던증권거래소lse-심층-분석">런던증권거래소(LSE) 심층 분석</a>
+    <ul>
+    <li><a href="#기관-개요-및-시장-내-위상" id="toc-기관-개요-및-시장-내-위상">1. 기관 개요 및 시장 내 위상</a></li>
+    <li><a href="#현행-거래-제도" id="toc-현행-거래-제도">2. 현행 거래 제도</a>
+    <ul>
+    <li><a href="#거래-세션-구조-및-시간" id="toc-거래-세션-구조-및-시간">2.1 거래 세션 구조 및 시간</a></li>
+    <li><a href="#옥션-메커니즘-opening-midday-closing-auction" id="toc-옥션-메커니즘-opening-midday-closing-auction">2.2 옥션 메커니즘 (Opening / Midday / Closing Auction)</a></li>
+    <li><a href="#주문-유형-및-체결-메커니즘" id="toc-주문-유형-및-체결-메커니즘">2.3 주문 유형 및 체결 메커니즘</a></li>
+    </ul></li>
+    <li><a href="#핵심-시스템-인프라" id="toc-핵심-시스템-인프라">3. 핵심 시스템 인프라</a>
+    <ul>
+    <li><a href="#millennium-exchange-매칭-엔진" id="toc-millennium-exchange-매칭-엔진">3.1 Millennium Exchange 매칭 엔진</a></li>
+    <li><a href="#시장-데이터-배포-level-2-mitch" id="toc-시장-데이터-배포-level-2-mitch">3.2 시장 데이터 배포 (Level 2-MITCH)</a></li>
+    </ul></li>
+    <li><a href="#청산결제-체계" id="toc-청산결제-체계">4. 청산·결제 체계</a>
+    <ul>
+    <li><a href="#lch-청산-구조" id="toc-lch-청산-구조">4.1 LCH 청산 구조</a></li>
+    <li><a href="#crest-결제-시스템-및-t1-전환" id="toc-crest-결제-시스템-및-t1-전환">4.2 CREST 결제 시스템 및 T+1 전환</a></li>
+    </ul></li>
+    <li><a href="#시간-거래-논의-현황" id="toc-시간-거래-논의-현황">5. 24시간 거래 논의 현황</a>
+    <ul>
+    <li><a href="#lseg의-24시간-거래-검토" id="toc-lseg의-24시간-거래-검토">5.1 LSEG의 24시간 거래 검토</a></li>
+    <li><a href="#mtf-dark-pool-경쟁-구도" id="toc-mtf-dark-pool-경쟁-구도">5.2 MTF / Dark Pool 경쟁 구도</a></li>
+    <li><a href="#규제-환경-fca-post-brexit" id="toc-규제-환경-fca-post-brexit">5.3 규제 환경 (FCA, Post-Brexit)</a></li>
+    </ul></li>
+    <li><a href="#시장감시-체계" id="toc-시장감시-체계">6. 시장감시 체계</a>
+    <ul>
+    <li><a href="#ai-기반-감시-시스템" id="toc-ai-기반-감시-시스템">6.1 AI 기반 감시 시스템</a></li>
+    </ul></li>
+    <li><a href="#krx-현행-제도와의-비교-분석" id="toc-krx-현행-제도와의-비교-분석">7. KRX 현행 제도와의 비교 분석</a>
+    <ul>
+    <li><a href="#주요-시사점" id="toc-주요-시사점">주요 시사점</a></li>
+    </ul></li>
+    </ul></li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- Main content -->
+<div class="main-content" id="mainContent">
+  <div class="content-wrapper">
+
+    <header>
+      <h1>LSE_Analysis</h1>
+      <div class="subtitle">KRX 24시간 거래 전환 전략 리서치 시리즈</div>
+      <div class="date">2026년 3월 | Confidential</div>
+    </header>
+
+    <article>
+      <h1 id="런던증권거래소lse-심층-분석">런던증권거래소(LSE) 심층 분석</h1>
+      <blockquote>
+      <p><strong>작성일:</strong> 2026-03-27 <strong>대상 기관:</strong> London Stock Exchange Group (LSEG) <strong>목적:</strong> LSE의 거래 제도, 핵심 인프라, 청산·결제 체계, 24시간 거래 논의 현황을 종합 분석하고 KRX와의 비교를 통해 시사점을 도출한다.</p>
+      </blockquote>
+      <hr />
+      <h2 id="기관-개요-및-시장-내-위상">1. 기관 개요 및 시장 내 위상</h2>
+      <p>런던증권거래소(London Stock Exchange, LSE)는 1801년 공식 설립된 세계 최대 규모의 증권거래소 중 하나로, 모회사인 <strong>London Stock Exchange Group(LSEG)</strong>은 거래소 운영뿐 아니라 데이터·분석(Refinitiv), 지수(FTSE Russell), 청산(LCH), 기술 인프라(MillenniumIT) 등을 아우르는 글로벌 금융 인프라 기업이다.</p>
+      <p>LSEG은 단순한 거래소 운영사를 넘어 <strong>수직 통합형 금융 인프라 그룹</strong>으로 진화하였다. 거래 체결(Millennium Exchange), 청산(LCH Ltd / LCH SA), 결제(CREST를 통한 Euroclear 연계), 시장 데이터(LSEG Data &amp; Analytics)까지 거래의 전체 생애주기(trade lifecycle)를 자체 생태계 내에서 처리할 수 있는 역량을 보유하고 있다. 이는 단일 거래소·단일 청산기관 구조인 KRX와 구조적으로 대비되는 특징이다.</p>
+      <p>주요 상장 지수로는 <strong>FTSE 100</strong>(영국 대형주 100개), <strong>FTSE 250</strong>(중형주), <strong>FTSE All-Share</strong> 등이 있으며, 글로벌 기업의 GDR(글로벌 예탁증서) 상장, ETF, 채권 등 다양한 상품이 거래된다.</p>
+      <hr />
+      <h2 id="현행-거래-제도">2. 현행 거래 제도</h2>
+      <h3 id="거래-세션-구조-및-시간">2.1 거래 세션 구조 및 시간</h3>
+      <p>LSE의 거래 세션은 GMT 기준으로 아래와 같이 구성되며, <strong>연속 거래 시간은 약 8.5시간</strong>이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>세션</th>
+      <th>시간 (GMT)</th>
+      <th>소요 시간</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Pre-Open / Opening Auction</strong></td>
+      <td>07:50 – 08:00</td>
+      <td>10분</td>
+      <td>개장 가격 결정 경매</td>
+      </tr>
+      <tr>
+      <td><strong>연속 거래 (오전)</strong></td>
+      <td>08:00 – 12:00</td>
+      <td>4시간</td>
+      <td>주문 즉시 체결</td>
+      </tr>
+      <tr>
+      <td><strong>Midday Auction (장중 경매)</strong></td>
+      <td>12:00 – 12:02</td>
+      <td>2분</td>
+      <td>장중 가격 재조정</td>
+      </tr>
+      <tr>
+      <td><strong>연속 거래 (오후)</strong></td>
+      <td>12:02 – 16:30</td>
+      <td>약 4시간 28분</td>
+      <td>주문 즉시 체결</td>
+      </tr>
+      <tr>
+      <td><strong>Closing Auction (종가 경매)</strong></td>
+      <td>16:30 – 16:35</td>
+      <td>5분</td>
+      <td>종가 결정 경매</td>
+      </tr>
+      <tr>
+      <td><strong>Post-Close (거래 보고)</strong></td>
+      <td>16:35 – 17:15</td>
+      <td>40분</td>
+      <td>장외 거래 보고 전용</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>총 연속 거래 시간: 약 8시간 30분/일</strong></p>
+      <p>한국 시간(KST)으로 환산하면 연속 거래는 <strong>17:00 ~ 01:30(익일)</strong>에 해당하여, KRX 정규장(09:00~15:30)과 시간대가 완전히 분리된다. 이는 글로벌 포트폴리오 운용 관점에서 24시간 커버리지 확보에 유리한 조합이다.</p>
+      <h3 id="옥션-메커니즘-opening-midday-closing-auction">2.2 옥션 메커니즘 (Opening / Midday / Closing Auction)</h3>
+      <p>LSE는 하루 총 <strong>세 차례의 경매(auction)</strong> 메커니즘을 운영한다는 점이 특징적이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>경매 유형</th>
+      <th>목적</th>
+      <th>가격 결정 방식</th>
+      <th>특이사항</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Opening Auction</strong></td>
+      <td>개장 기준가 형성</td>
+      <td>최대 체결 수량 기준 단일가</td>
+      <td>무작위 종료(random close) 적용</td>
+      </tr>
+      <tr>
+      <td><strong>Midday Auction</strong></td>
+      <td>장중 유동성 재집중</td>
+      <td>최대 체결 수량 기준 단일가</td>
+      <td>FTSE 100/250 대상, 2분간 진행</td>
+      </tr>
+      <tr>
+      <td><strong>Closing Auction</strong></td>
+      <td>종가 결정</td>
+      <td>최대 체결 수량 기준 단일가</td>
+      <td><strong>일일 거래대금의 20~25%</strong> 집중</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>특히 <strong>Closing Auction이 일일 거래대금의 20~25%를 차지</strong>한다는 점은 주목할 만하다. 이는 패시브 투자(ETF, 인덱스 펀드)의 증가로 종가 기준 리밸런싱 수요가 집중되기 때문이며, KRX의 종가 단일가 매매(15:20~15:30)에서도 유사한 추세가 관찰되고 있다.</p>
+      <p><strong>Midday Auction</strong>은 LSE 고유의 제도로, 장중 유동성이 분산되는 것을 방지하고 FTSE 지수 구성 종목에 대해 장중 기준가를 재설정하는 기능을 한다. KRX에는 이에 대응하는 제도가 없으며, 향후 장시간 거래 도입 시 유동성 집중 메커니즘으로 참고할 만한 모델이다.</p>
+      <h3 id="주문-유형-및-체결-메커니즘">2.3 주문 유형 및 체결 메커니즘</h3>
+      <p>LSE는 <strong>가격-시간 우선(Price-Time Priority)</strong> 원칙에 따른 중앙 지정가 주문대장(Central Limit Order Book, CLOB) 방식을 채택하고 있다. 주요 주문 유형은 다음과 같다:</p>
+      <ul>
+      <li><strong>지정가 주문(Limit Order):</strong> 지정 가격 이상/이하에서만 체결</li>
+      <li><strong>시장가 주문(Market Order):</strong> 즉시 최우선 가격으로 체결</li>
+      <li><strong>Iceberg Order:</strong> 총 수량의 일부만 시장에 노출, 나머지는 숨김 처리</li>
+      <li><strong>Stop Order:</strong> 특정 가격 도달 시 활성화</li>
+      <li><strong>Passive Order:</strong> 즉시 체결되지 않는 조건부 주문(메이커 전용)</li>
+      </ul>
+      <hr />
+      <h2 id="핵심-시스템-인프라">3. 핵심 시스템 인프라</h2>
+      <h3 id="millennium-exchange-매칭-엔진">3.1 Millennium Exchange 매칭 엔진</h3>
+      <p>Millennium Exchange는 LSEG 자회사인 <strong>MillenniumIT</strong>(스리랑카 소재)가 개발한 Linux 기반의 고성능 매칭 엔진이다. 이 엔진은 LSE뿐만 아니라 전 세계 여러 거래소에 배포되어 글로벌 거래소 인프라의 핵심 역할을 수행하고 있다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>사양</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>개발사</strong></td>
+      <td>MillenniumIT (LSEG 자회사, 스리랑카)</td>
+      </tr>
+      <tr>
+      <td><strong>운영체제</strong></td>
+      <td>Linux 기반</td>
+      </tr>
+      <tr>
+      <td><strong>주문 처리 지연시간(Latency)</strong></td>
+      <td>Turquoise: 126μs / AAX: 최저 90μs</td>
+      </tr>
+      <tr>
+      <td><strong>주문 처리량(Throughput)</strong></td>
+      <td>최대 <strong>1,000,000 주문/초</strong></td>
+      </tr>
+      <tr>
+      <td><strong>청산 처리량</strong></td>
+      <td>2,000만 거래/일 (1,600 거래/초)</td>
+      </tr>
+      <tr>
+      <td><strong>배포 거래소</strong></td>
+      <td>LSE, Borsa Italiana, Johannesburg SE, Mongolian SE</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>지연시간 분석:</strong> Turquoise 플랫폼에서 126마이크로초(μs), AAX(Alternative Access)에서는 90μs까지 달성한다. 이는 밀리초(ms) 단위가 아닌 마이크로초 단위의 초저지연 매칭으로, 고빈도 거래(HFT) 전략에 적합한 인프라이다. 다만, KRX EXTURE 3.0의 <strong>50μs</strong> 대비로는 다소 느린 수치이며, 이는 KRX가 단일 거래소로서 최적화에 집중할 수 있는 반면 Millennium은 글로벌 범용성을 우선시하는 설계 철학의 차이에서 기인한다.</p>
+      <p><strong>처리량(Throughput):</strong> 초당 100만 주문 처리 역량은 글로벌 최고 수준으로, 변동성 급등 시에도 안정적인 주문 처리를 보장한다. 일일 청산 처리량 2,000만 건은 유럽 전체 시장의 거래를 수용할 수 있는 규모이다.</p>
+      <h3 id="시장-데이터-배포-level-2-mitch">3.2 시장 데이터 배포 (Level 2-MITCH)</h3>
+      <p>LSE는 <strong>Level 2-MITCH</strong> 프로토콜을 통해 시장 데이터를 배포한다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 50%" />
+      <col style="width: 50%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>내용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>프로토콜</strong></td>
+      <td>Level 2-MITCH (바이너리 프로토콜)</td>
+      </tr>
+      <tr>
+      <td><strong>타임스탬프 정밀도</strong></td>
+      <td>마이크로초(μs) 단위</td>
+      </tr>
+      <tr>
+      <td><strong>데이터 내용</strong></td>
+      <td>호가 잔량(Order Book Depth), 체결 정보, 경매 데이터</td>
+      </tr>
+      <tr>
+      <td><strong>전송 방식</strong></td>
+      <td>UDP 멀티캐스트</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>마이크로초 단위의 타임스탬프는 시장감시 및 최선집행(best execution) 분석에 필수적인 정밀도를 제공한다. 이는 거래소 간 시간 동기화와 주문 우선순위 판정에 있어 밀리초 단위보다 10배 이상 높은 정확도를 보장한다.</p>
+      <hr />
+      <h2 id="청산결제-체계">4. 청산·결제 체계</h2>
+      <h3 id="lch-청산-구조">4.1 LCH 청산 구조</h3>
+      <p>LSEG 산하 <strong>LCH Group</strong>은 런던(LCH Ltd)과 파리(LCH SA) 두 법인으로 구성되며, 유럽 최대 규모의 중앙청산기관(CCP)이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>법인</th>
+      <th>소재지</th>
+      <th>규제 상태</th>
+      <th>주요 서비스</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>LCH Ltd</strong></td>
+      <td>런던</td>
+      <td>RCH(Recognised Clearing House) 지위</td>
+      <td>SwapClear, RepoClear, EquityClear Ltd, ForexClear</td>
+      </tr>
+      <tr>
+      <td><strong>LCH SA</strong></td>
+      <td>파리</td>
+      <td>유럽 대륙 청산</td>
+      <td>CDS, 레포, 고정수익(Fixed Income)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>EquityClear</strong>는 주식, ETF, ETC, REIT 등을 대상으로 하는 범유럽(pan-European) CCP로, LSE뿐만 아니라 다수의 유럽 거래소 및 MTF에서 체결된 거래의 청산을 담당한다. 이는 단일 청산기관(한국거래소 → 한국예탁결제원) 구조인 KRX와 대비되는 <strong>다층적 청산 구조</strong>이다.</p>
+      <p><strong>SwapClear</strong>는 전 세계 OTC 금리 스왑 청산의 90% 이상을 처리하는 글로벌 핵심 인프라이며, <strong>ForexClear</strong>는 OTC 외환 파생상품의 중앙 청산을 제공한다. 이처럼 LCH는 단순 주식 청산을 넘어 글로벌 OTC 파생상품 청산의 중추 역할을 수행한다.</p>
+      <h3 id="crest-결제-시스템-및-t1-전환">4.2 CREST 결제 시스템 및 T+1 전환</h3>
+      <p>LSE 주식의 결제는 <strong>CREST(Euroclear UK &amp; International 운영)</strong> 시스템을 통해 이루어진다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>현행</th>
+      <th>목표</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>결제 주기</strong></td>
+      <td>T+2</td>
+      <td><strong>T+1</strong></td>
+      </tr>
+      <tr>
+      <td><strong>T+1 시행 목표일</strong></td>
+      <td>-</td>
+      <td><strong>2027년 10월 11일</strong></td>
+      </tr>
+      <tr>
+      <td><strong>조율 대상</strong></td>
+      <td>-</td>
+      <td>EU, 스위스와 동시 전환</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>T+1 전환 로드맵:</strong></p>
+      <table>
+      <colgroup>
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>연도</th>
+      <th>단계</th>
+      <th>주요 활동</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>2025</strong></td>
+      <td>기획(Planning)</td>
+      <td>규제 프레임워크 수립, 업계 협의</td>
+      </tr>
+      <tr>
+      <td><strong>2026</strong></td>
+      <td>구축(Building)</td>
+      <td>시스템 개발, 테스트 환경 구축</td>
+      </tr>
+      <tr>
+      <td><strong>2027</strong></td>
+      <td>테스트/전환(Testing/Migration)</td>
+      <td>병행 운영, 최종 전환 (10월 11일)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>영국은 Brexit 이후 독자적 규제 경로를 설정할 수 있었음에도, T+1 전환에서는 <strong>EU 및 스위스와 시행일을 동기화</strong>(2027년 10월 11일)하는 전략을 채택하였다. 이는 유럽 대륙과의 교차 결제(cross-border settlement) 효율성을 유지하기 위한 실용적 판단이다. KRX 역시 T+2에서 T+1으로의 전환을 계획하고 있어, 유럽의 전환 과정에서 발생하는 기술적·운영적 이슈를 선행 학습할 수 있는 기회가 된다.</p>
+      <hr />
+      <h2 id="시간-거래-논의-현황">5. 24시간 거래 논의 현황</h2>
+      <h3 id="lseg의-24시간-거래-검토">5.1 LSEG의 24시간 거래 검토</h3>
+      <p>2025년 7월, LSEG CEO <strong>David Schwimmer</strong>는 24시간 거래 가능성을 공식적으로 검토 중임을 확인하였다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 50%" />
+      <col style="width: 50%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>내용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>발표 시점</strong></td>
+      <td>2025년 7월</td>
+      </tr>
+      <tr>
+      <td><strong>발표자</strong></td>
+      <td>David Schwimmer (LSEG CEO)</td>
+      </tr>
+      <tr>
+      <td><strong>현재 상태 (2026.3)</strong></td>
+      <td>탐색/논의 단계 (exploratory/discussion phase)</td>
+      </tr>
+      <tr>
+      <td><strong>공식 규제 신청</strong></td>
+      <td>미제출</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>추진 동인:</strong> - <strong>리테일 수요 증가:</strong> 개인 투자자의 시간 외 거래 수요 확대 - <strong>암호화폐 경쟁:</strong> 24/7 거래되는 디지털 자산 시장과의 경쟁 압력 - <strong>미국 거래소 압력:</strong> NYSE, NASDAQ의 24/5(주 5일 24시간) 거래 추진 가속화</p>
+      <p><strong>핵심 과제:</strong> - <strong>FCA 규제 장벽:</strong> 영국 금융행위감독청(FCA)의 승인 및 규제 프레임워크 재설계 필요 - <strong>유동성 분산(Liquidity Fragmentation):</strong> 거래 시간 확대 시 기존 세션의 유동성 희석 우려 - <strong>기술 인프라 업그레이드:</strong> 24시간 무중단 운영을 위한 시스템 이중화, 유지보수 윈도우 확보 등</p>
+      <p>2026년 3월 현재 LSE의 24시간 거래는 <strong>탐색·논의 단계</strong>에 머물러 있으며, FCA에 대한 공식 신청은 이루어지지 않았다. 이는 시장 구조 변경의 복잡성과 규제 협의의 장기성을 반영한다.</p>
+      <h3 id="mtf-dark-pool-경쟁-구도">5.2 MTF / Dark Pool 경쟁 구도</h3>
+      <p>유럽 MiFID II 체제하에서 LSE는 다수의 <strong>다자간 거래시설(MTF)</strong> 및 <strong>다크풀(Dark Pool)</strong>과 경쟁하는 분산된 시장 구조를 가지고 있다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래 플랫폼</th>
+      <th>유형</th>
+      <th>주요 특징</th>
+      <th>시장 점유율</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>LSE (Main Market)</strong></td>
+      <td>정규 거래소</td>
+      <td>FTSE 종목 1차 상장 거래소</td>
+      <td>-</td>
+      </tr>
+      <tr>
+      <td><strong>Turquoise</strong></td>
+      <td>MTF (LSE 다수 지분)</td>
+      <td>Lit + Dark Book, Plato 미드포인트 다크풀</td>
+      <td>-</td>
+      </tr>
+      <tr>
+      <td><strong>Cboe Europe</strong></td>
+      <td>MTF (구 BATS Chi-X)</td>
+      <td>범유럽 최대 대안 거래소</td>
+      <td><strong>25.1% (2025 Q2)</strong></td>
+      </tr>
+      <tr>
+      <td><strong>Aquis Exchange</strong></td>
+      <td>MTF</td>
+      <td>구독료 기반 수수료 모델</td>
+      <td>-</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>Turquoise Plato</strong>는 LSE가 과반 지분을 보유한 MTF로, 미드포인트 다크풀을 통해 기관 투자자에게 시장 충격(market impact) 최소화 거래를 제공한다. <strong>Cboe Europe</strong>은 2025년 2분기 기준 25.1%의 시장 점유율로 범유럽 최대 대안 거래소의 지위를 유지하고 있다.</p>
+      <p>이러한 분산된 거래소 구조는 KRX의 단일 거래소 독점 구조와 대비된다. 다만 한국에서도 <strong>Nextrade</strong>(넥스트레이드)의 출범으로 경쟁 체제가 시작되었으며, 유럽의 다자간 거래소 경쟁 모델은 한국 시장의 향후 발전 방향을 가늠하는 참고 사례가 된다.</p>
+      <h3 id="규제-환경-fca-post-brexit">5.3 규제 환경 (FCA, Post-Brexit)</h3>
+      <p>Brexit 이후 영국은 EU 규제 체계를 계승하면서도 독자적인 금융 규제 개혁을 추진하고 있다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>규제 이슈</th>
+      <th>상태</th>
+      <th>시행 시기</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>UK MAR</strong> (시장남용규정)</td>
+      <td>EU MAR 계승·유지</td>
+      <td>시행 중</td>
+      </tr>
+      <tr>
+      <td><strong>Systematic Internaliser 제도 폐지</strong></td>
+      <td>폐지 결정</td>
+      <td>2025년 12월 / 2026년 3월</td>
+      </tr>
+      <tr>
+      <td><strong>UK Equity Consolidated Tape</strong></td>
+      <td>도입 추진</td>
+      <td><strong>2027년</strong> 운영 목표</td>
+      </tr>
+      <tr>
+      <td><strong>Short Selling Sourcebook</strong></td>
+      <td>단계적 도입</td>
+      <td>Phase 1: 2026년 중반 / Phase 2: 2026년 후반</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>Systematic Internaliser(SI) 제도 폐지</strong>는 주목할 만한 변화이다. EU에서는 MiFID II하에 SI가 유지되고 있으나, 영국은 이를 폐지함으로써 규제 부담을 줄이고 시장 구조를 단순화하는 방향으로 나아가고 있다.</p>
+      <p><strong>UK Equity Consolidated Tape</strong>(통합 시세 테이프)는 분산된 다수의 거래소·MTF에서 발생하는 거래 데이터를 하나의 통합 피드로 제공하는 것으로, 2027년 운영을 목표로 추진 중이다. 이는 유럽에서 오랫동안 부재했던 인프라로, 미국의 SIP(Securities Information Processor)에 대응하는 개념이다.</p>
+      <hr />
+      <h2 id="시장감시-체계">6. 시장감시 체계</h2>
+      <h3 id="ai-기반-감시-시스템">6.1 AI 기반 감시 시스템</h3>
+      <p>LSEG은 시장감시 분야에서 <strong>인공지능(AI) 기술을 선도적으로 도입</strong>하고 있다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>내용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>AI 플랫폼</strong></td>
+      <td>Amazon Bedrock + Anthropic Claude Sonnet 3.5</td>
+      </tr>
+      <tr>
+      <td><strong>적용 분야</strong></td>
+      <td>RNS(Regulatory News Service) 뉴스 분류</td>
+      </tr>
+      <tr>
+      <td><strong>LSEG Trade Surveillance</strong></td>
+      <td>2026년 1월 출시</td>
+      </tr>
+      <tr>
+      <td><strong>기존 시스템</strong></td>
+      <td>Millennium Surveillance 플랫폼</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>LSEG은 <strong>Amazon Bedrock 기반의 Anthropic Claude Sonnet 3.5</strong> 모델을 활용하여 RNS(규제 뉴스 서비스) 뉴스를 자동 분류하고 있다. 이는 대규모 언어모델(LLM)을 거래소 감시 업무에 직접 적용한 글로벌 최초 사례 중 하나로, 기존 규칙 기반(rule-based) 감시의 한계를 보완하는 데 기여한다.</p>
+      <p>2026년 1월에 출시된 <strong>LSEG Trade Surveillance</strong>는 기존 Millennium Surveillance 플랫폼을 확장한 서비스로, 시장 참여자들에게 자체 거래 감시 솔루션을 제공한다. 이는 거래소가 단순히 시장을 감시하는 데 그치지 않고, 감시 기술 자체를 상품화하여 새로운 수익원을 창출하는 비즈니스 모델이다.</p>
+      <p>KRX가 야간 시장이나 시간 외 거래 확대를 검토하는 경우, LSE의 AI 기반 감시 모델은 <strong>인력 투입 없이도 24시간 자동화된 시장 감시</strong>를 가능하게 하는 참고 사례가 된다. 특히 LLM 기반 뉴스 분류는 한국어 RNS에도 적용 가능한 기술적 확장성을 가진다.</p>
+      <hr />
+      <h2 id="krx-현행-제도와의-비교-분석">7. KRX 현행 제도와의 비교 분석</h2>
+      <p>아래 표는 LSE와 KRX의 핵심 제도를 항목별로 비교한 것이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>비교 항목</th>
+      <th>LSE (LSEG)</th>
+      <th>KRX (한국거래소)</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>연속 거래 시간</strong></td>
+      <td>약 8.5시간</td>
+      <td>6.5시간</td>
+      <td>양쪽 모두 상대적으로 짧은 편</td>
+      </tr>
+      <tr>
+      <td><strong>매칭 엔진</strong></td>
+      <td>Millennium Exchange</td>
+      <td>EXTURE 3.0</td>
+      <td>-</td>
+      </tr>
+      <tr>
+      <td><strong>매칭 지연시간</strong></td>
+      <td>126μs (Turquoise) / 90μs (AAX)</td>
+      <td><strong>50μs</strong></td>
+      <td><strong>KRX가 더 빠름</strong></td>
+      </tr>
+      <tr>
+      <td><strong>주문 처리량</strong></td>
+      <td>1,000,000 주문/초</td>
+      <td>-</td>
+      <td>Millennium이 글로벌 최고 수준</td>
+      </tr>
+      <tr>
+      <td><strong>현행 결제 주기</strong></td>
+      <td>T+2</td>
+      <td>T+2</td>
+      <td>동일</td>
+      </tr>
+      <tr>
+      <td><strong>T+1 전환 계획</strong></td>
+      <td>2027년 10월 11일</td>
+      <td>추진 중</td>
+      <td>양쪽 모두 T+1 전환 예정</td>
+      </tr>
+      <tr>
+      <td><strong>청산기관</strong></td>
+      <td>LCH Ltd / LCH SA (다층 구조)</td>
+      <td>한국예탁결제원 (단일 구조)</td>
+      <td>구조적 차이</td>
+      </tr>
+      <tr>
+      <td><strong>시장 구조</strong></td>
+      <td>분산 (LSE + 다수 MTF)</td>
+      <td>집중 → 분산 전환 중 (Nextrade 출범)</td>
+      <td>KRX 신규 경쟁 시작</td>
+      </tr>
+      <tr>
+      <td><strong>24시간 거래</strong></td>
+      <td>탐색 단계</td>
+      <td>야간 거래 논의</td>
+      <td>양쪽 모두 초기 단계</td>
+      </tr>
+      <tr>
+      <td><strong>AI 감시</strong></td>
+      <td>Claude Sonnet 3.5 기반 도입</td>
+      <td>규칙 기반 중심</td>
+      <td>LSE 선도</td>
+      </tr>
+      <tr>
+      <td><strong>Consolidated Tape</strong></td>
+      <td>2027년 도입 목표</td>
+      <td>단일 거래소로 불필요 → 향후 필요</td>
+      <td>Nextrade 출범 시 필요성 대두</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="주요-시사점">주요 시사점</h3>
+      <p><strong>1. 매칭 엔진 성능:</strong> KRX의 EXTURE 3.0(50μs)는 Millennium Exchange(90~126μs)보다 <strong>빠른 지연시간</strong>을 달성하고 있다. 이는 KRX가 단일 거래소로서 하드웨어 최적화에 집중할 수 있는 구조적 이점을 반영한다. 반면 Millennium은 글로벌 복수 거래소에 배포되는 범용 엔진으로, 처리량(초당 100만 주문) 측면에서 우위를 보인다.</p>
+      <p><strong>2. 시장 분산과 통합:</strong> LSE는 MiFID II 이후 MTF·다크풀과의 경쟁이 일상화된 <strong>분산 시장 구조</strong>에 있다. KRX는 오랜 기간 독점적 지위를 유지해 왔으나, Nextrade 출범으로 분산 구조로의 전환이 시작되었다. LSE의 경험은 (1) 다수 거래소 간 최선집행 규제, (2) Consolidated Tape의 필요성, (3) 유동성 분산에 대한 대응 전략 등에서 KRX에 중요한 선행 사례를 제공한다.</p>
+      <p><strong>3. T+1 전환 동기화:</strong> 영국이 EU·스위스와 T+1 시행일을 맞춘 것은 교차 결제 효율성 확보를 위한 것이다. KRX 역시 T+1 전환 시 아시아 주요 시장(일본, 홍콩 등)과의 동기화를 고려해야 하며, LSE의 3개년 전환 로드맵(기획→구축→전환)은 실행 프레임워크로서 참고할 가치가 있다.</p>
+      <p><strong>4. AI 감시 도입:</strong> LSEG의 LLM 기반 뉴스 분류 시스템은 KRX의 야간 시장 감시에 직접적으로 적용 가능한 모델이다. 특히 인력 배치가 어려운 시간 외 거래 구간에서 AI 자동 감시는 사실상 필수적인 인프라가 될 것이며, LSE의 선도적 도입 사례는 기술 선택과 규제 수용 양 측면에서 참고가 된다.</p>
+      <p><strong>5. Closing Auction 비중:</strong> LSE에서 Closing Auction이 일일 거래대금의 20~25%를 차지하는 현상은 패시브 투자 확대의 글로벌 추세를 반영한다. KRX 종가 단일가 매매의 비중 추이를 모니터링하고, 필요시 Midday Auction과 같은 장중 유동성 집중 메커니즘 도입을 검토할 필요가 있다.</p>
+      <hr />
+      <blockquote>
+      <p><strong>요약:</strong> LSE는 분산된 시장 구조, 글로벌 청산 인프라, AI 감시 선도 도입 등에서 KRX와 구조적으로 대비되는 특징을 가진다. 양 거래소 모두 T+1 전환, 24시간 거래 논의, 시장 경쟁 구도 변화라는 공통 과제에 직면해 있으며, LSE의 선행 경험은 KRX의 제도 설계에 실질적인 참고 자료가 된다.</p>
+      </blockquote>
+    </article>
+
+    <hr>
+    <footer>
+      <p>본 보고서는 KRX 24시간 거래 전환 전략 리서치 프로젝트의 일환으로 작성되었습니다.</p>
+      <p>&copy; 2026 | Generated from Markdown source</p>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  // Mobile toggle
+  var toggle = document.getElementById('tocToggle');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  var iconMenu = toggle ? toggle.querySelector('.icon-menu') : null;
+  var iconClose = toggle ? toggle.querySelector('.icon-close') : null;
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    if (iconMenu) iconMenu.style.display = 'none';
+    if (iconClose) iconClose.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    if (iconMenu) iconMenu.style.display = 'block';
+    if (iconClose) iconClose.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      if (sidebar && sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+
+  // Close sidebar on link click (mobile)
+  if (sidebar) {
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth < 1100) {
+          closeSidebar();
+        }
+      });
+    });
+  }
+
+  // Scroll spy: highlight active section in TOC
+  var headings = document.querySelectorAll('article h1[id], article h2[id], article h3[id]');
+  var tocLinks = sidebar ? sidebar.querySelectorAll('a[href^="#"]') : [];
+
+  if (headings.length > 0 && tocLinks.length > 0) {
+    var tocMap = {};
+    tocLinks.forEach(function(link) {
+      tocMap[link.getAttribute('href')] = link;
+    });
+
+    function updateActive() {
+      var scrollPos = window.scrollY + 120;
+      var current = null;
+
+      headings.forEach(function(h) {
+        if (h.offsetTop <= scrollPos) {
+          current = h;
+        }
+      });
+
+      tocLinks.forEach(function(link) {
+        link.classList.remove('active');
+      });
+
+      if (current) {
+        var activeLink = tocMap['#' + current.id];
+        if (activeLink) {
+          activeLink.classList.add('active');
+          // Scroll TOC to keep active item visible
+          var nav = document.getElementById('sidebarNav');
+          if (nav && window.innerWidth >= 1100) {
+            var linkTop = activeLink.offsetTop - nav.offsetTop;
+            var navScroll = nav.scrollTop;
+            var navHeight = nav.clientHeight;
+            if (linkTop < navScroll + 40 || linkTop > navScroll + navHeight - 40) {
+              nav.scrollTo({ top: linkTop - navHeight / 3, behavior: 'smooth' });
+            }
+          }
+        }
+      }
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    updateActive();
+  }
+
+  // Progress bar
+  var progressBar = document.createElement('div');
+  progressBar.className = 'reading-progress';
+  document.body.appendChild(progressBar);
+
+  window.addEventListener('scroll', function() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = (window.scrollY / docHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  });
+})();
+</script>
+
+</body>
+</html>

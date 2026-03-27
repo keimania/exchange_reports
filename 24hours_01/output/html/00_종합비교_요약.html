@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>종합 비교 요약 - 24시간 거래 체제 분석 리포트</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1a1a2e; --sidebar-bg: #f8f9fa; --border: #dee2e6;
+            --accent: #0066cc; --accent-light: #e7f1ff; --table-header: #0066cc;
+            --table-header-text: #ffffff; --table-border: #d0d7de; --code-bg: #f6f8fa;
+            --highlight: #fff3cd; --hover-bg: #e9ecef;
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f1a; --text: #d8d8e8; --sidebar-bg: #161625; --border: #2a2a45;
+            --accent: #4da6ff; --accent-light: #1a2a4a; --table-header: #1e3a5f;
+            --table-header-text: #e0e8f0; --table-border: #2a3a4a; --code-bg: #1e2a3a;
+            --highlight: #3a3520; --hover-bg: #1e1e35;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.75;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            overflow-y: auto; z-index: 100; transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-280px); }
+        .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 13px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-header select {
+            width: 100%; margin-top: 8px; padding: 7px 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+        }
+        .toc { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .toc a {
+            display: block; padding: 5px 16px; color: var(--text); text-decoration: none;
+            font-size: 12.5px; border-left: 3px solid transparent; transition: all 0.15s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toc a:hover { background: var(--hover-bg); }
+        .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: var(--accent-light); }
+        .toc a.depth-3 { padding-left: 30px; font-size: 11.5px; opacity: 0.85; }
+        .toc a.depth-4 { padding-left: 44px; font-size: 11px; opacity: 0.7; }
+
+        /* Top bar */
+        .topbar {
+            position: fixed; top: 0; right: 0; left: 280px; height: 48px;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 90;
+            transition: left 0.25s ease;
+        }
+        .topbar.expanded { left: 0; }
+        .topbar button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--sidebar-bg); color: var(--text); cursor: pointer; font-size: 13px;
+            white-space: nowrap;
+        }
+        .topbar button:hover { background: var(--hover-bg); }
+        .topbar input {
+            flex: 1; max-width: 350px; padding: 6px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--sidebar-bg); color: var(--text);
+        }
+        .search-count { font-size: 11px; color: var(--accent); min-width: 50px; }
+
+        /* Main content */
+        main {
+            margin-left: 280px; padding: 68px 50px 60px;
+            transition: margin-left 0.25s ease;
+        }
+        main.expanded { margin-left: 0; }
+        h1 { font-size: 26px; margin: 25px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+        h2 { font-size: 20px; margin: 28px 0 14px; color: var(--accent); }
+        h3 { font-size: 16px; margin: 22px 0 10px; }
+        h4 { font-size: 14px; margin: 18px 0 8px; }
+        p { margin: 8px 0; }
+        a { color: var(--accent); }
+
+        /* Tables - responsive */
+        .table-wrap {
+            overflow-x: auto; margin: 14px 0; border-radius: 8px;
+            border: 1px solid var(--table-border);
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        table { border-collapse: collapse; font-size: 12.5px; width: max-content; min-width: 100%; }
+        th { background: var(--table-header); color: var(--table-header-text); font-weight: 600;
+              padding: 9px 10px; text-align: left; border: 1px solid var(--table-border);
+              position: sticky; top: 0; white-space: nowrap; }
+        td { padding: 8px 10px; border: 1px solid var(--table-border); word-break: keep-all; }
+        tr:nth-child(even) { background: var(--sidebar-bg); }
+        tr:hover { background: var(--accent-light); }
+        /* First column sticky on wide tables */
+        th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: inherit; }
+        th:first-child { z-index: 2; }
+        tr:nth-child(odd) td:first-child { background: var(--bg); }
+        tr:nth-child(even) td:first-child { background: var(--sidebar-bg); }
+        tr:hover td:first-child { background: var(--accent-light); }
+        th:first-child { background: var(--table-header); }
+
+        code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        blockquote {
+            border-left: 4px solid var(--accent); padding: 10px 18px; margin: 14px 0;
+            background: var(--accent-light); border-radius: 0 8px 8px 0; font-size: 13px;
+        }
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 25px 0; }
+        mark { background: #ffe066; padding: 0 3px; border-radius: 2px; }
+        strong { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.mobile-show { transform: translateX(0); }
+            main { margin-left: 0 !important; padding: 60px 12px 40px; }
+            .topbar { left: 0 !important; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 7px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 17px; }
+            h3 { font-size: 14px; }
+        }
+        @media (max-width: 480px) {
+            main { padding: 56px 8px 30px; }
+            table { font-size: 10px; }
+            th, td { padding: 5px 5px; }
+            .topbar input { max-width: 150px; }
+        }
+        @media print {
+            .sidebar, .topbar { display: none !important; }
+            main { margin: 0 !important; padding: 10px !important; max-width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>24H Trading Report</h2>
+            <select onchange="if(this.value)location.href=this.value">
+                <option value="00_종합비교_요약.html" selected>&#128202; 종합 비교 요약</option>
+<option value="01_KRX_한국거래소.html">&#127472;&#127479; KRX 한국거래소</option>
+<option value="02_NYSE_뉴욕증권거래소.html">&#127482;&#127480; NYSE 뉴욕증권거래소</option>
+<option value="03_NASDAQ_나스닥.html">&#127482;&#127480; NASDAQ 나스닥</option>
+<option value="04_24X_Exchange.html">&#127482;&#127480; 24X Exchange</option>
+<option value="05_CME_Group.html">&#127482;&#127480; CME Group</option>
+<option value="06_DTCC_청산결제.html">&#127482;&#127480; DTCC 청산결제</option>
+<option value="07_LSE_런던증권거래소.html">&#127466;&#127482; LSE 런던증권거래소</option>
+<option value="08_JPX_도쿄증권거래소.html">&#127471;&#127477; JPX 도쿄증권거래소</option>
+<option value="09_Blue_Ocean_ATS.html">&#127482;&#127480; Blue Ocean ATS</option>
+<option value="10_유럽거래소_Eurex_Euronext.html">&#127466;&#127482; 유럽거래소 Eurex/Euronext</option>
+            </select>
+        </div>
+        <div class="toc" id="toc"></div>
+    </nav>
+
+    <div class="topbar" id="topbar">
+        <button id="toggleBtn" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="doSearch(this.value)">
+        <span class="search-count" id="searchCount"></span>
+        <button onclick="toggleTheme()" title="Toggle dark mode">&#9681;</button>
+        <button onclick="window.print()" title="Print">&#128424;</button>
+    </div>
+
+    <main id="main">
+        <h1 id="글로벌-거래소청산소-종합-비교-및-krx-24시간-거래-도입-방안">글로벌 거래소·청산소 종합 비교 및 KRX 24시간 거래 도입 방안</h1>
+<blockquote>
+<p><strong>작성일:</strong> 2026년 3월 26일
+<strong>분석 범위:</strong> KRX, NYSE/NYSE Arca, NASDAQ, 24X National Exchange, CME Group, DTCC/NSCC, LSE, JPX/TSE, Blue Ocean ATS, Deutsche Börse/Eurex, Euronext
+<strong>목적:</strong> 각 거래소/청산소의 핵심 제도·시스템을 KRX와 비교하고, 24시간 거래 체제 도입 방안을 도출</p>
+</blockquote>
+<hr />
+<h2 id="목차">목차</h2>
+<ol>
+<li><a href="#1-거래소-핵심-제도-비교">거래소 핵심 제도 비교</a></li>
+<li><a href="#2-거래소-핵심-시스템-비교">거래소 핵심 시스템 비교</a></li>
+<li><a href="#3-청산소-핵심-제도-비교">청산소 핵심 제도 비교</a></li>
+<li><a href="#4-청산소-핵심-시스템-비교">청산소 핵심 시스템 비교</a></li>
+<li><a href="#5-24시간-거래-체제-비교">24시간 거래 체제 비교</a></li>
+<li><a href="#6-krx-24시간-거래-도입-방안">KRX 24시간 거래 도입 방안</a></li>
+</ol>
+<hr />
+<h2 id="1-거래소-핵심-제도-비교">1. 거래소 핵심 제도 비교</h2>
+<h3 id="11-거래시간-종합-비교">1.1 거래시간 종합 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th style="text-align: center;">KRX</th>
+<th style="text-align: center;">NYSE Arca (확장)</th>
+<th style="text-align: center;">NASDAQ (제안)</th>
+<th style="text-align: center;">24X</th>
+<th style="text-align: center;">CME Globex</th>
+<th style="text-align: center;">LSE</th>
+<th style="text-align: center;">TSE/JPX</th>
+<th style="text-align: center;">Deutsche Börse (Xetra)</th>
+<th style="text-align: center;">Euronext</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>정규시장</strong></td>
+<td style="text-align: center;">09:00-15:30</td>
+<td style="text-align: center;">09:30-16:00 ET</td>
+<td style="text-align: center;">09:30-16:00 ET</td>
+<td style="text-align: center;">09:30-16:00 ET</td>
+<td style="text-align: center;">N/A (선물)</td>
+<td style="text-align: center;">08:00-16:30 GMT</td>
+<td style="text-align: center;">09:00-15:30 JST</td>
+<td style="text-align: center;">09:00-17:30 CET</td>
+<td style="text-align: center;">09:00-17:30 CET</td>
+</tr>
+<tr>
+<td><strong>정규시장 시간</strong></td>
+<td style="text-align: center;"><strong>6.5h</strong></td>
+<td style="text-align: center;"><strong>6.5h</strong></td>
+<td style="text-align: center;"><strong>6.5h</strong></td>
+<td style="text-align: center;"><strong>6.5h</strong></td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;"><strong>8.5h</strong></td>
+<td style="text-align: center;"><strong>5.5h</strong></td>
+<td style="text-align: center;"><strong>8.5h</strong></td>
+<td style="text-align: center;"><strong>8.5h</strong></td>
+</tr>
+<tr>
+<td><strong>프리마켓</strong></td>
+<td style="text-align: center;">08:00-09:00</td>
+<td style="text-align: center;"><strong>21:00 ET(전일)~09:30</strong></td>
+<td style="text-align: center;"><strong>21:00~04:00(Night)+04:00~09:30</strong></td>
+<td style="text-align: center;"><strong>21:00~04:00+04:00~09:30</strong></td>
+<td style="text-align: center;">일 17:00 CT~</td>
+<td style="text-align: center;">Pre-open 경매</td>
+<td style="text-align: center;">08:00 주문접수</td>
+<td style="text-align: center;">07:30-09:00</td>
+<td style="text-align: center;">07:15-09:00</td>
+</tr>
+<tr>
+<td><strong>애프터마켓</strong></td>
+<td style="text-align: center;">15:40-18:00</td>
+<td style="text-align: center;">16:00-20:00</td>
+<td style="text-align: center;">16:00-20:00</td>
+<td style="text-align: center;">16:00-20:00</td>
+<td style="text-align: center;">~금 16:00 CT</td>
+<td style="text-align: center;">Closing 경매 후</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">17:30-22:00 (리테일)</td>
+<td style="text-align: center;">17:30-17:40</td>
+</tr>
+<tr>
+<td><strong>총 운영시간</strong></td>
+<td style="text-align: center;"><strong>~10h</strong></td>
+<td style="text-align: center;"><strong>~23h</strong></td>
+<td style="text-align: center;"><strong>~23h</strong></td>
+<td style="text-align: center;"><strong>~23h</strong></td>
+<td style="text-align: center;"><strong>~23h</strong></td>
+<td style="text-align: center;"><strong>~8.5h+</strong></td>
+<td style="text-align: center;"><strong>~6.5h</strong></td>
+<td style="text-align: center;"><strong>~14.5h</strong> (리테일 포함)</td>
+<td style="text-align: center;"><strong>~10.5h</strong></td>
+</tr>
+<tr>
+<td><strong>점심시간</strong></td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;"><strong>11:30-12:30 (1h)</strong></td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">없음</td>
+</tr>
+<tr>
+<td><strong>기술 점검</strong></td>
+<td style="text-align: center;">야간 배치</td>
+<td style="text-align: center;">20:00-21:00 (1h)</td>
+<td style="text-align: center;">20:00-21:00 (1h)</td>
+<td style="text-align: center;">20:00-21:00 (1h)</td>
+<td style="text-align: center;">16:00-16:01 CT (1min)</td>
+<td style="text-align: center;">야간</td>
+<td style="text-align: center;">야간</td>
+<td style="text-align: center;">야간</td>
+<td style="text-align: center;">야간</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-가격결정-메커니즘-비교">1.2 가격결정 메커니즘 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KRX</th>
+<th>NYSE</th>
+<th>NASDAQ</th>
+<th>24X</th>
+<th>LSE</th>
+<th>TSE</th>
+<th>Xetra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>시가결정</strong></td>
+<td>동시호가 (단일가매매)</td>
+<td>Opening Auction (Imbalance Freeze 09:29:55)</td>
+<td>Opening Cross</td>
+<td>없음 (연속매매)</td>
+<td>Opening Auction</td>
+<td>이타요세 (판매호가)</td>
+<td>Opening Auction</td>
+</tr>
+<tr>
+<td><strong>장중 매매</strong></td>
+<td>접속매매 (복수가격)</td>
+<td>연속매매 (Price/Time Priority)</td>
+<td>연속매매 (Price/Time)</td>
+<td>연속매매 (Price/Time)</td>
+<td>연속매매</td>
+<td>자라바 (연속매매)</td>
+<td>연속매매 (Price/Time)</td>
+</tr>
+<tr>
+<td><strong>종가결정</strong></td>
+<td>동시호가 (단일가매매)</td>
+<td>Closing Auction (MOC/LOC, D-Order)</td>
+<td>Closing Cross</td>
+<td>없음 (연속매매)</td>
+<td>Closing Auction</td>
+<td><strong>Closing Auction (2024.11 신설)</strong></td>
+<td>Closing Auction</td>
+</tr>
+<tr>
+<td><strong>랜덤 종료</strong></td>
+<td>✅ (조건부 랜덤)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-가격제한-및-변동성-관리-비교">1.3 가격제한 및 변동성 관리 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KRX</th>
+<th>NYSE/NASDAQ</th>
+<th>24X (야간)</th>
+<th>CME Globex</th>
+<th>LSE</th>
+<th>TSE</th>
+<th>Xetra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>일일 가격제한폭</strong></td>
+<td><strong>±30%</strong></td>
+<td>없음</td>
+<td>없음</td>
+<td>없음 (상품별 상이)</td>
+<td>없음</td>
+<td>없음</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>Market-Wide Circuit Breaker</strong></td>
+<td>3단계 (8/15/20%)</td>
+<td>3단계 (7/13/20%)</td>
+<td>N/A (야간 미적용)</td>
+<td>없음 (개별 상품)</td>
+<td>없음</td>
+<td>없음</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>종목별 변동성 관리</strong></td>
+<td>VI (정적 10%, 동적 3/6%)</td>
+<td>LULD (5min 기준 5-20%)</td>
+<td>24X Price Bands ($1-3:10%, $3-50:5%, $50+:3%)</td>
+<td>Dynamic Price Bands (롤링)</td>
+<td>개별종목 경매전환</td>
+<td>개별종목 경매전환</td>
+<td>Volatility Interruption</td>
+</tr>
+<tr>
+<td><strong>야간 적용 방식</strong></td>
+<td>시간외단일가 ±10%</td>
+<td>LULD 미적용 → Double-Wide Collars (20/10/6%)</td>
+<td>자체 Price Bands</td>
+<td>Dynamic Bands 연속 적용</td>
+<td>N/A</td>
+<td>PTS 자체 규칙</td>
+<td>Xetra 리테일 자체 규칙</td>
+</tr>
+<tr>
+<td><strong>서킷브레이커 적용시간</strong></td>
+<td>장종료 40분전까지 (3단계 제외)</td>
+<td>정규시간만</td>
+<td>야간 미적용</td>
+<td>세션 무관</td>
+<td>개별종목</td>
+<td>개별종목</td>
+<td>개별종목</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-주문-유형-비교">1.4 주문 유형 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KRX</th>
+<th>NYSE Arca (확장시간)</th>
+<th>NASDAQ (Night)</th>
+<th>24X (야간)</th>
+<th>CME Globex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>지정가</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (Day+, GTT)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>시장가</strong></td>
+<td>✅</td>
+<td>✅ (정규만)</td>
+<td>❌ (야간 금지)</td>
+<td>❌ (야간 금지)</td>
+<td>✅ (Protected Market)</td>
+</tr>
+<tr>
+<td><strong>조건부지정가</strong></td>
+<td>✅</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>최유리지정가</strong></td>
+<td>✅</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>최우선지정가</strong></td>
+<td>✅</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Pegged</strong></td>
+<td>-</td>
+<td>✅ (정규만)</td>
+<td>❌ (야간 금지)</td>
+<td>❌ (야간 금지)</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>IOC</strong></td>
+<td>-</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (FAK)</td>
+</tr>
+<tr>
+<td><strong>FOK</strong></td>
+<td>-</td>
+<td>✅</td>
+<td>-</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>MOO/LOO</strong></td>
+<td>-</td>
+<td>✅ (경매 전용)</td>
+<td>❌ (야간 금지)</td>
+<td>❌ (경매 없음)</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>MOC/LOC</strong></td>
+<td>-</td>
+<td>✅ (경매 전용)</td>
+<td>❌ (야간 금지)</td>
+<td>❌ (경매 없음)</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>스톱지정가</strong></td>
+<td>✅ (2025.2 신설)</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>중간가</strong></td>
+<td>✅ (2025.2 신설)</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>GTC</strong></td>
+<td>-</td>
+<td>✅ (세션 간 유지)</td>
+<td>❌ (2026.2 폐지)</td>
+<td>-</td>
+<td>✅ (세션 간 유지)</td>
+</tr>
+<tr>
+<td><strong>ISO</strong></td>
+<td>-</td>
+<td>✅</td>
+<td>✅ (야간 허용)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>핵심 관찰:</strong> 글로벌 거래소들은 야간 세션에서 <strong>시장가 주문과 Pegged 주문을 일괄 금지</strong>하는 것이 공통 패턴이다. KRX도 야간 도입 시 <strong>지정가 주문만 허용</strong>하는 것이 안전한 접근법이다.</p>
+</blockquote>
+<h3 id="15-결제주기-비교">1.5 결제주기 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th style="text-align: center;">KRX</th>
+<th style="text-align: center;">미국 (NYSE/NASDAQ)</th>
+<th style="text-align: center;">LSE/UK</th>
+<th style="text-align: center;">TSE/일본</th>
+<th style="text-align: center;">Euronext/EU</th>
+<th style="text-align: center;">Deutsche Börse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>현행</strong></td>
+<td style="text-align: center;"><strong>T+2</strong></td>
+<td style="text-align: center;"><strong>T+1</strong> (2024.5~)</td>
+<td style="text-align: center;">T+2</td>
+<td style="text-align: center;">T+2</td>
+<td style="text-align: center;">T+2</td>
+<td style="text-align: center;">T+2</td>
+</tr>
+<tr>
+<td><strong>전환 계획</strong></td>
+<td style="text-align: center;">T+1 검토 중</td>
+<td style="text-align: center;">시행 중</td>
+<td style="text-align: center;"><strong>T+1 (2027.10.11)</strong></td>
+<td style="text-align: center;">검토 중</td>
+<td style="text-align: center;"><strong>T+1 (2027.10.11)</strong></td>
+<td style="text-align: center;"><strong>T+1 (2027.10.11)</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="16-휴장일-비교">1.6 휴장일 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th style="text-align: center;">KRX</th>
+<th style="text-align: center;">NYSE</th>
+<th style="text-align: center;">NASDAQ</th>
+<th style="text-align: center;">LSE</th>
+<th style="text-align: center;">TSE</th>
+<th style="text-align: center;">Xetra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>연간 휴장일 (토·일 제외)</strong></td>
+<td style="text-align: center;">~15-17일</td>
+<td style="text-align: center;">~9일</td>
+<td style="text-align: center;">~9일</td>
+<td style="text-align: center;">~8일 + 반일 2일</td>
+<td style="text-align: center;">~15-20일</td>
+<td style="text-align: center;">~10일</td>
+</tr>
+<tr>
+<td><strong>반일 거래</strong></td>
+<td style="text-align: center;">12/31 (대체 가능)</td>
+<td style="text-align: center;">~3일 (13:00 조기폐장)</td>
+<td style="text-align: center;">~3일</td>
+<td style="text-align: center;">~2일 (12:30)</td>
+<td style="text-align: center;">없음</td>
+<td style="text-align: center;">12/30-31</td>
+</tr>
+<tr>
+<td><strong>근거</strong></td>
+<td style="text-align: center;">업무규정 제5조</td>
+<td style="text-align: center;">NYSE Rule</td>
+<td style="text-align: center;">NASDAQ Rule</td>
+<td style="text-align: center;">Exchange Calendar</td>
+<td style="text-align: center;">JPX Calendar</td>
+<td style="text-align: center;">FWB Calendar</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-거래소-핵심-시스템-비교">2. 거래소 핵심 시스템 비교</h2>
+<h3 id="21-매칭엔진-기술-사양">2.1 매칭엔진 기술 사양</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th style="text-align: center;">KRX (EXTURE 3.0)</th>
+<th style="text-align: center;">NYSE (Pillar)</th>
+<th style="text-align: center;">NASDAQ (Genium INET)</th>
+<th style="text-align: center;">24X (MEMX Memoir)</th>
+<th style="text-align: center;">CME (Globex)</th>
+<th style="text-align: center;">LSE (Millennium)</th>
+<th style="text-align: center;">TSE (arrowhead 4.0)</th>
+<th style="text-align: center;">Xetra (T7)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>처리량</strong></td>
+<td style="text-align: center;"><strong>9.4억건/일</strong></td>
+<td style="text-align: center;">N/A (분산)</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">수백만/초</td>
+<td style="text-align: center;">수천만/일</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">N/A</td>
+</tr>
+<tr>
+<td><strong>레이턴시</strong></td>
+<td style="text-align: center;"><strong>50µs</strong></td>
+<td style="text-align: center;"><strong>마이크로초급</strong></td>
+<td style="text-align: center;"><strong>&lt;100µs</strong></td>
+<td style="text-align: center;"><strong>마이크로초급</strong></td>
+<td style="text-align: center;"><strong>마이크로초급</strong></td>
+<td style="text-align: center;"><strong>126µs</strong></td>
+<td style="text-align: center;"><strong>마이크로초급</strong></td>
+<td style="text-align: center;"><strong>&lt;10µs</strong></td>
+</tr>
+<tr>
+<td><strong>아키텍처</strong></td>
+<td style="text-align: center;">시장별 멀티 매칭</td>
+<td style="text-align: center;">14개 TXN 파티션</td>
+<td style="text-align: center;">수평 확장</td>
+<td style="text-align: center;">탄력적 클러스터</td>
+<td style="text-align: center;">Market Segment 분할</td>
+<td style="text-align: center;">MillenniumIT</td>
+<td style="text-align: center;">462대 Fujitsu 서버</td>
+<td style="text-align: center;">수평 파티셔닝</td>
+</tr>
+<tr>
+<td><strong>프로토콜</strong></td>
+<td style="text-align: center;">FIX, FIX/FAST</td>
+<td style="text-align: center;">FIX 4.2/4.4, Binary</td>
+<td style="text-align: center;">OUCH 5.0, Core FIX, ITCH</td>
+<td style="text-align: center;">FIX, Binary</td>
+<td style="text-align: center;">iLink 3 (FIXP+SBE)</td>
+<td style="text-align: center;">Native, FIX</td>
+<td style="text-align: center;">arrowhead</td>
+<td style="text-align: center;">EOBI, FIX</td>
+</tr>
+<tr>
+<td><strong>코로케이션</strong></td>
+<td style="text-align: center;">Koscom IDC</td>
+<td style="text-align: center;">Mahwah, NJ</td>
+<td style="text-align: center;">Carteret, NJ</td>
+<td style="text-align: center;">Equinix NY4</td>
+<td style="text-align: center;">Aurora, IL</td>
+<td style="text-align: center;">LD4, Basildon</td>
+<td style="text-align: center;">Kiba, Tokyo</td>
+<td style="text-align: center;">Frankfurt</td>
+</tr>
+<tr>
+<td><strong>이중화</strong></td>
+<td style="text-align: center;">Active-Standby</td>
+<td style="text-align: center;">다중 TXN</td>
+<td style="text-align: center;">다중 인스턴스</td>
+<td style="text-align: center;">NY4+LD4+CH4</td>
+<td style="text-align: center;">Blue-Green (Dual Zone)</td>
+<td style="text-align: center;">Active-Active</td>
+<td style="text-align: center;">이중화</td>
+<td style="text-align: center;">Active-Active</td>
+</tr>
+<tr>
+<td><strong>무중단 업데이트</strong></td>
+<td style="text-align: center;">❌ (야간 배치)</td>
+<td style="text-align: center;">❌ (1h 점검)</td>
+<td style="text-align: center;">✅ (Rolling Restart)</td>
+<td style="text-align: center;">❌ (1h 점검)</td>
+<td style="text-align: center;">✅ (Blue-Green)</td>
+<td style="text-align: center;">❌ (야간)</td>
+<td style="text-align: center;">❌ (야간)</td>
+<td style="text-align: center;">❌ (야간)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-주문-관리-시스템-비교">2.2 주문 관리 시스템 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KRX</th>
+<th>NYSE Arca (확장)</th>
+<th>NASDAQ (23/5)</th>
+<th>24X</th>
+<th>CME Globex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>세션 간 주문 이월</strong></td>
+<td>❌ (세션 경계 소멸)</td>
+<td>✅ (GTC 디스크 저장)</td>
+<td>❌ (Double Flush)</td>
+<td>❌ (Hard Flush)</td>
+<td>✅ (GTC/GTD Priority 보존)</td>
+</tr>
+<tr>
+<td><strong>Trade Date 전환</strong></td>
+<td>N/A</td>
+<td>20:00 ET (FIX Tag 715)</td>
+<td>20:00 ET (FIX Tag 715)</td>
+<td>20:00 ET (FIX Tag 715)</td>
+<td>16:00 CT (1분 점검)</td>
+</tr>
+<tr>
+<td><strong>Cancel on Disconnect</strong></td>
+<td>미상</td>
+<td>✅ (Pillar 기본)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (CoD 의무화)</td>
+</tr>
+<tr>
+<td><strong>Kill Switch</strong></td>
+<td>미상</td>
+<td>✅ (Pillar Risk)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (GC2, 1초 이내)</td>
+</tr>
+<tr>
+<td><strong>Self-Trade Prevention</strong></td>
+<td>미상</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (마이크로초 STP)</td>
+<td>✅ (SMP 의무)</td>
+</tr>
+<tr>
+<td><strong>DoS 보호</strong></td>
+<td>미상</td>
+<td>✅ (100회 실패→60초 차단)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>시퀀스 리셋</strong></td>
+<td>야간</td>
+<td>점검 시 (Msg Type 1)</td>
+<td>점검 시</td>
+<td>점검 시</td>
+<td>16:00-16:01 CT</td>
+</tr>
+<tr>
+<td><strong>주문 상태 복원</strong></td>
+<td>N/A</td>
+<td>ExecTransType=3, ExecType=D</td>
+<td>재입력 필요</td>
+<td>재입력 필요</td>
+<td>FIXP UUID 세션 지속</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-시장-데이터-배포-비교">2.3 시장 데이터 배포 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KRX</th>
+<th>NYSE</th>
+<th>NASDAQ</th>
+<th>24X</th>
+<th>CME</th>
+<th>LSE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>공식 데이터</strong></td>
+<td>거래소 데이터 피드</td>
+<td>SIP (CTS/CQS)</td>
+<td>SIP (UTP)</td>
+<td>SIP (확장 대기)</td>
+<td>CME MDP 3.0</td>
+<td>LSEG 데이터 피드</td>
+</tr>
+<tr>
+<td><strong>독점 피드</strong></td>
+<td>Koscom 제공</td>
+<td>XDP (Level 3)</td>
+<td>ITCH (Level 3)</td>
+<td>24X Top/Depth</td>
+<td>Market Segment별</td>
+<td>Millennium 피드</td>
+</tr>
+<tr>
+<td><strong>야간 데이터</strong></td>
+<td>시간외 데이터</td>
+<td>SIP 확장 (21:00-20:00 ET)</td>
+<td>SIP 확장 + 별도 Night 피드</td>
+<td>24X Top/Depth (독자)</td>
+<td>연속 제공</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>시간외 구분</strong></td>
+<td>시간외시장 표시</td>
+<td>.T 식별자</td>
+<td>세션별 분리</td>
+<td>세션별 분리</td>
+<td>세션 무관</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-재해복구dr-체계-비교">2.4 재해복구(DR) 체계 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KRX</th>
+<th>NYSE Arca</th>
+<th>24X</th>
+<th>CME Group</th>
+<th>LSE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Primary</strong></td>
+<td>Koscom IDC</td>
+<td>Mahwah, NJ</td>
+<td>Equinix NY4</td>
+<td>Aurora, IL</td>
+<td>Basildon, UK</td>
+</tr>
+<tr>
+<td><strong>DR Site</strong></td>
+<td>미상</td>
+<td>Cermak, Chicago</td>
+<td>CH4 (Chicago)</td>
+<td>NYDC</td>
+<td>LD4, London</td>
+</tr>
+<tr>
+<td><strong>Mirror</strong></td>
+<td>-</td>
+<td>-</td>
+<td>LD4 (London)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Failover 시간</strong></td>
+<td>미상</td>
+<td>점검 시 전환</td>
+<td>즉시 (Aeron 복제)</td>
+<td><strong>45분 스테이징</strong></td>
+<td>자동 전환</td>
+</tr>
+<tr>
+<td><strong>DR 프로세스</strong></td>
+<td>미상</td>
+<td>자동</td>
+<td>자동 (상태머신 복제)</td>
+<td><strong>4단계</strong> (Pre-Event→DR→Recovery→Post-Recovery)</td>
+<td>자동</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-청산소-핵심-제도-비교">3. 청산소 핵심 제도 비교</h2>
+<h3 id="31-청산결제-기관-종합-비교">3.1 청산·결제 기관 종합 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th style="text-align: center;">KSD/KRX CCP</th>
+<th style="text-align: center;">DTCC (DTC/NSCC/FICC)</th>
+<th style="text-align: center;">CME Clearing</th>
+<th style="text-align: center;">LCH (Ltd/SA)</th>
+<th style="text-align: center;">JSCC</th>
+<th style="text-align: center;">Eurex Clearing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>소속</strong></td>
+<td style="text-align: center;">KRX 그룹</td>
+<td style="text-align: center;">독립 (업계 소유)</td>
+<td style="text-align: center;">CME Group</td>
+<td style="text-align: center;">LSEG</td>
+<td style="text-align: center;">JPX 그룹</td>
+<td style="text-align: center;">Deutsche Börse</td>
+</tr>
+<tr>
+<td><strong>대상 자산</strong></td>
+<td style="text-align: center;">주식, 채권</td>
+<td style="text-align: center;">주식, 채권, 국채</td>
+<td style="text-align: center;">선물, 옵션, OTC</td>
+<td style="text-align: center;">금리, FX, CDS, 주식</td>
+<td style="text-align: center;">주식, 채권, 파생상품</td>
+<td style="text-align: center;">파생상품, Repo</td>
+</tr>
+<tr>
+<td><strong>CCP 기능</strong></td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅ (NSCC)</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td><strong>결제주기</strong></td>
+<td style="text-align: center;">T+2</td>
+<td style="text-align: center;">T+1</td>
+<td style="text-align: center;">상품별 상이</td>
+<td style="text-align: center;">T+1 (2027 목표)</td>
+<td style="text-align: center;">T+2</td>
+<td style="text-align: center;">T+1 (2027 목표)</td>
+</tr>
+<tr>
+<td><strong>Novation 방식</strong></td>
+<td style="text-align: center;">배치</td>
+<td style="text-align: center;">실시간 (UTC, 2026.6 목표)</td>
+<td style="text-align: center;">실시간</td>
+<td style="text-align: center;">실시간</td>
+<td style="text-align: center;">배치</td>
+<td style="text-align: center;">실시간</td>
+</tr>
+<tr>
+<td><strong>24시간 대응</strong></td>
+<td style="text-align: center;">미대응</td>
+<td style="text-align: center;"><strong>24/5 전환 중</strong></td>
+<td style="text-align: center;"><strong>이미 운영 (~23h)</strong></td>
+<td style="text-align: center;">검토 중</td>
+<td style="text-align: center;">미대응</td>
+<td style="text-align: center;">검토 중</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-증거금-관리-비교">3.2 증거금 관리 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KSD</th>
+<th>DTCC/NSCC</th>
+<th>CME Clearing</th>
+<th>LCH</th>
+<th>JSCC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>산출 빈도</strong></td>
+<td>일 1-2회 (배치)</td>
+<td><strong>15분마다 (24/5)</strong></td>
+<td>실시간 (GC2)</td>
+<td>Intraday</td>
+<td>일 1회</td>
+</tr>
+<tr>
+<td><strong>야간 마진콜</strong></td>
+<td>❌</td>
+<td>✅ (동적 마진콜 권한)</td>
+<td>✅ (자동)</td>
+<td>N/A</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>VaR 모델</strong></td>
+<td>기본 VaR</td>
+<td>VaR + MRD</td>
+<td>SPAN + VaR</td>
+<td>SPAN + VaR</td>
+<td>VaR</td>
+</tr>
+<tr>
+<td><strong>교차증거금</strong></td>
+<td>제한적</td>
+<td>✅ (CME-FICC)</td>
+<td>✅ (CME-DTCC/FICC)</td>
+<td>✅</td>
+<td>제한적</td>
+</tr>
+<tr>
+<td><strong>High-Value Threshold</strong></td>
+<td>미상</td>
+<td><strong>$1B(야간)/$1.5B(주간)</strong></td>
+<td>상품별</td>
+<td>N/A</td>
+<td>미상</td>
+</tr>
+<tr>
+<td><strong>Pre-funding (야간)</strong></td>
+<td>N/A</td>
+<td>리테일 100%</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-결제불이행-관리-비교">3.3 결제불이행 관리 비교</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KSD</th>
+<th>DTCC/NSCC</th>
+<th>CME Clearing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>디폴트 펀드</strong></td>
+<td>결제안정기금</td>
+<td>Clearing Fund + 상호화</td>
+<td>Guaranty Fund</td>
+</tr>
+<tr>
+<td><strong>워터폴</strong></td>
+<td>불이행자 담보 → 결제안정기금</td>
+<td>불이행자 담보 → Clearing Fund → Capped Contingent Liquidity Facility</td>
+<td>불이행자 담보 → CME 기여금 → Guaranty Fund</td>
+</tr>
+<tr>
+<td><strong>야간 대응</strong></td>
+<td>N/A</td>
+<td>UTC 실시간 모니터링</td>
+<td>GCC 24시간 모니터링</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-청산소-핵심-시스템-비교">4. 청산소 핵심 시스템 비교</h2>
+<h3 id="41-거래-캡처-시스템">4.1 거래 캡처 시스템</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KSD</th>
+<th>DTCC UTC</th>
+<th>CME ClearPort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>처리 방식</strong></td>
+<td>배치</td>
+<td><strong>실시간</strong> (FIX/MQ)</td>
+<td>실시간 + 배치</td>
+</tr>
+<tr>
+<td><strong>운영시간</strong></td>
+<td>영업시간 중</td>
+<td><strong>일 20:00~금 20:00 ET</strong> (2026.6 목표)</td>
+<td>일 17:00~금 16:00 CT</td>
+</tr>
+<tr>
+<td><strong>Trade Date 전환</strong></td>
+<td>영업일 기준</td>
+<td><strong>20:00 ET</strong> (FIX Tag 715)</td>
+<td>16:00 CT (1분 점검)</td>
+</tr>
+<tr>
+<td><strong>세션 식별</strong></td>
+<td>정규/시간외</td>
+<td><strong>FIX Tag 336</strong> (PRE/REG/PST/OVN)</td>
+<td>Market State 기반</td>
+</tr>
+<tr>
+<td><strong>Good Night 프로토콜</strong></td>
+<td>없음</td>
+<td>✅ (5단계 + Master Good Night)</td>
+<td>일일 마감 배치</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-자금이체-시스템-연동">4.2 자금이체 시스템 연동</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>KRX/KSD</th>
+<th>미국 (DTCC)</th>
+<th>CME Group</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>중앙은행 결제</strong></td>
+<td>BOK-Wire+ (09:00-17:30)</td>
+<td>Fedwire (영업시간)</td>
+<td>Fedwire + BAMS</td>
+</tr>
+<tr>
+<td><strong>야간 자금이체</strong></td>
+<td>❌ (BOK-Wire+ 제한)</td>
+<td>토큰화 예치금 파일럿 (ICE/BNY/Citi)</td>
+<td>BAMS API (FIXML, SFTP)</td>
+</tr>
+<tr>
+<td><strong>24시간 대응</strong></td>
+<td><strong>최대 병목</strong></td>
+<td>토큰화 + 블록체인 파일럿</td>
+<td>글로벌 뱅킹 타임 활용</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-24시간-거래-체제-비교">5. 24시간 거래 체제 비교</h2>
+<h3 id="51-24시간또는-유사-체제-현황-종합">5.1 24시간(또는 유사) 체제 현황 종합</h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>현재 상태</th>
+<th>목표</th>
+<th>운영시간</th>
+<th>점검 윈도우</th>
+<th>야간 주문</th>
+<th>야간 변동성 관리</th>
+<th>청산 연동</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KRX</strong></td>
+<td>10h (08:00-18:00)</td>
+<td>24h (2026.12)</td>
+<td>확장 중</td>
+<td>TBD</td>
+<td>TBD (One Board)</td>
+<td>TBD</td>
+<td>KSD T+2</td>
+</tr>
+<tr>
+<td><strong>NYSE Arca</strong></td>
+<td>16h → 23h 승인</td>
+<td>23h (2026 H2)</td>
+<td>21:00-20:00 ET</td>
+<td>20:00-21:00 (1h)</td>
+<td>GTC 유지, .T 구분</td>
+<td>Double-Wide Collars</td>
+<td>DTCC UTC 24/5</td>
+</tr>
+<tr>
+<td><strong>NASDAQ</strong></td>
+<td>16h → 23h 제안</td>
+<td>23h (2026 H2)</td>
+<td>21:00-20:00 ET</td>
+<td>20:00-21:00 (1h)</td>
+<td>Limit+ISO만, GTC 폐지</td>
+<td>CEE 20%, Volatility Guards</td>
+<td>DTCC UTC 24/5</td>
+</tr>
+<tr>
+<td><strong>24X</strong></td>
+<td>SEC 승인 완료</td>
+<td>23h</td>
+<td>21:00-20:00 ET</td>
+<td>20:00-21:00 (1h)</td>
+<td>Day+/GTT, Market 금지</td>
+<td>24X Price Bands (10/5/3%)</td>
+<td>DTCC UTC 24/5</td>
+</tr>
+<tr>
+<td><strong>CME Globex</strong></td>
+<td><strong>~23h 운영 중</strong></td>
+<td>유지</td>
+<td>일 17:00~금 16:00 CT</td>
+<td>16:00-16:01 CT (1min)</td>
+<td>GTC/GTD 유지</td>
+<td>Dynamic Price Bands</td>
+<td>CME Clearing 자체</td>
+</tr>
+<tr>
+<td><strong>Blue Ocean ATS</strong></td>
+<td>8h 야간 운영 중</td>
+<td>유지</td>
+<td>20:00-04:00 ET</td>
+<td>없음 (별도 운영)</td>
+<td>Limit만, 20% 밴드</td>
+<td>20% Price Band</td>
+<td>NSCC/DTCC</td>
+</tr>
+<tr>
+<td><strong>LSE</strong></td>
+<td>8.5h</td>
+<td>검토 중</td>
+<td>08:00-16:30 GMT</td>
+<td>야간</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>LCH</td>
+</tr>
+<tr>
+<td><strong>TSE</strong></td>
+<td>5.5h + PTS</td>
+<td>검토 중</td>
+<td>09:00-15:30 JST</td>
+<td>야간 + 점심 1h</td>
+<td>PTS: 16:30-23:59</td>
+<td>PTS 자체</td>
+<td>JSCC</td>
+</tr>
+<tr>
+<td><strong>Xetra</strong></td>
+<td>8.5h + 리테일 14.5h</td>
+<td>검토 중</td>
+<td>09:00-17:30 CET</td>
+<td>야간</td>
+<td>리테일: 08:00-22:00</td>
+<td>Xetra 리테일 자체</td>
+<td>Eurex Clearing</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-기술-점검-윈도우-비교">5.2 기술 점검 윈도우 비교</h3>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>점검 시간</th>
+<th>길이</th>
+<th>주요 작업</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NYSE Arca</strong></td>
+<td>20:00-21:00 ET</td>
+<td>1시간</td>
+<td>DB 백업, 시퀀스 리셋, 기업행위, 소프트웨어 배포, Cold Start</td>
+</tr>
+<tr>
+<td><strong>NASDAQ</strong></td>
+<td>20:00-21:00 ET</td>
+<td>1시간</td>
+<td>Trade Date 롤오버, 기업행위, 시스템 유지보수, 캐시 Flush</td>
+</tr>
+<tr>
+<td><strong>24X</strong></td>
+<td>20:00-21:00 ET (일~목)</td>
+<td>1시간</td>
+<td>주문북 Hard Flush, 배치 아카이빙, FIX 시퀀스 리셋, DB 인덱싱</td>
+</tr>
+<tr>
+<td><strong>CME Globex</strong></td>
+<td>16:00-16:01 CT</td>
+<td><strong>1분</strong></td>
+<td>논리적 일일 마감, 시퀀스 리셋, Trade Date 롤링</td>
+</tr>
+<tr>
+<td><strong>24X (주간)</strong></td>
+<td>토 08:00-11:00 ET</td>
+<td>3시간</td>
+<td>심층 인프라 업그레이드, 하드웨어 교체, 스트레스 테스트</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>시사점:</strong> 미국 주식시장은 <strong>20:00-21:00 ET (1시간)</strong>이 업계 표준 점검 윈도우로 수렴하고 있다. CME의 1분 점검은 선물시장의 특수성(상대적으로 단순한 기업행위)에 기인한다. KRX는 최소 <strong>1시간</strong>의 점검 윈도우를 확보해야 한다.</p>
+</blockquote>
+<h3 id="53-야간-규제-환경-비교">5.3 야간 규제 환경 비교</h3>
+<table>
+<thead>
+<tr>
+<th>규제 요소</th>
+<th>정규시간</th>
+<th>야간 (미국 표준)</th>
+<th>KRX 현행</th>
+<th>KRX 적용 방안</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reg NMS / 최선집행</strong></td>
+<td>완전 적용</td>
+<td><strong>미적용</strong> (격리 풀)</td>
+<td>최선집행 의무</td>
+<td>야간 별도 규제 카테고리 신설</td>
+</tr>
+<tr>
+<td><strong>NBBO</strong></td>
+<td>SIP 통합</td>
+<td><strong>부재</strong> (SOR 자체 합성)</td>
+<td>N/A</td>
+<td>Nextrade 포함 통합 데이터 또는 독립 운영</td>
+</tr>
+<tr>
+<td><strong>LULD / VI</strong></td>
+<td>완전 적용</td>
+<td><strong>미적용</strong> → 대체 메커니즘</td>
+<td>VI 적용</td>
+<td>야간 축소 Price Bands (예: ±15%)</td>
+</tr>
+<tr>
+<td><strong>서킷브레이커</strong></td>
+<td>시장 전체</td>
+<td><strong>미적용</strong></td>
+<td>3단계 적용</td>
+<td>야간 별도 기준 또는 미적용</td>
+</tr>
+<tr>
+<td><strong>CEE (착오매매)</strong></td>
+<td>엄격 (3%)</td>
+<td><strong>완화</strong> (20% 허용)</td>
+<td>착오매매 정정 가능</td>
+<td>야간 착오매매 기준 완화</td>
+</tr>
+<tr>
+<td><strong>공시</strong></td>
+<td>즉시 공시</td>
+<td>제한적</td>
+<td>정규시간 공시</td>
+<td>24시간 공시 체계 또는 야간 매매정지 규칙</td>
+</tr>
+<tr>
+<td><strong>공매도</strong></td>
+<td>업틱룰 적용</td>
+<td>적용 여부 불명확</td>
+<td>업틱룰 적용</td>
+<td>야간 공매도 금지 검토</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-dtcc-245-청산-로드맵과-각-거래소의-연동">5.4 DTCC 24/5 청산 로드맵과 각 거래소의 연동</h3>
+<pre><code>2024.9                    2026.1        2026.3          2026.6           2026 H2         2027 Q4
+  │                         │              │               │                │               │
+  ▼                         ▼              ▼               ▼                ▼               ▼
+Phase 1                 Industry       9A/9B          Phase 2          NYSE/NASDAQ      Full UTC
+(UTC 01:30 ET)          Testing      Facility       (24/5 Full)       23h 출범        Modernization
+                                                                          │
+                                                                    ┌─────┴─────┐
+                                                              NYSE Arca    NASDAQ
+                                                               22-23h      23h
+                                                                  │
+                                                            ┌─────┼─────┐
+                                                          24X   Cboe    기타
+                                                          23h   24/5
+</code></pre>
+<hr />
+<h2 id="6-krx-24시간-거래-도입-방안">6. KRX 24시간 거래 도입 방안</h2>
+<h3 id="61-세션-설계-제안">6.1 세션 설계 제안</h3>
+<p>글로벌 모범사례를 종합하면, KRX에 가장 적합한 세션 구조는 다음과 같다:</p>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간 (KST)</th>
+<th>해당 미국 시간 (ET)</th>
+<th>특성</th>
+<th>벤치마킹 모델</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>기술 점검</strong></td>
+<td>06:00-07:00</td>
+<td>17:00-18:00 ET (전일)</td>
+<td>DB 백업, 기업행위, 기준가격 산정, 소프트웨어 배포</td>
+<td>NYSE Arca/NASDAQ (1h)</td>
+</tr>
+<tr>
+<td><strong>프리마켓</strong></td>
+<td>07:00-09:00</td>
+<td>18:00-20:00 ET (전일)</td>
+<td>지정가 한정, 야간 글로벌 이벤트 반영</td>
+<td>NYSE Extended Early</td>
+</tr>
+<tr>
+<td><strong>정규시장</strong></td>
+<td>09:00-15:30</td>
+<td>20:00-02:30 ET</td>
+<td>완전한 규제 적용, 시가/종가 경매</td>
+<td>현행 유지</td>
+</tr>
+<tr>
+<td><strong>애프터마켓</strong></td>
+<td>15:40-20:00</td>
+<td>02:40-07:00 ET</td>
+<td>지정가 + 시간외단일가, Nextrade 경쟁 대응</td>
+<td>Nextrade 시간 매칭</td>
+</tr>
+<tr>
+<td><strong>야간 세션</strong></td>
+<td>20:00-06:00</td>
+<td>07:00-17:00 ET</td>
+<td>지정가 한정, 축소 Price Bands, 미국 정규시간 겹침</td>
+<td>24X/Blue Ocean 모델</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>총 운영시간: 23시간</strong> (06:00-07:00 기술 점검 제외)</p>
+<p><strong>핵심 장점:</strong> 야간 세션(20:00-06:00 KST)이 미국 정규시장(09:30-16:00 ET = 23:30-06:00 KST)과 대부분 겹쳐, 미국시장 이벤트에 대한 실시간 한국주식 거래가 가능하다.</p>
+</blockquote>
+<h3 id="62-규정-개정-로드맵">6.2 규정 개정 로드맵</h3>
+<h4 id="phase-1-12시간-체제-2026-상반기">Phase 1: 12시간 체제 (2026 상반기)</h4>
+<table>
+<thead>
+<tr>
+<th>개정 대상</th>
+<th>개정 내용</th>
+<th style="text-align: center;">우선순위</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>업무규정 제4조 제3항</strong></td>
+<td>정규시장 시간 유지, 시간외시장 07:00-20:00으로 확대</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>시행세칙 제11조</strong></td>
+<td>프리마켓(07:00-09:00), 애프터마켓(15:40-20:00) 호가접수시간 신설</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>업무규정 제33조-36조</strong></td>
+<td>시간외매매 유형 재정비, 연속매매 도입</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>시행세칙 제13조</strong></td>
+<td>"One Board" 주문 이월 규칙 신설</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td><strong>업무규정 제20조의2</strong></td>
+<td>유동성공급회원 확장시간 의무 범위</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h4 id="phase-2-야간-세션-도입-2026-하반기">Phase 2: 야간 세션 도입 (2026 하반기)</h4>
+<table>
+<thead>
+<tr>
+<th>개정 대상</th>
+<th>개정 내용</th>
+<th style="text-align: center;">우선순위</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>업무규정 제4조</strong></td>
+<td>야간시장(Night Session) 신설, 세션별 규제 차등화</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>업무규정 제25조</strong></td>
+<td>야간 서킷브레이커 기준 신설 또는 미적용 규정</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>업무규정 제26조의2</strong></td>
+<td>야간 VI 별도 파라미터 (축소 Price Bands)</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>시행세칙 제16조</strong></td>
+<td>기준가격 갱신 시점 재정의 (기술 점검 시)</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>업무규정 제5조</strong></td>
+<td>금요일 야간→토요일 전환 규칙, 글로벌 휴장일 조율</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td><strong>시행세칙 제8조</strong></td>
+<td>기술 점검 윈도우 공식 규정화</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h4 id="phase-3-t1-전환-완전-24시간-2027">Phase 3: T+1 전환 + 완전 24시간 (2027)</h4>
+<table>
+<thead>
+<tr>
+<th>개정 대상</th>
+<th>개정 내용</th>
+<th style="text-align: center;">우선순위</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>업무규정 제7조</strong></td>
+<td>T+1 결제 전환, Clearing Business Date 개념 도입</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>청산결제 업무규정</strong></td>
+<td>KSD 24시간 청산, FIX Tag 715 로컬 등가물, Good Night 프로토콜</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>시장감시규정</strong></td>
+<td>24시간 감시 체계, AI 기반 야간 자동감시</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>회원관리규정</strong></td>
+<td>야간 참여 회원 자격, 9A/9B 등가 분리 청산 관계</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-기술-인프라-구축-방안">6.3 기술 인프라 구축 방안</h3>
+<table>
+<thead>
+<tr>
+<th>영역</th>
+<th>현황</th>
+<th>목표</th>
+<th>벤치마킹 모델</th>
+<th style="text-align: center;">우선순위</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>매칭엔진</strong></td>
+<td>EXTURE 3.0 (50µs, 야간 배치 의존)</td>
+<td>23시간 연속 운영 + 1시간 점검</td>
+<td>NYSE Pillar / MEMX Memoir</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>주문 관리</strong></td>
+<td>세션 경계 주문 소멸</td>
+<td>"One Board" 연속 주문 처리, GTC 지원</td>
+<td>NYSE GTC 디스크 저장 / CME FIXP 세션 지속</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>청산 연동</strong></td>
+<td>KSD 배치 처리</td>
+<td>실시간 UTC 등가 시스템, 15분 마진 재계산</td>
+<td>DTCC UTC 24/5</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>자금이체</strong></td>
+<td>BOK-Wire+ (09:00-17:30)</td>
+<td>야간 유동성 확보 메커니즘</td>
+<td>ICE 토큰화 예치금, CME BAMS</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>시장 데이터</strong></td>
+<td>Koscom 피드</td>
+<td>23시간 연속 배포, 야간 데이터 분리 표시</td>
+<td>NYSE .T 식별자, NASDAQ Night 피드 분리</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td><strong>리스크 관리</strong></td>
+<td>기본 VI</td>
+<td>야간 축소 Price Bands + Kill Switch + CoD + STP</td>
+<td>24X Price Bands, NYSE Pillar Risk, CME GC2</td>
+<td style="text-align: center;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>DR/BCP</strong></td>
+<td>미상</td>
+<td>다중 사이트 이중화, 45분 이내 Failover</td>
+<td>CME 4단계 DR, 24X 3-사이트</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td><strong>시장감시</strong></td>
+<td>주간 인력 중심</td>
+<td>AI/ML 자동 감시 + 3교대 운영</td>
+<td>CME GCC Follow-the-Sun</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+<tr>
+<td><strong>프로토콜</strong></td>
+<td>FIX/FAST</td>
+<td>FIX Tag 715/336 로컬 등가물, 바이너리 게이트웨이</td>
+<td>NYSE Binary, NASDAQ OUCH, CME iLink 3</td>
+<td style="text-align: center;">⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="64-운영-모델-제안">6.4 운영 모델 제안</h3>
+<h4 id="인력-운영">인력 운영</h4>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>현행</th>
+<th>목표 (24시간)</th>
+<th>벤치마킹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>거래소 운영</strong></td>
+<td>주간 1교대</td>
+<td><strong>3교대</strong> (08:00-16:00, 16:00-00:00, 00:00-08:00)</td>
+<td>CME GCC Follow-the-Sun</td>
+</tr>
+<tr>
+<td><strong>시장감시</strong></td>
+<td>주간 인력</td>
+<td><strong>AI 자동감시</strong> + 야간 에스컬레이션 인력</td>
+<td>NYSE/NASDAQ (야간 자동화 의존)</td>
+</tr>
+<tr>
+<td><strong>청산/결제</strong></td>
+<td>영업시간 중</td>
+<td>연속 모니터링 + <strong>15분 마진콜 자동화</strong></td>
+<td>DTCC Intraday VaR</td>
+</tr>
+<tr>
+<td><strong>IT 운영</strong></td>
+<td>주간 + 야간 배치</td>
+<td><strong>NOC/SOC 24/7</strong></td>
+<td>CME/24X</td>
+</tr>
+<tr>
+<td><strong>회원 지원</strong></td>
+<td>영업시간</td>
+<td>핫라인 24시간 + 이메일</td>
+<td>NYSE Extended Hours Support</td>
+</tr>
+</tbody>
+</table>
+<h4 id="글로벌-분산-운영-장기">글로벌 분산 운영 (장기)</h4>
+<ul>
+<li><strong>서울 본사:</strong> 정규시장(09:00-15:30 KST) + 프리마켓/애프터마켓 주간 운영</li>
+<li><strong>싱가포르 또는 홍콩 허브:</strong> 야간 전반(20:00-02:00 KST) 운영 — APAC 투자자 시간대</li>
+<li><strong>런던 허브 (선택):</strong> 야간 후반(02:00-06:00 KST) 운영 — 유럽 투자자 시간대</li>
+</ul>
+<h3 id="65-리스크-관리-프레임워크">6.5 리스크 관리 프레임워크</h3>
+<table>
+<thead>
+<tr>
+<th>리스크 유형</th>
+<th>관리 방안</th>
+<th>벤치마킹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>유동성 분할</strong></td>
+<td>야간 시장조성자 인센티브(수수료 감면), ETF→대형주→전종목 단계적 확대</td>
+<td>24X Warrant Performance Incentive</td>
+</tr>
+<tr>
+<td><strong>가격 왜곡</strong></td>
+<td>야간 축소 Price Bands (±15% 또는 가격대별 차등), 시장가 금지</td>
+<td>24X Price Bands, Blue Ocean 20%</td>
+</tr>
+<tr>
+<td><strong>리테일 보호</strong></td>
+<td>야간 거래 리스크 고지 의무화, 사전예탁(Pre-funding) 검토</td>
+<td>NASDAQ 브로커 고지 의무, DTCC Pre-funding</td>
+</tr>
+<tr>
+<td><strong>시스템 장애</strong></td>
+<td>Cancel-on-Disconnect 의무화, Kill Switch 도입, DR 다중 사이트</td>
+<td>CME CoD, NYSE Pillar Risk, CME 4단계 DR</td>
+</tr>
+<tr>
+<td><strong>결제 리스크</strong></td>
+<td>별도 야간 청산 관계(9A/9B 등가), High-Value Threshold 도입</td>
+<td>DTCC 9A/9B 분리, $1B 야간 상한</td>
+</tr>
+<tr>
+<td><strong>교차시장 리스크</strong></td>
+<td>KRX-Nextrade 교차감시 MOU, KSD 단일 결제 (Cross-venue Netting)</td>
+<td>DTCC Nextrade 교차결제 권고</td>
+</tr>
+<tr>
+<td><strong>교차증거금</strong></td>
+<td>KOSPI 선물-현물 간 교차증거금 도입 → 야간 자본 효율성 제고</td>
+<td>CME-DTCC/FICC Cross-Margining</td>
+</tr>
+</tbody>
+</table>
+<h3 id="66-단계별-추진-타임라인-제안">6.6 단계별 추진 타임라인 (제안)</h3>
+<pre><code>2026 H1          2026 Q3        2026 Q4          2027 H1         2027 H2
+    │                │              │                │               │
+    ▼                ▼              ▼                ▼               ▼
+  12시간           ETF 시간외      야간 세션          T+1 결제        완전 24시간
+  체제 도입        거래 도입       시범 운영          전환             운영
+  (07:00-20:00)   (2026.9)      (지정가 한정,      (업무규정 제7조   (전종목)
+                                 주요 종목)         개정)
+    │                │              │                │               │
+    ├── 업무규정     ├── ETF       ├── 업무규정      ├── 청산결제    ├── 전종목
+    │   제4조 1차    │   업무규정   │   제4조 2차     │   업무규정    │   야간 확대
+    │   개정         │   개정       │   개정          │   전면 개정   │
+    │                │              │                │               │
+    ├── One Board   ├── Nextrade  ├── 야간 VI/      ├── KSD UTC    ├── 글로벌
+    │   시스템 구축  │   ETF 대응   │   Price Band    │   등가 시스템 │   마케팅
+    │                │              │   도입          │   가동         │
+    │                │              │                │               │
+    └── Nextrade    └── 시장조성자  ├── AI 감시      └── 교차증거금  └── Follow-
+        경쟁 대응       인센티브     │   체계 가동        도입            the-Sun
+                                    │                                    운영
+                                    └── DR 다중
+                                        사이트 구축
+</code></pre>
+<h3 id="67-핵심-성공-요인-및-리스크">6.7 핵심 성공 요인 및 리스크</h3>
+<h4 id="성공-요인">성공 요인</h4>
+<ol>
+<li><strong>청산이 먼저다 (Clearing First):</strong> DTCC UTC 24/5 사례가 증명하듯, 연속 매칭은 연속 Novation 없이 불가능하다. KSD의 실시간 청산 시스템 구축이 <strong>최우선 과제</strong>이다.</li>
+<li><strong>BOK-Wire+ 제약 해결:</strong> 한국은행 결제시스템의 야간 운영 부재는 가장 근본적인 병목이다. 토큰화 예치금, 별도 야간 유동성 풀, 또는 한국은행과의 협의가 필수적이다.</li>
+<li><strong>1시간 점검은 비타협적:</strong> NYSE, NASDAQ, 24X 모두 20:00-21:00 ET를 기술 점검으로 활용한다. KRX도 최소 1시간의 점검 윈도우를 반드시 확보해야 한다 — 무중단 운영(True 24/7)은 기술적으로 비현실적이다.</li>
+<li><strong>단계적 확대가 안전하다:</strong> Blue Ocean ATS의 "지정가 한정 야간 거래" → 24X의 "점진적 SIP 연동" → NYSE Arca의 "회원 한정 확장시간" 모델처럼, ETF/대형주부터 시작하여 전종목으로 확대하는 것이 리스크를 통제한다.</li>
+<li><strong>Nextrade와의 공존 설계:</strong> 미국에서 24X-NYSE-NASDAQ이 동시에 23시간 거래를 추진하듯, KRX-Nextrade 간 경쟁이 혁신을 촉진하되, KSD를 통한 교차결제(Cross-venue Netting)로 시장 효율성을 확보해야 한다.</li>
+</ol>
+<h4 id="주요-리스크">주요 리스크</h4>
+<table>
+<thead>
+<tr>
+<th>리스크</th>
+<th>영향</th>
+<th>완화 방안</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>야간 유동성 부족</td>
+<td>스프레드 확대, 가격 왜곡, 리테일 피해</td>
+<td>시장조성자 인센티브, 단계적 종목 확대, 시장가 금지</td>
+</tr>
+<tr>
+<td>증권사 부담 증가</td>
+<td>시스템 개발비, 인건비 증가 (업계 우려 표출)</td>
+<td>선택적 야간 참여(Opt-in), 기술 지원, 수수료 차등</td>
+</tr>
+<tr>
+<td>BOK-Wire+ 제약</td>
+<td>야간 증거금 납부·결제 불가</td>
+<td>한국은행 협의, 토큰화 파일럿, Pre-funding</td>
+</tr>
+<tr>
+<td>시장감시 공백</td>
+<td>야간 불공정거래 증가</td>
+<td>AI/ML 자동감시, 야간 에스컬레이션 체계</td>
+</tr>
+<tr>
+<td>규정 개정 지연</td>
+<td>일정 차질</td>
+<td>조기 규정 개정 착수, 단계별 시행</td>
+</tr>
+<tr>
+<td>글로벌 연동 복잡성</td>
+<td>해외 거래소·청산소와의 시간대 불일치</td>
+<td>Follow-the-Sun 운영, 글로벌 파트너십</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="부록-개별-리포트-색인">부록: 개별 리포트 색인</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">번호</th>
+<th>리포트</th>
+<th>주제</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">01</td>
+<td><a href="01_KRX_한국거래소.html">KRX 한국거래소</a></td>
+<td>한국거래소 유가증권시장 현행 제도 및 24시간 전환 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">02</td>
+<td><a href="02_NYSE_뉴욕증권거래소.html">NYSE 뉴욕증권거래소</a></td>
+<td>NYSE 및 NYSE Arca 확장 거래시간 체제 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">03</td>
+<td><a href="03_NASDAQ_나스닥.html">NASDAQ 나스닥</a></td>
+<td>NASDAQ 23/5 글로벌 거래 생태계 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">04</td>
+<td><a href="04_24X_Exchange.html">24X Exchange</a></td>
+<td>24X National Exchange 거래 운영 체제 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">05</td>
+<td><a href="05_CME_Group.html">CME Group</a></td>
+<td>CME 그룹 24시간 거래 인프라 및 규제 프레임워크 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">06</td>
+<td><a href="06_DTCC_청산결제.html">DTCC 청산결제</a></td>
+<td>DTCC 24/5 청산·결제 로드맵 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">07</td>
+<td><a href="07_LSE_런던증권거래소.html">LSE 런던증권거래소</a></td>
+<td>런던증권거래소(LSE) 제도 및 시스템 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">08</td>
+<td><a href="08_JPX_도쿄증권거래소.html">JPX 도쿄증권거래소</a></td>
+<td>일본거래소그룹(JPX)/도쿄증권거래소(TSE) 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">09</td>
+<td><a href="09_Blue_Ocean_ATS.html">Blue Ocean ATS</a></td>
+<td>Blue Ocean ATS 야간 거래 시스템 분석</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td><a href="10_유럽거래소_Eurex_Euronext.html">유럽거래소 Eurex/Euronext</a></td>
+<td>유럽 거래소(Deutsche Börse/Eurex, Euronext) 분석</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>본 리포트는 KRX 업무규정/시행세칙 원문, 7개 사전조사 보고서, 및 2026년 3월 기준 최신 글로벌 시장 동향 조사를 바탕으로 작성되었습니다.</em></p>
+    </main>
+
+    <script>
+    (function() {
+        // --- Wrap tables ---
+        document.querySelectorAll('main table').forEach(t => {
+            if (!t.parentElement.classList.contains('table-wrap')) {
+                const w = document.createElement('div');
+                w.className = 'table-wrap';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            }
+        });
+
+        // --- Build TOC ---
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h1, main h2, main h3');
+        const tocLinks = [];
+        headings.forEach(h => {
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent;
+            a.dataset.id = h.id;
+            const depth = parseInt(h.tagName[1]);
+            if (depth >= 3) a.classList.add('depth-' + depth);
+            toc.appendChild(a);
+            tocLinks.push({ el: h, link: a });
+        });
+
+        // --- Scroll spy ---
+        let ticking = false;
+        function updateActive() {
+            const scrollY = window.scrollY + 100;
+            let current = tocLinks[0];
+            for (const item of tocLinks) {
+                if (item.el.offsetTop <= scrollY) current = item;
+            }
+            tocLinks.forEach(i => i.link.classList.remove('active'));
+            if (current) {
+                current.link.classList.add('active');
+                current.link.scrollIntoView({ block: 'nearest' });
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+        });
+        updateActive();
+
+        // --- Smooth scroll for TOC links ---
+        toc.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', e.target.href);
+            }
+        });
+
+        // --- Smooth scroll for in-content anchor links ---
+        document.querySelectorAll('main a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = decodeURIComponent(a.getAttribute('href').slice(1));
+                const target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    })();
+
+    // --- Sidebar toggle ---
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const tb = document.getElementById('topbar');
+        sb.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        tb.classList.toggle('expanded');
+    }
+
+    // --- Search ---
+    let searchTimeout;
+    function doSearch(q) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => _search(q), 200);
+    }
+    function _search(query) {
+        const main = document.getElementById('main');
+        // Remove old marks
+        main.querySelectorAll('mark[data-search]').forEach(m => {
+            const parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+        });
+        const countEl = document.getElementById('searchCount');
+        if (!query || query.length < 2) { countEl.textContent = ''; return; }
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+                regex.test(walker.currentNode.textContent)) {
+                nodes.push(walker.currentNode);
+                regex.lastIndex = 0;
+            }
+        }
+        let count = 0;
+        nodes.forEach(node => {
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            regex.lastIndex = 0;
+            let m;
+            while ((m = regex.exec(node.textContent)) !== null) {
+                frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+                const mark = document.createElement('mark');
+                mark.setAttribute('data-search', '');
+                mark.textContent = m[0];
+                frag.appendChild(mark);
+                last = regex.lastIndex;
+                count++;
+            }
+            frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+            node.parentNode.replaceChild(frag, node);
+        });
+        countEl.textContent = count > 0 ? count + '건' : '0건';
+        const first = main.querySelector('mark[data-search]');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- Theme ---
+    function toggleTheme() {
+        const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        document.body.dataset.theme = d;
+        try { localStorage.setItem('theme', d); } catch(e) {}
+    }
+    try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>

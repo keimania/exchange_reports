@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24시간 거래 체제 비교 분석 리포트</title>
+    <style>
+        :root { --bg:#f0f2f5; --card-bg:#fff; --text:#1a1a2e; --accent:#0066cc; --border:#dee2e6; }
+        [data-theme="dark"] { --bg:#0f0f1a; --card-bg:#161625; --text:#d8d8e8; --accent:#4da6ff; --border:#2a2a45; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        .header { text-align:center; padding:60px 20px 40px; }
+        .header h1 { font-size:30px; margin-bottom:10px; }
+        .header p { font-size:14px; opacity:0.7; }
+        .header .meta { font-size:11px; margin-top:12px; opacity:0.5; }
+        .theme-btn { position:fixed; top:12px; right:12px; padding:7px 12px; border:1px solid var(--border);
+            border-radius:6px; background:var(--card-bg); color:var(--text); cursor:pointer; font-size:13px; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px;
+            max-width:1100px; margin:0 auto; padding:0 24px 50px; }
+        .card { display:flex; align-items:center; gap:14px; padding:18px 22px; background:var(--card-bg);
+            border:1px solid var(--border); border-radius:10px; text-decoration:none; color:var(--text);
+            transition:transform 0.2s,box-shadow 0.2s; }
+        .card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.08); }
+        .icon { font-size:24px; } .title { font-size:14px; font-weight:600; }
+    </style>
+</head>
+<body>
+    <button class="theme-btn" onclick="toggleTheme()">&#9681; Theme</button>
+    <div class="header">
+        <h1>24시간 거래 체제 비교 분석</h1>
+        <p>KRX vs 글로벌 주요 거래소 - 제도, 시스템, 청산결제 종합 리포트</p>
+        <div class="meta">2026.03 | EXTURE 3.0 | 11 Reports</div>
+    </div>
+    <div class="grid">
+        <a href="00_종합비교_요약.html" class="card" style="grid-column:1/-1;background:var(--accent);color:#fff;border-color:var(--accent);"><span class="icon">&#128202;</span><span class="title">종합 비교 요약</span></a>
+        <a href="01_KRX_한국거래소.html" class="card"><span class="icon">&#127472;&#127479;</span><span class="title">KRX 한국거래소</span></a>
+        <a href="02_NYSE_뉴욕증권거래소.html" class="card"><span class="icon">&#127482;&#127480;</span><span class="title">NYSE 뉴욕증권거래소</span></a>
+        <a href="03_NASDAQ_나스닥.html" class="card"><span class="icon">&#127482;&#127480;</span><span class="title">NASDAQ 나스닥</span></a>
+        <a href="04_24X_Exchange.html" class="card"><span class="icon">&#127482;&#127480;</span><span class="title">24X Exchange</span></a>
+        <a href="05_CME_Group.html" class="card"><span class="icon">&#127482;&#127480;</span><span class="title">CME Group</span></a>
+        <a href="06_DTCC_청산결제.html" class="card"><span class="icon">&#127482;&#127480;</span><span class="title">DTCC 청산결제</span></a>
+        <a href="07_LSE_런던증권거래소.html" class="card"><span class="icon">&#127466;&#127482;</span><span class="title">LSE 런던증권거래소</span></a>
+        <a href="08_JPX_도쿄증권거래소.html" class="card"><span class="icon">&#127471;&#127477;</span><span class="title">JPX 도쿄증권거래소</span></a>
+        <a href="09_Blue_Ocean_ATS.html" class="card"><span class="icon">&#127482;&#127480;</span><span class="title">Blue Ocean ATS</span></a>
+        <a href="10_유럽거래소_Eurex_Euronext.html" class="card"><span class="icon">&#127466;&#127482;</span><span class="title">유럽거래소 Eurex/Euronext</span></a>
+    </div>
+    <script>
+        function toggleTheme() {
+            const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+            document.body.dataset.theme = d;
+            try { localStorage.setItem('theme', d); } catch(e) {}
+        }
+        try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KRX 24시간 거래 전환 전략 - 리포트 인덱스</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Index page overrides - no sidebar layout */
+    .sidebar, .toc-toggle, .sidebar-overlay, .reading-progress { display: none !important; }
+    .main-content { margin-left: 0; }
+    .content-wrapper { max-width: 960px; }
+    header { margin: -2rem -2.5rem 2.5rem; }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+    .report-card {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      transition: all 0.2s;
+      background: var(--bg);
+      text-decoration: none !important;
+      border-bottom: 1px solid var(--border) !important;
+    }
+    .report-card:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-light) !important;
+      transform: translateY(-2px);
+    }
+    .report-card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+      color: var(--primary);
+    }
+    .report-card p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: left;
+      line-height: 1.6;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 12px;
+      margin-right: 0.25rem;
+      margin-top: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .tag-master { background: #fed7d7; color: #c53030; }
+    .tag-us { background: #bee3f8; color: #2b6cb0; }
+    .tag-eu { background: #c6f6d5; color: #276749; }
+    .tag-asia { background: #fefcbf; color: #975a16; }
+    .tag-clearing { background: #e9d8fd; color: #6b46c1; }
+    .tag-krx { background: #fbd38d; color: #c05621; }
+
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 0;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.6rem;
+      font-weight: 900;
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      opacity: 0.75;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 640px) {
+      header { margin: -1rem -1rem 2rem; }
+      .content-wrapper { padding: 1rem; }
+      .stats-bar { gap: 1.5rem; }
+      .stat-num { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="main-content">
+  <div class="content-wrapper">
+
+    <header>
+      <h1>KRX 24시간 거래 전환 전략</h1>
+      <div class="subtitle">글로벌 거래소 비교 분석 및 도입 방안 리서치 리포트</div>
+      <div class="stats-bar">
+        <div class="stat"><span class="stat-num">12</span><span class="stat-label">리포트</span></div>
+        <div class="stat"><span class="stat-num">9</span><span class="stat-label">거래소/ATS</span></div>
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">청산기관</span></div>
+        <div class="stat"><span class="stat-num">25+</span><span class="stat-label">규정 개정 조항</span></div>
+      </div>
+      <div class="date">2026년 3월</div>
+    </header>
+
+    <div class="section-label">Master Report</div>
+    <div class="report-grid">
+      <a href="Master_KRX_24H_Transition_Strategy.html" class="report-card">
+        <h3>KRX 24시간 거래 전환 전략 마스터 리포트</h3>
+        <p>글로벌 거래소 제도/시스템 종합 비교, 24시간 체제 특화 분석, KRX 규정 개정 소요(25개+ 조항), 단계별 도입 방안 및 전문가 인사이트</p>
+        <span class="tag tag-master">MASTER</span>
+      </a>
+    </div>
+
+    <div class="section-label">한국거래소 현행 분석</div>
+    <div class="report-grid">
+      <a href="KRX_Current_System_Analysis.html" class="report-card">
+        <h3>한국거래소(KRX) 현행 제도 및 시스템 심층 분석</h3>
+        <p>EXTURE 3.0 매칭 엔진(50μs, 일 9.4억 건), 업무규정/시행세칙 핵심 조항, CB/VI, T+2 결제, Nextrade(39% 점유율), 규정 개정 소요</p>
+        <span class="tag tag-krx">KRX</span>
+      </a>
+    </div>
+
+    <div class="section-label">미국 거래소 및 ATS</div>
+    <div class="report-grid">
+      <a href="NYSE_Arca_Analysis.html" class="report-card">
+        <h3>NYSE Arca 22시간 거래 체제 심층 분석</h3>
+        <p>Pillar 매칭 엔진(14 TXN), 3종 옥션, GTC 영속성, DTCC Phase 2 연동, Double-wide 야간 변동성 통제</p>
+        <span class="tag tag-us">US</span>
+      </a>
+      <a href="NASDAQ_Analysis.html" class="report-card">
+        <h3>NASDAQ 23/5 글로벌 거래 생태계 심층 분석</h3>
+        <p>Eqlipse 클라우드 네이티브, OUCH 5.0, Night Session "Double Flush", GTC 폐지, CEE 야간 통제</p>
+        <span class="tag tag-us">US</span>
+      </a>
+      <a href="24X_Exchange_Analysis.html" class="report-card">
+        <h3>24X National Exchange 23/5 거래 체제 심층 분석</h3>
+        <p>MEMX Memoir 엔진, 옥션 전략적 배제, 24X Price Bands, Hard Flush, Day+ TIF, TNS 파트너십</p>
+        <span class="tag tag-us">US</span>
+      </a>
+      <a href="Blue_Ocean_ATS_Analysis.html" class="report-card">
+        <h3>Blue Ocean ATS 심층 분석</h3>
+        <p>미국 최초 야간 주식 ATS, MEMX 플랫폼, 삼성증권 등 한국 파트너십, 2024년 장애, 한국 비중 35%</p>
+        <span class="tag tag-us">US ATS</span>
+        <span class="tag tag-krx">Korea Link</span>
+      </a>
+    </div>
+
+    <div class="section-label">파생상품 거래소</div>
+    <div class="report-grid">
+      <a href="CME_Group_Analysis.html" class="report-card">
+        <h3>CME Group 24시간 거래 인프라 심층 분석</h3>
+        <p>Globex 17 Market Segments, 1분 유지보수 윈도우, Dual Zone/Blue-Green, iLink 3/MDP 3.0, GC2, BTIC/TACO</p>
+        <span class="tag tag-us">US Derivatives</span>
+      </a>
+      <a href="Eurex_Analysis.html" class="report-card">
+        <h3>Eurex (Deutsche Borse) 심층 분석</h3>
+        <p>T7 엔진(2.7μs), 21시간 운영(아시안 아워), Prisma 리스크, Eurex/KRX Link, Sponsored Access</p>
+        <span class="tag tag-eu">EU Derivatives</span>
+        <span class="tag tag-krx">KRX Link</span>
+      </a>
+    </div>
+
+    <div class="section-label">유럽/일본 거래소</div>
+    <div class="report-grid">
+      <a href="LSE_Analysis.html" class="report-card">
+        <h3>런던증권거래소(LSE) 심층 분석</h3>
+        <p>Millennium Exchange, LCH 청산, CREST/T+1(2027.10), 24시간 검토, AI 감시(Bedrock/Claude)</p>
+        <span class="tag tag-eu">UK</span>
+      </a>
+      <a href="TSE_JPX_Analysis.html" class="report-card">
+        <h3>도쿄증권거래소(TSE/JPX) 심층 분석</h3>
+        <p>arrowhead 4.0, Closing Auction(2024.11), 3중 변동성 통제, PTS 분업 모델(Japannext), Nextrade 비교</p>
+        <span class="tag tag-asia">Japan</span>
+      </a>
+    </div>
+
+    <div class="section-label">청산결제 기관</div>
+    <div class="report-grid">
+      <a href="DTCC_NSCC_Analysis.html" class="report-card">
+        <h3>DTCC/NSCC 24시간 청산결제 인프라 심층 분석</h3>
+        <p>UTC 24x5(Phase 2: 2026.6), FIX Tag 715, "Good Night" 프로토콜, 9A/9B 분리, 15분 VaR, CCP 보증</p>
+        <span class="tag tag-clearing">Clearing</span>
+      </a>
+      <a href="JSCC_Analysis.html" class="report-card">
+        <h3>일본증권청산기구(JSCC) 심층 분석</h3>
+        <p>CCP 구조, T+2, VaR(SPAN→VaR 전환), JASDEC/BOJ-NET DVP, 배치 의존성, KSD 비교</p>
+        <span class="tag tag-clearing">Clearing</span>
+      </a>
+    </div>
+
+    <hr>
+    <footer>
+      <p>전체 12개 리포트 | <a href="../docx/">DOCX 버전 다운로드</a></p>
+    </footer>
+
+  </div>
+</div>
+</body>
+</html>

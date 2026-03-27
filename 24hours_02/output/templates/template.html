@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="pandoc">
+  <title>$title$</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Mobile TOC toggle button -->
+<button class="toc-toggle" id="tocToggle" aria-label="목차 열기/닫기">
+  <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+  <span class="toc-toggle-label">목차</span>
+</button>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar TOC -->
+$if(toc)$
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-home" title="리포트 인덱스">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      전체 리포트
+    </a>
+    <div class="sidebar-title">목차</div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    $toc$
+  </nav>
+</aside>
+$endif$
+
+<!-- Main content -->
+<div class="main-content" id="mainContent">
+  <div class="content-wrapper">
+
+    <header>
+      <h1>$title$</h1>
+      <div class="subtitle">KRX 24시간 거래 전환 전략 리서치 시리즈</div>
+      <div class="date">2026년 3월 | Confidential</div>
+    </header>
+
+    <article>
+      $body$
+    </article>
+
+    <hr>
+    <footer>
+      <p>본 보고서는 KRX 24시간 거래 전환 전략 리서치 프로젝트의 일환으로 작성되었습니다.</p>
+      <p>&copy; 2026 | Generated from Markdown source</p>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  // Mobile toggle
+  var toggle = document.getElementById('tocToggle');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  var iconMenu = toggle ? toggle.querySelector('.icon-menu') : null;
+  var iconClose = toggle ? toggle.querySelector('.icon-close') : null;
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    if (iconMenu) iconMenu.style.display = 'none';
+    if (iconClose) iconClose.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    if (iconMenu) iconMenu.style.display = 'block';
+    if (iconClose) iconClose.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      if (sidebar && sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+
+  // Close sidebar on link click (mobile)
+  if (sidebar) {
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth < 1100) {
+          closeSidebar();
+        }
+      });
+    });
+  }
+
+  // Scroll spy: highlight active section in TOC
+  var headings = document.querySelectorAll('article h1[id], article h2[id], article h3[id]');
+  var tocLinks = sidebar ? sidebar.querySelectorAll('a[href^="#"]') : [];
+
+  if (headings.length > 0 && tocLinks.length > 0) {
+    var tocMap = {};
+    tocLinks.forEach(function(link) {
+      tocMap[link.getAttribute('href')] = link;
+    });
+
+    function updateActive() {
+      var scrollPos = window.scrollY + 120;
+      var current = null;
+
+      headings.forEach(function(h) {
+        if (h.offsetTop <= scrollPos) {
+          current = h;
+        }
+      });
+
+      tocLinks.forEach(function(link) {
+        link.classList.remove('active');
+      });
+
+      if (current) {
+        var activeLink = tocMap['#' + current.id];
+        if (activeLink) {
+          activeLink.classList.add('active');
+          // Scroll TOC to keep active item visible
+          var nav = document.getElementById('sidebarNav');
+          if (nav && window.innerWidth >= 1100) {
+            var linkTop = activeLink.offsetTop - nav.offsetTop;
+            var navScroll = nav.scrollTop;
+            var navHeight = nav.clientHeight;
+            if (linkTop < navScroll + 40 || linkTop > navScroll + navHeight - 40) {
+              nav.scrollTo({ top: linkTop - navHeight / 3, behavior: 'smooth' });
+            }
+          }
+        }
+      }
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    updateActive();
+  }
+
+  // Progress bar
+  var progressBar = document.createElement('div');
+  progressBar.className = 'reading-progress';
+  document.body.appendChild(progressBar);
+
+  window.addEventListener('scroll', function() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = (window.scrollY / docHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  });
+})();
+</script>
+
+</body>
+</html>

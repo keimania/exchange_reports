@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYSE 뉴욕증권거래소 - 24시간 거래 체제 분석 리포트</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1a1a2e; --sidebar-bg: #f8f9fa; --border: #dee2e6;
+            --accent: #0066cc; --accent-light: #e7f1ff; --table-header: #0066cc;
+            --table-header-text: #ffffff; --table-border: #d0d7de; --code-bg: #f6f8fa;
+            --highlight: #fff3cd; --hover-bg: #e9ecef;
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f1a; --text: #d8d8e8; --sidebar-bg: #161625; --border: #2a2a45;
+            --accent: #4da6ff; --accent-light: #1a2a4a; --table-header: #1e3a5f;
+            --table-header-text: #e0e8f0; --table-border: #2a3a4a; --code-bg: #1e2a3a;
+            --highlight: #3a3520; --hover-bg: #1e1e35;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.75;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            overflow-y: auto; z-index: 100; transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-280px); }
+        .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 13px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-header select {
+            width: 100%; margin-top: 8px; padding: 7px 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+        }
+        .toc { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .toc a {
+            display: block; padding: 5px 16px; color: var(--text); text-decoration: none;
+            font-size: 12.5px; border-left: 3px solid transparent; transition: all 0.15s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toc a:hover { background: var(--hover-bg); }
+        .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: var(--accent-light); }
+        .toc a.depth-3 { padding-left: 30px; font-size: 11.5px; opacity: 0.85; }
+        .toc a.depth-4 { padding-left: 44px; font-size: 11px; opacity: 0.7; }
+
+        /* Top bar */
+        .topbar {
+            position: fixed; top: 0; right: 0; left: 280px; height: 48px;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 90;
+            transition: left 0.25s ease;
+        }
+        .topbar.expanded { left: 0; }
+        .topbar button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--sidebar-bg); color: var(--text); cursor: pointer; font-size: 13px;
+            white-space: nowrap;
+        }
+        .topbar button:hover { background: var(--hover-bg); }
+        .topbar input {
+            flex: 1; max-width: 350px; padding: 6px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--sidebar-bg); color: var(--text);
+        }
+        .search-count { font-size: 11px; color: var(--accent); min-width: 50px; }
+
+        /* Main content */
+        main {
+            margin-left: 280px; padding: 68px 50px 60px;
+            transition: margin-left 0.25s ease;
+        }
+        main.expanded { margin-left: 0; }
+        h1 { font-size: 26px; margin: 25px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+        h2 { font-size: 20px; margin: 28px 0 14px; color: var(--accent); }
+        h3 { font-size: 16px; margin: 22px 0 10px; }
+        h4 { font-size: 14px; margin: 18px 0 8px; }
+        p { margin: 8px 0; }
+        a { color: var(--accent); }
+
+        /* Tables - responsive */
+        .table-wrap {
+            overflow-x: auto; margin: 14px 0; border-radius: 8px;
+            border: 1px solid var(--table-border);
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        table { border-collapse: collapse; font-size: 12.5px; width: max-content; min-width: 100%; }
+        th { background: var(--table-header); color: var(--table-header-text); font-weight: 600;
+              padding: 9px 10px; text-align: left; border: 1px solid var(--table-border);
+              position: sticky; top: 0; white-space: nowrap; }
+        td { padding: 8px 10px; border: 1px solid var(--table-border); word-break: keep-all; }
+        tr:nth-child(even) { background: var(--sidebar-bg); }
+        tr:hover { background: var(--accent-light); }
+        /* First column sticky on wide tables */
+        th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: inherit; }
+        th:first-child { z-index: 2; }
+        tr:nth-child(odd) td:first-child { background: var(--bg); }
+        tr:nth-child(even) td:first-child { background: var(--sidebar-bg); }
+        tr:hover td:first-child { background: var(--accent-light); }
+        th:first-child { background: var(--table-header); }
+
+        code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        blockquote {
+            border-left: 4px solid var(--accent); padding: 10px 18px; margin: 14px 0;
+            background: var(--accent-light); border-radius: 0 8px 8px 0; font-size: 13px;
+        }
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 25px 0; }
+        mark { background: #ffe066; padding: 0 3px; border-radius: 2px; }
+        strong { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.mobile-show { transform: translateX(0); }
+            main { margin-left: 0 !important; padding: 60px 12px 40px; }
+            .topbar { left: 0 !important; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 7px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 17px; }
+            h3 { font-size: 14px; }
+        }
+        @media (max-width: 480px) {
+            main { padding: 56px 8px 30px; }
+            table { font-size: 10px; }
+            th, td { padding: 5px 5px; }
+            .topbar input { max-width: 150px; }
+        }
+        @media print {
+            .sidebar, .topbar { display: none !important; }
+            main { margin: 0 !important; padding: 10px !important; max-width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>24H Trading Report</h2>
+            <select onchange="if(this.value)location.href=this.value">
+                <option value="00_종합비교_요약.html">&#128202; 종합 비교 요약</option>
+<option value="01_KRX_한국거래소.html">&#127472;&#127479; KRX 한국거래소</option>
+<option value="02_NYSE_뉴욕증권거래소.html" selected>&#127482;&#127480; NYSE 뉴욕증권거래소</option>
+<option value="03_NASDAQ_나스닥.html">&#127482;&#127480; NASDAQ 나스닥</option>
+<option value="04_24X_Exchange.html">&#127482;&#127480; 24X Exchange</option>
+<option value="05_CME_Group.html">&#127482;&#127480; CME Group</option>
+<option value="06_DTCC_청산결제.html">&#127482;&#127480; DTCC 청산결제</option>
+<option value="07_LSE_런던증권거래소.html">&#127466;&#127482; LSE 런던증권거래소</option>
+<option value="08_JPX_도쿄증권거래소.html">&#127471;&#127477; JPX 도쿄증권거래소</option>
+<option value="09_Blue_Ocean_ATS.html">&#127482;&#127480; Blue Ocean ATS</option>
+<option value="10_유럽거래소_Eurex_Euronext.html">&#127466;&#127482; 유럽거래소 Eurex/Euronext</option>
+            </select>
+        </div>
+        <div class="toc" id="toc"></div>
+    </nav>
+
+    <div class="topbar" id="topbar">
+        <button id="toggleBtn" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="doSearch(this.value)">
+        <span class="search-count" id="searchCount"></span>
+        <button onclick="toggleTheme()" title="Toggle dark mode">&#9681;</button>
+        <button onclick="window.print()" title="Print">&#128424;</button>
+    </div>
+
+    <main id="main">
+        <h1 id="nyse-및-nyse-arca-확장-거래시간-체제-분석">NYSE 및 NYSE Arca 확장 거래시간 체제 분석</h1>
+<hr />
+<h2 id="1-기관-개요">1. 기관 개요</h2>
+<h3 id="11-nyse-group-구조">1.1 NYSE Group 구조</h3>
+<p>뉴욕증권거래소(New York Stock Exchange, NYSE)는 <strong>Intercontinental Exchange(ICE)</strong> 산하의 글로벌 최대 주식 거래소 그룹이다. NYSE Group은 다음 네 개의 주요 거래소로 구성된다:</p>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>특징</th>
+<th>주요 기능</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NYSE</strong></td>
+<td>물리적 플로어 + 전자 거래 하이브리드</td>
+<td>대형주 주 상장 시장, DMM(Designated Market Maker) 제도 운영</td>
+</tr>
+<tr>
+<td><strong>NYSE Arca</strong></td>
+<td>완전 전자식(Fully Electronic)</td>
+<td>ETF 최대 상장 시장, 확장 거래시간 추진 주체</td>
+</tr>
+<tr>
+<td><strong>NYSE American</strong></td>
+<td>완전 전자식</td>
+<td>중소형주(Small-Cap) 전문 거래소, 구 NYSE MKT</td>
+</tr>
+<tr>
+<td><strong>NYSE Chicago</strong></td>
+<td>완전 전자식</td>
+<td>시카고 기반 지역 거래소, Maker-Taker 수수료 모델</td>
+</tr>
+</tbody>
+</table>
+<p>NYSE는 시가총액 기준 약 <strong>28조 달러</strong> 이상의 상장 기업을 보유하고 있으며, 미국 전체 상장 주식의 약 <strong>1.5백만 개</strong> 이상의 거래 가능 종목(instruments)이 Pillar 매칭 엔진을 통해 처리된다. NYSE Closing Auction은 매일 수백억 달러 규모의 거래를 처리하며, 전체 통합(consolidated) 시장 거래량의 약 <strong>10%</strong>를 차지한다.</p>
+<h3 id="12-ice-소속-및-글로벌-위상">1.2 ICE 소속 및 글로벌 위상</h3>
+<p>NYSE Group은 2013년 ICE에 인수된 이후 에너지, 금리, 주식, ETF, 옵션 등 다양한 자산 클래스를 아우르는 글로벌 거래소 네트워크의 핵심 축을 담당하고 있다. ICE의 기술 인프라 투자와 NYSE Pillar 플랫폼의 개발을 통해 초저지연(ultra-low-latency) 결정론적(deterministic) 매칭 아키텍처를 구현하였으며, 이를 기반으로 22시간 이상의 준연속(near-continuous) 거래 체제로의 전환을 추진 중이다.</p>
+<hr />
+<h2 id="2-현행-거래시간-제도">2. 현행 거래시간 제도</h2>
+<h3 id="21-정규-세션-core-trading-session-0930-1600-et">2.1 정규 세션 (Core Trading Session: 09:30-16:00 ET)</h3>
+<p>정규 세션은 미국 주식 시장의 핵심 유동성 이벤트가 집중되는 6.5시간의 거래 시간이다.</p>
+<h4 id="opening-auction-메커니즘">Opening Auction 메커니즘</h4>
+<p>본장 오픈 경매(Core Open Auction)는 야간 글로벌 거시경제 전개에 대한 가격 안정을 보장하기 위해 엄격한 시간적 동결(freeze) 프레임워크를 사용한다:</p>
+<table>
+<thead>
+<tr>
+<th>시간 (ET)</th>
+<th>이벤트</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>08:00</td>
+<td>Auction Imbalance Information 배포 시작</td>
+<td>미체결 주식에 대한 실시간 불균형 데이터를 1초 간격으로 게시</td>
+</tr>
+<tr>
+<td>09:29:00</td>
+<td>MOO/LOO 취소 거부 시작</td>
+<td>시장가 오픈 주문(MOO) 및 지정가 오픈 주문(LOO)의 취소 또는 수량 감소 요청 일괄 거부</td>
+</tr>
+<tr>
+<td>09:29:55</td>
+<td><strong>Imbalance Freeze</strong> 시작</td>
+<td>새로운 MOO/LOO 주문 즉각 거부; 불균형 상쇄 지정가 주문은 흡수되나 공개 불균형 계산에서 의도적으로 마스킹</td>
+</tr>
+<tr>
+<td>09:30:00</td>
+<td>매칭 엔진 교차 체결(Cross)</td>
+<td>사전 정의된 Auction Collars 내에서 엄격하게 제한; 주 상장 시장 경매 불가 시 10:00 ET까지 대기</td>
+</tr>
+</tbody>
+</table>
+<p>Imbalance Freeze 기간(09:29:55~09:30:00)에 전송된 주문은 <strong>Pending-Imbalance Freeze</strong> 상태를 나타내는 FIX 또는 Binary 승인 메시지를 수신한다. 이 5초의 마이크로 윈도우는 알고리즘에 의한 시가 게임화(gamification)를 방지하기 위해 설계되었다.</p>
+<h4 id="closing-auction-메커니즘">Closing Auction 메커니즘</h4>
+<p>종가 경매(Closing Auction)는 뮤추얼 펀드 NAV 계산 및 파생상품 결제에 사용되는 <strong>공식 종가(Official Closing Price)</strong>를 결정하는 거래일의 가장 중요한 유동성 이벤트이다.</p>
+<table>
+<thead>
+<tr>
+<th>시간 (ET)</th>
+<th>이벤트</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>~15:50</td>
+<td><strong>Closing Imbalance Period</strong> 시작</td>
+<td>MOC/LOC 주문 자유 입력·수정·취소 마감; 이후 MOC/LOC 입력은 게시된 Significant Imbalance의 contra-side에만 허용</td>
+</tr>
+<tr>
+<td>16:00</td>
+<td>종가 경매 체결</td>
+<td>경매 기준가: 거래일 마지막 통합 round-lot 가격; 'M' sale condition으로 OCP 배포</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>MOC (Market-On-Close)</strong>: 종가에 시장가로 체결되는 주문</li>
+<li><strong>LOC (Limit-On-Close)</strong>: 종가에 지정가로 체결되는 주문</li>
+<li><strong>D-Orders</strong>: NYSE 물리적 플로어 전용, 플로어 브로커를 통해 제출; NYSE Arca 전자 매칭 엔진에서는 처리되지 않음</li>
+<li><strong>Closing Offset (CO) Orders</strong>: 다른 종가 주문에 양보하도록 설계된 엄격한 지정가 주문; 불균형 반대편에서만 체결</li>
+</ul>
+<p>NYSE Closing Auction은 전체 통합 시장 거래량의 약 <strong>~10%</strong>를 차지하며, 매일 수십억 달러 규모의 거래를 처리한다.</p>
+<h3 id="22-프리마켓-extended-early-0400-0930-et">2.2 프리마켓 (Extended Early: 04:00-09:30 ET)</h3>
+<p>현행 프리마켓 세션은 오전 4:00 ET에 시작되며, 주로 야간 뉴스 및 글로벌 매크로 이벤트에 대한 초기 가격 반응을 포착한다. Early Open Auction을 통해 세션이 개시되며, Indicative Match Price(IMP) 계산에 기반한 경매 메커니즘이 작동한다.</p>
+<h3 id="23-애프터마켓-late-trading-1600-2000-et">2.3 애프터마켓 (Late Trading: 16:00-20:00 ET)</h3>
+<p>Late Trading Session은 장 마감 후 실적 발표 반응 및 포트폴리오 리밸런싱을 포착한다. 이 세션에서의 체결 건에는 <strong>'.T' 식별자(modifier)</strong>가 부착되어 다음을 보장한다:</p>
+<ul>
+<li>야간 체결이 공식 일일 고가/저가/최종 거래가 계산에서 <strong>제외</strong></li>
+<li>주요 시장 지수 및 벤치마크가 장외 시간의 비정상적 변동성으로부터 <strong>격리</strong></li>
+<li>SIP(CTS/CQS)에 보고 시 '.T' sale condition이 명시적으로 추가</li>
+</ul>
+<hr />
+<h2 id="3-nyse-arca-22시간-거래-체제-확장-계획">3. NYSE Arca 22시간 거래 체제 (확장 계획)</h2>
+<h3 id="31-sec-승인-경과">3.1 SEC 승인 경과</h3>
+<p>NYSE Arca의 확장 거래시간 이니셔티브는 다음의 규제 경로를 통해 진행되었다:</p>
+<table>
+<thead>
+<tr>
+<th>규제 문서</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SR-NYSEARCA-2024-89</strong></td>
+<td>SEC 규칙 제출: 임시 규칙 Rule 7.34-E(T) 채택 및 Rules 1.1, 7.34-E 개정 제안</td>
+</tr>
+<tr>
+<td><strong>Amendment No. 1</strong></td>
+<td>초기 22시간(01:30~23:30 ET) 모델에서 SIP/DTCC 조율을 통한 23시간 모델로 발전</td>
+</tr>
+<tr>
+<td><strong>Amendment No. 2</strong></td>
+<td>SEC 최종 승인 (Release No. 34-102400)</td>
+</tr>
+<tr>
+<td><strong>Rule 7.34-E(T)</strong></td>
+<td>확장된 거래 세션의 시간적 경계 및 주문 관리 규칙을 규정하는 임시 규칙</td>
+</tr>
+</tbody>
+</table>
+<p>당초 22시간(01:30 ET ~ 23:30 ET)으로 제안되었으나, SIP 및 DTCC와의 조율을 거쳐 <strong>21:00 ET ~ 20:00 ET(익일)</strong>의 23시간 체제를 목표로 발전하였다.</p>
+<h3 id="32-확장된-세션-구조">3.2 확장된 세션 구조</h3>
+<table>
+<thead>
+<tr>
+<th>세션 명칭</th>
+<th>현행 시간 (ET)</th>
+<th>목표 확장 시간 (ET)</th>
+<th>지속시간</th>
+<th>운영 특성</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Maintenance Pause</strong></td>
+<td>20:00 ~ 04:00</td>
+<td><strong>20:00 ~ 21:00</strong></td>
+<td>1시간</td>
+<td>시스템 초기화, DB 백업, 거래일 전환, 기업행위 처리, 소프트웨어 배포</td>
+</tr>
+<tr>
+<td><strong>Extended Early Session</strong></td>
+<td>04:00 ~ 09:30</td>
+<td><strong>21:00 ~ 09:30</strong></td>
+<td><strong>12.5시간</strong></td>
+<td>APAC/EMEA 가격 발견 촉진; 야간 글로벌 유동성 집계; LULD 대신 Double-Wide Collars 적용</td>
+</tr>
+<tr>
+<td><strong>Core Trading Session</strong></td>
+<td>09:30 ~ 16:00</td>
+<td>09:30 ~ 16:00</td>
+<td>6.5시간</td>
+<td>주요 유동성 이벤트; 표준 LULD 변동성 메커니즘 활성</td>
+</tr>
+<tr>
+<td><strong>Late Trading Session</strong></td>
+<td>16:00 ~ 20:00</td>
+<td>16:00 ~ 20:00</td>
+<td>4시간</td>
+<td>장 마감 후 실적 반응, 포트폴리오 리밸런싱; '.T' 식별자 활용</td>
+</tr>
+</tbody>
+</table>
+<p><strong>총 거래 가능 시간: 23시간</strong> (유지보수 점검 1시간 제외)</p>
+<p>진정한 24/7 영구 가동 모델을 추구하지 않는 이유는 Regulation NMS가 요구하는 결정론적 순서 지정(deterministic sequencing)과 충돌하는 비동기식 분산 원장 또는 핫스왑 가능한 이중화 매칭 엔진의 극도로 높은 비용과 운영 복잡성 때문이다.</p>
+<h3 id="33-trade-date-전환-로직">3.3 Trade Date 전환 로직</h3>
+<p><strong>20:00 ET</strong>를 기준으로 논리적 거래일(Trade Date)이 변경된다. 이 변곡점은 DTCC의 UTC(Universal Trade Capture) 시스템과 동기화되어 T+1 결제 주기를 유지한다.</p>
+<h4 id="fix-tag-715-clearing-business-date-적용">FIX Tag 715 (Clearing Business Date) 적용</h4>
+<p>DTCC는 확장된 FIX 메시징 스키마에서 <strong>FIX Tag 715(Clearing Business Date)</strong>를 의무화하였다. 이 태그는 청산 참가자에게 체결의 로컬 타임스탬프를 무시하고 해당 트랜잭션에 적용 가능한 정확한 영업일을 명시적으로 지시한다.</p>
+<h4 id="trade-datesettlement-date-전환-예시">Trade Date/Settlement Date 전환 예시</h4>
+<table>
+<thead>
+<tr>
+<th>체결 시각 (ET)</th>
+<th>달력 날짜</th>
+<th>할당 거래일 (TD)</th>
+<th>Tag 715 청산일</th>
+<th>결제일 (T+1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>화요일, 15:45</td>
+<td>화요일</td>
+<td>화요일</td>
+<td>화요일</td>
+<td>수요일</td>
+</tr>
+<tr>
+<td>화요일, 19:55</td>
+<td>화요일</td>
+<td>화요일</td>
+<td>화요일</td>
+<td>수요일</td>
+</tr>
+<tr>
+<td>화요일, 19:59</td>
+<td>화요일</td>
+<td>화요일</td>
+<td>화요일</td>
+<td>수요일</td>
+</tr>
+<tr>
+<td>화요일, 20:00~21:00</td>
+<td>-</td>
+<td><strong>System Maintenance Pause</strong></td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>화요일, 21:05</td>
+<td>화요일</td>
+<td><strong>수요일</strong></td>
+<td><strong>수요일</strong></td>
+<td><strong>목요일</strong></td>
+</tr>
+<tr>
+<td>수요일, 01:15</td>
+<td>수요일</td>
+<td>수요일</td>
+<td>수요일</td>
+<td>목요일</td>
+</tr>
+<tr>
+<td>수요일, 02:30</td>
+<td>수요일</td>
+<td>수요일</td>
+<td>수요일</td>
+<td>목요일</td>
+</tr>
+<tr>
+<td>수요일, 09:30</td>
+<td>수요일</td>
+<td>수요일</td>
+<td>수요일</td>
+<td>목요일</td>
+</tr>
+</tbody>
+</table>
+<p>이 엄격한 분리는 CNS(Continuous Net Settlement) 배치 프로세스, 일말 잔고 정산 루틴, 기업행위 권리(record date, ex-dividend date) 인식이 표준 일일 배치 사이클에 영향 없이 유지되도록 보장한다.</p>
+<hr />
+<h2 id="4-pillar-매칭엔진-기술-아키텍처">4. Pillar 매칭엔진 기술 아키텍처</h2>
+<p>NYSE Pillar는 주식 및 옵션 거래를 통합하는 결정론적(deterministic), 초저지연(ultra-low-latency) 매칭 아키텍처이다.</p>
+<h3 id="41-trading-unit-txn-구조-14개-파티션">4.1 Trading Unit (TXN) 구조: 14개 파티션</h3>
+<p>Pillar 매칭 엔진은 단일 모놀리식 프로세스가 아닌, <strong>14개의 독립적 Trading Unit(TXN)</strong>으로 분산 구성된다. 이 설계의 핵심 목적은 다음과 같다:</p>
+<ul>
+<li><strong>지연시간 최소화</strong>: 단일 서버 클러스터의 병목 현상 제거</li>
+<li><strong>단일 장애점(Single Point of Failure) 방지</strong>: 개별 TXN 장애가 전체 시스템에 영향을 미치지 않음</li>
+<li><strong>결정론적 샤딩(Sharding)</strong>: 전체 1.5백만+ 종목이 14개 TXN에 결정론적으로 배분</li>
+</ul>
+<h3 id="42-심볼-매핑-marketsymbolmapping_yyyymmddxml">4.2 심볼 매핑 ($Market$SymbolMapping_YYYYMMDD.xml)</h3>
+<p>매일 야간 유지보수 시간 중 <strong>Symbol Index Mapping</strong> 프로토콜이 실행된다:</p>
+<ul>
+<li>파일 형식: <code>$Market$SymbolMapping_YYYYMMDD.xml</code></li>
+<li>공개 FTP 서버를 통해 배포</li>
+<li>각 티커 심볼이 어느 TXN(서버 클러스터)에서 주문장을 관리할지 결정</li>
+<li><strong>Symbol Index Mapping Message (Msg Type 3)</strong>: 최소 가격 단위(MPV), 가격 척도 코드(진정한 소수점 값 결정을 위해 가격을 10,000으로 나누어야 하는지 여부) 등의 참조 데이터 포함</li>
+</ul>
+<h3 id="43-dealid-구조-8바이트-systemid-marketid-tradeid">4.3 DealID 구조 (8바이트: SystemID + MarketID + TradeID)</h3>
+<p>비동기적 22시간 타임라인에서 데이터 충돌 없이 수백만 건의 주문 및 체결을 추적하기 위해 복합 식별 전략을 사용한다:</p>
+<table>
+<thead>
+<tr>
+<th>구성 요소</th>
+<th>크기</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SystemID</strong></td>
+<td>1 byte</td>
+<td>원천 Pillar 심볼 파티션의 고유 ID (Symbol Index Mapping에서 파생)</td>
+</tr>
+<tr>
+<td><strong>MarketID</strong></td>
+<td>2 bytes</td>
+<td>원천 거래소 ID (NYSE, NYSE Arca, NYSE American 등 식별)</td>
+</tr>
+<tr>
+<td><strong>TradeID</strong></td>
+<td>4 bytes</td>
+<td>XDP Market Data 피드에서 발행하는 체결 ID (개별 TXN 내에서만 고유)</td>
+</tr>
+<tr>
+<td><strong>DealID (합계)</strong></td>
+<td><strong>8 bytes</strong></td>
+<td>FIX Tag 9483에 매핑; 전체 거래소 컴플렉스에 걸쳐 절대적 글로벌 고유성 보장</td>
+</tr>
+</tbody>
+</table>
+<p>이 구조는 중앙 집중식 지연 유발 시퀀스 생성기 없이 모든 주문 및 체결에 대해 글로벌 고유성을 달성한다.</p>
+<h3 id="44-binary-gateway-프로토콜-msgtype-100-103">4.4 Binary Gateway 프로토콜 (MsgType 100-103)</h3>
+<p>Pillar Integrated Feed의 주문 상태 관리는 다음 바이너리 메시지 유형으로 처리된다:</p>
+<table>
+<thead>
+<tr>
+<th>MsgType</th>
+<th>명칭</th>
+<th>기능</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>100</strong></td>
+<td>Add Order</td>
+<td>신규 유동성을 주문장에 추가</td>
+</tr>
+<tr>
+<td><strong>101</strong></td>
+<td>Modify Order</td>
+<td>기존 대기 주문의 가격 또는 수량 조정</td>
+</tr>
+<tr>
+<td><strong>102</strong></td>
+<td>Delete Order</td>
+<td>주문 완전 제거</td>
+</tr>
+<tr>
+<td><strong>103</strong></td>
+<td>Order Execution</td>
+<td>매칭 발생 신호</td>
+</tr>
+<tr>
+<td><strong>1</strong></td>
+<td>Sequence Number Reset</td>
+<td>일일 유지보수 후 시퀀스 번호 초기화</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Symbol Index Mapping</td>
+<td>심볼-TXN 매핑 정보 및 참조 데이터 배포</td>
+</tr>
+</tbody>
+</table>
+<p><strong>OrderID</strong>: "good for current day only"로 정의되어 있으며, 매일 유지보수 시간에 시퀀스가 리셋된다. 레거시 일정에서 NYSE Arca 시퀀스 리셋은 02:03 ET, NYSE American은 02:01 ET에 수행되었으며, 확장 체제에서는 유지보수 시간(20:00~21:00 ET) 종료 시점으로 재조정된다.</p>
+<h3 id="45-fix-gateway-프로토콜">4.5 FIX Gateway 프로토콜</h3>
+<p>참가자 연결은 <strong>Pillar FIX Gateway(FIX 4.2/4.4)</strong> 및 <strong>Pillar Native Binary Gateway</strong>를 통해 관리된다:</p>
+<ul>
+<li><strong>듀얼 IP 배포 모델</strong>: Primary/Secondary 대상 IP를 통한 고가용성 보장</li>
+<li><strong>Drop Copy</strong>: 별도의 FIX Gateway 인터페이스를 통해 모든 주문 활동의 실시간 사본 제공</li>
+<li><strong>세션 연속성</strong>: Secondary IP 로그인 시 Primary IP에서의 마지막 애플리케이션 계층 메시지부터 시퀀스 번호가 계속됨</li>
+</ul>
+<hr />
+<h2 id="5-주문-관리-및-세션-전환">5. 주문 관리 및 세션 전환</h2>
+<h3 id="51-fix-tag-336-tradingsessionid-및-tag-59-timeinforce">5.1 FIX Tag 336 (TradingSessionID) 및 Tag 59 (TimeInForce)</h3>
+<p>NYSE Pillar 아키텍처는 주문의 실행 경계를 다음 FIX 태그로 규정한다:</p>
+<table>
+<thead>
+<tr>
+<th>FIX 태그</th>
+<th>명칭</th>
+<th>역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tag 336</strong></td>
+<td>TradingSessionID</td>
+<td>주문이 체결 가능한 세션을 명시적으로 지정 (Extended Early, Core, Late)</td>
+</tr>
+<tr>
+<td><strong>Tag 59</strong></td>
+<td>TimeInForce</td>
+<td>주문 유효기간 설정 (Day=0, GTC, GTD 등)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>세션 지정 규칙</strong>: 연장 시간대에 주문 효력을 유지하려면 참가자가 <strong>특정 연장 시간대 식별자(Tag 336)</strong>를 명시적으로 지정해야 한다. Extended Early Session 지정이 없는 주문이 해당 시간에 제출되면 Pillar Gateway가 <strong>체계적으로 거부(reject)</strong>한다.</p>
+<h3 id="52-gtc-주문의-세션-간-유지">5.2 GTC 주문의 세션 간 유지</h3>
+<table>
+<thead>
+<tr>
+<th>주문 유형</th>
+<th>유지보수 시간(20:00~21:00 ET) 동작</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Day Order (TIF=0)</strong></td>
+<td>20:00 ET Late Session 종료 시 매칭 엔진 RAM에서 <strong>일괄 삭제</strong></td>
+<td>다음 세션으로 이월 불가</td>
+</tr>
+<tr>
+<td><strong>GTC (Good-Til-Cancelled)</strong></td>
+<td><strong>디스크에 영구 저장</strong>; DR 클러스터(시카고 Cermak 데이터 센터)에 다크 파이버로 동시 복제</td>
+<td>30~90일간 지속</td>
+</tr>
+<tr>
+<td><strong>GTD (Good-Til-Date)</strong></td>
+<td>GTC와 동일한 지속 메커니즘; 지정 일자까지 유효</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p><strong>콜드 스타트 시 주문장 복원 프로세스</strong> (21:00 ET):
+1. 매칭 엔진이 영구 데이터 저장소에서 GTC 주문을 로드
+2. <strong>Restatement 메시지</strong> 생성: <code>ExecTransType = 3 (Status)</code>, <code>ExecType = D (Restated)</code>
+3. FIX Drop Copy 및 독점 데이터 피드를 통해 참가자에게 복원 확인 브로드캐스트
+4. 대량의 <strong>Add Order (MsgType 100)</strong> 메시지 burst 발생 (Extended Early Auction 시작 수 밀리초 전)</p>
+<p><strong>주문 수정 시 큐 우선순위</strong>:
+- <strong>가격 변경 또는 표시 수량 증가</strong>: 시간 우선순위(time priority) <strong>즉시 상실</strong>
+- <strong>수량 감소만</strong>: 원래 큐 위치 <strong>유지</strong></p>
+<h3 id="53-mooloomocloc-주문의-세션-제한">5.3 MOO/LOO/MOC/LOC 주문의 세션 제한</h3>
+<p>경매 전용 주문은 특정 본장 유동성 이벤트에 근본적으로 연결된다:</p>
+<table>
+<thead>
+<tr>
+<th>주문 유형</th>
+<th>체결 가능 세션</th>
+<th>연장 프리마켓 중 동작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MOO (Market-On-Open)</strong></td>
+<td>Core Open Auction (09:30 ET)만</td>
+<td>접수되나 즉각적 연속 거래 자격 박탈; 09:30 경매까지 수동 대기</td>
+</tr>
+<tr>
+<td><strong>LOO (Limit-On-Open)</strong></td>
+<td>Core Open Auction (09:30 ET)만</td>
+<td>동일</td>
+</tr>
+<tr>
+<td><strong>MOC (Market-On-Close)</strong></td>
+<td>Closing Auction (16:00 ET)만</td>
+<td>해당 시간대에 입력 불가</td>
+</tr>
+<tr>
+<td><strong>LOC (Limit-On-Close)</strong></td>
+<td>Closing Auction (16:00 ET)만</td>
+<td>해당 시간대에 입력 불가</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-cancel-on-disconnect-cod-기능">5.4 Cancel on Disconnect (COD) 기능</h3>
+<p>네트워크 장애로 브로커-딜러의 연결이 끊어지면, Pillar Gateway가 <strong>경매 주문을 제외한</strong> 모든 대기 주문에 대해 즉각적이고 자동적인 취소를 개시한다. 이 프로토콜의 핵심 목적:</p>
+<ul>
+<li>야간 시간대의 얇은 유동성 속에서 약탈적 알고리즘에 의한 stale quote 체결 방지</li>
+<li>참가자의 의도치 않은 야간 노출(exposure) 차단</li>
+<li>Secondary IP 로그인 시 시퀀스 번호가 Primary IP의 마지막 메시지부터 이어져 주문 상태 매끄러운 보존</li>
+</ul>
+<h3 id="55-dos-보호-100회-실패-시-60초-차단">5.5 DoS 보호 (100회 실패 시 60초 차단)</h3>
+<p>Pillar Gateway는 엄격한 서비스 거부(DoS) 방어 메커니즘을 시행한다:</p>
+<table>
+<thead>
+<tr>
+<th>조건</th>
+<th>동작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>특정 SenderCompID 또는 Target IP에서 <strong>100회</strong> 로그인 실패 또는 세션 레벨 거부 발생</td>
+<td><strong>DoS 모드</strong> 진입</td>
+</tr>
+<tr>
+<td>DoS 모드 진입 시</td>
+<td>해당 SenderCompID의 모든 오픈 주문을 COD 설정에 따라 <strong>즉시 취소</strong></td>
+</tr>
+<tr>
+<td>냉각 기간</td>
+<td>해당 Target IP로부터의 모든 연결 시도를 <strong>60초간</strong> 거부</td>
+</tr>
+</tbody>
+</table>
+<p>또한 Binary Gateway는 메시지 레이트 스로틀링(throttling)을 통해 매칭 엔진을 보호한다:</p>
+<table>
+<thead>
+<tr>
+<th>설정 모드</th>
+<th>동작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Queue and Process</strong></td>
+<td>초과 메시지를 Gateway 메모리에 버퍼링, 엔진 읽기 속도에 맞춰 시간순 처리</td>
+</tr>
+<tr>
+<td><strong>Queue and Reject</strong></td>
+<td>초과 신규 주문은 <code>&lt;78 - Throttle Reject&gt;</code> 코드로 즉시 거부; 단, 취소 요청 및 cancel-replace는 여전히 큐잉 후 처리</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-리스크-관리-및-변동성-통제">6. 리스크 관리 및 변동성 통제</h2>
+<h3 id="61-market-wide-circuit-breaker-mwcb-71320">6.1 Market-Wide Circuit Breaker (MWCB): 7%/13%/20%</h3>
+<p>S&amp;P 500 지수 기준으로 작동하는 시장 전체 서킷 브레이커:</p>
+<table>
+<thead>
+<tr>
+<th>레벨</th>
+<th>하락 폭</th>
+<th>동작</th>
+<th>적용 시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Level 1</strong></td>
+<td><strong>7%</strong></td>
+<td>15분 거래 중단 (15:25 ET 이전)</td>
+<td>정규 세션만</td>
+</tr>
+<tr>
+<td><strong>Level 2</strong></td>
+<td><strong>13%</strong></td>
+<td>15분 거래 중단 (15:25 ET 이전)</td>
+<td>정규 세션만</td>
+</tr>
+<tr>
+<td><strong>Level 3</strong></td>
+<td><strong>20%</strong></td>
+<td>당일 잔여 세션 거래 완전 중단</td>
+<td>정규 세션만</td>
+</tr>
+</tbody>
+</table>
+<p><strong>중요</strong>: MWCB는 역사적으로 정규 거래 시간(09:30~16:00 ET)에만 적용되도록 설계되었다. 현행 시간외 세션에서는 이 산업 전반의 메커니즘이 <strong>완전 비활성</strong> 상태이다.</p>
+<h3 id="62-limit-up-limit-down-luld----정규시간만-적용">6.2 Limit Up-Limit Down (LULD) -- 정규시간만 적용</h3>
+<p>LULD 메커니즘은 후행 5분 평균 기준 가격에 기초하여 허용 가능한 가격 밴드를 동적으로 재계산한다:</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>Tier 1 (S&amp;P 500, Russell 1000 등)</th>
+<th>Tier 2 (기타)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>가격 밴드</td>
+<td>일반적으로 <strong>5%</strong></td>
+<td>더 넓은 밴드</td>
+</tr>
+<tr>
+<td>적용 시간</td>
+<td><strong>정규 세션(09:30~16:00 ET)에만</strong></td>
+<td>동일</td>
+</tr>
+<tr>
+<td>연장 세션 적용</td>
+<td><strong>미적용</strong></td>
+<td><strong>미적용</strong></td>
+</tr>
+</tbody>
+</table>
+<p>연장 프리마켓 세션(오전 3시 등)에 5%의 좁은 밴드를 강제하면 지속적이고 연쇄적인 거래 정지가 발생하여 야간 시장의 효용성을 심각하게 저하시키므로, LULD는 의도적으로 시간외 세션에 적용되지 않는다.</p>
+<h3 id="63-확장시간-double-wide-collars-20106">6.3 확장시간 Double-Wide Collars (20%/10%/6%)</h3>
+<p>LULD가 적용되지 않는 연장 세션에서의 가격 보호를 위해 NYSE Arca는 Pillar Gateway 내 독점적 <strong>Limit Order Price Protection</strong>에 의존한다:</p>
+<table>
+<thead>
+<tr>
+<th>기준 가격 범위</th>
+<th>Double-Wide Collar 비율</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>고가 증권</td>
+<td><strong>6%</strong></td>
+</tr>
+<tr>
+<td>중가 증권</td>
+<td><strong>10%</strong></td>
+</tr>
+<tr>
+<td>저가 증권</td>
+<td><strong>20%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>기업들은 기본 증권의 기준 가격에 따라 지정가 주문 거부 임계값을 동적으로 확장하는 "Double-Wide" 가격 확인을 프로그래밍 방식으로 구성할 수 있다.</p>
+<h3 id="64-pillar-risk-controls-risk-entities-subid-grmp">6.4 Pillar Risk Controls (Risk Entities, SubID, GRMP)</h3>
+<h4 id="risk-entity-구조">Risk Entity 구조</h4>
+<p>Pillar는 다음 세 가지 요소를 연결하여 프로그래밍 방식의 "Risk Entity"를 생성한다:</p>
+<table>
+<thead>
+<tr>
+<th>요소</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Symbol</strong></td>
+<td>기본 증권 기호</td>
+</tr>
+<tr>
+<td><strong>MPID</strong></td>
+<td>브로커의 Market Participant Identifier</td>
+</tr>
+<tr>
+<td><strong>SubID</strong></td>
+<td>4자리 영숫자 식별자 (선택적)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="주요-제한-사항-및-파라미터">주요 제한 사항 및 파라미터</h4>
+<table>
+<thead>
+<tr>
+<th>파라미터</th>
+<th>값/범위</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MPID/SubID 쌍당 최대 심볼 수</td>
+<td><strong>400개</strong></td>
+</tr>
+<tr>
+<td>슬라이딩 윈도우 시간 범위</td>
+<td><strong>100ms ~ 300s</strong></td>
+</tr>
+<tr>
+<td>모니터링 지표</td>
+<td>거래량, 총 주식 거래량, 백분율 한도</td>
+</tr>
+<tr>
+<td>한도 위반 시 자동 동작</td>
+<td><strong>Cancel Non-Auction Orders &amp; Block</strong> 명령 실행</td>
+</tr>
+<tr>
+<td>위반 추적</td>
+<td><strong>GRMP (Gross Risk Multiplier)</strong> 카운터 증가</td>
+</tr>
+</tbody>
+</table>
+<p>이 아키텍처를 통해 청산 회사는 APAC 시간대에서 활동하는 특정 퀀트 데스크의 총 명목 노출을 회사 전체 주간 운영과 독립적으로 조절할 수 있다. 한도 위반 시 위반 엔티티의 야간 유동성 프로필이 즉시 0으로 만들어지며 GRMP 카운터가 증가한다.</p>
+<hr />
+<h2 id="7-청산-및-결제-연동-dtccnscc">7. 청산 및 결제 연동 (DTCC/NSCC)</h2>
+<h3 id="71-utc-24x5-phase-1-20249-phase-2-20266-목표">7.1 UTC 24x5 Phase 1 (2024.9) / Phase 2 (2026.6 목표)</h3>
+<p>DTCC의 주식 청산 자회사인 NSCC는 UTC(Universal Trade Capture) 시스템을 24x5 일정으로 근본적으로 변경 중이다:</p>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>시기</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 1</strong></td>
+<td><strong>2024년 9월</strong> 구현 완료</td>
+<td>UTC 시스템 개장 시간을 01:30 ET로 확대; 레거시 04:00 ET 대비 2.5시간 조기 야간 거래 제출 가능</td>
+</tr>
+<tr>
+<td><strong>Phase 2</strong></td>
+<td><strong>2026년 6월</strong> 목표 (규제 검토 대기)</td>
+<td>UTC를 <strong>일요일 20:00 ET ~ 금요일 20:00 ET</strong> 완전 24x5 운영으로 전환</td>
+</tr>
+</tbody>
+</table>
+<p>Phase 2 완료 시:
+- UTC가 FIX 및 MQ 메시지를 지속적으로 수신
+- NSCC의 CCP(Central Counterparty) 보증이 야간 거래에 <strong>즉각적으로 적용</strong>
+- <strong>즉각적인 계약 갱신(novation)</strong>: 과거 야간 장외 ATS에서의 양자간 신용 위험 제거</p>
+<h3 id="72-t1-결제-체제">7.2 T+1 결제 체제</h3>
+<p>2024년 5월 도입된 T+1 결제 주기는 23시간 프레임워크 내에서도 엄격하게 유지된다:</p>
+<ul>
+<li><strong>20:00 ET Trade Date Cutoff</strong>: 불변의 거래일 전환 기준점</li>
+<li>NSCC 리스크 시스템: <strong>15분마다</strong> 회원 노출 평가 및 동적 증거금 콜(margin call) 발행 가능</li>
+<li><strong>Margin Requirement Differential (MRD) charge</strong>: 본장 유동성 도착 전 야간 포지션의 비순환(un-netted) 위험 해소</li>
+</ul>
+<h3 id="73-별도-9a9b-야간-청산-관계">7.3 별도 9A/9B 야간 청산 관계</h3>
+<p>야간 세션 참가자는 <strong>완전히 분리된</strong> Correspondent Clearing(CORR) 및 Qualified Special Representative(QSR) 9A/9B 관계를 설정해야 한다:</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>주간 청산</th>
+<th>야간 청산</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9A/9B 관계</td>
+<td>기존 주간 운영용</td>
+<td><strong>별도 설정 필수</strong></td>
+</tr>
+<tr>
+<td>목적</td>
+<td>표준 본장 거래 청산</td>
+<td>APAC 시간대 알고리즘 오류/대규모 방향성 베팅이 주간 증거금 한도를 침범하지 않도록 리스크 구획화</td>
+</tr>
+</tbody>
+</table>
+<h3 id="74-high-value-threshold">7.4 High-Value Threshold</h3>
+<p>UTC 시스템은 대규모 오류 거래를 차단하기 위한 하드코딩된 유효성 검사를 구현한다:</p>
+<table>
+<thead>
+<tr>
+<th>시간대</th>
+<th>임계값</th>
+<th>대상</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>야간 (Overnight)</strong></td>
+<td><strong>$1 Billion</strong></td>
+<td>장외(OTC) Correspondent Clearing 트랜잭션</td>
+</tr>
+<tr>
+<td><strong>주간 (Daytime)</strong></td>
+<td><strong>$1.5 Billion</strong></td>
+<td>동일</td>
+</tr>
+</tbody>
+</table>
+<p>이 임계값을 초과하는 거래는 자동으로 플래그되어 억제(contain)되며, "fat finger" 입력이 하위 CNS 체인을 손상시키기 전에 차단된다.</p>
+<hr />
+<h2 id="8-시장-데이터-배포">8. 시장 데이터 배포</h2>
+<h3 id="81-sip-ctscqs-확장----일금-2100-2000-et">8.1 SIP (CTS/CQS) 확장 -- 일~금 21:00-20:00 ET</h3>
+<p>확장 거래시간의 실행 가능성은 통합 시장 데이터의 지속적 가용성에 전적으로 의존한다. SEC 및 SIFMA는 SIP가 완전 가동되지 않으면 NYSE Arca가 확장 세션을 운영할 수 <strong>없다</strong>고 강조하였다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>현행</th>
+<th>확장 목표</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SIP 운영시간</strong></td>
+<td>~04:00~20:00 ET</td>
+<td><strong>일요일 21:00 ET ~ 금요일 20:00 ET</strong> (23시간 패러다임)</td>
+</tr>
+<tr>
+<td><strong>데이터 품질</strong></td>
+<td>본장과 동일</td>
+<td>본장과 <strong>동등한</strong> 지연시간, 신뢰성, 범위 보장 필수</td>
+</tr>
+<tr>
+<td><strong>야간 체결 식별</strong></td>
+<td>'.T' sale condition</td>
+<td>야간 체결이 Last Sale eligible이 아님을 명시</td>
+</tr>
+<tr>
+<td><strong>공식 종가</strong></td>
+<td>'M' sale condition (16:00 ET Closing Auction)</td>
+<td><strong>변경 없음</strong>: OCP는 16:00 ET에 고정</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-nyse-integrated-feed-xdp">8.2 NYSE Integrated Feed (XDP)</h3>
+<p>NYSE Arca의 독점(proprietary) 데이터 피드:</p>
+<ul>
+<li><strong>Pillar Integrated Feed</strong>: 심층 주문장(deep book) 가시성 제공</li>
+<li><strong>BQT (Best Quote and Trade) Feed</strong>: 최우선 호가 및 체결 정보</li>
+<li>연속 운영: 23시간 내내 비스로틀(un-throttled) 데이터 제공</li>
+<li>참가자는 세션 경계 전반에 걸쳐 <strong>8바이트 OrderID</strong> 및 <strong>4바이트 TradeID</strong> 페이로드를 엄격하게 매핑해야 함</li>
+</ul>
+<h3 id="83-moldudp64-프로토콜">8.3 MoldUdp64 프로토콜</h3>
+<p>UTP 및 CTA SIP 데이터는 <strong>MoldUdp64</strong> 프로토콜을 통해 게시된다:</p>
+<ul>
+<li>바이너리 페이로드의 <strong>순차적 전달</strong> 보장</li>
+<li>NBBO(National Best Bid and Offer) 업데이트를 포함</li>
+<li>23시간 세션 동안 VWAP(Volume Weighted Average Price) 및 기관 거래 추적에 필수적인 결정론적 시퀀싱 제공</li>
+</ul>
+<hr />
+<h2 id="9-maintenance-pause-2000-2100-et-상세">9. Maintenance Pause (20:00-21:00 ET) 상세</h2>
+<p>매일 1시간의 유지보수 시간은 NYSE Arca 확장 체제의 <strong>아키텍처 핵심</strong>이다. 외부 FIX 트래픽을 정확히 60분간 중단함으로써 라이브 매칭 엔진에서 실행하기에는 위험한 기능들을 안전하게 수행한다.</p>
+<h3 id="자동화-작업-파이프라인">자동화 작업 파이프라인</h3>
+<table>
+<thead>
+<tr>
+<th>순서</th>
+<th>작업</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>데이터베이스 백업</strong></td>
+<td>모든 영구 주문, 사용자 구성, 라우팅 지시, 리스크 한도 활용 상태 스냅샷</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>시퀀스 리셋</strong></td>
+<td>FIX 시퀀스 번호, 매칭 엔진 실행 ID, XDP 피드 Symbol Sequence Numbers를 <strong>1로 초기화</strong> (MsgType 1); 정수 오버플로 방지 및 깨끗한 진단 기준선 제공</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>기업행위 처리</strong></td>
+<td>배당금 적용, 주식 분할 실행, 심볼 변경, 배당락 조정 계산; 조정된 종가 및 참조 데이터를 SIP의 Symbol Reference Data 메시지(CQS/CTS)로 배포</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>소프트웨어 배포</strong></td>
+<td>OS 패치, 매칭 엔진 로직 업데이트, 네트워크 라우팅 최적화; 자동화된 회귀 테스트 실행; 21:00 오픈 전 오류 시 이전 상태로 즉각 롤백 가능</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>심볼 매핑 파일 배포</strong></td>
+<td><code>$Market$SymbolMapping_YYYYMMDD.xml</code>을 공개 FTP 서버에 게시</td>
+</tr>
+</tbody>
+</table>
+<h3 id="콜드-스타트-시-주문장-복원-프로세스">콜드 스타트 시 주문장 복원 프로세스</h3>
+<p>매칭 엔진의 "sleep/wake" 시퀀스:</p>
+<ol>
+<li><strong>20:00 ET</strong>: 일시적 상태 데이터 RAM에서 삭제; 영구 데이터(GTC 주문 등) 로컬 디스크 저장 + Cermak DR 클러스터로 다크 파이버 동시 복제</li>
+<li><strong>20:00~21:00 ET</strong>: 위 자동화 작업 파이프라인 실행</li>
+<li><strong>~20:55 ET</strong>: Extended Early Session 주문 접수 시작 (5분 주문 축적 윈도우)</li>
+<li><strong>21:00 ET</strong>: 콜드 스타트 완료
+   - 영구 데이터 저장소에서 GTC 주문 로드
+   - <strong>Restatement 메시지 생성</strong>: <code>ExecTransType = 3 (Status)</code>, <code>ExecType = D (Restated)</code>
+   - FIX Drop Copy 및 독점 피드를 통해 참가자에게 복원 확인 브로드캐스트
+   - 대량 Add Order (MsgType 100) 메시지 burst
+   - Extended Early Open Auction 실행</li>
+</ol>
+<hr />
+<h2 id="10-krx와의-비교">10. KRX와의 비교</h2>
+<h3 id="101-종합-비교표">10.1 종합 비교표</h3>
+<table>
+<thead>
+<tr>
+<th>비교 항목</th>
+<th>NYSE / NYSE Arca</th>
+<th>KRX (현행)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>총 거래시간</strong></td>
+<td>23시간 (목표)</td>
+<td>6.5시간 (09:00~15:30 KST)</td>
+</tr>
+<tr>
+<td><strong>정규 세션</strong></td>
+<td>09:30~16:00 ET (6.5h)</td>
+<td>09:00~15:30 KST (6.5h)</td>
+</tr>
+<tr>
+<td><strong>프리마켓</strong></td>
+<td>21:00 ET(전일)~09:30 ET (12.5h 목표)</td>
+<td>08:00~09:00 KST (동시호가, 1h)</td>
+</tr>
+<tr>
+<td><strong>애프터마켓</strong></td>
+<td>16:00~20:00 ET (4h)</td>
+<td>15:30~16:00 KST (장 마감 동시호가, 0.5h)</td>
+</tr>
+<tr>
+<td><strong>유지보수 시간</strong></td>
+<td>20:00~21:00 ET (1h)</td>
+<td>해당 없음 (야간 전체 비운영)</td>
+</tr>
+<tr>
+<td><strong>오프닝 옥션</strong></td>
+<td>Imbalance Info 08:00 시작, Freeze 09:29:55</td>
+<td>동시호가 08:00~09:00 (단일가매매)</td>
+</tr>
+<tr>
+<td><strong>클로징 옥션</strong></td>
+<td>Closing Imbalance 15:50 시작, D-Orders</td>
+<td>장 마감 동시호가 15:20~15:30 (단일가매매)</td>
+</tr>
+<tr>
+<td><strong>매칭 엔진</strong></td>
+<td>Pillar (14 TXN 분산 파티션)</td>
+<td>EXTURE 3.0 (시장별 멀티 매칭, 50µs)</td>
+</tr>
+<tr>
+<td><strong>서킷 브레이커</strong></td>
+<td>MWCB 7%/13%/20% (정규시간만)</td>
+<td>KOSPI 8%/15%/20% (3단계)</td>
+</tr>
+<tr>
+<td><strong>변동성 완화</strong></td>
+<td>LULD (정규), Double-Wide Collars (연장)</td>
+<td>VI (Volatility Interruption) + 정적 가격제한폭 (±30%)</td>
+</tr>
+<tr>
+<td><strong>결제 주기</strong></td>
+<td>T+1 (2024.5 시행)</td>
+<td>T+2 (일부 T+1 논의 중)</td>
+</tr>
+<tr>
+<td><strong>청산기관</strong></td>
+<td>DTCC/NSCC (UTC 24x5)</td>
+<td>KSD (한국예탁결제원)</td>
+</tr>
+<tr>
+<td><strong>야간 체결 식별</strong></td>
+<td>'.T' sale condition</td>
+<td>해당 없음</td>
+</tr>
+<tr>
+<td><strong>주문 프로토콜</strong></td>
+<td>FIX 4.2/4.4 + Native Binary</td>
+<td>FIX + 독자 프로토콜</td>
+</tr>
+<tr>
+<td><strong>시장 데이터</strong></td>
+<td>SIP(CTS/CQS) + XDP(Proprietary)</td>
+<td>KOSCOM 통합 데이터 피드</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-krx-도입-시-참고할-핵심-시사점">10.2 KRX 도입 시 참고할 핵심 시사점</h3>
+<h4 id="1-동적-가격-제한폭-dynamic-collars-도입-필요">(1) 동적 가격 제한폭 (Dynamic Collars) 도입 필요</h4>
+<ul>
+<li>현행 KRX의 정적 일일 상하한가(±30%)를 야간에 그대로 적용하는 것은 부적절</li>
+<li>NYSE Arca의 Double-Wide Collars(20%/10%/6%) 모델을 벤치마킹하여 <strong>유동성 깊이에 따라 동적으로 확장되는 가격 제한폭</strong> 설계 필요</li>
+<li>야간 전용 "LULD-Lite" 알고리즘 구현 권장: 임계값(예: ±10%) 위반 시 해당 종목 연속 거래 중단 -&gt; 5분 동결 -&gt; 재개장 경매</li>
+</ul>
+<h4 id="2-시장-데이터-동등성-확보">(2) 시장 데이터 동등성 확보</h4>
+<ul>
+<li>야간 세션 데이터 품질이 정규 세션 대비 열화되어서는 안 됨</li>
+<li>KOSCOM과의 기술적 합의를 통해 야간 체결 건의 분류 체계 구축</li>
+<li>KOSPI 200 등 국내 지수 계산에서 야간 가격 데이터를 <strong>격리</strong>하는 식별자 프로토콜 필수</li>
+<li>야간 체결 건의 '.T' 유사 식별자 도입으로 기술적 분석 차트, 자동 증거금 계산의 왜곡 방지</li>
+</ul>
+<h4 id="3-청산-인프라-현대화">(3) 청산 인프라 현대화</h4>
+<ul>
+<li>KSD의 UTC 동등 시스템을 24x5로 확장하는 로드맵 수립</li>
+<li>T+1 결제 전환과 연장 거래시간의 동시 추진 시 FIX Tag 715 수준의 Clearing Business Date 메커니즘 도입</li>
+<li>야간 전용 9A/9B 유사 청산 관계의 분리 설정</li>
+<li>15분 주기 증거금 재계산 및 동적 마진콜 역량 구축</li>
+</ul>
+<h4 id="4-운영-인력-체계-재구성">(4) 운영 인력 체계 재구성</h4>
+<ul>
+<li>"Follow-the-Sun" 3교대 운영 모델 도입</li>
+<li>야간 전담 Market Surveillance, IT Operations, 회원 지원 팀 설치</li>
+<li>야간 감시는 ML 기반 결정론적 경보 메커니즘으로 전환 (스푸핑, 레이어링, 시세조종 탐지)</li>
+<li>야간 근무자 건강관리, 피로 관리, 경력 개발 경로 제도화</li>
+</ul>
+<h4 id="5-리테일-투자자-보호">(5) 리테일 투자자 보호</h4>
+<ul>
+<li>야간 거래의 구체적 위험(유동성 감소, 변동성 확대, 넓은 스프레드, NBBO 보호 부재)에 대한 <strong>필수 고지</strong> 규정 마련</li>
+<li>개인 투자자의 야간 주문 라우팅 전 명시적 위험 동의 절차 의무화</li>
+</ul>
+<hr />
+<h2 id="참고자료">참고자료</h2>
+<h3 id="sec-규제-문서">SEC 규제 문서</h3>
+<ul>
+<li>Self-Regulatory Organizations; NYSE Arca, Inc.; Notice of Filing of Proposed Rule Change (SR-NYSEARCA-2024-89): <a href="https://www.federalregister.gov/documents/2024/11/14/2024-26418/self-regulatory-organizations-nyse-arca-inc-notice-of-filing-of-proposed-rule-change-to-adopt">federalregister.gov/documents/2024/11/14/2024-264...</a></li>
+<li>SEC Release No. 34-101985: <a href="https://www.sec.gov/files/rules/sro/nysearca/2024/34-101985.pdf">sec.gov/files/rules/sro/nysearca/2024...</a></li>
+<li>Amendment No. 1: <a href="https://www.federalregister.gov/documents/2024/12/30/2024-30903/self-regulatory-organizations-nyse-arca-inc-notice-of-filing-of-amendment-no-1-to-a-proposed-rule">federalregister.gov/documents/2024/12/30/2024-309...</a></li>
+<li>Amendment No. 2 and Order Granting Approval (Release No. 34-102400): <a href="https://www.sec.gov/files/rules/sro/nysearca/2025/34-102400.pdf">sec.gov/files/rules/sro/nysearca/2025...</a></li>
+<li>SR-NYSEARCA-2024-89 Am. 2: <a href="https://www.nyse.com/publicdocs/nyse/markets/nyse-arca/rule-filings/filings/2025/SR-NYSEArca-2024-89_Am._2.pdf">nyse.com/publicdocs/nyse/markets/nyse-...</a></li>
+<li>Federal Register Filing: <a href="https://public-inspection.federalregister.gov/2025-02688.pdf">public-inspection.federalregister.gov/2025-02688.pdf</a></li>
+<li>Rule 7.34-E(T) Exhibit 5: <a href="https://www.sec.gov/files/rules/sro/nysearca/2024/34-101985-ex5.pdf">sec.gov/files/rules/sro/nysearca/2024...</a></li>
+</ul>
+<h3 id="nyse-공식-문서">NYSE 공식 문서</h3>
+<ul>
+<li>Extended Hours Trading: <a href="https://www.nyse.com/extended-hours-trading">nyse.com/extended-hours-trading</a></li>
+<li>Extended-Hours Trading FAQ: <a href="https://www.nyse.com/publicdocs/nyse/NYSE_Extended_Hours_Trading_FAQ.pdf">nyse.com/publicdocs/nyse/NYSE_Extended...</a></li>
+<li>NYSE Closing Auction Insights: <a href="https://www.nyse.com/data-insights/nyse-closing-auction-price-discovery-opportunities-reach-new-highs">nyse.com/data-insights/nyse-closing-au...</a></li>
+<li>NYSE Rules: <a href="https://www.nyse.com/publicdocs/nyse/regulation/nyse/NYSE_Rules.pdf">nyse.com/publicdocs/nyse/regulation/ny...</a></li>
+<li>Auctions: <a href="https://www.nyse.com/trade/auctions">nyse.com/trade/auctions</a></li>
+<li>Opening and Closing Auctions Fact Sheet: <a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/NYSE_Opening_and_Closing_Auctions_Fact_Sheet.pdf">nyse.com/publicdocs/nyse/markets/nyse/...</a></li>
+<li>Trading Information: <a href="https://www.nyse.com/trade/trading-information">nyse.com/trade/trading-information</a></li>
+</ul>
+<h3 id="nyse-pillar-기술-사양">NYSE Pillar 기술 사양</h3>
+<ul>
+<li>NYSE Pillar: <a href="https://www.nyse.com/pillar">nyse.com/pillar</a></li>
+<li>Pillar Risk Controls: <a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Risk_Controls.pdf">nyse.com/publicdocs/nyse/NYSE_Pillar_R...</a></li>
+<li>Pillar Integrated Feed Client Specification v2.5c: <a href="https://www.nyse.com/publicdocs/nyse/data/Pillar_Integrated_Feed_Client_Specification_v2.5c.pdf">nyse.com/publicdocs/nyse/data/Pillar_I...</a></li>
+<li>Pillar Common Client Specification v2.6c: <a href="https://www.nyse.com/publicdocs/nyse/data/Pillar_Common_Client_Specification_v2.6c.pdf">nyse.com/publicdocs/nyse/data/Pillar_C...</a></li>
+<li>Pillar Gateway FIX Protocol Specification: <a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_FIX_Protocol_Specification.pdf">nyse.com/publicdocs/nyse/NYSE_Pillar_G...</a></li>
+<li>Pillar Gateway Binary Protocol Specification: <a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_Binary_Protocol_Specification.pdf">nyse.com/publicdocs/nyse/NYSE_Pillar_G...</a></li>
+<li>NYSE Group Security Master Client Specification v4.0.9: <a href="https://www.nyse.com/publicdocs/nyse/data/NYSE_Group_Security_Master_Client_Specification_v4.0.9.pdf">nyse.com/publicdocs/nyse/data/NYSE_Gro...</a></li>
+<li>NYSE BQT Common Client Specification: <a href="https://www.nyse.com/publicdocs/nyse/data/NYSE_BQT_Common_Client_Specification.pdf">nyse.com/publicdocs/nyse/data/NYSE_BQT...</a></li>
+<li>Pillar Options Common Client Specification: <a href="https://www.nyse.com/publicdocs/nyse/data/Pillar_Options_Common_Client_Specification.pdf">nyse.com/publicdocs/nyse/data/Pillar_O...</a></li>
+</ul>
+<h3 id="dtccnscc-문서">DTCC/NSCC 문서</h3>
+<ul>
+<li>Preparing US Equity Markets for 24x5 Trading: <a href="https://www.dtcc.com/dtcctransformation/24x5">dtcc.com/dtcctransformation/24x5</a></li>
+<li>THE SHIFT TO 24X5 TRADING: <a href="https://www.dtcc.com/-/media/Files/Downloads/Transformation/theshiftto24x5trading.pdf">dtcc.com/-/media/Files/Downloads/Trans...</a></li>
+<li>UTC 24x5 Extended Trading Hours: <a href="https://www.dtcc.com/-/media/Files/Downloads/Transformation/UTC-24-x-5-Extended-Trading-Hours.pdf">dtcc.com/-/media/Files/Downloads/Trans...</a></li>
+<li>Universal Trade Capture (UTC) 24x5 FAQ: <a href="https://www.dtcc.com/-/media/Files/Downloads/Transformation/Universal-Trade-Capture-FAQs.pdf">dtcc.com/-/media/Files/Downloads/Trans...</a></li>
+<li>24x5 Trading Update (A9689): <a href="https://www.dtcc.com/-/media/Files/pdf/2026/1/7/A9689.pdf">dtcc.com/-/media/Files/pdf/2026/1/7/A9...</a></li>
+<li>24x5 Executive Summary: <a href="https://www.dtcc.com/-/media/Files/Downloads/Transformation/dtcc-24x5-Executive-Summary.pdf">dtcc.com/-/media/Files/Downloads/Trans...</a></li>
+<li>DTCC FAQ: <a href="https://www.dtcc.com/dtcctransformation/faqs">dtcc.com/dtcctransformation/faqs</a></li>
+<li>Shortening the US Equities Settlement Cycle: <a href="https://www.dtcc.com/ust1">dtcc.com/ust1</a></li>
+</ul>
+<h3 id="sip-및-시장-데이터">SIP 및 시장 데이터</h3>
+<ul>
+<li>SIPs Submit Plan Amendment for Overnight Trading: <a href="https://www.prnewswire.com/news-releases/sips-submit-plan-amendment-to-extend-operating-hours-to-accommodate-overnight-trading-302647034.html">prnewswire.com/news-releases/sips-submit-pla...</a></li>
+<li>UTP Plan Participants Propose Extended Hours: <a href="https://www.findknowdo.com/news/01/09/2026/utp-plan-participants-propose-extended-global-trading-hours">findknowdo.com/news/01/09/2026/utp-plan-part...</a></li>
+<li>UTP Binary Output Specification (MoldUdp64): <a href="https://utpplan.com/DOC/UtpBinaryOutputSpec_Fractional.pdf">utpplan.com/DOC/UtpBinaryOutputSpec_Fract...</a></li>
+</ul>
+<h3 id="기타-참고">기타 참고</h3>
+<ul>
+<li>ICE Insights - Expanding Market Hours: <a href="https://www.ice.com/insights/ice-vox/expanding-market-hours-key-considerations-and-the-nyses-approach-v92y9h4ox1">ice.com/insights/ice-vox/expanding-ma...</a></li>
+<li>SIFMA Extended Trading Hours: <a href="https://www.sifma.org/issues/market-structure/extended-trading-hours">sifma.org/issues/market-structure/exten...</a></li>
+<li>LULD Plan: <a href="https://www.luldplan.com/">luldplan.com/</a></li>
+<li>CAT Reporting Technical Specifications: <a href="https://catnmsplan.com/sites/default/files/2020-05/CAT-Reporting-Technical-Specifications-for-Industry-Members-v2.2.1-r5-REDLINE.pdf">catnmsplan.com/sites/default/files/2020-05/C...</a></li>
+<li>FINRA Trading Terms: <a href="https://www.finra.org/investors/insights/time-parameters-qualifiers-stock-orders">finra.org/investors/insights/time-param...</a></li>
+<li>NYSE LULD Enhancement Testing: <a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/NYSE_Group_LULD_12_testing.pdf">nyse.com/publicdocs/nyse/markets/nyse/...</a></li>
+<li>NYSE Disaster Recovery FAQ: <a href="https://www.nyse.com/publicdocs/support/DisasterRecoveryFAQs.pdf">nyse.com/publicdocs/support/DisasterRe...</a></li>
+<li>Is 24/7 Trading Better? (SSRN): <a href="https://papers.ssrn.com/sol3/Delivery.cfm/4942934.pdf?abstractid=4942934">papers.ssrn.com/sol3/Delivery.cfm/4942934.pdf</a></li>
+</ul>
+<hr />
+<p><em>본 보고서는 SEC 규칙 제출 문서, NYSE 공식 기술 사양서, DTCC 변환 프로그램 문서 및 관련 학술 자료를 기반으로 작성되었습니다.</em></p>
+    </main>
+
+    <script>
+    (function() {
+        // --- Wrap tables ---
+        document.querySelectorAll('main table').forEach(t => {
+            if (!t.parentElement.classList.contains('table-wrap')) {
+                const w = document.createElement('div');
+                w.className = 'table-wrap';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            }
+        });
+
+        // --- Build TOC ---
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h1, main h2, main h3');
+        const tocLinks = [];
+        headings.forEach(h => {
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent;
+            a.dataset.id = h.id;
+            const depth = parseInt(h.tagName[1]);
+            if (depth >= 3) a.classList.add('depth-' + depth);
+            toc.appendChild(a);
+            tocLinks.push({ el: h, link: a });
+        });
+
+        // --- Scroll spy ---
+        let ticking = false;
+        function updateActive() {
+            const scrollY = window.scrollY + 100;
+            let current = tocLinks[0];
+            for (const item of tocLinks) {
+                if (item.el.offsetTop <= scrollY) current = item;
+            }
+            tocLinks.forEach(i => i.link.classList.remove('active'));
+            if (current) {
+                current.link.classList.add('active');
+                current.link.scrollIntoView({ block: 'nearest' });
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+        });
+        updateActive();
+
+        // --- Smooth scroll for TOC links ---
+        toc.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', e.target.href);
+            }
+        });
+
+        // --- Smooth scroll for in-content anchor links ---
+        document.querySelectorAll('main a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = decodeURIComponent(a.getAttribute('href').slice(1));
+                const target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    })();
+
+    // --- Sidebar toggle ---
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const tb = document.getElementById('topbar');
+        sb.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        tb.classList.toggle('expanded');
+    }
+
+    // --- Search ---
+    let searchTimeout;
+    function doSearch(q) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => _search(q), 200);
+    }
+    function _search(query) {
+        const main = document.getElementById('main');
+        // Remove old marks
+        main.querySelectorAll('mark[data-search]').forEach(m => {
+            const parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+        });
+        const countEl = document.getElementById('searchCount');
+        if (!query || query.length < 2) { countEl.textContent = ''; return; }
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+                regex.test(walker.currentNode.textContent)) {
+                nodes.push(walker.currentNode);
+                regex.lastIndex = 0;
+            }
+        }
+        let count = 0;
+        nodes.forEach(node => {
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            regex.lastIndex = 0;
+            let m;
+            while ((m = regex.exec(node.textContent)) !== null) {
+                frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+                const mark = document.createElement('mark');
+                mark.setAttribute('data-search', '');
+                mark.textContent = m[0];
+                frag.appendChild(mark);
+                last = regex.lastIndex;
+                count++;
+            }
+            frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+            node.parentNode.replaceChild(frag, node);
+        });
+        countEl.textContent = count > 0 ? count + '건' : '0건';
+        const first = main.querySelector('mark[data-search]');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- Theme ---
+    function toggleTheme() {
+        const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        document.body.dataset.theme = d;
+        try { localStorage.setItem('theme', d); } catch(e) {}
+    }
+    try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>

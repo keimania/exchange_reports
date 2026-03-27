@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="pandoc">
+  <title>Blue_Ocean_ATS_Analysis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Mobile TOC toggle button -->
+<button class="toc-toggle" id="tocToggle" aria-label="목차 열기/닫기">
+  <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+  <span class="toc-toggle-label">목차</span>
+</button>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar TOC -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-home" title="리포트 인덱스">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      전체 리포트
+    </a>
+    <div class="sidebar-title">목차</div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <ul>
+    <li><a href="#blue-ocean-ats-심층-분석" id="toc-blue-ocean-ats-심층-분석">Blue Ocean ATS 심층 분석</a>
+    <ul>
+    <li><a href="#기관-개요-및-시장-내-위상" id="toc-기관-개요-및-시장-내-위상">1. 기관 개요 및 시장 내 위상</a>
+    <ul>
+    <li><a href="#설립-배경-및-소유-구조" id="toc-설립-배경-및-소유-구조">1.1 설립 배경 및 소유 구조</a></li>
+    <li><a href="#규제-현황" id="toc-규제-현황">1.2 규제 현황</a></li>
+    </ul></li>
+    <li><a href="#현행-거래-제도" id="toc-현행-거래-제도">2. 현행 거래 제도</a>
+    <ul>
+    <li><a href="#거래-시간-및-세션-구조" id="toc-거래-시간-및-세션-구조">2.1 거래 시간 및 세션 구조</a></li>
+    <li><a href="#주문-유형-및-제한" id="toc-주문-유형-및-제한">2.2 주문 유형 및 제한</a></li>
+    <li><a href="#가격-통제-메커니즘" id="toc-가격-통제-메커니즘">2.3 가격 통제 메커니즘</a></li>
+    </ul></li>
+    <li><a href="#핵심-시스템-인프라" id="toc-핵심-시스템-인프라">3. 핵심 시스템 인프라</a>
+    <ul>
+    <li><a href="#memx-매칭-엔진-마이그레이션" id="toc-memx-매칭-엔진-마이그레이션">3.1 MEMX 매칭 엔진 마이그레이션</a></li>
+    <li><a href="#년-8월-시스템-장애-사태" id="toc-년-8월-시스템-장애-사태">3.2 2024년 8월 시스템 장애 사태</a></li>
+    </ul></li>
+    <li><a href="#청산결제-체계" id="toc-청산결제-체계">4. 청산·결제 체계</a></li>
+    <li><a href="#시장-데이터-배포" id="toc-시장-데이터-배포">5. 시장 데이터 배포</a></li>
+    <li><a href="#한국-시장과의-관계" id="toc-한국-시장과의-관계">6. 한국 시장과의 관계</a>
+    <ul>
+    <li><a href="#한국-증권사-파트너십-현황" id="toc-한국-증권사-파트너십-현황">6.1 한국 증권사 파트너십 현황</a></li>
+    <li><a href="#한국-투자자-비중-및-거래량" id="toc-한국-투자자-비중-및-거래량">6.2 한국 투자자 비중 및 거래량</a></li>
+    <li><a href="#서울-오피스-및-아시아-전략" id="toc-서울-오피스-및-아시아-전략">6.3 서울 오피스 및 아시아 전략</a></li>
+    </ul></li>
+    <li><a href="#경쟁-구도" id="toc-경쟁-구도">7. 경쟁 구도</a></li>
+    <li><a href="#krx-현행-제도와의-비교-분석" id="toc-krx-현행-제도와의-비교-분석">8. KRX 현행 제도와의 비교 분석</a></li>
+    <li><a href="#결론-및-전망" id="toc-결론-및-전망">결론 및 전망</a></li>
+    </ul></li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- Main content -->
+<div class="main-content" id="mainContent">
+  <div class="content-wrapper">
+
+    <header>
+      <h1>Blue_Ocean_ATS_Analysis</h1>
+      <div class="subtitle">KRX 24시간 거래 전환 전략 리서치 시리즈</div>
+      <div class="date">2026년 3월 | Confidential</div>
+    </header>
+
+    <article>
+      <h1 id="blue-ocean-ats-심층-분석">Blue Ocean ATS 심층 분석</h1>
+      <blockquote>
+      <p>작성일: 2026년 3월 27일</p>
+      </blockquote>
+      <hr />
+      <h2 id="기관-개요-및-시장-내-위상">1. 기관 개요 및 시장 내 위상</h2>
+      <h3 id="설립-배경-및-소유-구조">1.1 설립 배경 및 소유 구조</h3>
+      <p>Blue Ocean ATS(이하 “BOATS”)는 미국 정규 거래시간 외 야간 시간대에 NMS(National Market System) 주식의 거래를 가능하게 하는 대체거래시스템(Alternative Trading System)이다. 회사는 2016년에 법인이 설립되었으며 2019년에 사업 구조가 재편되었고, 실제 거래 서비스는 <strong>2021년 6월</strong>에 공식 개시되었다.</p>
+      <p>공동창업자는 <strong>Gregory Shinnick</strong>과 <strong>Matthew Brown</strong>이며, CEO는 나스닥(Nasdaq) 출신의 <strong>Brian Hyndman</strong>이 맡고 있다. Hyndman CEO의 나스닥 경력은 BOATS의 기술 전략 및 규제 대응 역량에 핵심적 기반을 제공하고 있다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>구분</th>
+      <th>내용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>법인 설립</td>
+      <td>2016년 (2019년 재편)</td>
+      </tr>
+      <tr>
+      <td>서비스 개시</td>
+      <td>2021년 6월</td>
+      </tr>
+      <tr>
+      <td>공동창업자</td>
+      <td>Gregory Shinnick, Matthew Brown</td>
+      </tr>
+      <tr>
+      <td>CEO</td>
+      <td>Brian Hyndman (전 Nasdaq 임원)</td>
+      </tr>
+      <tr>
+      <td>법적 지위</td>
+      <td>SEC 등록 브로커-딜러, FINRA 회원사</td>
+      </tr>
+      <tr>
+      <td>거래 체계</td>
+      <td>Regulation ATS</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>소유 구조</strong>는 캐나다 상장 투자회사인 <strong>Urbana Corporation</strong>이 약 <strong>35%</strong> 의 지분을 보유하고 있으며, 일본 최대 거래소 그룹인 <strong>도쿄증권거래소(JPX, Japan Exchange Group)</strong> 가 <strong>5%</strong> 의 전략적 지분을 보유하고 있다. JPX의 투자 참여는 BOATS의 아시아 시장 전략에 대한 신뢰도를 제도적으로 뒷받침하는 중요한 요소이다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>주요 주주</th>
+      <th>지분율</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>Urbana Corporation</td>
+      <td>~35%</td>
+      <td>캐나다 상장 투자회사</td>
+      </tr>
+      <tr>
+      <td>JPX (도쿄증권거래소)</td>
+      <td>5%</td>
+      <td>전략적 투자</td>
+      </tr>
+      <tr>
+      <td>기타 투자자</td>
+      <td>~60%</td>
+      <td>창업자 및 기관투자자 등</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="규제-현황">1.2 규제 현황</h3>
+      <p>BOATS는 미국 증권거래위원회(SEC)에 <strong>등록된 브로커-딜러</strong>이자 <strong>FINRA(금융산업규제기구) 회원사</strong>로서, <strong>Regulation ATS</strong> 하에 운영되고 있다. 이는 BOATS가 정규 거래소(national securities exchange)가 아닌 대체거래시스템으로서의 법적 지위를 가진다는 것을 의미한다. Regulation ATS는 SEC Rule 3a1-1(a) 및 Regulation ATS(Rule 300-303)에 근거하며, BOATS는 이에 따라 Form ATS-N을 SEC에 제출하여 운영 세부사항을 공시하고 있다.</p>
+      <p>이 규제 체계 하에서 BOATS는 정규 거래소에 비해 상대적으로 유연한 운영이 가능하지만, 동시에 공정접근(fair access), 시스템 안정성, 이해충돌 관리 등에 관한 SEC와 FINRA의 엄격한 감독을 받는다.</p>
+      <hr />
+      <h2 id="현행-거래-제도">2. 현행 거래 제도</h2>
+      <h3 id="거래-시간-및-세션-구조">2.1 거래 시간 및 세션 구조</h3>
+      <p>BOATS의 가장 핵심적인 차별점은 <strong>미국 정규시장이 닫힌 야간 시간대</strong>에 거래를 제공한다는 점이다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>구분</th>
+      <th>세부 내용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>거래 시간</td>
+      <td>20:00 ~ 04:00 ET (미국 동부시간)</td>
+      </tr>
+      <tr>
+      <td>거래 요일</td>
+      <td>일요일 ~ 목요일 (주 5회)</td>
+      </tr>
+      <tr>
+      <td>세션 길이</td>
+      <td>1회당 8시간</td>
+      </tr>
+      <tr>
+      <td>참조가 결정 시각</td>
+      <td>19:30 ET</td>
+      </tr>
+      <tr>
+      <td>전반 세션 (20:00~00:00)</td>
+      <td>익영업일 기준 거래일 적용</td>
+      </tr>
+      <tr>
+      <td>후반 세션 (00:00~04:00)</td>
+      <td>당일 영업일 기준 거래일 적용</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>특히 20:00~00:00 사이에 체결된 거래는 <strong>익영업일(next business day)</strong> 의 거래일(trade date)로 처리되며, 00:00~04:00 사이의 거래는 당일 영업일로 처리된다. 이 구조는 결제 일정(T+1)과 연동되므로 투자자 및 청산 참여자들이 반드시 인지해야 할 사항이다.</p>
+      <p>한국 시간으로 환산하면 (ET + 14시간 기준, 서머타임 미적용 시) <strong>오전 10:00 ~ 오후 18:00 KST</strong>에 해당하여, 한국 투자자에게는 사실상 <strong>한국 주간 시간대에 미국 주식을 거래</strong>할 수 있는 환경을 제공한다.</p>
+      <h3 id="주문-유형-및-제한">2.2 주문 유형 및 제한</h3>
+      <p>BOATS는 현재 <strong>지정가 주문(Limit Order)만</strong> 허용하며, <strong>시장가 주문(Market Order)은 지원하지 않는다</strong>. 이는 야간 시간대의 유동성 특성상 시장가 주문이 극단적 가격에 체결될 위험을 방지하기 위한 투자자 보호 조치이다.</p>
+      <p>또한 <strong>주문은 세션 간 이월(carry-over)되지 않는다</strong>. 즉, 해당 세션 내에서 체결되지 않은 주문은 세션 종료 시 자동으로 취소되며, 다음 세션에서 거래하려면 새로운 주문을 제출해야 한다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>주문 관련 규칙</th>
+      <th>내용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>허용 주문 유형</td>
+      <td>지정가 주문(Limit Order)만</td>
+      </tr>
+      <tr>
+      <td>시장가 주문</td>
+      <td>불가</td>
+      </tr>
+      <tr>
+      <td>주문 이월</td>
+      <td>불가 (세션 종료 시 자동 취소)</td>
+      </tr>
+      <tr>
+      <td>주문 유효기간</td>
+      <td>해당 세션 한정</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="가격-통제-메커니즘">2.3 가격 통제 메커니즘</h3>
+      <p>BOATS는 <strong>19:30 ET 기준 참조가(reference price)</strong> 를 기점으로 <strong>상하 20% 가격 밴드(price band)</strong> 를 설정한다. 이 참조가는 일반적으로 정규시장 종가 또는 애프터마켓 최종가를 기반으로 결정된다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>가격 통제 항목</th>
+      <th>세부 내용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>참조가 결정 시각</td>
+      <td>19:30 ET</td>
+      </tr>
+      <tr>
+      <td>가격 밴드 범위</td>
+      <td>참조가 대비 ±20%</td>
+      </tr>
+      <tr>
+      <td>목적</td>
+      <td>야간 시간대 급격한 가격 변동 방지</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>이 ±20% 밴드는 야간 시간대의 상대적으로 낮은 유동성 환경에서 극단적 가격 변동으로부터 투자자를 보호하는 역할을 한다. 다만 실적 발표 등 중대 이벤트 발생 시 20% 밴드가 충분하지 않을 수 있다는 지적도 존재한다.</p>
+      <hr />
+      <h2 id="핵심-시스템-인프라">3. 핵심 시스템 인프라</h2>
+      <h3 id="memx-매칭-엔진-마이그레이션">3.1 MEMX 매칭 엔진 마이그레이션</h3>
+      <p>BOATS는 <strong>2024년 8월</strong>, 기존 자체 매칭 엔진에서 <strong>MEMX(Members Exchange)</strong> 의 <strong>“Market-as-a-Service”</strong> 플랫폼으로 전면 마이그레이션하였다. MEMX는 2020년에 출범한 미국의 신생 증권거래소로, 초저지연(ultra-low latency) 기술력으로 알려져 있다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>기술 인프라 항목</th>
+      <th>세부 사양</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>매칭 엔진</td>
+      <td>MEMX Market-as-a-Service</td>
+      </tr>
+      <tr>
+      <td>마이그레이션 시점</td>
+      <td>2024년 8월</td>
+      </tr>
+      <tr>
+      <td>처리 용량</td>
+      <td>350억(35 billion) 메시지</td>
+      </tr>
+      <tr>
+      <td>프로토콜</td>
+      <td>FIX 5.0</td>
+      </tr>
+      <tr>
+      <td>인코딩 방식</td>
+      <td>SBE (Simple Binary Encoding)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>MEMX 플랫폼으로의 전환은 이전 시스템의 안정성 문제를 근본적으로 해결하고, 급증하는 거래량에 대응하기 위한 전략적 결정이었다. 350억 메시지 처리 용량은 현재 거래량 대비 충분한 여유를 확보하고 있으며, FIX 5.0 프로토콜과 SBE 인코딩은 기관투자자 및 글로벌 브로커의 시스템 연동을 용이하게 한다.</p>
+      <h3 id="년-8월-시스템-장애-사태">3.2 2024년 8월 시스템 장애 사태</h3>
+      <p>2024년 8월 5일, 글로벌 금융시장의 대규모 매도세(엔 캐리 트레이드 청산, 일본 닛케이 급락 등)가 발생한 날, BOATS의 <strong>기존 매칭 엔진이 폭주하는 주문량을 감당하지 못하고 장애를 일으켰다</strong>. 이 사태의 규모는 다음과 같다:</p>
+      <table>
+      <thead>
+      <tr>
+      <th>장애 영향 항목</th>
+      <th>규모</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>취소된 주문 규모</td>
+      <td>약 6,300억 원 (630B KRW)</td>
+      </tr>
+      <tr>
+      <td>영향 받은 계좌 수</td>
+      <td>약 90,000개</td>
+      </tr>
+      <tr>
+      <td>한국 서비스 중단 기간</td>
+      <td>약 15개월</td>
+      </tr>
+      <tr>
+      <td>한국 서비스 재개 시점</td>
+      <td>2025년 11월</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>이 장애는 특히 <strong>한국 투자자</strong>에게 치명적이었다. 당시 BOATS 전체 거래량의 <strong>약 65%</strong> 가 한국에서 발생하고 있었으며, 이 사태로 인해 한국 증권사들의 BOATS 연결이 약 15개월간 중단되었다. 이 기간 동안 한국 투자자들은 BOATS를 통한 야간 거래가 불가능했으며, 이는 BOATS의 한국 시장 점유율에 심대한 영향을 미쳤다.</p>
+      <p>이 장애가 MEMX 플랫폼 마이그레이션의 직접적 계기가 되었으며, 2024년 8월 마이그레이션 이후에는 유사한 규모의 시스템 장애가 보고되지 않고 있다.</p>
+      <hr />
+      <h2 id="청산결제-체계">4. 청산·결제 체계</h2>
+      <p>BOATS의 청산·결제 구조는 미국 표준 증권 결제 인프라를 활용한다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 48%" />
+      <col style="width: 33%" />
+      <col style="width: 18%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>청산·결제 단계</th>
+      <th>담당 기관</th>
+      <th>역할</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>청산 브로커</td>
+      <td>Velox Clearing LLC</td>
+      <td>거래 확인 및 청산 처리</td>
+      </tr>
+      <tr>
+      <td>중앙청산</td>
+      <td>NSCC (National Securities Clearing Corporation)</td>
+      <td>중앙거래상대방(CCP)</td>
+      </tr>
+      <tr>
+      <td>예탁</td>
+      <td>DTC (Depository Trust Company)</td>
+      <td>증권 예탁 및 결제</td>
+      </tr>
+      <tr>
+      <td>결제 방식</td>
+      <td>CNS (Continuous Net Settlement)</td>
+      <td>차감결제</td>
+      </tr>
+      <tr>
+      <td>결제 주기</td>
+      <td>T+1</td>
+      <td>거래일 익영업일 결제</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>특히 주목할 점은 <strong>2026년 3월</strong> 기준 <strong>RQD* Clearing</strong>과의 파트너십을 통해 <strong>토큰화된 NMS 주식(tokenized NMS equities)</strong> 의 청산을 추진하고 있다는 것이다. 이는 블록체인 기반 증권 결제라는 차세대 인프라를 선도적으로 도입하려는 시도로, 향후 결제 효율성과 투명성을 획기적으로 개선할 가능성이 있다.</p>
+      <hr />
+      <h2 id="시장-데이터-배포">5. 시장 데이터 배포</h2>
+      <p>야간 거래 시간대에는 <strong>SIP(Securities Information Processor)</strong> 가 가동되지 않으므로, BOATS는 자체적인 시장 데이터 배포 체계를 구축하고 있다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>데이터 유형</th>
+      <th>배포 채널</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>Level 1 (최우선 호가)</td>
+      <td>BOATS 자체 피드</td>
+      <td>실시간</td>
+      </tr>
+      <tr>
+      <td>Level 2 (호가창)</td>
+      <td>BOATS 자체 피드</td>
+      <td>실시간</td>
+      </tr>
+      <tr>
+      <td>터미널 서비스</td>
+      <td>Bloomberg Terminal</td>
+      <td>2025년 9월 연동</td>
+      </tr>
+      <tr>
+      <td>클라우드 스트리밍</td>
+      <td>NYSE Cloud Streaming</td>
+      <td>실시간</td>
+      </tr>
+      <tr>
+      <td>차트 플랫폼</td>
+      <td>TradingView</td>
+      <td>리테일 투자자 대상</td>
+      </tr>
+      <tr>
+      <td>DeFi 오라클</td>
+      <td>Pyth Network</td>
+      <td>온체인 데이터</td>
+      </tr>
+      <tr>
+      <td>데이터 피드</td>
+      <td>dxFeed</td>
+      <td>기관투자자 대상</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>2025년 9월 <strong>Bloomberg Terminal</strong> 연동은 BOATS의 기관투자자 접근성을 획기적으로 높인 이정표적 사건이다. 전 세계 주요 자산운용사, 헤지펀드, 은행의 트레이더가 Bloomberg을 통해 BOATS의 실시간 시세를 확인하고 주문을 집행할 수 있게 되었다. 또한 <strong>Pyth Network</strong> 연동은 DeFi(탈중앙화 금융) 생태계와의 접점을 마련한 것으로, 토큰화 증권 전략과 시너지를 형성할 수 있는 요소이다.</p>
+      <hr />
+      <h2 id="한국-시장과의-관계">6. 한국 시장과의 관계</h2>
+      <h3 id="한국-증권사-파트너십-현황">6.1 한국 증권사 파트너십 현황</h3>
+      <p>BOATS와 한국 시장의 관계는 <strong>2022년 2월 삼성증권(Samsung Securities)</strong> 과의 제휴로 시작되었다. 삼성증권은 BOATS의 <strong>최초 파트너 증권사</strong>로서, 한국 투자자들이 한국 주간 시간대에 미국 주식을 거래할 수 있는 서비스를 최초로 제공하였다.</p>
+      <p>이후 파트너십은 빠르게 확대되어 <strong>미래에셋증권(Mirae Asset Securities)</strong>, <strong>한국투자증권(Korea Investment &amp; Securities)</strong> 등 주요 증권사로 이어졌으며, 현재는 <strong>거의 모든 한국 증권사</strong>가 BOATS를 통한 야간 미국 주식 거래 서비스를 제공하고 있다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>시점</th>
+      <th>파트너십 이벤트</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>2022년 2월</td>
+      <td>삼성증권 최초 연결</td>
+      </tr>
+      <tr>
+      <td>2022~2024년</td>
+      <td>미래에셋, 한국투자증권 등 순차 연결</td>
+      </tr>
+      <tr>
+      <td>2024년 8월</td>
+      <td>시스템 장애로 한국 서비스 전면 중단</td>
+      </tr>
+      <tr>
+      <td>2025년 11월</td>
+      <td>한국 서비스 재개</td>
+      </tr>
+      <tr>
+      <td>현재</td>
+      <td>거의 모든 한국 주요 증권사 연결</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="한국-투자자-비중-및-거래량">6.2 한국 투자자 비중 및 거래량</h3>
+      <p>한국 투자자는 BOATS의 성장에 가장 결정적인 역할을 한 시장이다. 그러나 2024년 8월 장애 이후 그 비중에 현저한 변화가 발생하였다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>시기</th>
+      <th>한국 투자자 비중</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>2024년 8월 이전</td>
+      <td>전체 거래량의 ~65%</td>
+      <td>BOATS 주요 수익원</td>
+      </tr>
+      <tr>
+      <td>장애 기간 (2024.8~2025.11)</td>
+      <td>0% (서비스 중단)</td>
+      <td>15개월간 완전 단절</td>
+      </tr>
+      <tr>
+      <td>2025년 11월 이후</td>
+      <td>전체 거래량의 ~35%</td>
+      <td>서비스 재개 후 회복 중</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>한국 비중이 65%에서 35%로 감소한 것은, 15개월간의 공백 기간 동안 미국 내 기관투자자 및 다른 지역 투자자의 참여가 크게 증가했음을 의미한다. 이는 BOATS 입장에서 지역적 집중 리스크가 완화된 긍정적 변화이기도 하다.</p>
+      <h3 id="서울-오피스-및-아시아-전략">6.3 서울 오피스 및 아시아 전략</h3>
+      <p>BOATS는 <strong>2026년 초</strong> 서울에 오피스를 개설하였으며, 서울을 <strong>“아시아 전략의 허브(Hub of Asia Strategy)”</strong> 로 공식 지정하였다. 이는 다음과 같은 전략적 의미를 가진다:</p>
+      <ul>
+      <li><strong>한국 증권사 및 규제기관과의 직접적 소통 채널</strong> 확보</li>
+      <li><strong>아시아 시간대</strong> 비즈니스 개발 및 기술 지원 거점</li>
+      <li>JPX(5% 지분) 등 일본 파트너와의 <strong>지리적 연계</strong> 강화</li>
+      <li>동남아, 대만, 홍콩 등 <strong>아시아 확장의 교두보</strong> 역할</li>
+      </ul>
+      <hr />
+      <h2 id="경쟁-구도">7. 경쟁 구도</h2>
+      <p>2025~2026년 현재, 미국 야간 주식 거래 시장은 급속히 경쟁이 심화되고 있다. BOATS는 선점 효과를 누리고 있으나 강력한 경쟁자들이 진입 중이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 38%" />
+      <col style="width: 12%" />
+      <col style="width: 12%" />
+      <col style="width: 38%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>경쟁사/이니셔티브</th>
+      <th>현황</th>
+      <th>특징</th>
+      <th>BOATS 대비 위협도</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Blue Ocean ATS</strong></td>
+      <td>운영 중</td>
+      <td>시장 선도자, ~83-95% 점유율</td>
+      <td>- (기준)</td>
+      </tr>
+      <tr>
+      <td><strong>24X National Exchange</strong></td>
+      <td>SEC 승인, 아직 야간 미개시</td>
+      <td>24시간 정규거래소 지향</td>
+      <td>높음 (장기)</td>
+      </tr>
+      <tr>
+      <td><strong>Nasdaq Night</strong></td>
+      <td>2026년 하반기 예정</td>
+      <td>Nasdaq 브랜드 파워 및 기존 인프라</td>
+      <td>매우 높음</td>
+      </tr>
+      <tr>
+      <td><strong>NYSE Bruce</strong> (자회사)</td>
+      <td>준비 중</td>
+      <td>NYSE 산하 신설 법인</td>
+      <td>매우 높음</td>
+      </tr>
+      <tr>
+      <td><strong>MOON/Moonlight</strong></td>
+      <td>운영 중</td>
+      <td>소규모 경쟁사</td>
+      <td>낮음~중간</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>BOATS의 2025년 거래 실적</strong>은 야간 거래 시장에서의 압도적 지위를 보여준다:</p>
+      <table>
+      <thead>
+      <tr>
+      <th>지표</th>
+      <th>수치</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>2025년 연간 명목거래대금</td>
+      <td>$374.7B (약 500조 원)</td>
+      </tr>
+      <tr>
+      <td>거래 세션 수</td>
+      <td>307 세션</td>
+      </tr>
+      <tr>
+      <td>일평균 거래대금</td>
+      <td>$1.22B/야간</td>
+      </tr>
+      <tr>
+      <td>피크 일평균 (2025년 11월)</td>
+      <td>$2.45B/야간</td>
+      </tr>
+      <tr>
+      <td>역대 최고 기록 (2025.11.4)</td>
+      <td>$5.87B, 1.6억 주</td>
+      </tr>
+      <tr>
+      <td>2026년 3월 기준 일평균</td>
+      <td>1.25~1.3억 주/야간</td>
+      </tr>
+      <tr>
+      <td>야간 시장 점유율</td>
+      <td>~83-95%</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>83-95%라는 야간 시장 점유율은 사실상 독점적 수준이나, Nasdaq Night와 NYSE Bruce가 본격 가동되면 이 점유율은 상당히 희석될 것으로 예상된다. 특히 두 거래소는 기존 정규시장 참여자 네트워크, 브랜드 인지도, 기술 인프라를 야간 시간대로 확장하는 형태이므로 경쟁 우위를 점할 가능성이 높다.</p>
+      <hr />
+      <h2 id="krx-현행-제도와의-비교-분석">8. KRX 현행 제도와의 비교 분석</h2>
+      <p>한국거래소(KRX) 현행 제도와 BOATS를 비교하면, 한국 투자자가 왜 BOATS에 주목하는지를 이해할 수 있다.</p>
+      <table>
+      <thead>
+      <tr>
+      <th>비교 항목</th>
+      <th>KRX (한국거래소)</th>
+      <th>Blue Ocean ATS</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>거래 시간</td>
+      <td>09:00~15:30 KST (6.5시간)</td>
+      <td>20:00~04:00 ET (8시간)</td>
+      </tr>
+      <tr>
+      <td>한국시간 기준</td>
+      <td>09:00~15:30 KST</td>
+      <td><sub>10:00</sub>18:00 KST (비서머타임)</td>
+      </tr>
+      <tr>
+      <td>거래 대상</td>
+      <td>한국 상장 주식</td>
+      <td>미국 NMS 상장 주식</td>
+      </tr>
+      <tr>
+      <td>주문 유형</td>
+      <td>시장가, 지정가 등 다양</td>
+      <td>지정가만</td>
+      </tr>
+      <tr>
+      <td>가격 제한</td>
+      <td>상하한가 ±30%</td>
+      <td>참조가 대비 ±20%</td>
+      </tr>
+      <tr>
+      <td>결제 주기</td>
+      <td>T+2</td>
+      <td>T+1</td>
+      </tr>
+      <tr>
+      <td>중앙청산</td>
+      <td>KSD/한국예탁결제원</td>
+      <td>NSCC/DTC</td>
+      </tr>
+      <tr>
+      <td>시장 데이터</td>
+      <td>KRX 정보분배 (정규 SIP)</td>
+      <td>자체 피드 (야간 SIP 없음)</td>
+      </tr>
+      <tr>
+      <td>규제 체계</td>
+      <td>자본시장법, 금융위원회</td>
+      <td>SEC, FINRA, Regulation ATS</td>
+      </tr>
+      <tr>
+      <td>공매도</td>
+      <td>제한적 허용</td>
+      <td>야간 시간대 제한적</td>
+      </tr>
+      <tr>
+      <td>서킷브레이커</td>
+      <td>있음 (KOSPI 8/15/20%)</td>
+      <td>가격 밴드 (±20%)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>핵심 시사점:</strong></p>
+      <ol type="1">
+      <li><p><strong>시간대 상호보완성</strong>: KRX가 15:30에 폐장한 후, 미국 정규시장은 23:30 KST에 개장하므로 약 8시간의 공백이 존재한다. BOATS는 이 공백 중 상당 부분(<sub>10:00</sub>18:00 KST)을 채워주어, 한국 투자자에게 한국 주간 시간대 미국 주식 거래라는 독보적 가치를 제공한다.</p></li>
+      <li><p><strong>결제 주기 차이</strong>: KRX의 T+2 대비 BOATS의 T+1은 자본 효율성 측면에서 우위를 가진다. 다만 한국 투자자 입장에서는 환전 및 해외 결제 과정이 추가되므로 실질 결제 소요시간은 다를 수 있다.</p></li>
+      <li><p><strong>가격 통제 차이</strong>: KRX의 ±30% 상하한가 대비 BOATS의 ±20% 밴드는 더 보수적이다. 야간 시간대의 낮은 유동성을 감안하면 합리적이나, 실적 발표 등 대형 이벤트 시 가격 발견 기능이 제한될 수 있다.</p></li>
+      <li><p><strong>주문 유형 제한</strong>: KRX는 다양한 주문 유형을 지원하지만, BOATS의 지정가 전용 정책은 야간 유동성 환경에서의 투자자 보호 관점에서 불가피한 선택이다. 향후 유동성이 충분히 성장하면 주문 유형 확대가 검토될 수 있다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="결론-및-전망">결론 및 전망</h2>
+      <p>Blue Ocean ATS는 미국 야간 주식 거래라는 새로운 시장을 사실상 창출한 선구자로서, 2025년 기준 약 $374.7B의 연간 거래대금과 83-95%의 야간 시장 점유율을 기록하며 독보적 위치를 확보하고 있다. 특히 한국 시장과의 깊은 연결은 BOATS의 정체성을 규정하는 핵심 요소이며, 2026년 초 서울 오피스 개설은 이 관계를 더욱 공고히 하려는 의지의 표현이다.</p>
+      <p>그러나 Nasdaq Night(2026년 하반기)과 NYSE Bruce의 진입은 BOATS에 실존적 도전이 될 수 있다. 이들 거대 거래소의 기존 네트워크 효과, 브랜드 신뢰도, 기술 인프라는 BOATS의 선점 효과를 빠르게 잠식할 수 있는 잠재력을 보유하고 있다. BOATS가 MEMX 기반의 기술 안정성, RQD* Clearing과의 토큰화 이니셔티브, 그리고 아시아 시장에서의 깊은 관계를 차별화 요소로 유지할 수 있을지가 향후 경쟁 구도의 핵심 변수가 될 것이다.</p>
+      <hr />
+      <p><em>본 보고서는 공개된 자료를 기반으로 작성되었으며, 투자 권유를 목적으로 하지 않습니다.</em></p>
+    </article>
+
+    <hr>
+    <footer>
+      <p>본 보고서는 KRX 24시간 거래 전환 전략 리서치 프로젝트의 일환으로 작성되었습니다.</p>
+      <p>&copy; 2026 | Generated from Markdown source</p>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  // Mobile toggle
+  var toggle = document.getElementById('tocToggle');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  var iconMenu = toggle ? toggle.querySelector('.icon-menu') : null;
+  var iconClose = toggle ? toggle.querySelector('.icon-close') : null;
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    if (iconMenu) iconMenu.style.display = 'none';
+    if (iconClose) iconClose.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    if (iconMenu) iconMenu.style.display = 'block';
+    if (iconClose) iconClose.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      if (sidebar && sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+
+  // Close sidebar on link click (mobile)
+  if (sidebar) {
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth < 1100) {
+          closeSidebar();
+        }
+      });
+    });
+  }
+
+  // Scroll spy: highlight active section in TOC
+  var headings = document.querySelectorAll('article h1[id], article h2[id], article h3[id]');
+  var tocLinks = sidebar ? sidebar.querySelectorAll('a[href^="#"]') : [];
+
+  if (headings.length > 0 && tocLinks.length > 0) {
+    var tocMap = {};
+    tocLinks.forEach(function(link) {
+      tocMap[link.getAttribute('href')] = link;
+    });
+
+    function updateActive() {
+      var scrollPos = window.scrollY + 120;
+      var current = null;
+
+      headings.forEach(function(h) {
+        if (h.offsetTop <= scrollPos) {
+          current = h;
+        }
+      });
+
+      tocLinks.forEach(function(link) {
+        link.classList.remove('active');
+      });
+
+      if (current) {
+        var activeLink = tocMap['#' + current.id];
+        if (activeLink) {
+          activeLink.classList.add('active');
+          // Scroll TOC to keep active item visible
+          var nav = document.getElementById('sidebarNav');
+          if (nav && window.innerWidth >= 1100) {
+            var linkTop = activeLink.offsetTop - nav.offsetTop;
+            var navScroll = nav.scrollTop;
+            var navHeight = nav.clientHeight;
+            if (linkTop < navScroll + 40 || linkTop > navScroll + navHeight - 40) {
+              nav.scrollTo({ top: linkTop - navHeight / 3, behavior: 'smooth' });
+            }
+          }
+        }
+      }
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    updateActive();
+  }
+
+  // Progress bar
+  var progressBar = document.createElement('div');
+  progressBar.className = 'reading-progress';
+  document.body.appendChild(progressBar);
+
+  window.addEventListener('scroll', function() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = (window.scrollY / docHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  });
+})();
+</script>
+
+</body>
+</html>

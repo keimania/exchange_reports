@@ -1,0 +1,252 @@
+Technical Feasibility and Market Structure Analysis: The NASDAQ 23/5 Global Trading Ecosystem
+1. Executive Summary
+The global equity market structure is currently undergoing its most significant transformation since the transition to electronic trading: the shift from regional, time-bound liquidity pools to a continuous, asynchronous global trading cycle. For the Korea Exchange (KRX), this evolution presents both an urgent competitive threat and a strategic opportunity to capture cross-border liquidity flows. This report provides an exhaustive case study of NASDAQ’s "Global Trading Hours" (GTH) initiative, specifically its proposal to extend operations to a "23/5" model (23 hours a day, five days a week).
+The analysis herein is designed to serve as a technical and operational blueprint for KRX stakeholders. It dissects NASDAQ’s regulatory filings, technical specifications, and strategic partnerships to reveal the underlying mechanics of their 24-hour ecosystem. Key findings indicate that NASDAQ’s approach is not merely an extension of existing trading hours but a fundamental re-architecture of the trading day involving bifurcated regulatory regimes, physically segregated connectivity ports, and a sophisticated "double-flush" risk management protocol to handle the transition between trading sessions.
+Furthermore, the report highlights the critical dependency on downstream market infrastructure—specifically the Depository Trust & Clearing Corporation (DTCC) and the National Securities Clearing Corporation (NSCC)—which are parallelly upgrading to a 24/5 clearing model to mitigate the counterparty risk inherent in overnight trading. The emergence of Alternative Trading Systems (ATS) like Blue Ocean Technologies, which currently dominate the overnight retail flow from Asia, has forced regulated exchanges like NASDAQ to innovate or risk losing relevance in the "post-market" landscape.
+For KRX, the implementation of a similar 24-hour model requires a rigorous evaluation of matching engine determinism, protocol adaptation (OUCH/FIX), regulatory waivers for overnight volatility, and the synchronization of trade dates with the banking system’s settlement windows. This document details these considerations, supported by granular analysis of NASDAQ’s proposed Rule Change SR-NASDAQ-2025-106 and associated technical documentation.
+2. Strategic Imperatives and Global Market Evolution
+2.1 The Macro-Structural Shift to Continuous Liquidity
+The traditional equity market structure, anchored by the "9:30 AM to 4:00 PM" core trading session, is increasingly viewed as an anachronism in a globally interconnected financial system. The impetus for NASDAQ’s expansion originates from three converging vectors that KRX must also consider in its strategic planning.
+First, the "retailization" of trading has altered liquidity demands. The rise of zero-commission brokerages and mobile trading platforms has empowered a demographic of investors who do not operate within standard banking hours.1 This trend is particularly pronounced in the Asia-Pacific (APAC) region, where retail investors demonstrate a strong appetite for U.S. technology stocks. Currently, these investors must trade during their local night time (U.S. day time) or rely on illiquid pre-market sessions. NASDAQ’s 23/5 initiative is explicitly designed to repatriate this flow, offering "local hours" trading for global investors.2
+Second, the competitive threat from Alternative Trading Systems (ATS) has materialized into significant market share erosion for regulated exchanges. Blue Ocean Technologies, an ATS specifically designed for overnight trading, has successfully captured billions of dollars in notional value by partnering with Asian brokerages.4 This demonstrates that the demand for overnight liquidity is not theoretical but realized. NASDAQ’s move is a defensive strategy to bring this volume back onto a "lit" exchange environment where it can monetize market data and transaction fees.
+Third, the convergence of digital assets and traditional finance has normalized the expectation of 24/7 access. Investors acclimated to the continuous operation of cryptocurrency markets view the weekend and overnight closures of equity markets as friction points.6 As traditional exchanges integrate digital asset products, the disparity between the operating hours of the underlying equity infrastructure and the digital asset overlay becomes untenable.
+2.2 The Competitive Landscape of Overnight Liquidity
+While NASDAQ is a primary mover among national securities exchanges, the ecosystem is fragmenting into distinct competitive tiers. Understanding this landscape is crucial for KRX to position its own offering.
+The Incumbent ATS Model: Blue Ocean ATS currently leads the overnight space, operating from 8:00 PM to 4:00 AM ET. Its success is built on partnerships with retail aggregators (e.g., Robinhood, Samsung Securities) rather than institutional direct market access.5 The ATS model is agile but lacks the regulatory robustness of an exchange, relying on internal risk controls rather than the consolidated surveillance of a Self-Regulatory Organization (SRO).
+The Exchange Response:
+NASDAQ’s proposal is part of a broader wave of exchange-led initiatives.
+NASDAQ: Proposed 23/5 model with a distinct "Night Session".7
+NYSE Arca: Has filed to extend trading to 22 hours a day, signaling that this is a market-wide shift rather than a single-venue experiment.8
+24X National Exchange: A newly approved exchange aiming for a full 23-hour model, challenging incumbent exchanges with a clean-slate technology stack designed for continuous operation without legacy debt.8
+For KRX, this signals that "overnight" liquidity is no longer a niche service provided by fringe operators but is becoming a standard competitive requirement for global listing venues. The risk of inaction is the permanent migration of overnight volume to offshore ATS venues or competing exchanges that offer superior accessibility.
+3. The NASDAQ 23/5 Proposal: Operational Architecture
+NASDAQ’s "Global Trading Hours" proposal (SR-NASDAQ-2025-106) is not merely a lengthening of the trading day. It is a sophisticated re-architecture of the session lifecycle, designed to balance the demand for continuous access with the technical necessity of system maintenance and trade date reconciliation.
+3.1 The Bifurcated Session Model
+NASDAQ proposes to divide the trading day into two primary operational components: the "Day Session" and the "Night Session." This distinction is legal, technical, and operational.7
+3.1.1 The "Day" Session (04:00 AM – 20:00 PM ET)
+The Day Session encompasses the current operational structure of the exchange. It is further subdivided into three segments:
+Pre-Market (04:00 AM – 09:30 AM): Characterized by limit orders only and the absence of official opening prices until the cross.
+Regular Market Hours (09:30 AM – 16:00 PM): The core session where full Regulation NMS protections apply, utilizing the Opening and Closing Crosses for price discovery.
+Post-Market (16:00 PM – 20:00 PM): Similar to the Pre-Market, this session allows for extended trading but with reduced regulatory protections and liquidity.11
+Critically, the Day Session effectively ends at 8:00 PM ET. This is a hard stop. At this moment, the NASDAQ system initiates a "flush" protocol. All outstanding orders on the NASDAQ book—whether Day, GTC (Good 'Til Cancelled), or extended hours orders—are automatically cancelled.10 This creates a clean slate, ensuring that no stale liquidity bridges the gap between the Day Session and the subsequent Night Session.
+3.1.2 The Strategic Market Infrastructure Maintenance Pause (20:00 PM – 21:00 PM ET)
+The one-hour window between 8:00 PM and 9:00 PM ET is the operational "airlock" of the NASDAQ ecosystem. No trading occurs during this period. This pause is not arbitrary; it serves three critical functions that KRX should replicate in any proposed 24-hour model 8:
+Trade Date Rollover: The US banking system and the DTCC utilize 8:00 PM ET as the cutoff for the current trade date (T). The pause allows internal systems to batch process the day's trades and reset the logical date to T+1.
+Corporate Action Processing: Mergers, stock splits, and dividend adjustments typically become effective "overnight." This window allows the exchange to update reference data and adjust order book prices (e.g., halving price for a 2-for-1 split) without active orders interfering.
+System Maintenance: It provides a window for software patches, hardware failovers, and the "flushing" of memory caches in the matching engine, ensuring performance stability for the next 23-hour cycle.
+3.1.3 The "Night" Session (21:00 PM – 04:00 AM ET)
+The Night Session is the new operational construct introduced by the proposal.
+Start Time: Connectivity ports open for order entry at 21:00 PM ET.
+Operating Days: Sunday through Thursday. The trading week effectively begins on Sunday night at 9:00 PM ET.7
+End Time: The session concludes at 04:00 AM ET. At this moment, a second flush occurs. All orders entered during the Night Session are cancelled. Participants must re-enter orders for the 04:00 AM Pre-Market start.10
+Table 1: Proposed NASDAQ Session Schedule and Transitions
+Time (ET)
+Session
+Activity Status
+Trade Date
+04:00 AM - 09:30 AM
+Pre-Market
+Trading Active
+T
+09:30 AM - 16:00 PM
+Regular Market
+Trading Active (Crosses)
+T
+16:00 PM - 20:00 PM
+Post-Market
+Trading Active
+T
+20:00 PM - 21:00 PM
+Maintenance Pause
+Trading Halted / Order Flush
+Transition (T to T+1)
+21:00 PM - 23:59 PM
+Night Session (Part 1)
+Trading Active
+T+1
+00:00 AM - 04:00 AM
+Night Session (Part 2)
+Trading Active
+T+1
+04:00 AM
+Transition
+Order Flush / Re-entry
+T+1
+Analysis: The "double flush" mechanism (at 8 PM and 4 AM) is a robust risk management control. It prevents orders priced based on 8 PM information from executing at 4 AM when macroeconomic news in Europe or Asia might have fundamentally shifted the fair value of the asset. It forces participants to actively manage their interest, reducing the exchange's liability for "stale" executions.
+3.2 Order Type Restrictions and Logic
+To minimize complexity and volatility risk during the illiquid Night Session, NASDAQ restricts the suite of allowable order types. The complex algorithmic order types available during the Regular Market Hours are largely disabled.
+Permitted Orders: The Night Session primarily supports Limit Orders and Intermarket Sweep Orders (ISO). This reflects the need for price certainty in a thin market.7
+Prohibited Orders:
+Market Orders: Banned to prevent catastrophic execution prices in wide-spread environments.
+Pegged Orders: Disabled because there is no consolidated National Best Bid and Offer (NBBO) to peg to during the night.
+Auction Orders (MOO/LOO/MOC/LOC): There are no opening or closing crosses in the Night Session, so these are rejected.
+Discretionary Orders: Disabled to reduce matching engine complexity.8
+Time-in-Force (TIF) Logic and Session Boundaries: To prevent the risks of stale orders executing in vastly different liquidity environments, Nasdaq enforces strict logical separation between sessions. A paramount change is the complete abolition of Good-Til-Cancelled (GTC) orders from the Nasdaq system by February 2026. With GTC orders removed, participants cannot leave orders open indefinitely across session boundaries. Furthermore, Time-in-Force (TIF) instructions like "Day" or "SDAY" (System Day) are strictly bounded by the physical session flushes:
+Day to Night Transition: Any order active during the Day Session (04:00 AM – 20:00 PM ET) is forcefully cancelled at the 20:00 PM flush.8 No order bridges the 1-hour maintenance window.8
+Night to Day Transition: Similarly, an order entered during the Night Session (21:00 PM – 04:00 AM ET) will automatically expire and be cancelled by the system at the 04:00 AM flush.11 Members must completely re-enter their orders if they wish to participate in the Pre-Market session that follows.11
+4. Regulatory Framework: Managing the Bifurcated Regime
+A critical challenge for KRX in implementing 24-hour trading is the regulatory classification of the overnight session. NASDAQ’s approach bifurcates the regulatory regime between "Core Trading Hours" and the "Night Session." This separation is essential because the rigorous protections of the U.S. National Market System (Reg NMS) are designed for a consolidated market with multiple active exchanges, a condition that does not exist at 3:00 AM.
+4.1 Regulation NMS and the Order Protection Rule
+During the Regular Market Session (9:30 AM – 4:00 PM), Rule 611 (Order Protection Rule) of Regulation NMS applies. This rule prevents "trade-throughs"—executing a trade at a price worse than a protected quote displayed on another venue. It forces exchanges to route orders to the venue with the best price.
+However, NASDAQ has designated the Night Session as "Extended Hours." Consequently, Rule 611 does not apply during the 9:00 PM – 4:00 AM window.8
+Implication: There is no "protected" NBBO during the night. If NASDAQ is offering Apple (AAPL) at $150.00 and Blue Ocean ATS is offering it at $149.90, NASDAQ is not obligated to route the order to Blue Ocean.
+Fragmented Liquidity: This regulatory decoupling implies that the Night Session functions more like an isolated liquidity pool (similar to an ECN) rather than a fully interconnected national market. Price formation is local to the venue.
+4.2 Price Volatility Mechanisms: LULD vs. CEE
+The Limit Up-Limit Down (LULD) mechanism, which pauses trading if prices move outside of specific bands (e.g., 5% in 5 minutes), is only active during Regular Market Hours. In the absence of LULD, NASDAQ relies on Clearly Erroneous Execution (CEE) rules (Rule 11890) to maintain market integrity during the Night Session.11
+Numerical Guidelines: The proposal likely includes widened percentage thresholds for determining erroneous trades during the night. For instance, while a 3% deviation might trigger a review during the day, the Night Session might tolerate 20% deviations for certain stocks before a trade is broken, acknowledging the wider spreads.8
+Volatility Guards: NASDAQ is discussing specific volatility moderators to replace LULD. These internal "collars" would reject orders that are aggressively priced too far through the last sale price, preventing "flash crash" scenarios caused by a single large market order sweeping a thin book.11
+4.3 Disclosure Obligations
+Recognizing the heightened risk, regulators (SEC and FINRA) require specific disclosures for extended hours trading. Brokers must explicitly inform customers of risks such as:
+Lower Liquidity: Difficulty executing orders at desired prices.
+Higher Volatility: Greater price swings than during regular hours.
+Changing Prices: Prices may not reflect the consolidated market value.
+Unlinked Markets: Prices on one venue may not match prices on another.9
+For KRX, adopting a similar "risk disclosure" framework will be necessary to protect retail investors entering the overnight market.
+5. Technical Infrastructure: Connectivity and Protocols
+For the technology division at KRX, the most pertinent details lie in how NASDAQ physically and logically differentiates the Night Session. The implementation relies on strict logical segregation to ensure the stability of the core market.
+5.1 Port Segregation and Connectivity
+NASDAQ mandates the use of separate logical ports for the Night Session. Existing connectivity for the Day Session cannot be used for the Night Session.10
+Day Ports: Operational 04:00 AM – 20:00 PM ET. These ports are hard-coded to reject orders outside this window.
+Night Ports: Operational 21:00 PM – 04:00 AM ET. These are new logical entities that participants must order and pay for.
+Risk Isolation: This segregation allows NASDAQ to run a distinct instance or partition of its matching engine for the Night Session. If the Night Session instance encounters a catastrophic software failure (e.g., a memory leak or an infinite loop triggered by an edge case), the Day Session infrastructure remains uncorrupted. The "blast radius" of an overnight failure is contained.10
+5.2 Protocol Specifications: OUCH, FIX, and ITCH
+The ecosystem supports NASDAQ’s standard suite of protocols, updated to recognize the new session identifiers and trade dates.
+5.2.1 OUCH 5.0 (Order Entry)
+OUCH is NASDAQ’s native low-latency binary protocol. It prioritizes speed over flexibility.
+Architecture: OUCH uses fixed-length messages and eliminates the "handshaking" overhead of FIX.
+Night Implementation: Participants using OUCH for the Night Session must manage their own order state rigorously. Since OUCH does not provide the rich "execution report" history of FIX upon reconnection, firms must track their Night Session exposures in real-time.
+Message Types: The Enter Order message will require specific TIF values (e.g., 99999 for Market Day) that the host interprets differently depending on whether it is received on a Day Port or a Night Port.15
+5.2.2 ITCH (Market Data)
+ITCH is the outbound proprietary data feed that broadcasts every individual order and execution (Level 3 data).
+Feed Consolidation: NASDAQ plans to offer "Complete" data feeds that consolidate the 23-hour cycle into a single stream. However, they will also offer distinct "Night Session" feeds for firms that only want to consume overnight data without the bandwidth overhead of the full day’s history.
+Transparency: Unlike the SIP (Consolidated Tape), which aggregates top-of-book, ITCH provides full depth-of-book. This is critical for the Night Session, where liquidity may be sparse and fragmented across multiple price levels. Traders need to see the "air pockets" in the book to size their orders correctly.11
+5.2.3 FIX (Financial Information eXchange)
+For participants not requiring ultra-low latency, NASDAQ supports Core FIX. The FIX gateway acts as a translator, converting FIX messages into OUCH instructions for the matching engine. This lowers the barrier to entry for international firms (like Korean brokerages) who may already have FIX connectivity but lack OUCH development resources.11
+5.3 Latency and Resilience: The Eqlipse Stack
+NASDAQ’s transition is underpinned by its Eqlipse technology stack, a modernization effort crucial for supporting 24/7 uptime.
+Cloud-Native Architecture: The infrastructure is designed to be cloud-agnostic (partnered with AWS). This allows NASDAQ to spin up matching engine instances dynamically.
+Evergreen Updates: A critical requirement for 24-hour trading is the ability to patch systems without downtime. Eqlipse supports "rolling restarts" and microservices architectures that allow individual components (e.g., the gateway or the market data publisher) to be updated while the matching engine remains active.
+Deterministic Performance: Despite the cloud architecture, NASDAQ utilizes FPGA-accelerated gateways and kernel-bypass networking (likely Solarflare/Xilinx based technologies) to ensure that latency remains deterministic—a non-negotiable requirement for High-Frequency Trading (HFT) firms participating in the Night Session.14
+6. Post-Trade Architecture: Clearing and Settlement
+The most significant bottleneck for 24-hour trading is not matching orders, but clearing them. The divergence between "Trading Hours" (24/7) and "Banking Hours" (9-5) creates significant credit and settlement risk. NASDAQ’s initiative is synchronized with the DTCC’s expansion.
+6.1 The DTCC/NSCC 24x5 Expansion
+The National Securities Clearing Corporation (NSCC) is expanding its operations to support the 24/5 model, with a target implementation in Q3 2026. This is a massive infrastructure project involving the Universal Trade Capture (UTC) system.21
+Real-Time Novation: Currently, trades are often batched. In the new model, NSCC plans to provide immediate central counterparty (CCP) guarantees for trades executed during the Night Session.
+Risk Transfer: This means that once a trade is matched on NASDAQ at 2:00 AM and reported to NSCC, the credit risk transfers from the bilateral counterparties to the CCP. This is vital for allowing participants to trade with anonymity and confidence during illiquid hours.23
+6.2 Trade Date Logic and Settlement Cycles
+The industry has standardized on the 8:00 PM ET Trade Date Cutoff to align with banking windows.
+Scenario A (Trade at 7:55 PM Monday):
+Session: Day Session (Post-Market).
+Trade Date: Monday (T).
+Settlement Date: Wednesday (T+1).
+Scenario B (Trade at 9:05 PM Monday):
+Session: Night Session.
+Trade Date: Tuesday (T+1).
+Settlement Date: Wednesday (T+1).
+Implication: The "Monday Night" session is legally part of "Tuesday." This ensures that cash settlement always occurs on days when the Federal Reserve's Fedwire system is open. KRX must similarly align its "overnight" trade dates with the Bank of Korea's settlement system (BOK-Wire+) operating hours.9
+6.3 Margin and Collateral Management
+Operating overnight increases the margin burden on members.
+Volatility Margining: The NSCC may impose intraday margin calls or higher "Value-at-Risk" (VaR) charges for members active in the Night Session to buffer against the risk of the market moving significantly while banks are closed.
+Pre-Funding: Many brokers effectively mitigate this by requiring retail clients to 100% pre-fund overnight trades (i.e., no margin leverage allowed). This protects the broker from a client blowing up their account at 3:00 AM when no margin call can be issued or met.6
+7. Comparative Analysis: NASDAQ vs. Blue Ocean ATS vs. 24X
+To understand NASDAQ's strategic positioning, it is instructive to compare it with its primary competitors.
+Table 2: Comparative Market Structure
+Feature
+NASDAQ Night Session
+Blue Ocean ATS
+24X National Exchange
+Legal Structure
+National Securities Exchange
+Alternative Trading System (Broker-Dealer)
+National Securities Exchange
+Regulation
+Section 19(b) / SRO Rules
+Regulation ATS
+Section 19(b) / SRO Rules
+Hours
+9:00 PM - 4:00 AM ET
+8:00 PM - 4:00 AM ET
+23 Hours / 7 Days (Planned)
+Market Data
+ITCH (Proprietary & SIP)
+Proprietary Feed (distributed via SIP/vendors)
+Proprietary Feed
+Clearing
+NSCC (Real-time Novation)
+NSCC (T+1 Reporting)
+NSCC (Real-time Novation)
+Participants
+All Members (Retail & Institutional)
+Predominantly Retail Aggregators (Robinhood, Korean Brokers)
+Retail & Institutional
+Price Protection
+Rule 11890 (Strict Bands)
+Internal ATS Controls
+Exchange Rules
+Liquidity Source
+Central Limit Order Book
+Market Makers / Retail Flow
+Central Limit Order Book
+Analysis: Blue Ocean has the "first mover" advantage and deep ties with Korean retail brokers. However, NASDAQ offers the "safety" of an exchange. Institutional investors, who are largely absent from Blue Ocean due to counterparty and regulatory concerns, may be more willing to participate in a NASDAQ-regulated Night Session. 24X represents a "disruptor" threat—a exchange built from the ground up for 24/7, potentially offering lower costs or better technology than NASDAQ's retrofitted legacy stack.4
+8. Operational Resilience and SIFMA Guidelines
+The Securities Industry and Financial Markets Association (SIFMA) has established a working group to ensure that the move to 24/5 does not introduce systemic risk. Their guidelines, which NASDAQ has largely adopted, focus on operational robustness.25
+8.1 Staffing and Incident Response
+A 23/5 model challenges the traditional "follow-the-sun" support model.
+Operations: Firms must maintain "eyes on glass" surveillance capability during the Night Session. This likely requires staffing trading desks in Asian time zones or utilizing rotation shifts in the US.
+Cybersecurity: Security Operations Centers (SOC) must be fully active 24/7. The "quiet" night period is often a target for cyber-attacks.
+Incident Response: SIFMA emphasizes the need for clear escalation paths. If a matching engine fails at 2:00 AM, who has the authority to declare a "Self-Help" situation or halt the market? NASDAQ has defined specific protocols for these scenarios, ensuring that decision-making authority is delegated to night-shift operations leads.9
+9. Implications and Recommendations for the Korea Exchange (KRX)
+Based on the exhaustive analysis of the NASDAQ ecosystem, the following strategic and technical recommendations are formulated for the KRX 24-hour trading initiative.
+9.1 Strategic Recommendations
+Adopt the "Maintenance Window": Do not attempt a seamless 24-hour stream immediately. Implement a pause (similar to NASDAQ’s 8PM-9PM ET) to allow for safe trade date rollovers and system maintenance. This reduces the risk of date-handling errors in clearing.
+Leverage the Exchange Brand: Compete on trust. While ATS venues may offer flexibility, KRX should emphasize its status as a regulated SRO with surveillance, clear error policies, and capital requirements. This appeals to institutional capital that is wary of "wild west" overnight venues.
+Collaborate with the CSD: The Korea Securities Depository (KSD) must be a partner from Day 1. Real-time trade capture and clearing guarantees are the bedrock of overnight liquidity. Without them, the exchange is merely accumulating uncollateralized credit risk.
+9.2 Technical Recommendations
+Segregate Matching Engines: Use distinct logical ports or even separate matching engine partitions for the overnight session. This "air-gaps" the risk; a technical failure during the low-volume night session should never jeopardize the open of the core KOSPI/KOSDAQ market.
+Simplify Order Types: Restrict the overnight session to Limit Orders only. Remove Market Orders, Pegs, and complex algos. This reduces the computational load and protects the order book from volatility induced by "fat finger" errors in a thin market.
+Protocol Adaptation: Ensure that the KRX FIX gateway and KOSCOM infrastructure can handle "Next Day" trade reporting flags. Participants need clear signaling in the execution report (Tag 75 TradeDate) to know which settlement cycle a trade belongs to.
+9.3 Regulatory Recommendations
+Define "Extended Hours" Explicitly: Create a distinct regulatory category for the overnight session that disapplies strict "best execution" or "trade-through" obligations that are impossible to meet when foreign markets are closed.
+Implement Hard Volatility Collars: Since Korean stocks may not have a liquid reference price overnight, implement strict price bands (e.g., +/- 15% from the domestic close) to prevent erroneous trades from setting unrealistic benchmarks for the next morning's open.
+10. Conclusion
+NASDAQ’s "Global Trading Hours" initiative represents a calculated compromise between the market's demand for immediacy and the constraints of legacy banking and regulatory infrastructure. By creating a "walled garden" for the Night Session—separated by ports, restricted rules, and distinct settlement logic—NASDAQ creates a safe sandbox for 24-hour liquidity.
+For KRX, the path forward lies not in simply keeping the lights on longer, but in orchestrating a synchronized upgrade of trading, clearing, and regulatory systems. The "23/5" model, with its built-in pauses and safety valves, offers a proven template for bridging the time zone gap between Seoul and the global capital markets.
+Citation Index
+7: NASDAQ 23/5 Proposal and SEC Filing.
+11: NASDAQ Global Trading Hours FAQ & Maintenance Window.
+8: Transition Procedures, Night Ports, and Order Flushing.
+9: SIFMA Recommendations and SIP Alignment.
+4: Blue Ocean ATS Statistics and Competitive Analysis.
+21: DTCC/NSCC 24x5 Clearing Roadmap.
+8: Regulatory Framework, Reg NMS, and Rule 611.
+8: Night Session Order Types and Market Maker Obligations.
+15: OUCH Protocol and Technical Specs.
+14: Nasdaq Eqlipse Technology Stack.
+참고 자료
+Nasdaq Proposes Near-24-Hour Trading | Cadwalader, Wickersham & Taft LLP - JDSupra, 2월 12, 2026에 액세스, https://www.jdsupra.com/legalnews/nasdaq-proposes-near-24-hour-trading-6538509/
+Nasdaq looks to extend trading hours as Wall Street eyes 24/7 move | Daily Sabah, 2월 12, 2026에 액세스, https://www.dailysabah.com/business/finance/nasdaq-looks-to-extend-trading-hours-as-wall-street-eyes-247-move
+Nasdaq Seeks SEC Approval For 23-Hour, Five-Day Trading Schedule, 2월 12, 2026에 액세스, https://www.nasdaq.com/articles/nasdaq-seeks-sec-approval-23-hour-five-day-trading-schedule
+Blue Ocean ATS Joins Pyth Network: Institutional Overnight Hours US Equity Data, 2월 12, 2026에 액세스, https://blueocean-tech.io/2025/09/25/pyth-blue-ocean-ats-joins-pyth-network-institutional-overnight-hours-us-equity-data/
+Blue Ocean: Overnight trading could reach 10% of total volumes, 2월 12, 2026에 액세스, https://www.globaltrading.net/blue-ocean-overnight-trading-could-reach-10-of-total-volumes/
+Market Spotlight: 24 Hour Trading | BlackRock, 2월 12, 2026에 액세스, https://www.blackrock.com/corporate/literature/whitepaper/blackrock-market-spotlight-24-hour-trading.pdf
+Nasdaq Proposes to Extend Trading Hours During Weekdays | Practical Law - Westlaw, 2월 12, 2026에 액세스, https://content.next.westlaw.com/practical-law/document/I52f988cfdaa111f098028aa0904d44cc/Nasdaq-Proposes-to-Extend-Trading-Hours-During-Weekdays?viewType=FullText&transitionType=Default&contextData=(sc.Default)
+sr-nasdaq-2025-106, 2월 12, 2026에 액세스, https://listingcenter.nasdaq.com/assets/rulebook/nasdaq/filings/SR-NASDAQ-2025-106.pdf
+Extended Trading Hours: A New Frontier for US Equity Markets ..., 2월 12, 2026에 액세스, https://www.sifma.org/news/blog/extended-trading-hours-a-new-frontier-for-us-equity-markets
+Self-Regulatory Organizations; The Nasdaq Stock Market LLC; Notice of Filing of Proposed Rule Change To Extend the Exchange's U.S. Equities Trading Hours to 23 Hours a Day, Five Days a Week - Federal Register, 2월 12, 2026에 액세스, https://www.federalregister.gov/documents/2026/01/13/2026-00416/self-regulatory-organizations-the-nasdaq-stock-market-llc-notice-of-filing-of-proposed-rule-change
+Nasdaq Global Trading Hours, 2월 12, 2026에 액세스, https://www.nasdaq.com/docs/nasdaq-global-trading-hours-faqs
+24-Hour Market Trading Regulation Issues - Exegy, 2월 12, 2026에 액세스, https://www.exegy.com/24-hour-market-trading-regulation-issues/
+Nasdaq Proposes "Night Session" Trading | Find Know Do - Regulatory Intelligence, 2월 12, 2026에 액세스, https://www.findknowdo.com/news/01/13/2026/nasdaq-proposes-night-session-trading
+Future-Ready Markets - Preparing for 24/7 Trading| Nasdaq, 2월 12, 2026에 액세스, https://www.nasdaq.com/solutions/fintech/resources/whitepapers/future-ready-markets-continuous-trading-hours
+O*U*C*H - Nasdaq Trader, 2월 12, 2026에 액세스, https://www.nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/ouch2.0a.pdf
+Two Sides to Every Match - Nasdaq, 2월 12, 2026에 액세스, https://www.nasdaq.com/articles/two-sides-every-match-2014-10-08
+NASDAQ TotalView-ITCH 4.1 1 Overview, 2월 12, 2026에 액세스, https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/nqtv-itch-v4_1.pdf
+Protocol Quick Reference - Nasdaq Trader, 2월 12, 2026에 액세스, https://www.nasdaqtrader.com/content/ProductsServices/Trading/Protocols_quickref.pdf
+Achieving Ultra-Low Latency in Trading Infrastructure - Exegy, 2월 12, 2026에 액세스, https://www.exegy.com/ultra-low-latency-trading-infrastructure/
+Nasdaq Reaches 'New Base Camp' with Eqlipse - Markets Media, 2월 12, 2026에 액세스, https://www.marketsmedia.com/nasdaq-reaches-new-base-camp-with-eqlipse/
+THE SHIFT TO 24X5 TRADING: - DTCC, 2월 12, 2026에 액세스, https://www.dtcc.com/-/media/Files/Downloads/Transformation/theshiftto24x5trading.pdf
+DTCC's NSCC to Increase Clearing Hours to Support Extended Trading, 2월 12, 2026에 액세스, https://www.dtcc.com/news/2025/march/18/dtccs-nscc-to-increase-clearing-hours-to-support-extended-trading
+DTCC prepares for 24-hour trading onslaught - Global Trading, 2월 12, 2026에 액세스, https://www.globaltrading.net/dtcc-prepares-for-24-hour-trading-onslaught/
+24X National Exchange; Application for Registration - SIFMA, 2월 12, 2026에 액세스, https://www.sifma.org/advocacy/letters/24x-national-exchange-application-for-registration
+Equity Market Structure - SIFMA, 2월 12, 2026에 액세스, https://www.sifma.org/issues/market-structure/equity-market-structure
+Extended Trading Hours - SIFMA, 2월 12, 2026에 액세스, https://www.sifma.org/issues/market-structure/extended-trading-hours
+The Future of Trading Is Always On: Why Market Infrastructure Must Lead the Way - Nasdaq, 2월 12, 2026에 액세스, https://www.nasdaq.com/articles/fintech/always-on-market-infrastructure-must-lead-way

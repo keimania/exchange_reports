@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유럽거래소 Eurex/Euronext - 24시간 거래 체제 분석 리포트</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1a1a2e; --sidebar-bg: #f8f9fa; --border: #dee2e6;
+            --accent: #0066cc; --accent-light: #e7f1ff; --table-header: #0066cc;
+            --table-header-text: #ffffff; --table-border: #d0d7de; --code-bg: #f6f8fa;
+            --highlight: #fff3cd; --hover-bg: #e9ecef;
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f1a; --text: #d8d8e8; --sidebar-bg: #161625; --border: #2a2a45;
+            --accent: #4da6ff; --accent-light: #1a2a4a; --table-header: #1e3a5f;
+            --table-header-text: #e0e8f0; --table-border: #2a3a4a; --code-bg: #1e2a3a;
+            --highlight: #3a3520; --hover-bg: #1e1e35;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.75;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            overflow-y: auto; z-index: 100; transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-280px); }
+        .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 13px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-header select {
+            width: 100%; margin-top: 8px; padding: 7px 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+        }
+        .toc { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .toc a {
+            display: block; padding: 5px 16px; color: var(--text); text-decoration: none;
+            font-size: 12.5px; border-left: 3px solid transparent; transition: all 0.15s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toc a:hover { background: var(--hover-bg); }
+        .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: var(--accent-light); }
+        .toc a.depth-3 { padding-left: 30px; font-size: 11.5px; opacity: 0.85; }
+        .toc a.depth-4 { padding-left: 44px; font-size: 11px; opacity: 0.7; }
+
+        /* Top bar */
+        .topbar {
+            position: fixed; top: 0; right: 0; left: 280px; height: 48px;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 90;
+            transition: left 0.25s ease;
+        }
+        .topbar.expanded { left: 0; }
+        .topbar button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--sidebar-bg); color: var(--text); cursor: pointer; font-size: 13px;
+            white-space: nowrap;
+        }
+        .topbar button:hover { background: var(--hover-bg); }
+        .topbar input {
+            flex: 1; max-width: 350px; padding: 6px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--sidebar-bg); color: var(--text);
+        }
+        .search-count { font-size: 11px; color: var(--accent); min-width: 50px; }
+
+        /* Main content */
+        main {
+            margin-left: 280px; padding: 68px 50px 60px;
+            transition: margin-left 0.25s ease;
+        }
+        main.expanded { margin-left: 0; }
+        h1 { font-size: 26px; margin: 25px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+        h2 { font-size: 20px; margin: 28px 0 14px; color: var(--accent); }
+        h3 { font-size: 16px; margin: 22px 0 10px; }
+        h4 { font-size: 14px; margin: 18px 0 8px; }
+        p { margin: 8px 0; }
+        a { color: var(--accent); }
+
+        /* Tables - responsive */
+        .table-wrap {
+            overflow-x: auto; margin: 14px 0; border-radius: 8px;
+            border: 1px solid var(--table-border);
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        table { border-collapse: collapse; font-size: 12.5px; width: max-content; min-width: 100%; }
+        th { background: var(--table-header); color: var(--table-header-text); font-weight: 600;
+              padding: 9px 10px; text-align: left; border: 1px solid var(--table-border);
+              position: sticky; top: 0; white-space: nowrap; }
+        td { padding: 8px 10px; border: 1px solid var(--table-border); word-break: keep-all; }
+        tr:nth-child(even) { background: var(--sidebar-bg); }
+        tr:hover { background: var(--accent-light); }
+        /* First column sticky on wide tables */
+        th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: inherit; }
+        th:first-child { z-index: 2; }
+        tr:nth-child(odd) td:first-child { background: var(--bg); }
+        tr:nth-child(even) td:first-child { background: var(--sidebar-bg); }
+        tr:hover td:first-child { background: var(--accent-light); }
+        th:first-child { background: var(--table-header); }
+
+        code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        blockquote {
+            border-left: 4px solid var(--accent); padding: 10px 18px; margin: 14px 0;
+            background: var(--accent-light); border-radius: 0 8px 8px 0; font-size: 13px;
+        }
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 25px 0; }
+        mark { background: #ffe066; padding: 0 3px; border-radius: 2px; }
+        strong { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.mobile-show { transform: translateX(0); }
+            main { margin-left: 0 !important; padding: 60px 12px 40px; }
+            .topbar { left: 0 !important; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 7px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 17px; }
+            h3 { font-size: 14px; }
+        }
+        @media (max-width: 480px) {
+            main { padding: 56px 8px 30px; }
+            table { font-size: 10px; }
+            th, td { padding: 5px 5px; }
+            .topbar input { max-width: 150px; }
+        }
+        @media print {
+            .sidebar, .topbar { display: none !important; }
+            main { margin: 0 !important; padding: 10px !important; max-width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>24H Trading Report</h2>
+            <select onchange="if(this.value)location.href=this.value">
+                <option value="00_종합비교_요약.html">&#128202; 종합 비교 요약</option>
+<option value="01_KRX_한국거래소.html">&#127472;&#127479; KRX 한국거래소</option>
+<option value="02_NYSE_뉴욕증권거래소.html">&#127482;&#127480; NYSE 뉴욕증권거래소</option>
+<option value="03_NASDAQ_나스닥.html">&#127482;&#127480; NASDAQ 나스닥</option>
+<option value="04_24X_Exchange.html">&#127482;&#127480; 24X Exchange</option>
+<option value="05_CME_Group.html">&#127482;&#127480; CME Group</option>
+<option value="06_DTCC_청산결제.html">&#127482;&#127480; DTCC 청산결제</option>
+<option value="07_LSE_런던증권거래소.html">&#127466;&#127482; LSE 런던증권거래소</option>
+<option value="08_JPX_도쿄증권거래소.html">&#127471;&#127477; JPX 도쿄증권거래소</option>
+<option value="09_Blue_Ocean_ATS.html">&#127482;&#127480; Blue Ocean ATS</option>
+<option value="10_유럽거래소_Eurex_Euronext.html" selected>&#127466;&#127482; 유럽거래소 Eurex/Euronext</option>
+            </select>
+        </div>
+        <div class="toc" id="toc"></div>
+    </nav>
+
+    <div class="topbar" id="topbar">
+        <button id="toggleBtn" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="doSearch(this.value)">
+        <span class="search-count" id="searchCount"></span>
+        <button onclick="toggleTheme()" title="Toggle dark mode">&#9681;</button>
+        <button onclick="window.print()" title="Print">&#128424;</button>
+    </div>
+
+    <main id="main">
+        <h1 id="10-유럽-주요-거래소-deutsche-börse-eurex-amp-euronext">10. 유럽 주요 거래소 — Deutsche Börse / Eurex &amp; Euronext</h1>
+<h2 id="1-개요">1. 개요</h2>
+<p>유럽 자본시장은 Deutsche Börse Group(독일거래소그룹)과 Euronext(유로넥스트)라는 두 대형 거래소 그룹이 주도하고 있다. Deutsche Börse는 Xetra 현물 거래 플랫폼과 Eurex 파생상품 거래소를 운영하며, Euronext는 파리, 암스테르담, 브뤼셀, 리스본, 더블린, 오슬로, 밀라노 등 8개국 거래소를 통합 운영하는 범유럽 거래소이다. 2025년 기준 글로벌 24시간 거래 논의가 본격화되면서, 유럽 거래소들도 변화의 기로에 서 있다.</p>
+<hr />
+<h2 id="2-deutsche-börse-group-eurex">2. Deutsche Börse Group / Eurex</h2>
+<h3 id="21-deutsche-börse-group-구조">2.1 Deutsche Börse Group 구조</h3>
+<table>
+<thead>
+<tr>
+<th>사업부</th>
+<th>주요 서비스</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Xetra</strong></td>
+<td>독일 및 유럽 현물 주식/ETF 전자 거래 플랫폼</td>
+</tr>
+<tr>
+<td><strong>Börse Frankfurt</strong></td>
+<td>프랑크푸르트 증권거래소 (개인투자자 중심)</td>
+</tr>
+<tr>
+<td><strong>Eurex Exchange</strong></td>
+<td>유럽 최대 파생상품 거래소</td>
+</tr>
+<tr>
+<td><strong>Eurex Clearing</strong></td>
+<td>중앙청산소(CCP)</td>
+</tr>
+<tr>
+<td><strong>Clearstream</strong></td>
+<td>국제 증권 보관/결제 (ICSD)</td>
+</tr>
+<tr>
+<td><strong>EEX (European Energy Exchange)</strong></td>
+<td>에너지 시장 거래</td>
+</tr>
+<tr>
+<td><strong>360T</strong></td>
+<td>외환(FX) 전자 거래 플랫폼</td>
+</tr>
+<tr>
+<td><strong>ISS (Institutional Shareholder Services)</strong></td>
+<td>ESG/거버넌스 자문</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-xetra-거래-플랫폼">2.2 Xetra 거래 플랫폼</h3>
+<h4 id="기본-정보">기본 정보</h4>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>운영사</td>
+<td>Deutsche Börse AG</td>
+</tr>
+<tr>
+<td>매칭 엔진</td>
+<td><strong>T7 Trading Architecture</strong></td>
+</tr>
+<tr>
+<td>정규 거래 시간</td>
+<td><strong>09:00 ~ 17:30 CET</strong> (8.5시간)</td>
+</tr>
+<tr>
+<td>거래 방식</td>
+<td>완전 전자거래 (Fully Electronic)</td>
+</tr>
+<tr>
+<td>주요 거래 상품</td>
+<td>주식, ETF, ETP, 채권 등</td>
+</tr>
+</tbody>
+</table>
+<h4 id="xetra-거래-세션-구조">Xetra 거래 세션 구조</h4>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간 (CET)</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-Trading</td>
+<td>07:30 ~ 08:50</td>
+<td>주문 입력/수정/취소</td>
+</tr>
+<tr>
+<td>Opening Auction</td>
+<td>08:50 ~ 09:00</td>
+<td>개장 단일가 매매</td>
+</tr>
+<tr>
+<td>Continuous Trading</td>
+<td>09:00 ~ 17:30</td>
+<td>연속 매매</td>
+</tr>
+<tr>
+<td>Closing Auction</td>
+<td>17:30 ~ 17:35</td>
+<td>종가 결정 단일가 매매</td>
+</tr>
+<tr>
+<td>Trade at Close</td>
+<td>17:35 ~ 17:45</td>
+<td>종가 기준 거래</td>
+</tr>
+<tr>
+<td>Post-Trading</td>
+<td>~20:30</td>
+<td>주문 처리 마감</td>
+</tr>
+</tbody>
+</table>
+<h4 id="extended-xetra-retail-service-2025년-12월-신규">Extended Xetra Retail Service (2025년 12월 신규)</h4>
+<p>2025년 12월 1일부터, Deutsche Börse는 Xetra에서 개인투자자를 위한 거래 시간을 대폭 확대했다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>확장 거래 시간</td>
+<td><strong>08:00 ~ 22:00 CET</strong> (총 14시간)</td>
+</tr>
+<tr>
+<td>얼리 트레이딩</td>
+<td>08:00 ~ 08:55 CET</td>
+</tr>
+<tr>
+<td>레이트 트레이딩</td>
+<td>17:30(Xetra 종가 확정 후) ~ 22:00 CET</td>
+</tr>
+<tr>
+<td>거래 대상</td>
+<td>주식, ETF, ETP</td>
+</tr>
+<tr>
+<td>도입 배경</td>
+<td>미국 거래소(22:00 CET 종료)의 동향에 개인투자자들이 대응할 수 있도록</td>
+</tr>
+</tbody>
+</table>
+<p>이 확장으로 Xetra의 실효적인 거래 종료 시각이 17:30에서 22:00 CET로 이동했다.</p>
+<h3 id="23-t7-매칭-엔진">2.3 T7 매칭 엔진</h3>
+<h4 id="t7-기술-사양">T7 기술 사양</h4>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>정식 명칭</td>
+<td>T7 Trading Architecture</td>
+</tr>
+<tr>
+<td>특징</td>
+<td>저지연(Low Latency), 고처리량(High Throughput), 유연성</td>
+</tr>
+<tr>
+<td>적용 거래소</td>
+<td>Xetra, Börse Frankfurt, Eurex, EEX, 봄베이증권거래소(BSE) 등</td>
+</tr>
+<tr>
+<td>최신 버전</td>
+<td><strong>T7 Release 14.0</strong> (2025년 11월 10일 도입)</td>
+</tr>
+<tr>
+<td>프로토콜</td>
+<td>FIX, ETI (Enhanced Trading Interface)</td>
+</tr>
+</tbody>
+</table>
+<p>T7은 Deutsche Börse Group이 개발한 차세대 거래 기술로, 낮은 지연시간과 높은 처리량, 그리고 참가자들의 유연한 활용을 지원한다. Xetra뿐 아니라 Eurex, EEX, 그리고 인도 봄베이증권거래소(BSE) 등에서도 사용되는 글로벌 표준 플랫폼이다.</p>
+<h3 id="24-eurex-exchange-유럽-최대-파생상품-거래소">2.4 Eurex Exchange — 유럽 최대 파생상품 거래소</h3>
+<h4 id="기본-정보">기본 정보</h4>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>본사</td>
+<td>프랑크푸르트, 독일</td>
+</tr>
+<tr>
+<td>매칭 엔진</td>
+<td>T7</td>
+</tr>
+<tr>
+<td>거래 시간</td>
+<td><strong>07:30 ~ 22:00 CET</strong> (Pre-Trading 포함)</td>
+</tr>
+<tr>
+<td>주요 상품</td>
+<td>주가지수 선물/옵션, 금리, 배당, 변동성 파생상품 등</td>
+</tr>
+</tbody>
+</table>
+<h4 id="eurex-거래-세션">Eurex 거래 세션</h4>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간 (CET)</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-Trading</td>
+<td>07:30 ~</td>
+<td>주문 입력 준비</td>
+</tr>
+<tr>
+<td>Trading</td>
+<td>상품별 상이</td>
+<td>연속 거래 + 경매</td>
+</tr>
+<tr>
+<td>Post-Trading</td>
+<td>~ 22:00</td>
+<td>거래 후 처리</td>
+</tr>
+</tbody>
+</table>
+<p>Eurex의 거래일은 일반적으로 07:30에서 22:00 CET까지 운영되며, Pre-Trading, Trading, Post-Trading의 세 단계로 구성된다. 상품별로 세부 시간표가 다르다.</p>
+<h4 id="eurex-주요-상품군">Eurex 주요 상품군</h4>
+<table>
+<thead>
+<tr>
+<th>상품군</th>
+<th>대표 상품</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주가지수</td>
+<td>EURO STOXX 50, DAX, SMI 선물/옵션</td>
+</tr>
+<tr>
+<td>금리</td>
+<td>Euro-Bund, Euro-Bobl, Euro-Schatz 선물</td>
+</tr>
+<tr>
+<td>배당</td>
+<td>배당 선물/옵션</td>
+</tr>
+<tr>
+<td>변동성</td>
+<td>VSTOXX 선물/옵션</td>
+</tr>
+<tr>
+<td>외환</td>
+<td>FX 선물/옵션</td>
+</tr>
+<tr>
+<td>ESG</td>
+<td>ESG 관련 파생상품</td>
+</tr>
+</tbody>
+</table>
+<h3 id="25-eurex-clearing">2.5 Eurex Clearing</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>유형</td>
+<td>중앙청산소 (CCP)</td>
+</tr>
+<tr>
+<td>청산 대상</td>
+<td>상장 파생상품, OTC 파생상품, 증권 대차, 레포 등</td>
+</tr>
+<tr>
+<td>리스크 관리</td>
+<td>Prisma (포트폴리오 기반 마진)</td>
+</tr>
+<tr>
+<td>CCP 간 연계</td>
+<td>LCH 등과 상호운용</td>
+</tr>
+</tbody>
+</table>
+<p>Eurex Clearing은 유럽 최대의 파생상품 청산 기관으로, Deutsche Börse Group의 핵심 포스트 트레이드 인프라이다.</p>
+<h3 id="26-clearstream-증권-보관-및-결제">2.6 Clearstream — 증권 보관 및 결제</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>유형</td>
+<td>국제증권예탁기관 (ICSD)</td>
+</tr>
+<tr>
+<td>기능</td>
+<td>증권 보관, 결제, 담보 관리</td>
+</tr>
+<tr>
+<td>결제 주기</td>
+<td>T+2 → <strong>T+1 (2027년 10월 11일 전환 예정)</strong></td>
+</tr>
+<tr>
+<td>특징</td>
+<td>Euroclear와 함께 글로벌 양대 ICSD</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-euronext-범유럽-통합-거래소">3. Euronext — 범유럽 통합 거래소</h2>
+<h3 id="31-euronext-개요">3.1 Euronext 개요</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>정식 명칭</td>
+<td>Euronext N.V. (European New Exchange Technology)</td>
+</tr>
+<tr>
+<td>등록지</td>
+<td>암스테르담, 네덜란드</td>
+</tr>
+<tr>
+<td>운영 본부</td>
+<td>파리, 프랑스</td>
+</tr>
+<tr>
+<td>상장 종목 수</td>
+<td>약 1,800개 (2025년 3월 기준)</td>
+</tr>
+<tr>
+<td>시가총액</td>
+<td>약 €6.3T (약 8,800조 원)</td>
+</tr>
+<tr>
+<td>신용등급</td>
+<td>BBB+ (S&amp;P 상향)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-소속-거래소-및-시장">3.2 소속 거래소 및 시장</h3>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>국가</th>
+<th>인수/통합 시기</th>
+<th>주요 특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Euronext Paris</strong></td>
+<td>프랑스</td>
+<td>2000년 (창립)</td>
+<td>CAC 40 지수, 유럽 최대 시장 중 하나</td>
+</tr>
+<tr>
+<td><strong>Euronext Amsterdam</strong></td>
+<td>네덜란드</td>
+<td>2000년 (창립)</td>
+<td>AEX 지수, 세계 최초 증권거래소 역사</td>
+</tr>
+<tr>
+<td><strong>Euronext Brussels</strong></td>
+<td>벨기에</td>
+<td>2000년 (창립)</td>
+<td>BEL 20 지수</td>
+</tr>
+<tr>
+<td><strong>Euronext Lisbon</strong></td>
+<td>포르투갈</td>
+<td>2002년</td>
+<td>PSI 지수</td>
+</tr>
+<tr>
+<td><strong>Euronext Dublin</strong></td>
+<td>아일랜드</td>
+<td>2018년</td>
+<td>ISEQ 지수, 25개 상장사, €106B 시가총액</td>
+</tr>
+<tr>
+<td><strong>Euronext Oslo Børs</strong></td>
+<td>노르웨이</td>
+<td>2019년</td>
+<td>OBX 지수, 에너지 관련 종목 강세, 290개 상장사, €356B</td>
+</tr>
+<tr>
+<td><strong>Borsa Italiana (Milan)</strong></td>
+<td>이탈리아</td>
+<td>2021년 (€4.4B)</td>
+<td>FTSE MIB 지수, MTS 채권시장, 410개 상장사, €1.1T</td>
+</tr>
+<tr>
+<td><strong>Athens Stock Exchange</strong></td>
+<td>그리스</td>
+<td>2025년 11월</td>
+<td>74.3% 지분 확보, €1.9B 규모</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-주요-인수-연혁">3.3 주요 인수 연혁</h3>
+<table>
+<thead>
+<tr>
+<th>시기</th>
+<th>대상</th>
+<th>금액/상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2018년</td>
+<td>Irish Stock Exchange (Dublin)</td>
+<td>Euronext Dublin으로 편입</td>
+</tr>
+<tr>
+<td>2019년</td>
+<td>Oslo Børs VPS</td>
+<td>노르웨이 거래소 인수</td>
+</tr>
+<tr>
+<td>2021년 4월</td>
+<td><strong>Borsa Italiana Group</strong></td>
+<td><strong>€4.4B</strong>, LSEG 규제 조건에 따른 매각</td>
+</tr>
+<tr>
+<td>2024년</td>
+<td>Borsa Italiana 통합 완료</td>
+<td>기술 플랫폼 통합</td>
+</tr>
+<tr>
+<td>2025년 1월</td>
+<td>Nasdaq 북유럽 전력 선물 사업</td>
+<td>인수 계약 체결</td>
+</tr>
+<tr>
+<td>2025년 11월</td>
+<td><strong>Athens Stock Exchange</strong></td>
+<td>74.3% 지분 확보, 공개매수 성공</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-optiq-매칭-엔진">3.4 Optiq 매칭 엔진</h3>
+<h4 id="기술-사양">기술 사양</h4>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>명칭</td>
+<td><strong>Optiq®</strong></td>
+</tr>
+<tr>
+<td>유형</td>
+<td>이벤트 드리븐(Event-driven) 거래 플랫폼</td>
+</tr>
+<tr>
+<td>지연시간</td>
+<td><strong>평균 15 마이크로초</strong> (주문 왕복)</td>
+</tr>
+<tr>
+<td>용량</td>
+<td>기존 대비 <strong>10배 증가</strong></td>
+</tr>
+<tr>
+<td>적용 범위</td>
+<td>현물(Cash) + 파생상품(Derivatives) 단일 플랫폼</td>
+</tr>
+<tr>
+<td>프로토콜</td>
+<td>업계 표준 프로토콜 (최소 온보딩 시간)</td>
+</tr>
+<tr>
+<td>데이터 인프라</td>
+<td>Confluent Platform (Apache Kafka) 기반</td>
+</tr>
+<tr>
+<td>안정성</td>
+<td>24/5 무중단 운영, 가동 이후 주요 장애 없음</td>
+</tr>
+<tr>
+<td>특징</td>
+<td>최소 지터(jitter)로 알고리즘 트레이딩 최적화</td>
+</tr>
+</tbody>
+</table>
+<h4 id="optiq-구성-요소">Optiq 구성 요소</h4>
+<table>
+<thead>
+<tr>
+<th>구성 요소</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OEG (Order Entry Gateway)</td>
+<td>주문 입력 게이트웨이</td>
+</tr>
+<tr>
+<td>ME (Matching Engine)</td>
+<td>매칭 엔진</td>
+</tr>
+<tr>
+<td>MDG (Market Data Gateway)</td>
+<td>시장 데이터 게이트웨이</td>
+</tr>
+<tr>
+<td>RiskGuard</td>
+<td>파생상품용 리스크 관리 (FIX 5.0 API + 웹 GUI)</td>
+</tr>
+</tbody>
+</table>
+<p>Optiq는 Euronext가 자체 개발한 차세대 거래 플랫폼으로, 현물과 파생상품을 하나의 플랫폼에서 처리한다. Apache Kafka 기반의 데이터 영속성 계층을 사용하여 높은 안정성과 성능을 달성했다.</p>
+<h3 id="35-거래-시간">3.5 거래 시간</h3>
+<h4 id="euronext-현물-거래-시간">Euronext 현물 거래 시간</h4>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간 (CET)</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-Trading</td>
+<td>07:15 ~</td>
+<td>주문 입력 준비</td>
+</tr>
+<tr>
+<td>Opening Auction</td>
+<td>~09:00</td>
+<td>개장 단일가 매매</td>
+</tr>
+<tr>
+<td>Continuous Trading</td>
+<td><strong>09:00 ~ 17:30</strong></td>
+<td>연속 매매</td>
+</tr>
+<tr>
+<td>Closing Auction</td>
+<td>17:30 ~ 17:35</td>
+<td>종가 결정</td>
+</tr>
+<tr>
+<td>Trading at Last</td>
+<td>17:35 ~ 17:40</td>
+<td>종가 기준 거래</td>
+</tr>
+<tr>
+<td>총 정규 거래 시간</td>
+<td><strong>8.5시간</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="oslo-børs-예외">Oslo Børs 예외</h4>
+<p>Oslo Børs는 일부 공휴일(예: 2026년 4월 1일)에 반일 거래(half trading day)를 운영한다.</p>
+<h3 id="36-euronext-clearing-구-ccampg">3.6 Euronext Clearing (구 CC&amp;G)</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>전신</td>
+<td>Cassa di Compensazione e Garanzia S.p.A. (CC&amp;G)</td>
+</tr>
+<tr>
+<td>인수 경위</td>
+<td>2021년 Borsa Italiana 인수 시 함께 취득</td>
+</tr>
+<tr>
+<td>유형</td>
+<td>다자산 클래스 청산소 (Multi-asset CCP)</td>
+</tr>
+<tr>
+<td>청산 대상</td>
+<td>주식, 파생상품, 채권 등</td>
+</tr>
+</tbody>
+</table>
+<h3 id="37-lch-sa-청산-연계">3.7 LCH SA 청산 연계</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Euronext의 LCH SA 지분</td>
+<td>11.1% (2019년 12월 기준)</td>
+</tr>
+<tr>
+<td>기능</td>
+<td>Euronext 현물 거래의 CCP 서비스 제공</td>
+</tr>
+<tr>
+<td>Saturn 플랫폼</td>
+<td>Cleared OTC Trade Facility (OTC 거래를 CCP로 전달)</td>
+</tr>
+<tr>
+<td>병행 CCP</td>
+<td>EuroCCP (Euronext 거래의 대안 CCP)</td>
+</tr>
+</tbody>
+</table>
+<p>Euronext의 현물 거래는 LCH SA와 EuroCCP를 통해 청산되며, Euronext Clearing(구 CC&amp;G)은 주로 이탈리아 시장과 파생상품 청산을 담당한다.</p>
+<h3 id="38-전략-계획-innovate-for-growth-2027">3.8 전략 계획: "Innovate for Growth 2027"</h3>
+<p>2024년 11월 발표된 Euronext의 3개년 전략 계획으로, 혁신과 사업 다각화를 통한 매출 성장 가속화를 목표로 한다.</p>
+<table>
+<thead>
+<tr>
+<th>전략 목표</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>매출 성장</td>
+<td>혁신 기반 두 자릿수 매출 성장</td>
+</tr>
+<tr>
+<td>비용 관리</td>
+<td>규율 있는 비용 관리로 기록적 조정 EPS 달성</td>
+</tr>
+<tr>
+<td>자본 배분</td>
+<td>전략적 자본 배분 (인수, 주주환원)</td>
+</tr>
+<tr>
+<td>기술 혁신</td>
+<td>Optiq 플랫폼 지속 고도화</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-유럽-거래-시간-연장-논의">4. 유럽 거래 시간 연장 논의</h2>
+<h3 id="41-논의-배경">4.1 논의 배경</h3>
+<p>2025년 하반기부터 유럽 거래소들 사이에서 거래 시간 연장 및 24시간 거래에 대한 논의가 본격화되었다. 이는 미국에서 Cboe가 주 5일 24시간 거래를 추진하고, NYSE가 22시간 거래를, Nasdaq이 24시간 거래를 검토하는 것에 자극받은 것이다.</p>
+<h3 id="42-주요-거래소별-입장">4.2 주요 거래소별 입장</h3>
+<table>
+<thead>
+<tr>
+<th>거래소/기관</th>
+<th>입장</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LSEG (London Stock Exchange)</strong></td>
+<td><strong>적극 검토</strong></td>
+<td>24시간 거래 플랫폼 기술적/규제적 함의 검토 중</td>
+</tr>
+<tr>
+<td><strong>Cboe Europe</strong></td>
+<td><strong>주시 중</strong></td>
+<td>리테일 투자자 참여 확대를 위해 18개 유럽 시장 수수료 인하</td>
+</tr>
+<tr>
+<td><strong>SIX Group (스위스)</strong></td>
+<td><strong>부분 검토</strong></td>
+<td>ETF, 파생상품 등 구조화상품의 시간 연장 검토</td>
+</tr>
+<tr>
+<td><strong>Euronext</strong></td>
+<td><strong>현재 수요 없음</strong></td>
+<td>고객으로부터 시간 연장 요구가 없다며 즉각적 조치 불필요 입장</td>
+</tr>
+<tr>
+<td><strong>Deutsche Börse</strong></td>
+<td><strong>수요 시 확장 가능</strong></td>
+<td>현재 수요가 없으나 수요 발생 시 확장 의향</td>
+</tr>
+<tr>
+<td><strong>FESE (유럽증권거래소연맹)</strong></td>
+<td><strong>원칙 제시</strong></td>
+<td>시장 중심 유연성, 운영 준비성, 범유럽 접근 권고</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-주요-논점">4.3 주요 논점</h3>
+<h4 id="찬성-측-논거">찬성 측 논거</h4>
+<table>
+<thead>
+<tr>
+<th>논거</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>리테일 투자자 수요</td>
+<td>미국에서 장외 시간 거래가 급증하는 추세 반영 필요</td>
+</tr>
+<tr>
+<td>글로벌 경쟁력</td>
+<td>미국 거래소 시간 연장에 뒤처지면 유럽 시장 경쟁력 하락</td>
+</tr>
+<tr>
+<td>암호화폐 경쟁</td>
+<td>24/7 거래되는 암호화폐 시장에 대응 필요</td>
+</tr>
+<tr>
+<td>스마트폰 세대</td>
+<td>Gen Z 투자자들의 비정규 시간 거래 수요</td>
+</tr>
+</tbody>
+</table>
+<h4 id="반대우려-측-논거">반대/우려 측 논거</h4>
+<table>
+<thead>
+<tr>
+<th>논거</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>유동성 분산</td>
+<td>장외 시간대의 낮은 거래량으로 급격한 가격 변동 우려</td>
+</tr>
+<tr>
+<td>미국 주식 선호</td>
+<td>유럽 투자자들이 시간외에 거래하고 싶은 것은 유럽 주식이 아니라 미국 주식</td>
+</tr>
+<tr>
+<td>운영 비용</td>
+<td>거래 시간 연장에 따른 시스템/인력 비용 증가</td>
+</tr>
+<tr>
+<td>기관 투자자 우려</td>
+<td>종가 기반 펀드 가치 산정의 복잡성</td>
+</tr>
+<tr>
+<td>마진콜 리스크</td>
+<td>저유동성 시간대의 급격한 포지션 변동</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-fese의-원칙적-입장">4.4 FESE의 원칙적 입장</h3>
+<p>유럽증권거래소연맹(FESE)은 다음과 같은 원칙을 제시했다:
+- 거래소가 거래 시간에 대한 결정권을 유지해야 함
+- 현지 및 국경 간 투자자의 수요를 반영해야 함
+- 유럽의 다양한 시장 특성을 존중해야 함
+- 시장 중심의 유연성과 증거 기반의 접근법이 필요</p>
+<h3 id="45-deutsche-börse의-선제적-대응">4.5 Deutsche Börse의 선제적 대응</h3>
+<p>Deutsche Börse는 이미 2025년 12월부터 Extended Xetra Retail Service를 통해 거래 시간을 08:00~22:00 CET (14시간)로 확대했다. 이는 유럽 주요 거래소 중 가장 적극적인 시간 연장 조치이다.</p>
+<hr />
+<h2 id="5-유럽-t1-결제-전환">5. 유럽 T+1 결제 전환</h2>
+<h3 id="51-전환-일정">5.1 전환 일정</h3>
+<table>
+<thead>
+<tr>
+<th>지역</th>
+<th>T+1 전환 예정일</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>영국</td>
+<td>2027년 10월 11일</td>
+<td>입법 추진 중</td>
+</tr>
+<tr>
+<td>EU</td>
+<td>2027년 10월 11일</td>
+<td>영국과 동일 일자</td>
+</tr>
+<tr>
+<td>스위스</td>
+<td>2027년 10월 11일</td>
+<td>영국/EU와 조율</td>
+</tr>
+</tbody>
+</table>
+<p>세 지역이 동일한 날짜에 T+1을 시행함으로써, 범유럽 차원의 정합성을 확보한다. Euroclear, Euronext, Clearstream 등 주요 금융 인프라 기업들이 테스트 준비에 참여하고 있다.</p>
+<hr />
+<h2 id="6-krx와의-비교">6. KRX와의 비교</h2>
+<h3 id="61-거래소-구조-비교">6.1 거래소 구조 비교</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>Deutsche Börse</th>
+<th>Euronext</th>
+<th>KRX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>유형</td>
+<td>단일 국가 거래소 그룹</td>
+<td>범유럽 통합 거래소</td>
+<td>단일 국가 통합 거래소</td>
+</tr>
+<tr>
+<td>현물 플랫폼</td>
+<td>Xetra</td>
+<td>Optiq</td>
+<td>EXTURE 3.0</td>
+</tr>
+<tr>
+<td>파생상품</td>
+<td>Eurex</td>
+<td>Euronext Derivatives</td>
+<td>KRX 파생상품시장</td>
+</tr>
+<tr>
+<td>청산 기관</td>
+<td>Eurex Clearing</td>
+<td>Euronext Clearing + LCH SA</td>
+<td>KRX 자체 청산</td>
+</tr>
+<tr>
+<td>결제 기관</td>
+<td>Clearstream</td>
+<td>Euroclear</td>
+<td>한국예탁결제원</td>
+</tr>
+<tr>
+<td>매칭 엔진</td>
+<td>T7</td>
+<td>Optiq (15μs)</td>
+<td>EXTURE 3.0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-거래-시간-비교">6.2 거래 시간 비교</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>Xetra</th>
+<th>Euronext</th>
+<th>KRX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>정규 거래 시간</td>
+<td>09:00~17:30 CET</td>
+<td>09:00~17:30 CET</td>
+<td>09:00~15:30 KST</td>
+</tr>
+<tr>
+<td>총 정규 시간</td>
+<td>8.5시간</td>
+<td>8.5시간</td>
+<td>6.5시간</td>
+</tr>
+<tr>
+<td>시간외 거래</td>
+<td>08:00~22:00 CET (리테일, 2025.12~)</td>
+<td>없음 (현재)</td>
+<td>Nextrade (08:00~20:00)</td>
+</tr>
+<tr>
+<td>파생상품 시간</td>
+<td>~22:00 CET (Eurex)</td>
+<td>상품별 상이</td>
+<td>확대 중</td>
+</tr>
+<tr>
+<td>24시간 논의</td>
+<td>수요 시 확장 가능</td>
+<td>수요 없음</td>
+<td>12시간 거래 검토</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-기술-플랫폼-비교">6.3 기술 플랫폼 비교</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>T7 (Xetra/Eurex)</th>
+<th>Optiq (Euronext)</th>
+<th>EXTURE 3.0 (KRX)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>지연시간</td>
+<td>극초저지연 (비공개)</td>
+<td>평균 15μs</td>
+<td>비공개</td>
+</tr>
+<tr>
+<td>아키텍처</td>
+<td>분산 처리</td>
+<td>이벤트 드리븐</td>
+<td>—</td>
+</tr>
+<tr>
+<td>데이터 인프라</td>
+<td>자체</td>
+<td>Apache Kafka (Confluent)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>글로벌 사용</td>
+<td>BSE(인도) 등</td>
+<td>Euronext 전용</td>
+<td>KRX 전용</td>
+</tr>
+<tr>
+<td>최신 버전</td>
+<td>T7 Release 14.0 (2025.11)</td>
+<td>지속 업데이트</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="64-시사점">6.4 시사점</h3>
+<ol>
+<li>
+<p><strong>범유럽 통합 모델의 교훈</strong>: Euronext가 8개국 거래소를 Optiq 단일 플랫폼으로 통합 운영하는 것은 아시아 지역의 거래소 통합 논의에 시사점을 제공한다. KRX도 ASEAN+3 등 역내 거래소 간 연결을 강화할 수 있다.</p>
+</li>
+<li>
+<p><strong>리테일 시간 연장 모델</strong>: Deutsche Börse의 Extended Xetra Retail Service(08:00~22:00)는 기관 거래와 리테일 거래의 시간을 분리하는 모델로, KRX/Nextrade의 시간외 거래 설계에 참고할 수 있다.</p>
+</li>
+<li>
+<p><strong>T+1 동시 전환</strong>: 영국/EU/스위스의 2027년 10월 T+1 동시 전환은 글로벌 정합성의 중요성을 보여준다. 한국도 글로벌 결제 주기 단축에 맞춰 T+1 전환 계획을 수립해야 한다.</p>
+</li>
+<li>
+<p><strong>파생상품 시간의 전략적 중요성</strong>: Eurex가 22:00 CET까지 파생상품 거래를 운영하는 것은 미국 시장과의 시간대 중첩을 통한 글로벌 투자자 유치 전략이다. KRX도 KOSPI 파생상품의 야간 세션 확대를 가속화해야 한다.</p>
+</li>
+<li>
+<p><strong>데이터/기술 수출</strong>: Deutsche Börse의 T7이 인도 BSE에 판매된 것처럼, 거래 기술의 글로벌 수출은 중요한 수익원이 된다. KRX의 EXTURE 3.0 시스템도 신흥국 거래소에 대한 기술 수출을 검토할 수 있다.</p>
+</li>
+<li>
+<p><strong>24시간 거래의 현실적 한계</strong>: Euronext와 Deutsche Börse의 신중한 태도는 유럽에서 24시간 거래에 대한 실질적 수요가 아직 충분하지 않음을 시사한다. KRX도 시간 연장의 속도와 범위를 실질적 수요에 기반하여 결정해야 한다.</p>
+</li>
+</ol>
+<hr />
+<h2 id="7-유럽-거래소-현황-종합">7. 유럽 거래소 현황 종합</h2>
+<h3 id="71-유럽-주요-거래소-거래-시간-비교표">7.1 유럽 주요 거래소 거래 시간 비교표</h3>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>정규 거래 시간</th>
+<th>확장 거래 시간</th>
+<th>파생상품 시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xetra (Deutsche Börse)</td>
+<td>09:00~17:30 CET</td>
+<td>08:00~22:00 CET (리테일)</td>
+<td>Eurex: ~22:00 CET</td>
+</tr>
+<tr>
+<td>Börse Frankfurt</td>
+<td>08:00~22:00 CET</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Euronext (파리,암스테르담 등)</td>
+<td>09:00~17:30 CET</td>
+<td>없음</td>
+<td>상품별 상이</td>
+</tr>
+<tr>
+<td>LSE (런던)</td>
+<td>08:00~16:30 GMT</td>
+<td>24시간 검토 중</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SIX (스위스)</td>
+<td>09:00~17:30 CET</td>
+<td>구조화상품 연장 검토</td>
+<td>—</td>
+</tr>
+<tr>
+<td>룩셈부르크</td>
+<td>09:00~17:40 CET</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-유럽-거래소-시가총액-비교-2025년-기준">7.2 유럽 거래소 시가총액 비교 (2025년 기준)</h3>
+<table>
+<thead>
+<tr>
+<th>거래소 그룹</th>
+<th>시가총액 규모</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Euronext (8개국 통합)</td>
+<td>약 €6.3T</td>
+</tr>
+<tr>
+<td>LSEG (런던)</td>
+<td>약 $3.4T 이상</td>
+</tr>
+<tr>
+<td>Deutsche Börse (Xetra)</td>
+<td>DAX 시가총액 약 €2T+</td>
+</tr>
+<tr>
+<td>SIX (스위스)</td>
+<td>SMI 시가총액 약 CHF 1.5T+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-참고-자료">8. 참고 자료</h2>
+<ul>
+<li>Xetra T7 기술: <a href="https://www.cashmarket.deutsche-boerse.com/cash-en/Data-Tech/Technology/t7">cashmarket.deutsche-boerse.com/cash-en/Data-Tech/Technology/...</a></li>
+<li>Xetra 거래 시간: <a href="https://www.eurexgroup.com/xetra-en/trading/trading-calendar-and-trading-hours">eurexgroup.com/xetra-en/trading/trading-cale...</a></li>
+<li>Deutsche Börse 리테일 시간 연장: <a href="https://www.marketsmedia.com/deutsche-borse-extends-retail-trading-hours-on-xetra/">marketsmedia.com/deutsche-borse-extends-retail...</a></li>
+<li>Eurex Clearing 시간 연장 공지: <a href="https://www.eurex.com/ec-en/find/circulars/Eurex-Clearing-Readiness-Newsflash-C7-SCS-Introduction-of-Xetra-Trading-Hours-Extension-4742716">eurex.com/ec-en/find/circulars/Eurex-Cl...</a></li>
+<li>Euronext 거래 서비스: <a href="https://www.euronext.com/en/trading-information/euronext-trading-services">euronext.com/en/trading-information/eurone...</a></li>
+<li>Euronext Optiq 기술: <a href="https://www.euronext.com/en/technology/optiq-tech-solutions-for-exchanges-and-venue-operators">euronext.com/en/technology/optiq-tech-solu...</a></li>
+<li>Euronext Wikipedia: <a href="https://en.wikipedia.org/wiki/Euronext">en.wikipedia.org/wiki/Euronext</a></li>
+<li>Euronext Clearing: <a href="https://www.euronext.com/en/clearing">euronext.com/en/clearing</a></li>
+<li>Euronext Confluent 사례: <a href="https://www.confluent.io/customers/euronext/">confluent.io/customers/euronext/</a></li>
+<li>유럽 24시간 거래 논의 (CNBC): <a href="https://www.cnbc.com/2025/07/22/europe-stock-exchanges-mull-24-hour-trade-to-attract-retail-investors.html">cnbc.com/2025/07/22/europe-stock-excha...</a></li>
+<li>FESE 24시간 거래 입장 (The TRADE): <a href="https://www.thetradenews.com/fese-sets-out-stance-on-24-hour-trading-in-europe/">thetradenews.com/fese-sets-out-stance-on-24-ho...</a></li>
+<li>Euronext 거래 시간: <a href="https://www.euronext.com/en/trading/trading-hours-holidays">euronext.com/en/trading/trading-hours-holi...</a></li>
+<li>T+1 유럽 전환: <a href="https://securities.cib.bnpparibas/t1-in-europe-whats-next-for-the-eu-the-uk-and-switzerland/">securities.cib.bnpparibas/t1-in-europe-whats-next-for-t...</a></li>
+<li>Eurex 파생상품 시간: <a href="https://www.deutsche-boerse.com/dbg-en/markets-services/trading/ps-trading-hours-calendar/ps-hours-calendar-derivatives-eurexchange">deutsche-boerse.com/dbg-en/markets-services/tradi...</a></li>
+<li>KRX 12시간 거래 검토: <a href="https://www.koreaherald.com/article/10548345">koreaherald.com/article/10548345</a></li>
+<li>Nextrade 승인 (FSC): <a href="https://www.fsc.go.kr/eng/pr010101/83967">fsc.go.kr/eng/pr010101/83967</a></li>
+</ul>
+    </main>
+
+    <script>
+    (function() {
+        // --- Wrap tables ---
+        document.querySelectorAll('main table').forEach(t => {
+            if (!t.parentElement.classList.contains('table-wrap')) {
+                const w = document.createElement('div');
+                w.className = 'table-wrap';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            }
+        });
+
+        // --- Build TOC ---
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h1, main h2, main h3');
+        const tocLinks = [];
+        headings.forEach(h => {
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent;
+            a.dataset.id = h.id;
+            const depth = parseInt(h.tagName[1]);
+            if (depth >= 3) a.classList.add('depth-' + depth);
+            toc.appendChild(a);
+            tocLinks.push({ el: h, link: a });
+        });
+
+        // --- Scroll spy ---
+        let ticking = false;
+        function updateActive() {
+            const scrollY = window.scrollY + 100;
+            let current = tocLinks[0];
+            for (const item of tocLinks) {
+                if (item.el.offsetTop <= scrollY) current = item;
+            }
+            tocLinks.forEach(i => i.link.classList.remove('active'));
+            if (current) {
+                current.link.classList.add('active');
+                current.link.scrollIntoView({ block: 'nearest' });
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+        });
+        updateActive();
+
+        // --- Smooth scroll for TOC links ---
+        toc.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', e.target.href);
+            }
+        });
+
+        // --- Smooth scroll for in-content anchor links ---
+        document.querySelectorAll('main a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = decodeURIComponent(a.getAttribute('href').slice(1));
+                const target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    })();
+
+    // --- Sidebar toggle ---
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const tb = document.getElementById('topbar');
+        sb.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        tb.classList.toggle('expanded');
+    }
+
+    // --- Search ---
+    let searchTimeout;
+    function doSearch(q) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => _search(q), 200);
+    }
+    function _search(query) {
+        const main = document.getElementById('main');
+        // Remove old marks
+        main.querySelectorAll('mark[data-search]').forEach(m => {
+            const parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+        });
+        const countEl = document.getElementById('searchCount');
+        if (!query || query.length < 2) { countEl.textContent = ''; return; }
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+                regex.test(walker.currentNode.textContent)) {
+                nodes.push(walker.currentNode);
+                regex.lastIndex = 0;
+            }
+        }
+        let count = 0;
+        nodes.forEach(node => {
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            regex.lastIndex = 0;
+            let m;
+            while ((m = regex.exec(node.textContent)) !== null) {
+                frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+                const mark = document.createElement('mark');
+                mark.setAttribute('data-search', '');
+                mark.textContent = m[0];
+                frag.appendChild(mark);
+                last = regex.lastIndex;
+                count++;
+            }
+            frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+            node.parentNode.replaceChild(frag, node);
+        });
+        countEl.textContent = count > 0 ? count + '건' : '0건';
+        const first = main.querySelector('mark[data-search]');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- Theme ---
+    function toggleTheme() {
+        const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        document.body.dataset.theme = d;
+        try { localStorage.setItem('theme', d); } catch(e) {}
+    }
+    try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>

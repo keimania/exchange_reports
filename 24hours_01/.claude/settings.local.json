@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(python3 -c \":*)",
+      "Bash(file *.txt)",
+      "Bash(ls -lh *.txt)",
+      "Bash(wc -l *.txt)",
+      "Bash(python3:*)",
+      "Bash(pandoc --version)",
+      "Bash(pip3 list:*)",
+      "Bash(pip3 install:*)"
+    ]
+  }
+}

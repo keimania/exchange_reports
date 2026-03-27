@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="pandoc">
+  <title>Master_KRX_24H_Transition_Strategy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Mobile TOC toggle button -->
+<button class="toc-toggle" id="tocToggle" aria-label="목차 열기/닫기">
+  <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+  <span class="toc-toggle-label">목차</span>
+</button>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar TOC -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-home" title="리포트 인덱스">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      전체 리포트
+    </a>
+    <div class="sidebar-title">목차</div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <ul>
+    <li><a href="#krx-24시간-거래-전환-전략-마스터-리포트" id="toc-krx-24시간-거래-전환-전략-마스터-리포트">KRX 24시간 거래 전환 전략 마스터 리포트</a>
+    <ul>
+    <li><a href="#executive-summary" id="toc-executive-summary">Executive Summary</a></li>
+    <li><a href="#글로벌-거래소-핵심-제도-비교" id="toc-글로벌-거래소-핵심-제도-비교">1. 글로벌 거래소 핵심 제도 비교</a>
+    <ul>
+    <li><a href="#거래-시간-및-세션-구조-비교" id="toc-거래-시간-및-세션-구조-비교">1.1 거래 시간 및 세션 구조 비교</a></li>
+    <li><a href="#주문-유형-및-체결-메커니즘-비교" id="toc-주문-유형-및-체결-메커니즘-비교">1.2 주문 유형 및 체결 메커니즘 비교</a></li>
+    <li><a href="#가격-발견-및-옥션-메커니즘-비교" id="toc-가격-발견-및-옥션-메커니즘-비교">1.3 가격 발견 및 옥션 메커니즘 비교</a></li>
+    <li><a href="#변동성-통제-메커니즘-비교" id="toc-변동성-통제-메커니즘-비교">1.4 변동성 통제 메커니즘 비교</a></li>
+    </ul></li>
+    <li><a href="#글로벌-핵심-시스템-비교" id="toc-글로벌-핵심-시스템-비교">2. 글로벌 핵심 시스템 비교</a>
+    <ul>
+    <li><a href="#매칭-엔진-아키텍처-비교" id="toc-매칭-엔진-아키텍처-비교">2.1 매칭 엔진 아키텍처 비교</a></li>
+    <li><a href="#처리량-및-지연시간-비교" id="toc-처리량-및-지연시간-비교">2.2 처리량 및 지연시간 비교</a></li>
+    <li><a href="#프로토콜-및-시장-데이터-비교" id="toc-프로토콜-및-시장-데이터-비교">2.3 프로토콜 및 시장 데이터 비교</a></li>
+    <li><a href="#zero-downtime-및-유지보수-전략-비교" id="toc-zero-downtime-및-유지보수-전략-비교">2.4 Zero-Downtime 및 유지보수 전략 비교</a></li>
+    </ul></li>
+    <li><a href="#시간-체제-특화-비교-분석" id="toc-시간-체제-특화-비교-분석">3. 24시간 체제 특화 비교 분석</a>
+    <ul>
+    <li><a href="#청산결제clearing-settlement-시스템-비교" id="toc-청산결제clearing-settlement-시스템-비교">3.1 청산·결제(Clearing &amp; Settlement) 시스템 비교</a></li>
+    <li><a href="#증거금-관리-비교" id="toc-증거금-관리-비교">3.2 증거금 관리 비교</a></li>
+    <li><a href="#시장-감시market-surveillance-비교" id="toc-시장-감시market-surveillance-비교">3.3 시장 감시(Market Surveillance) 비교</a></li>
+    <li><a href="#유동성-분할liquidity-fragmentation-문제-분석" id="toc-유동성-분할liquidity-fragmentation-문제-분석">3.4 유동성 분할(Liquidity Fragmentation) 문제 분석</a></li>
+    </ul></li>
+    <li><a href="#krx-규정-개정-소요-분석" id="toc-krx-규정-개정-소요-분석">4. KRX 규정 개정 소요 분석</a>
+    <ul>
+    <li><a href="#업무규정-개정-필요-조항" id="toc-업무규정-개정-필요-조항">4.1 업무규정 개정 필요 조항</a></li>
+    <li><a href="#시행세칙-개정-필요-조항" id="toc-시행세칙-개정-필요-조항">4.2 시행세칙 개정 필요 조항</a></li>
+    <li><a href="#연쇄적-법규-개정-소요" id="toc-연쇄적-법규-개정-소요">4.3 연쇄적 법규 개정 소요</a></li>
+    </ul></li>
+    <li><a href="#krx-24시간-거래-단계별-도입-방안" id="toc-krx-24시간-거래-단계별-도입-방안">5. KRX 24시간 거래 단계별 도입 방안</a>
+    <ul>
+    <li><a href="#phase-1-etf-프리애프터마켓-우선-시행-2026년-9월-14일" id="toc-phase-1-etf-프리애프터마켓-우선-시행-2026년-9월-14일">5.1 Phase 1: ETF 프리/애프터마켓 우선 시행 (2026년 9월 14일)</a></li>
+    <li><a href="#phase-2-24시간-체제-2027년-12월" id="toc-phase-2-24시간-체제-2027년-12월">5.2 Phase 2: 24시간 체제 (2027년 12월)</a></li>
+    <li><a href="#인프라-현대화-로드맵" id="toc-인프라-현대화-로드맵">5.3 인프라 현대화 로드맵</a></li>
+    <li><a href="#청산결제-전환-로드맵" id="toc-청산결제-전환-로드맵">5.4 청산·결제 전환 로드맵</a></li>
+    <li><a href="#규제-프레임워크-전환-로드맵" id="toc-규제-프레임워크-전환-로드맵">5.5 규제 프레임워크 전환 로드맵</a></li>
+    </ul></li>
+    <li><a href="#전문가-인사이트-및-시사점" id="toc-전문가-인사이트-및-시사점">6. 전문가 인사이트 및 시사점</a>
+    <ul>
+    <li><a href="#글로벌-벤치마크에서-도출한-핵심-교훈" id="toc-글로벌-벤치마크에서-도출한-핵심-교훈">6.1 글로벌 벤치마크에서 도출한 핵심 교훈</a></li>
+    <li><a href="#krx-고유의-도전-과제" id="toc-krx-고유의-도전-과제">6.2 KRX 고유의 도전 과제</a></li>
+    <li><a href="#리스크-요인-및-완화-방안" id="toc-리스크-요인-및-완화-방안">6.3 리스크 요인 및 완화 방안</a></li>
+    <li><a href="#장단점-분석" id="toc-장단점-분석">6.4 장단점 분석</a></li>
+    <li><a href="#최종-제언" id="toc-최종-제언">6.5 최종 제언</a></li>
+    </ul></li>
+    </ul></li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- Main content -->
+<div class="main-content" id="mainContent">
+  <div class="content-wrapper">
+
+    <header>
+      <h1>Master_KRX_24H_Transition_Strategy</h1>
+      <div class="subtitle">KRX 24시간 거래 전환 전략 리서치 시리즈</div>
+      <div class="date">2026년 3월 | Confidential</div>
+    </header>
+
+    <article>
+      <h1 id="krx-24시간-거래-전환-전략-마스터-리포트">KRX 24시간 거래 전환 전략 마스터 리포트</h1>
+      <p><strong>문서 분류:</strong> 전략 보고서 (Confidential) <strong>작성일:</strong> 2026년 3월 27일 <strong>분석 대상:</strong> 글로벌 11개 거래소·청산기관 벤치마크 기반 KRX 24시간 거래 전환 전략 <strong>분석 범위:</strong> NYSE Arca, NASDAQ, 24X, CME Globex, LSE, Eurex, TSE/JPX, DTCC/NSCC, JSCC, Blue Ocean ATS, Nextrade</p>
+      <hr />
+      <h2 id="executive-summary">Executive Summary</h2>
+      <p>한국거래소(KRX)는 현재 6.5시간(09:00~15:30 KST) 정규거래 체제에서 <strong>단계적 24시간 거래 체제</strong>로의 전환을 추진하고 있다. 본 보고서는 글로벌 주요 거래소 11개 기관에 대한 심층 분석을 기반으로, KRX의 24시간 전환에 필요한 제도·시스템·규정·인프라 전반의 종합 전략을 제시한다.</p>
+      <p><strong>전환 배경 및 긴급성:</strong></p>
+      <p>2025년 3월 출범한 대체거래시스템(ATS) Nextrade는 08:00~20:00(12시간) 거래를 제공하며 출범 1년 만에 <strong>약 39%의 시장점유율(2026년 1월 기준)</strong>을 확보하였으며, 일평균 거래대금 20.35조 원, 출범 1년 누적 2,338조 원을 기록하였다. 다만, 15% 총량 상한 규제가 적용되고 있다. 이는 KRX 설립 이래 전례 없는 경쟁 압력이다. 동시에, 미국 시장에서 운영되는 Blue Ocean ATS(BOATS)는 한국 투자자의 미국 주식 야간 거래 수요를 흡수하며 <strong>전체 BOATS 거래량의 약 35%를 한국 투자자가 차지</strong>하고 있어, 한국 시장의 시간외 거래 수요가 실증적으로 입증되고 있다.</p>
+      <p>글로벌 추세 역시 24/5 거래를 향해 가속하고 있다. NYSE Arca는 22~23시간, NASDAQ은 23시간, 24X는 23시간, CME Globex는 사실상 24시간(23시간 59분) 거래를 운영 중이다. 일본 JPX를 제외하면, 주요 거래소 모두 거래 시간 확장을 적극 추진하고 있다.</p>
+      <p><strong>단계별 전환 계획:</strong></p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>단계</th>
+      <th>시기</th>
+      <th>거래 시간</th>
+      <th>핵심 목표</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Phase 1</strong></td>
+      <td>2026년 9월 14일</td>
+      <td>ETF 프리/애프터마켓 우선 시행 (전체 주식시장 12시간 거래는 2026년 하반기로 연기)</td>
+      <td>Nextrade 경쟁 대응, 시간외시장 체계 재편. LP 참여 정책 관련 3차례 정책 변경 (자율→의무→선별 ETF 한정)</td>
+      </tr>
+      <tr>
+      <td><strong>Phase 2</strong></td>
+      <td>2027년 12월</td>
+      <td>24시간 (1시간 유지보수 제외)</td>
+      <td>글로벌 24/5 체제 완성, T+1 결제 2027년 10월 전환 (EU/UK와 동기화)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>핵심 과제:</strong></p>
+      <ol type="1">
+      <li><strong>시스템 아키텍처 전환:</strong> EXTURE 3.0의 일일 배치(batch) 의존 구조를 무상태(stateless) 연속 매칭 엔진으로 전면 교체</li>
+      <li><strong>청산·결제 혁신:</strong> KSD의 야간 배치 결제 체계를 24x5 실시간 청산으로 전환, T+2에서 T+1으로의 결제주기 단축 2027년 10월 추진 (EU/UK와 동기화)</li>
+      <li><strong>대규모 규정 개정:</strong> 업무규정 25개 이상 조항, 시행세칙 10개 이상 조항, 자본시장법 시행령 등 연쇄적 법규 개정 필요</li>
+      <li><strong>야간 리스크 관리:</strong> 야간 유동성 저하에 따른 변동성 통제, 증거금 관리, 시장 감시 체계 전면 재설계</li>
+      <li><strong>노동·운영 모델 전환:</strong> Follow-the-Sun 운영 모델 도입, AI 기반 자동화 감시, 증권업계 노동조합 대응</li>
+      </ol>
+      <p>본 보고서는 글로벌 벤치마크 분석, 규정 개정 상세 분석, 단계별 도입 로드맵, 리스크 완화 방안을 포함하여, KRX 경영진이 전략적 의사결정에 활용할 수 있는 <strong>종합 실행 가이드</strong>를 제공한다.</p>
+      <hr />
+      <h2 id="글로벌-거래소-핵심-제도-비교">1. 글로벌 거래소 핵심 제도 비교</h2>
+      <h3 id="거래-시간-및-세션-구조-비교">1.1 거래 시간 및 세션 구조 비교</h3>
+      <p>글로벌 주요 거래소의 거래 시간은 지난 5년간 급격히 확장되었다. 특히 미국 시장은 23~24시간에 근접하는 거래 시간을 운영하고 있으며, 이는 KRX의 6.5시간 체제와 극명한 대비를 이룬다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>총 거래시간</th>
+      <th>일일 정지시간</th>
+      <th>정지 시간대</th>
+      <th>정지 목적</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Arca</strong></td>
+      <td>22→23시간</td>
+      <td>1시간</td>
+      <td>20:00~21:00 ET</td>
+      <td>RAM 퍼지, DB 영속화</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ</strong></td>
+      <td>23시간</td>
+      <td>1시간</td>
+      <td>20:00~21:00 ET</td>
+      <td>Double Flush, 상태 초기화</td>
+      </tr>
+      <tr>
+      <td><strong>24X</strong></td>
+      <td>23시간</td>
+      <td>1시간</td>
+      <td>20:00~21:00 ET</td>
+      <td>Hard Flush, 시스템 유지보수</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td>23시간 59분</td>
+      <td>1분</td>
+      <td>16:00~16:01 CT</td>
+      <td>Dual Zone 블루-그린 전환</td>
+      </tr>
+      <tr>
+      <td><strong>LSE</strong></td>
+      <td>8.5시간</td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>야간 거래 미운영</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex</strong></td>
+      <td>21시간</td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>Asian Hours 확장 운영</td>
+      </tr>
+      <tr>
+      <td><strong>TSE/JPX</strong></td>
+      <td>5.4시간</td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>거래시간 확장 미계획</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (현행)</strong></td>
+      <td>6.5시간</td>
+      <td>야간 전체</td>
+      <td>15:30~09:00</td>
+      <td>야간 배치 처리</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (목표)</strong></td>
+      <td>24시간</td>
+      <td>1시간 (제안)</td>
+      <td>06:00~07:00 KST</td>
+      <td>미국 ET 20:00~21:00 동기화</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>핵심 분석:</strong></p>
+      <p>KRX의 1시간 유지보수 윈도우를 <strong>06:00~07:00 KST</strong>로 설정하는 것은 전략적으로 최적이다. 이 시간대는 미국 동부시간 <strong>20:00~21:00 ET</strong>에 해당하며, NYSE Arca·NASDAQ·24X의 유지보수 시간과 정확히 동기화된다. 이를 통해:</p>
+      <ul>
+      <li>미국 시장 참가자의 거래 공백 최소화</li>
+      <li>글로벌 청산·결제 사이클과의 정합성 확보</li>
+      <li>CME Globex의 1분 정지 모델은 기술적으로 가능하나, 주식시장의 청산·결제·기업공시 복잡성을 고려할 때 <strong>1시간 정지가 현실적</strong></li>
+      </ul>
+      <h3 id="주문-유형-및-체결-메커니즘-비교">1.2 주문 유형 및 체결 메커니즘 비교</h3>
+      <p>야간 거래에서의 주문 유형 제한은 투자자 보호와 시장 안정성의 핵심 요소이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>야간 주문유형</th>
+      <th>시장가 주문</th>
+      <th>GTC 주문 처리</th>
+      <th>주문 이월 방식</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Arca</strong></td>
+      <td>지정가만 허용</td>
+      <td><strong>금지</strong></td>
+      <td>GTC 유지(persist)</td>
+      <td>RAM 퍼지 후 DB에서 복원</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ</strong></td>
+      <td>지정가 + ISO만</td>
+      <td><strong>금지</strong></td>
+      <td>GTC 폐지</td>
+      <td>Double Flush 후 재적재</td>
+      </tr>
+      <tr>
+      <td><strong>24X</strong></td>
+      <td>지정가만 허용</td>
+      <td><strong>금지</strong></td>
+      <td>Day+ TIF 도입</td>
+      <td>Hard Flush 후 캐리오버</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td>전 유형 허용</td>
+      <td><strong>허용</strong></td>
+      <td>GTC 보존</td>
+      <td>Dual Zone 자동 전환</td>
+      </tr>
+      <tr>
+      <td><strong>LSE</strong></td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex</strong></td>
+      <td>표준 유형</td>
+      <td><strong>허용</strong> (파생)</td>
+      <td>표준 처리</td>
+      <td>연속 운영</td>
+      </tr>
+      <tr>
+      <td><strong>TSE/JPX</strong></td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (현행)</strong></td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>주문 전량 소거</td>
+      <td>일일 배치 초기화</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (목표)</strong></td>
+      <td>지정가만 (제안)</td>
+      <td><strong>금지</strong> (제안)</td>
+      <td>“One Board” 캐리오버</td>
+      <td>세션간 주문 연속 이월</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>KRX 도입 방향:</strong></p>
+      <p>글로벌 주식시장(NYSE, NASDAQ, 24X)의 공통 패턴은 <strong>야간 시장가 주문 금지</strong>이다. 이는 야간 유동성 저하 환경에서 시장가 주문이 급격한 가격 이탈을 유발할 수 있기 때문이다. KRX 역시 야간 세션에서는 <strong>지정가 주문만 허용</strong>하고, 시장가·조건부지정가 주문을 금지하는 것이 적절하다.</p>
+      <p>“One Board” 시스템은 NYSE Arca의 GTC 보존 모델과 24X의 Day+ TIF 모델을 참고하여, 세션 전환 시 유효한 주문이 자동으로 이월되는 방식으로 설계해야 한다. 이는 현행 EXTURE 3.0의 일일 주문 소거 방식에서의 근본적 전환을 의미한다.</p>
+      <h3 id="가격-발견-및-옥션-메커니즘-비교">1.3 가격 발견 및 옥션 메커니즘 비교</h3>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>옥션 모델</th>
+      <th>야간 적용 여부</th>
+      <th>특징</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Arca</strong></td>
+      <td>3회 옥션 (Pre-Market Open, Core Open, Closing)</td>
+      <td>Pre-Market Open은 야간 종료 후 적용</td>
+      <td>세션 전환 시 가격 발견 기능</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ</strong></td>
+      <td>Opening/Closing Cross + 야간 연속매매</td>
+      <td>Opening Cross로 정규 전환</td>
+      <td>야간은 연속매매만</td>
+      </tr>
+      <tr>
+      <td><strong>24X</strong></td>
+      <td><strong>옥션 없음</strong> (연속매매만)</td>
+      <td>전 세션 연속매매</td>
+      <td>가장 단순한 모델</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td>Pre-Open 상태 (주식 옥션 없음)</td>
+      <td>해당 없음 (파생상품)</td>
+      <td>파생상품 특화</td>
+      </tr>
+      <tr>
+      <td><strong>LSE</strong></td>
+      <td>Opening/Midday/Closing 옥션</td>
+      <td>해당 없음</td>
+      <td>정규 시간 내 3회</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex</strong></td>
+      <td>상품별 Opening/Closing 옥션</td>
+      <td>Asian Hours 별도</td>
+      <td>상품별 차등</td>
+      </tr>
+      <tr>
+      <td><strong>TSE/JPX</strong></td>
+      <td>Opening/Closing Itayose(板寄せ)</td>
+      <td>해당 없음</td>
+      <td>일본 고유 단일가매매</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (현행)</strong></td>
+      <td>Random-End 단일가매매</td>
+      <td>해당 없음</td>
+      <td>종가 조작 방지 Random-End</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (목표)</strong></td>
+      <td>미정 (24X 연속매매 모델 + 정규 옥션 유지 권고)</td>
+      <td>야간: 연속매매, 정규: 옥션 유지</td>
+      <td>하이브리드 모델</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>권고 사항:</strong></p>
+      <p>KRX는 <strong>하이브리드 옥션 모델</strong>을 채택하는 것이 바람직하다. 야간 세션은 24X와 같이 연속매매만 운영하되, 정규 세션 시작(09:00) 시 현행 Random-End 단일가매매(개시가 결정)를 유지하고, 정규 세션 종료(15:30) 시에도 현행 종가 결정 옥션을 유지한다. 이는 기관투자자의 벤치마크(VWAP, TWAP) 수요와 인덱스 리밸런싱 수요를 충족하면서도 야간 거래의 연속성을 확보하는 방안이다.</p>
+      <h3 id="변동성-통제-메커니즘-비교">1.4 변동성 통제 메커니즘 비교</h3>
+      <p>야간 거래 환경에서의 변동성 통제는 투자자 보호의 최후 방어선이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>야간 변동성 통제</th>
+      <th>가격제한폭</th>
+      <th>특징</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Arca</strong></td>
+      <td>확대 적용: 20%/10%/6% (2배)</td>
+      <td>정규 대비 2배 확대</td>
+      <td>Activity-based controls 100ms 단위</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ</strong></td>
+      <td>CEE 20% 허용범위</td>
+      <td>야간 CEE 일시 중지</td>
+      <td>야간 별도 기준</td>
+      </tr>
+      <tr>
+      <td><strong>24X</strong></td>
+      <td>Price Bands: 10%/5%/3% (시간대별 차등)</td>
+      <td>3단계 차등 밴드</td>
+      <td>가장 정교한 야간 모델</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td>Dynamic Price Banding</td>
+      <td>실시간 동적 조정</td>
+      <td>파생상품 특화</td>
+      </tr>
+      <tr>
+      <td><strong>LSE</strong></td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>야간 미운영</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex</strong></td>
+      <td>VI 파라미터 조정</td>
+      <td>야간 별도 설정</td>
+      <td>Asian Hours 차등 적용</td>
+      </tr>
+      <tr>
+      <td><strong>TSE/JPX</strong></td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>야간 미운영</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (현행)</strong></td>
+      <td>±30% 가격제한폭 (Hard Limit)</td>
+      <td>전일 종가 대비 고정</td>
+      <td>VI(정적 3%/6%, 동적 10%), CB, 사이드카</td>
+      </tr>
+      <tr>
+      <td><strong>KRX (목표)</strong></td>
+      <td>시간대별 차등 밴드 (제안)</td>
+      <td>야간 축소 적용</td>
+      <td>24X 모델 벤치마크</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>KRX 야간 변동성 통제 설계 권고:</strong></p>
+      <p>24X의 Price Bands 모델을 벤치마크로, KRX는 다음과 같은 <strong>시간대별 차등 변동성 통제</strong>를 도입해야 한다:</p>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>시간대</th>
+      <th>세션 유형</th>
+      <th>가격제한폭 (제안)</th>
+      <th>VI 적용</th>
+      <th>CB 적용</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>07:00~09:00</td>
+      <td>프리마켓</td>
+      <td>±15%</td>
+      <td>정적 VI만 (6%)</td>
+      <td>미적용</td>
+      </tr>
+      <tr>
+      <td>09:00~15:30</td>
+      <td>정규시장</td>
+      <td>±30% (현행 유지)</td>
+      <td>정적+동적 VI</td>
+      <td>CB 전면 적용</td>
+      </tr>
+      <tr>
+      <td>15:30~20:00</td>
+      <td>애프터마켓</td>
+      <td>±15%</td>
+      <td>정적 VI만 (6%)</td>
+      <td>조건부 적용</td>
+      </tr>
+      <tr>
+      <td>20:00~06:00</td>
+      <td>야간시장</td>
+      <td>±10%</td>
+      <td>정적 VI만 (3%)</td>
+      <td>미적용</td>
+      </tr>
+      </tbody>
+      </table>
+      <hr />
+      <h2 id="글로벌-핵심-시스템-비교">2. 글로벌 핵심 시스템 비교</h2>
+      <h3 id="매칭-엔진-아키텍처-비교">2.1 매칭 엔진 아키텍처 비교</h3>
+      <p>24시간 거래를 지원하기 위한 매칭 엔진 아키텍처는 <strong>무상태(stateless) 연속 운영</strong>이 핵심 요건이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>매칭 엔진</th>
+      <th>아키텍처 특성</th>
+      <th>24시간 적합성</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Pillar</strong></td>
+      <td>분산형 14 TXN 파티션</td>
+      <td>분산 처리, 종목별 샤딩</td>
+      <td>1시간 정지 필요 (RAM 퍼지 + DB 영속화)</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ Genium INET/Eqlipse</strong></td>
+      <td>클라우드 네이티브 마이크로서비스</td>
+      <td>동적 프로비저닝, 탄력적 확장</td>
+      <td>1시간 정지 필요 (Double Flush)</td>
+      </tr>
+      <tr>
+      <td><strong>24X/MEMX Memoir</strong></td>
+      <td>Aeron Sequencer, 복제 상태 머신</td>
+      <td>결정론적 복제, 최소 상태 의존</td>
+      <td>1시간 정지 (Hard Flush), 가장 현대적 설계</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td>17 Market Segments, Dual Zone</td>
+      <td>블루-그린 배포, 존 간 자동 전환</td>
+      <td><strong>1분 정지</strong> 가능 (최고 수준)</td>
+      </tr>
+      <tr>
+      <td><strong>LSE Millennium</strong></td>
+      <td>분산형, 내결함성</td>
+      <td>고가용성 설계</td>
+      <td>야간 미운영</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex T7</strong></td>
+      <td>Confinity over Infiniband</td>
+      <td>초저지연 인피니밴드 통신</td>
+      <td>21시간 운영, 확장 가능</td>
+      </tr>
+      <tr>
+      <td><strong>TSE arrowhead 4.0</strong></td>
+      <td>인메모리, 3중 이중화</td>
+      <td>462대 서버, 메모리 기반</td>
+      <td>야간 미운영</td>
+      </tr>
+      <tr>
+      <td><strong>KRX EXTURE 3.0</strong></td>
+      <td><strong>EXTURE 3.0 (2023년 도입) - 성능 대폭 향상, 그러나 상태 보존형 배치 아키텍처 기반</strong></td>
+      <td>야간 배치 처리 의존</td>
+      <td><strong>24시간 적합성 최하</strong></td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>핵심 과제: EXTURE 3.0 한계</strong></p>
+      <p>KRX EXTURE 3.0은 Exture+에서 대폭 성능이 향상되었으나(2023년 1월 매매체결/정보분배, 10월 청산결제 단계적 오픈), <strong>근본적인 상태 보존형 배치 아키텍처</strong>는 그대로 유지하고 있다. 이는 매 거래일 종료 후 야간 배치 처리(주문 소거, 잔고 정산, 시스템 상태 초기화)를 전제로 하는 구조이며, 24시간 연속 거래와 근본적으로 상충한다.</p>
+      <p><strong>전환 목표 아키텍처:</strong></p>
+      <p>KRX는 <strong>24X/MEMX의 Aeron Sequencer 기반 복제 상태 머신(Replicated State Machine)</strong> 모델을 벤치마크로 새로운 매칭 엔진을 설계해야 한다. 핵심 설계 원칙:</p>
+      <ol type="1">
+      <li><strong>결정론적 복제(Deterministic Replication):</strong> 모든 입력(주문, 취소, 수정)이 단일 시퀀서를 통해 순서화되어 복제본 간 완전한 상태 일치 보장</li>
+      <li><strong>최소 상태 의존:</strong> 유지보수 윈도우에서 상태 복원이 최소 시간 내 가능하도록 상태를 최소화</li>
+      <li><strong>인메모리 우선 처리:</strong> 디스크 I/O 최소화를 통한 초저지연 달성</li>
+      <li><strong>분산 파티셔닝:</strong> NYSE Pillar의 14 TXN 파티션 모델 참고, 종목군별 독립 처리</li>
+      </ol>
+      <h3 id="처리량-및-지연시간-비교">2.2 처리량 및 지연시간 비교</h3>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>지연시간(Latency)</th>
+      <th>처리량(Throughput)</th>
+      <th>비고</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Pillar</strong></td>
+      <td>마이크로초 수준</td>
+      <td>높음 (14 TXN 샤드)</td>
+      <td>FPGA 기반 하드웨어 가속</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ Genium INET</strong></td>
+      <td>100μs 미만</td>
+      <td>동적 프로비저닝</td>
+      <td>클라우드 탄력적 확장</td>
+      </tr>
+      <tr>
+      <td><strong>24X/MEMX Memoir</strong></td>
+      <td><strong>18μs</strong> (온프레미스), 50μs 미만 (클라우드)</td>
+      <td>수백만 msg/sec</td>
+      <td>업계 최저 지연시간</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td>마이크로초 (FPGA)</td>
+      <td>높음 (17 세그먼트)</td>
+      <td>FPGA 기반</td>
+      </tr>
+      <tr>
+      <td><strong>LSE Millennium</strong></td>
+      <td>126μs (AAX: 90μs)</td>
+      <td>100만 주문/sec</td>
+      <td>Turquoise AAX 별도</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex T7</strong></td>
+      <td><strong>~2.7μs</strong> (최소 반응시간)</td>
+      <td>8,000kHz 버스트</td>
+      <td>인피니밴드 기반 최저</td>
+      </tr>
+      <tr>
+      <td><strong>TSE arrowhead 4.0</strong></td>
+      <td>~200μs</td>
+      <td>비공개 (462 서버)</td>
+      <td>4세대 시스템</td>
+      </tr>
+      <tr>
+      <td><strong>KRX EXTURE 3.0</strong></td>
+      <td><strong>50μs</strong></td>
+      <td><strong>일 9.4억 건 처리 (940M daily transactions)</strong></td>
+      <td>Koscom 운영, 주문 대역폭 45 Mbps, 파생상품 시세 100 Mbps</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>분석:</strong></p>
+      <p>KRX EXTURE 3.0의 50μs 지연시간과 일 9.4억 건 처리량(주문 대역폭 45 Mbps, 파생상품 시세 100 Mbps)은 글로벌 수준에서 <strong>경쟁력 있는 수치</strong>이다. 다만, 24시간 전환 시에는 야간 저유동성 환경에서의 처리 효율성보다는 <strong>연속 운영 안정성</strong>과 <strong>무중단 배포(zero-downtime deployment)</strong> 능력이 더 중요한 지표가 된다. 현행 성능 수준을 유지하면서 아키텍처를 무상태 연속 운영으로 전환하는 것이 핵심 과제이다.</p>
+      <h3 id="프로토콜-및-시장-데이터-비교">2.3 프로토콜 및 시장 데이터 비교</h3>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>주문 프로토콜</th>
+      <th>시장 데이터 프로토콜</th>
+      <th>야간 데이터 피드</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Arca</strong></td>
+      <td>Binary + FIX 4.2/4.4</td>
+      <td>자체 바이너리</td>
+      <td>SIP 미가동, 자체 피드만</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ</strong></td>
+      <td>OUCH 5.0 + Core FIX</td>
+      <td>ITCH</td>
+      <td>SIP 미가동, ITCH만</td>
+      </tr>
+      <tr>
+      <td><strong>24X</strong></td>
+      <td>FIX + Binary</td>
+      <td>24X Top/Depth</td>
+      <td>SIP 미가동, 자체 Top/Depth</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td>iLink 3 (FIXP+SBE)</td>
+      <td>MDP 3.0</td>
+      <td>해당 없음 (파생상품)</td>
+      </tr>
+      <tr>
+      <td><strong>LSE Millennium</strong></td>
+      <td>Level 2-MITCH</td>
+      <td>MITCH</td>
+      <td>해당 없음</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex T7</strong></td>
+      <td>T7 네이티브 바이너리</td>
+      <td>T7 바이너리</td>
+      <td>Asian Hours 동일 피드</td>
+      </tr>
+      <tr>
+      <td><strong>TSE arrowhead</strong></td>
+      <td>Direct, 자체 프로토콜</td>
+      <td>자체 프로토콜</td>
+      <td>해당 없음</td>
+      </tr>
+      <tr>
+      <td><strong>KRX EXTURE 3.0</strong></td>
+      <td>FIX + FIX/FAST</td>
+      <td>FIX/FAST</td>
+      <td>야간 미운영</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>야간 NBBO 문제:</strong></p>
+      <p>미국 시장에서는 야간 시간대에 SIP(Securities Information Processor)가 가동되지 않아 통합 최우선호가(NBBO)가 존재하지 않는다. 각 거래소가 자체 데이터 피드만 제공하는 구조이다.</p>
+      <p>KRX의 경우, 현행 독점 체제에서는 NBBO 개념이 불필요했으나, Nextrade의 등장으로 <strong>KRX + Nextrade 간 통합 최우선호가 보호규정</strong> 수립이 필수적이다. 이는 미국 NMS 규정의 Order Protection Rule(Rule 611)에 해당하는 한국형 규정의 신설을 의미한다.</p>
+      <h3 id="zero-downtime-및-유지보수-전략-비교">2.4 Zero-Downtime 및 유지보수 전략 비교</h3>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>유지보수 전략</th>
+      <th>정지 시간</th>
+      <th>상태 처리 방식</th>
+      <th>DR(재해복구)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE Pillar</strong></td>
+      <td>1시간 정지</td>
+      <td>20:00~21:00 ET</td>
+      <td>RAM 퍼지 + DB 영속화</td>
+      <td>Cermak(시카고) 다크파이버</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ</strong></td>
+      <td>1시간 정지</td>
+      <td>20:00~21:00 ET</td>
+      <td>Double Flush</td>
+      <td>Multi-AZ 클라우드</td>
+      </tr>
+      <tr>
+      <td><strong>24X/MEMX</strong></td>
+      <td>1시간 정지</td>
+      <td>20:00~21:00 ET</td>
+      <td>Hard Flush</td>
+      <td>NY4 Primary, LD4 미러, CH4 DR</td>
+      </tr>
+      <tr>
+      <td><strong>CME Globex</strong></td>
+      <td><strong>1분 정지</strong></td>
+      <td>16:00~16:01 CT</td>
+      <td>Dual Zone 블루-그린</td>
+      <td>Aurora Primary, NYDC DR (45분 스테이징)</td>
+      </tr>
+      <tr>
+      <td><strong>LSE</strong></td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>-</td>
+      <td>미공개</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex T7</strong></td>
+      <td>연속 운영</td>
+      <td>-</td>
+      <td>Asian Hours 확장</td>
+      <td>Equinix 데이터센터</td>
+      </tr>
+      <tr>
+      <td><strong>TSE arrowhead</strong></td>
+      <td>해당 없음</td>
+      <td>-</td>
+      <td>-</td>
+      <td>Dual-site</td>
+      </tr>
+      <tr>
+      <td><strong>KRX EXTURE 3.0</strong></td>
+      <td><strong>야간 전체 배치</strong></td>
+      <td>15:30~09:00</td>
+      <td>일일 배치 사이클</td>
+      <td>Koscom 운영. EXTURE 3.0은 2023년 1월(매매체결/정보분배) 및 10월(청산결제) 단계적 오픈. Solace PubSub+ 미들웨어, 서울/부산 이원화, 안양 DR센터</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>CME의 1분 정지 모델 vs 주식시장의 1시간 정지:</strong></p>
+      <p>CME Globex는 Dual Zone 블루-그린 배포를 통해 1분 정지를 달성하고 있으나, 이는 <strong>파생상품 시장의 특성</strong>(개별 결제 불필요, 일일 정산 시점 유연)에 기인한다. 주식시장은 다음의 이유로 1시간 정지가 불가피하다:</p>
+      <ul>
+      <li>청산·결제 사이클의 일일 절단(cutoff) 처리</li>
+      <li>기업공시(실적 발표, 유상증자 등) 반영 시점 확보</li>
+      <li>배당락·권리락 조치의 기준시점 설정</li>
+      <li>시스템 상태 검증 및 데이터 무결성 확인</li>
+      </ul>
+      <hr />
+      <h2 id="시간-체제-특화-비교-분석">3. 24시간 체제 특화 비교 분석</h2>
+      <h3 id="청산결제clearing-settlement-시스템-비교">3.1 청산·결제(Clearing &amp; Settlement) 시스템 비교</h3>
+      <p>24시간 거래 전환에서 <strong>가장 복잡하고 위험도가 높은</strong> 영역이 청산·결제 시스템의 전환이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>청산기관</th>
+      <th>운영 모델</th>
+      <th>결제주기</th>
+      <th>24시간 대응</th>
+      <th>야간 청산 방식</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>DTCC/NSCC</strong></td>
+      <td>Phase 2 (2026.06) 24x5 UTC</td>
+      <td>T+1</td>
+      <td>실시간 노베이션, FIX Tag 715</td>
+      <td>Good Night 프로토콜, $10억 야간 한도, 15분 VaR</td>
+      </tr>
+      <tr>
+      <td><strong>CME Clearing</strong></td>
+      <td>CCP, 일 2,000만+ 건</td>
+      <td>배치 정산</td>
+      <td>18:00/19:00/20:00 CT 배치 윈도우</td>
+      <td>시간대별 배치 정산</td>
+      </tr>
+      <tr>
+      <td><strong>LCH (LSE)</strong></td>
+      <td>다중 법인, 국경 간</td>
+      <td>T+2→T+1 (2027년 10월, EU/UK 동기화)</td>
+      <td>미정</td>
+      <td>미정</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex Clearing</strong></td>
+      <td>Prisma 포트폴리오 VaR, 단일 CCP</td>
+      <td>T+2→T+1 (2027년 10월, EU/UK 동기화)</td>
+      <td>미정</td>
+      <td>미정</td>
+      </tr>
+      <tr>
+      <td><strong>JSCC</strong></td>
+      <td>배치 윈도우 (13:00/14:15 절단)</td>
+      <td>T+2</td>
+      <td><strong>24시간 계획 없음</strong></td>
+      <td>VaR (2023.11 도입), 99% 신뢰수준</td>
+      </tr>
+      <tr>
+      <td><strong>KRX/KSD</strong></td>
+      <td>야간 배치 의존</td>
+      <td>T+2</td>
+      <td><strong>T+1 + 24시간 동시 전환 (초고위험)</strong></td>
+      <td>전면 재설계 필요</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>DTCC 모델의 핵심 벤치마크 요소:</strong></p>
+      <p>DTCC/NSCC의 Phase 2(2026년 6월) 24x5 전환은 KRX/KSD의 가장 직접적인 벤치마크이다. 핵심 설계 요소:</p>
+      <ol type="1">
+      <li><strong>FIX Tag 715 (ClearingBusinessDate):</strong> 거래의 청산일자를 명시적으로 태깅하여 24시간 환경에서 거래일 경계를 명확히 함. KRX는 이에 상응하는 한국판 태그 규격을 도입해야 함</li>
+      <li><strong>Good Night 프로토콜:</strong> 일일 유지보수 윈도우 전 모든 미결제 포지션의 안전한 보존과 복원을 관리하는 프로토콜</li>
+      <li><strong>$10억 야간 한도:</strong> 야간 시간대 단일 회원의 미청산 포지션 한도를 설정하여 시스템 리스크 통제</li>
+      <li><strong>15분 VaR:</strong> 야간 시간대 15분 간격으로 VaR을 재계산하여 마진콜 발동 여부 판단</li>
+      </ol>
+      <p><strong>KRX 최대 리스크: T+1 전환과 24시간의 동시 추진</strong></p>
+      <p>T+1 결제주기 전환과 24시간 거래를 동시에 추진하는 것은 <strong>DTCC조차 피한 초고위험 전략</strong>이다. DTCC는 T+1 전환(2024년 5월)을 완료한 후 24x5 전환(2026년 6월)을 별도로 추진하고 있다. 두 전환을 동시에 추진할 경우:</p>
+      <ul>
+      <li>결제 실패(settlement failure) 급증 리스크</li>
+      <li>증거금 부족 연쇄 발생 리스크</li>
+      <li>시스템 장애 시 복구 복잡성 극대화</li>
+      <li>참가자 테스트 부담 과중</li>
+      </ul>
+      <p><strong>권고:</strong> T+1 전환을 Phase 1(2026년 9월 14일) 이전 또는 동시에 완료하고, 24시간 전환(Phase 2)은 T+1 안정화 이후 추진하는 <strong>단계적 분리</strong> 전략을 강력히 권고한다.</p>
+      <h3 id="증거금-관리-비교">3.2 증거금 관리 비교</h3>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>기관</th>
+      <th>증거금 모델</th>
+      <th>실시간 관리</th>
+      <th>야간 증거금</th>
+      <th>특징</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>DTCC/NSCC</strong></td>
+      <td>15분 연속 VaR</td>
+      <td>장중 마진콜</td>
+      <td>MRD(Market Risk Deposit) 부과</td>
+      <td>실시간 야간 마진 관리</td>
+      </tr>
+      <tr>
+      <td><strong>CME</strong></td>
+      <td>GC2 통화 기반 노출 한도</td>
+      <td>자동화</td>
+      <td>주말 자동 제로화</td>
+      <td>통화별 노출 한도 관리</td>
+      </tr>
+      <tr>
+      <td><strong>Eurex</strong></td>
+      <td>Prisma Stress Period VaR 바닥값</td>
+      <td>연간 재보정</td>
+      <td>Stress VaR 적용</td>
+      <td>포트폴리오 기반</td>
+      </tr>
+      <tr>
+      <td><strong>JSCC</strong></td>
+      <td>VaR 99% 신뢰수준</td>
+      <td>배치 기반</td>
+      <td>해당 없음</td>
+      <td>1,250+ 데이터 포인트</td>
+      </tr>
+      <tr>
+      <td><strong>KRX</strong></td>
+      <td>회원 결정 (업무규정 제87조)</td>
+      <td><strong>실시간 야간 능력 없음</strong></td>
+      <td>해당 없음</td>
+      <td>가장 취약한 구조</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>KRX 야간 증거금 관리 설계:</strong></p>
+      <p>현행 KRX 업무규정 제87조는 위탁증거금률을 회원사가 자율적으로 결정하도록 위임하고 있으며, 실시간 야간 증거금 관리 체계가 부재하다. 24시간 체제 전환 시:</p>
+      <ol type="1">
+      <li><strong>야간 증거금률 상향:</strong> 야간 세션 참여 시 정규 대비 증거금률을 상향 적용 (예: 정규 40% → 야간 100% 사전납부 또는 60% 이상)</li>
+      <li><strong>15분 VaR 실시간 모니터링:</strong> DTCC 모델을 벤치마크로 15분 간격 VaR 재계산 도입</li>
+      <li><strong>BOK-Wire+ 비영업시간 문제:</strong> 한국은행 BOK-Wire+가 야간에 운영되지 않아 실시간 자금이체가 불가능 → 중장기적으로 <strong>토큰화 자산 기반 24/7 담보관리</strong> 또는 BOK-Wire+ 운영시간 확대 협의 필요</li>
+      <li><strong>야간 마진콜 처리:</strong> 야간 마진콜 발동 시 다음 영업일 개장 전까지 증거금 납부를 유예하되, 미납 시 자동 반대매매 체계 구축</li>
+      </ol>
+      <h3 id="시장-감시market-surveillance-비교">3.3 시장 감시(Market Surveillance) 비교</h3>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>거래소</th>
+      <th>감시 체계</th>
+      <th>자동화 수준</th>
+      <th>야간 감시</th>
+      <th>특징</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>NYSE</strong></td>
+      <td>Activity-based controls</td>
+      <td>100ms 단위 모니터링</td>
+      <td>GRMP 자동취소</td>
+      <td>세밀한 시간 단위 제어</td>
+      </tr>
+      <tr>
+      <td><strong>NASDAQ</strong></td>
+      <td>포트 분리, 폭발 반경 격리</td>
+      <td>자동 격리</td>
+      <td>포트 기반 야간 격리</td>
+      <td>장애 확산 방지 특화</td>
+      </tr>
+      <tr>
+      <td><strong>24X</strong></td>
+      <td>STP 마이크로초 체크</td>
+      <td>마이크로초 단위</td>
+      <td>CEE 야간 일시 중지</td>
+      <td>초고속 사전 검증</td>
+      </tr>
+      <tr>
+      <td><strong>CME</strong></td>
+      <td>Kill Switch (1초)</td>
+      <td>SMP 의무화</td>
+      <td>24시간 자동 감시</td>
+      <td>자기체결방지 특화</td>
+      </tr>
+      <tr>
+      <td><strong>LSE</strong></td>
+      <td><strong>AI 감시 (Amazon Bedrock + Claude)</strong></td>
+      <td>AI 기반 자동 탐지</td>
+      <td>해당 없음</td>
+      <td>업계 최첨단 AI 감시</td>
+      </tr>
+      <tr>
+      <td><strong>KRX</strong></td>
+      <td>상시파악(제106조), VI/CB/사이드카</td>
+      <td>부분 자동화</td>
+      <td><strong>야간 감시 체계 부재</strong></td>
+      <td>단기과열종목, 알고리즘거래 관리</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>KRX 24시간 감시 체계 설계:</strong></p>
+      <ol type="1">
+      <li><strong>AI 기반 24시간 자동 감시:</strong> LSE의 Amazon Bedrock + Claude 기반 AI 감시 모델을 벤치마크로, 야간 시간대 인력 최소화 + AI 자동 이상 탐지 체계 구축</li>
+      <li><strong>KRX AI 기반 공시 검증 시스템:</strong> 2026년 3월 배포 완료. AI를 활용한 공시 내용 자동 검증 및 이상 탐지를 통해 24시간 시장 환경에서의 공시 관련 감시 역량 강화</li>
+      <li><strong>알고리즘거래 야간 리스크 강화:</strong> 업무규정 제104조의2~4의 알고리즘거래 관리 조항을 야간 세션에 강화 적용</li>
+      <li><strong>Kill Switch 도입:</strong> CME의 1초 Kill Switch 모델을 도입하여 비정상 거래 즉시 차단</li>
+      <li><strong>야간 VI/CB 차등 적용:</strong> 야간 세션의 낮은 유동성을 고려한 변동성 통제 기준 별도 설정</li>
+      </ol>
+      <h3 id="유동성-분할liquidity-fragmentation-문제-분석">3.4 유동성 분할(Liquidity Fragmentation) 문제 분석</h3>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>시장</th>
+      <th>유동성 구조</th>
+      <th>ATS/MTF 경쟁</th>
+      <th>야간 유동성 비중</th>
+      <th>특징</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>미국</strong></td>
+      <td>고도 분할</td>
+      <td>Blue Ocean ATS (야간 95% 점유)</td>
+      <td>전체의 1~5%</td>
+      <td>SIP 확장 미정, 자체 피드 의존</td>
+      </tr>
+      <tr>
+      <td><strong>영국</strong></td>
+      <td>중간 분할</td>
+      <td>Turquoise, Cboe Europe (25.1%)</td>
+      <td>해당 없음</td>
+      <td>MTF 경쟁 활발</td>
+      </tr>
+      <tr>
+      <td><strong>일본</strong></td>
+      <td>저분할</td>
+      <td>Japannext PTS (~21.5h, 8~10%)</td>
+      <td>극소</td>
+      <td>“역할 분담” 모델</td>
+      </tr>
+      <tr>
+      <td><strong>한국</strong></td>
+      <td>독점→분할 전환</td>
+      <td>Nextrade (39%, 2026년 1월 기준, 12시간, 일평균 20.35조 원, 15% 총량 상한 규제 적용)</td>
+      <td>미정</td>
+      <td>KRX 독점 체제 붕괴 진행 중</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>한국 시장의 유동성 분할 전망:</strong></p>
+      <p>Nextrade의 39% 시장점유율(2026년 1월 기준) 확보는 KRX의 독점 체제가 사실상 종료되었음을 의미한다. 24시간 전환 시 다음을 고려해야 한다:</p>
+      <ol type="1">
+      <li><strong>야간 유동성 현실적 기대:</strong> 글로벌 경험상 야간 거래량은 전체의 <strong>1~10% 수준</strong>에 불과. 과도한 기대는 경계해야 함</li>
+      <li><strong>LP(유동성공급자) 인센티브:</strong> 24X의 Warrant Performance 모델을 참고하여 야간 LP에 대한 선택적 참여 + 인센티브 구조 설계</li>
+      <li><strong>Nextrade와의 경쟁 전략:</strong> 시간 확장만으로는 차별화 불충분. 시스템 안정성, 청산·결제 통합성, 규제 신뢰성에서의 우위 확보가 핵심</li>
+      <li><strong>통합 최우선호가 보호:</strong> KRX + Nextrade 간 주문 보호 규정(Order Protection Rule) 수립으로 시장 간 가격 괴리 방지</li>
+      </ol>
+      <hr />
+      <h2 id="krx-규정-개정-소요-분석">4. KRX 규정 개정 소요 분석</h2>
+      <h3 id="업무규정-개정-필요-조항">4.1 업무규정 개정 필요 조항</h3>
+      <p>24시간 거래 전환은 KRX 업무규정의 <strong>25개 이상 조항</strong>에 대한 개정을 요구한다. 이하 우선순위별로 상세히 분석한다.</p>
+      <h4 id="최상-우선순위-phase-1-이전-반드시-완료">4.1.1 최상 우선순위 (Phase 1 이전 반드시 완료)</h4>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>조항</th>
+      <th>현행 내용</th>
+      <th>개정 방향</th>
+      <th>영향 범위</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>제4조 제3항</strong></td>
+      <td>정규시장 09:00~15:30, 시간외 08:00<sub>09:00/15:40</sub>18:00</td>
+      <td>24시간 연속거래 세션 구조 전면 재편. 프리마켓(07:00~09:00), 정규(09:00~15:30), 애프터마켓(15:30~20:00), 야간(20:00~06:00) 4개 세션 구조 도입</td>
+      <td>전 시장 참가자, 전 시스템</td>
+      </tr>
+      <tr>
+      <td><strong>제4조 제1항~2항</strong></td>
+      <td>정규시장/시간외시장 구분</td>
+      <td>야간시장/연장시장 신설. “시간외시장” 개념을 폐지하고 “프리마켓”, “애프터마켓”, “야간시장”으로 재정의</td>
+      <td>전 규정 체계, 시행세칙 전면 연동</td>
+      </tr>
+      <tr>
+      <td><strong>제2조 제7항~8항</strong></td>
+      <td>시가(장개시 최초가), 종가(장종료 최종가)</td>
+      <td>24시간 체제에서 시가/종가 기준시점 재정의. 시가=정규시장 09:00 옥션 결정가, 종가=정규시장 15:30 옥션 결정가로 유지하되, “당일 최초/최종 체결가” 개념 별도 신설</td>
+      <td>지수 산출, ETF NAV, 파생상품 정산, 기업공시</td>
+      </tr>
+      <tr>
+      <td><strong>제7조</strong></td>
+      <td>보통거래 T+2</td>
+      <td>T+1 전환. 야간 거래의 결제일 기산 방식을 명확히 규정: 야간 세션(20:00~06:00) 거래는 익영업일 거래로 간주하여 T+1 기산. DTCC의 FIX Tag 715 ClearingBusinessDate 개념 도입</td>
+      <td>전 결제 시스템, KSD 연동, 참가자 자금관리</td>
+      </tr>
+      </tbody>
+      </table>
+      <h4 id="상-우선순위-phase-1과-동시-시행">4.1.2 상 우선순위 (Phase 1과 동시 시행)</h4>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>조항</th>
+      <th>현행 내용</th>
+      <th>개정 방향</th>
+      <th>영향 범위</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>제20조</strong></td>
+      <td>기준가격(전일종가) ±30%</td>
+      <td>야간 세션 시간대별 차등 가격제한폭 도입. 야간 ±10%, 프리마켓/애프터마켓 ±15%, 정규 ±30% 유지. 기준가격을 “직전 정규시장 종가”로 통일</td>
+      <td>가격 형성, 투자자 보호</td>
+      </tr>
+      <tr>
+      <td><strong>제25조</strong></td>
+      <td>CB: 8%/15%/20% 하락 시 20분 중단</td>
+      <td>야간 CB 발동 기준 별도 설정. 야간 세션에는 CB 미적용 또는 단일 단계(15% 하락 시)만 적용. 발동 시 잔여 야간 세션 전면 중단 검토</td>
+      <td>시장 안정성, 투자자 보호</td>
+      </tr>
+      <tr>
+      <td><strong>제26조의2</strong></td>
+      <td>VI: 정적 3%/6%, 동적 10%</td>
+      <td>야간 VI 기준가격 및 비율 조정. 야간 정적 VI 3%로 축소, 동적 VI 야간 미적용. VI 발동 시 2분→5분으로 냉각 시간 확대</td>
+      <td>가격 변동성 통제</td>
+      </tr>
+      <tr>
+      <td><strong>제22조~24조</strong></td>
+      <td>단일가매매 + 접속매매</td>
+      <td>야간 체결 방식 규정: 야간은 접속매매(연속매매)만 허용, 단일가매매 미적용. 세션 간 전환 규정(야간→프리마켓→정규) 신설</td>
+      <td>체결 메커니즘 전체</td>
+      </tr>
+      <tr>
+      <td><strong>제33조~36조</strong></td>
+      <td>시간외매매 (종가/단일가/대량)</td>
+      <td>시간외시장 개념 재정의 또는 폐지. “시간외 종가매매”는 야간 연속거래로 흡수, “시간외 대량매매”는 24시간 내 별도 채널로 유지</td>
+      <td>시간외시장 참가자, 기관투자자</td>
+      </tr>
+      </tbody>
+      </table>
+      <h4 id="중-우선순위-phase-2-이전-완료">4.1.3 중 우선순위 (Phase 2 이전 완료)</h4>
+      <table>
+      <colgroup>
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>조항</th>
+      <th>현행 내용</th>
+      <th>개정 방향</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>제5조</strong></td>
+      <td>휴장일: 공휴일, 토요일, 12/31</td>
+      <td>야간거래와 휴장일 관계 정의. 금요일 야간 세션은 토요일 06:00까지 운영할지, 금요일 20:00에 종료할지 결정 필요</td>
+      </tr>
+      <tr>
+      <td><strong>제87조</strong></td>
+      <td>위탁증거금 (회원 결정)</td>
+      <td>실시간 증거금 관리 체계 도입. 야간 증거금률 상향 의무화, 15분 VaR 기반 실시간 마진콜 체계</td>
+      </tr>
+      <tr>
+      <td><strong>제96조</strong></td>
+      <td>결제시한 (회원 정하는 시간)</td>
+      <td>24시간 결제시한 재설계. 야간 거래 결제시한을 익영업일 16:00으로 통일</td>
+      </tr>
+      <tr>
+      <td><strong>제16조</strong></td>
+      <td>사이드카: 선물 5% 변동 시 5분</td>
+      <td>야간 적용 기준 재정의. 야간 세션에는 사이드카 미적용 또는 발동 기준 상향(8%)</td>
+      </tr>
+      <tr>
+      <td><strong>제101조</strong></td>
+      <td>시세공표 (시가/종가/최고가/최저가)</td>
+      <td>야간 시세 공표 기준시점 규정. “당일 시세”의 기준 기간을 정규시장 기준으로 유지하되, “24시간 시세” 별도 공표</td>
+      </tr>
+      <tr>
+      <td><strong>제104조의2~4</strong></td>
+      <td>알고리즘거래 관리</td>
+      <td>야간 알고리즘 리스크 강화. 야간 주문 제출 속도 제한, Kill Switch 의무화, 자기체결방지(SMP) 도입</td>
+      </tr>
+      <tr>
+      <td><strong>제20조의4/9~11</strong></td>
+      <td>LP/시장조성자 (정규시장 중 의무)</td>
+      <td>야간 유동성공급 의무 범위 설정. 야간 LP 참여는 선택적(opt-in), 참여 시 인센티브 부여</td>
+      </tr>
+      <tr>
+      <td><strong>제105조</strong></td>
+      <td>배당락/권리락 조치일</td>
+      <td>24시간 거래 시 기준일 재정의. 배당락 조치 시점을 정규시장 개시(09:00) 기준으로 고정</td>
+      </tr>
+      </tbody>
+      </table>
+      <h4 id="하-우선순위-phase-2-안정화-이후">4.1.4 하 우선순위 (Phase 2 안정화 이후)</h4>
+      <table>
+      <colgroup>
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      <col style="width: 33%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>조항</th>
+      <th>현행 내용</th>
+      <th>개정 방향</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>제39조</strong></td>
+      <td>자기주식매매 (장종료 30분 전)</td>
+      <td>허용 시간대 재설정. 24시간 체제에서 “장종료”의 의미가 변경되므로, 정규시장 종료 30분 전(15:00~15:30)으로 명확화</td>
+      </tr>
+      <tr>
+      <td><strong>제106조</strong></td>
+      <td>시장감시 상시파악</td>
+      <td>24시간 감시 인력/시스템 구축. AI 자동 감시 체계 도입 근거 조항 신설</td>
+      </tr>
+      <tr>
+      <td><strong>제108조~109조</strong></td>
+      <td>호가전/결제전 예납</td>
+      <td>야간 예납 시한 규정. 야간 거래 참여를 위한 사전 예납 요건 강화</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="시행세칙-개정-필요-조항">4.2 시행세칙 개정 필요 조항</h3>
+      <p>업무규정 개정에 연동하여 시행세칙의 세부 조항도 전면 개정이 필요하다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>시행세칙 조항</th>
+      <th>현행 내용</th>
+      <th>개정 방향</th>
+      <th>연동 업무규정</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>제11조</strong> (호가접수시간)</td>
+      <td>08:30~15:30</td>
+      <td>24시간 호가접수 (유지보수 윈도우 제외). 세션별 호가접수 시작/종료 시간 세분화</td>
+      <td>제4조</td>
+      </tr>
+      <tr>
+      <td><strong>제8조</strong> (매매거래시간 변경)</td>
+      <td>“장종료” 개념</td>
+      <td>“장종료” 개념을 “유지보수 윈도우 개시”로 재정의. 긴급 시장 중단 절차 별도 규정</td>
+      <td>제4조</td>
+      </tr>
+      <tr>
+      <td><strong>제35조</strong> (단일가매매 참여호가)</td>
+      <td>시간 기준</td>
+      <td>정규시장 개시/종료 옥션 참여호가 시간 재설정. 야간→프리마켓→정규 전환 시 호가 처리 규정</td>
+      <td>제22조~24조</td>
+      </tr>
+      <tr>
+      <td><strong>제30조</strong> (기준가격)</td>
+      <td>“전일종가” 기준</td>
+      <td>“직전 정규시장 종가”로 재정의. 야간 세션 중 기준가격 변동 없음을 명확화</td>
+      <td>제20조</td>
+      </tr>
+      <tr>
+      <td><strong>제41조의2</strong> (VI 세부)</td>
+      <td>단일 기준</td>
+      <td>시간대별 차등 비율 도입. 야간 정적 VI 3%, 프리마켓/애프터마켓 정적 VI 6%, 정규 현행 유지</td>
+      <td>제26조의2</td>
+      </tr>
+      <tr>
+      <td><strong>제51조~54조</strong> (시간외매매)</td>
+      <td>시간외매매 세부 규정</td>
+      <td>전면 재검토 또는 폐지. 시간외 종가매매, 시간외 단일가매매의 24시간 체제 존속 여부 결정</td>
+      <td>제33조~36조</td>
+      </tr>
+      <tr>
+      <td><strong>제31조의5/12/17</strong> (LP/시장조성자)</td>
+      <td>의무이행 시간 범위</td>
+      <td>정규시장 의무, 야간 opt-in 구조로 재설계. 야간 LP 인센티브(수수료 감면, 우선순위 등) 규정</td>
+      <td>제20조의4/9~11</td>
+      </tr>
+      <tr>
+      <td><strong>제133조</strong> (단기과열종목)</td>
+      <td>“종가”, “거래회전율” 기준</td>
+      <td>“종가” 기준을 “정규시장 종가”로 명확화. 24시간 거래회전율 산출 방식 재정의</td>
+      <td>제101조</td>
+      </tr>
+      <tr>
+      <td><strong>제126조</strong> (호가정보 공표)</td>
+      <td>단일 공표 기준</td>
+      <td>시간대별 공표 기준 차등 적용. 야간 호가잔량 공표 범위(5단계→3단계 등) 검토</td>
+      <td>제101조</td>
+      </tr>
+      <tr>
+      <td><strong>제132조</strong> (배당락 조치일)</td>
+      <td>현행 기준일</td>
+      <td>기준일을 정규시장 개시(09:00) 기준으로 고정. 야간 세션 중 배당락 적용 시점 명확화</td>
+      <td>제105조</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="연쇄적-법규-개정-소요">4.3 연쇄적 법규 개정 소요</h3>
+      <p>KRX 업무규정·시행세칙 개정 외에도, 다음의 상위 법규 및 관련 기관 규정의 연쇄적 개정이 필수적이다.</p>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>법규/규정</th>
+      <th>소관 기관</th>
+      <th>개정 필요 사항</th>
+      <th>추정 소요기간</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>자본시장법 시행령</strong></td>
+      <td>금융위원회</td>
+      <td>거래시간 관련 조항 개정, ATS와의 경쟁 규정 정비, T+1 결제 관련 조항</td>
+      <td>12~18개월</td>
+      </tr>
+      <tr>
+      <td><strong>증권시장 청산결제 업무규정</strong></td>
+      <td>KSD (한국예탁결제원)</td>
+      <td>24시간 청산 체계, T+1 결제주기, 야간 결제일 기산, 실시간 DVP 체계</td>
+      <td>12~18개월</td>
+      </tr>
+      <tr>
+      <td><strong>시장감시규정</strong></td>
+      <td>금융감독원/KRX</td>
+      <td>24시간 감시 체계, AI 감시 도입 근거, 야간 이상거래 판단 기준</td>
+      <td>6~12개월</td>
+      </tr>
+      <tr>
+      <td><strong>외환건전성 규정</strong></td>
+      <td>한국은행</td>
+      <td>BOK-Wire+ 운영시간 확대 협의, 야간 외화결제 체계, 외국인 투자자 자금이체</td>
+      <td>18~24개월</td>
+      </tr>
+      <tr>
+      <td><strong>세법 (양도소득세)</strong></td>
+      <td>기획재정부/국세청</td>
+      <td>거래일 기준 재정의 (야간 거래의 과세 기준일), 연간 거래 기간 산정 방식</td>
+      <td>12~18개월</td>
+      </tr>
+      <tr>
+      <td><strong>금융투자업규정</strong></td>
+      <td>금융투자협회</td>
+      <td>증권사 야간 운영 기준, 투자자 보호 규정 야간 적용, 적합성 원칙 야간 적용</td>
+      <td>6~12개월</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>법규 개정 일정 리스크:</strong></p>
+      <p>자본시장법 시행령 개정은 금융위원회의 입법 절차(입법예고 40일, 규제심사, 법제처 심사)를 거쳐야 하며, 최소 12개월이 소요된다. Phase 1(2026년 9월 14일) 시행을 위해서는 <strong>2025년 상반기 중 입법예고가 개시</strong>되어야 하며, 이미 시한이 촉박한 상황이다.</p>
+      <hr />
+      <h2 id="krx-24시간-거래-단계별-도입-방안">5. KRX 24시간 거래 단계별 도입 방안</h2>
+      <h3 id="phase-1-etf-프리애프터마켓-우선-시행-2026년-9월-14일">5.1 Phase 1: ETF 프리/애프터마켓 우선 시행 (2026년 9월 14일)</h3>
+      <p><strong>목표:</strong> Nextrade의 12시간 거래(08:00~20:00)에 대한 경쟁적 대응, 시간외시장 체계 재편. 전체 주식시장 12시간 거래는 2026년 하반기로 연기되었으며, LP 참여 정책은 3차례 변경(자율→의무→선별 ETF 한정)을 거침</p>
+      <h4 id="세션-구조-설계">5.1.1 세션 구조 설계</h4>
+      <table>
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>세션</th>
+      <th>시간</th>
+      <th>거래 방식</th>
+      <th>주문 유형</th>
+      <th>가격제한폭</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>프리마켓</td>
+      <td>07:00~08:00</td>
+      <td>연속매매(접속매매)</td>
+      <td>지정가만</td>
+      <td>±15%</td>
+      </tr>
+      <tr>
+      <td>Pre-Open</td>
+      <td>08:00~09:00</td>
+      <td>호가 접수만 (체결 없음)</td>
+      <td>지정가만</td>
+      <td>-</td>
+      </tr>
+      <tr>
+      <td>정규시장 개시 옥션</td>
+      <td>09:00</td>
+      <td>Random-End 단일가매매</td>
+      <td>전 유형</td>
+      <td>±30%</td>
+      </tr>
+      <tr>
+      <td>정규시장</td>
+      <td>09:00~15:20</td>
+      <td>접속매매</td>
+      <td>전 유형</td>
+      <td>±30%</td>
+      </tr>
+      <tr>
+      <td>정규시장 종료 옥션</td>
+      <td>15:20~15:30</td>
+      <td>Random-End 단일가매매</td>
+      <td>전 유형</td>
+      <td>±30%</td>
+      </tr>
+      <tr>
+      <td>애프터마켓</td>
+      <td>15:30~20:00</td>
+      <td>연속매매(접속매매)</td>
+      <td>지정가만</td>
+      <td>±15%</td>
+      </tr>
+      </tbody>
+      </table>
+      <h4 id="핵심-시행-과제">5.1.2 핵심 시행 과제</h4>
+      <ol type="1">
+      <li><strong>“One Board” 시스템 도입:</strong> 프리마켓<sub>정규</sub>애프터마켓 간 주문 자동 이월. 현행 EXTURE 3.0의 주문 소거 방식을 세션 간 캐리오버 방식으로 전환</li>
+      <li><strong>시간외시장 체계 재편:</strong> 현행 시간외 종가매매(15:40~16:00) 및 시간외 단일가매매(16:00~18:00)를 애프터마켓 연속매매로 통합</li>
+      <li><strong>Nextrade 연동:</strong> KRX + Nextrade 간 통합 최우선호가 보호 체계 구축 착수</li>
+      <li><strong>증거금 체계 조정:</strong> 프리마켓/애프터마켓 참여 시 증거금률 상향 적용</li>
+      <li><strong>시장 감시 확대:</strong> 07:00~20:00 감시 체계 구축, 교대 근무 체계 도입</li>
+      </ol>
+      <h3 id="phase-2-24시간-체제-2027년-12월">5.2 Phase 2: 24시간 체제 (2027년 12월)</h3>
+      <p><strong>목표:</strong> 글로벌 24/5 거래 체제 완성, 아시아 시간대 허브 지위 확보</p>
+      <h4 id="세션-구조-설계-1">5.2.1 세션 구조 설계</h4>
+      <table style="width:100%;">
+      <colgroup>
+      <col style="width: 16%" />
+      <col style="width: 16%" />
+      <col style="width: 16%" />
+      <col style="width: 16%" />
+      <col style="width: 16%" />
+      <col style="width: 16%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>세션</th>
+      <th>시간 (KST)</th>
+      <th>해외 시간대</th>
+      <th>거래 방식</th>
+      <th>주문 유형</th>
+      <th>가격제한폭</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>유지보수 윈도우</td>
+      <td>06:00~07:00</td>
+      <td>ET 20:00~21:00</td>
+      <td><strong>거래 중단</strong></td>
+      <td>-</td>
+      <td>-</td>
+      </tr>
+      <tr>
+      <td>프리마켓</td>
+      <td>07:00~09:00</td>
+      <td>ET 21:00~23:00</td>
+      <td>연속매매</td>
+      <td>지정가만</td>
+      <td>±15%</td>
+      </tr>
+      <tr>
+      <td>정규시장</td>
+      <td>09:00~15:30</td>
+      <td>ET 23:00~05:30+1</td>
+      <td>옥션+접속매매</td>
+      <td>전 유형</td>
+      <td>±30%</td>
+      </tr>
+      <tr>
+      <td>애프터마켓</td>
+      <td>15:30~20:00</td>
+      <td>ET 05:30~10:00</td>
+      <td>연속매매</td>
+      <td>지정가만</td>
+      <td>±15%</td>
+      </tr>
+      <tr>
+      <td>야간시장</td>
+      <td>20:00~06:00+1</td>
+      <td>ET 10:00~20:00</td>
+      <td>연속매매</td>
+      <td>지정가만</td>
+      <td>±10%</td>
+      </tr>
+      </tbody>
+      </table>
+      <h4 id="핵심-시행-과제-1">5.2.2 핵심 시행 과제</h4>
+      <ol type="1">
+      <li><strong>EXTURE 3.0 차세대 전환:</strong> 상태 보존형 배치 아키텍처 → <strong>Aeron-style 복제 상태 머신</strong> 기반 무상태 매칭 엔진</li>
+      <li><strong>KSD 24x5 실시간 청산:</strong> DTCC 모델 벤치마크, 실시간 노베이션, FIX Tag 715 한국판 도입</li>
+      <li><strong>T+1 결제 전환:</strong> 2027년 10월 목표 (EU/UK와 동기화), Trade Date Cutoff 적용</li>
+      <li><strong>Good Night 프로토콜 도입:</strong> 유지보수 윈도우(06:00~07:00) 전후 미결제 포지션 안전 보존/복원</li>
+      <li><strong>야간 변동성 통제:</strong> 24X Price Bands 모델 기반 시간대별 차등 밴드</li>
+      <li><strong>NBBO equivalent 구축:</strong> KRX + Nextrade 통합 최우선호가 보호규정 완성</li>
+      <li><strong>Follow-the-Sun 운영:</strong> CME 벤치마크, 서울-런던-뉴욕 3교대 운영 체계</li>
+      <li><strong>AI 감시 시스템:</strong> LSE Amazon Bedrock/Claude 모델 기반 24시간 자동 감시</li>
+      </ol>
+      <h3 id="인프라-현대화-로드맵">5.3 인프라 현대화 로드맵</h3>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>단계</th>
+      <th>시기</th>
+      <th>핵심 과제</th>
+      <th>벤치마크</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Stage 1</strong></td>
+      <td>2025 Q3~2026 Q1</td>
+      <td>EXTURE 3.0 세션 관리 모듈 확장 (12시간 대응) - Exture+에서 성능 개선되었으나 상태 보존형 배치 아키텍처 기반 유지</td>
+      <td>NYSE Pillar 세션 전환</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 2</strong></td>
+      <td>2026 Q1~Q2</td>
+      <td>“One Board” 주문 이월 시스템 개발·테스트</td>
+      <td>24X Day+ TIF</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 3</strong></td>
+      <td>2026 Q3~2027 Q2</td>
+      <td>차세대 매칭 엔진 설계·개발</td>
+      <td>MEMX Memoir Aeron</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 4</strong></td>
+      <td>2027 Q2~Q3</td>
+      <td>차세대 시스템 병렬 운영·검증</td>
+      <td>CME Dual Zone</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 5</strong></td>
+      <td>2027 Q4</td>
+      <td>24시간 체제 전면 전환</td>
+      <td>-</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>기술적 핵심 설계 요건:</strong></p>
+      <ol type="1">
+      <li><strong>결정론적 시퀀싱(Deterministic Sequencing):</strong> 모든 입력 이벤트가 단일 시퀀서를 통해 전역적으로 순서화</li>
+      <li><strong>복제 상태 머신(RSM):</strong> 주(primary)·부(standby) 매칭 엔진 간 실시간 상태 복제</li>
+      <li><strong>1시간 내 상태 복원:</strong> 유지보수 윈도우 종료 후 1시간 내 전체 주문장(order book) 및 시스템 상태 완전 복원</li>
+      <li><strong>종목별 파티셔닝:</strong> 종목군별 독립 매칭 파티션으로 장애 격리(blast radius isolation)</li>
+      <li><strong>클라우드 하이브리드:</strong> 코어 매칭은 온프레미스, 시장 데이터·감시·분석은 클라우드</li>
+      </ol>
+      <h3 id="청산결제-전환-로드맵">5.4 청산·결제 전환 로드맵</h3>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>단계</th>
+      <th>시기</th>
+      <th>핵심 과제</th>
+      <th>리스크 수준</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Stage 1</strong></td>
+      <td>2025 Q4~2026 Q1</td>
+      <td>T+1 결제 시스템 설계, KSD 협의 개시</td>
+      <td>중</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 2</strong></td>
+      <td>2026 Q2~Q3</td>
+      <td>12시간 청산 체계 구축 (07:00~20:00)</td>
+      <td>상</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 3</strong></td>
+      <td>2026 Q4~2027 Q1</td>
+      <td>T+1 결제 전환 (12시간 체제 하)</td>
+      <td><strong>최상</strong></td>
+      </tr>
+      <tr>
+      <td><strong>Stage 4</strong></td>
+      <td>2027 Q1~Q3</td>
+      <td>24x5 실시간 청산 시스템 개발</td>
+      <td><strong>최상</strong></td>
+      </tr>
+      <tr>
+      <td><strong>Stage 5</strong></td>
+      <td>2027 Q3~Q4</td>
+      <td>24시간 청산·T+1 결제 통합 시행</td>
+      <td><strong>최상</strong></td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>리스크 완화 방안:</strong></p>
+      <ul>
+      <li>T+1 전환을 Phase 1(12시간) 안정화 이후인 2026 Q4에 시행하여 <strong>두 전환을 시간적으로 분리</strong></li>
+      <li>DTCC의 FIX Tag 715 ClearingBusinessDate 한국판을 선제 도입하여 거래일 경계 혼란 방지</li>
+      <li>야간 거래에 대한 <strong>$10억 원 상당 미청산 포지션 한도</strong> 설정 (DTCC 벤치마크)</li>
+      <li>24시간 실시간 청산 전환 전 <strong>6개월 이상 병렬 운영(parallel run)</strong> 의무화</li>
+      </ul>
+      <h3 id="규제-프레임워크-전환-로드맵">5.5 규제 프레임워크 전환 로드맵</h3>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>단계</th>
+      <th>시기</th>
+      <th>핵심 과제</th>
+      <th>소관 기관</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Stage 1</strong></td>
+      <td>2025 Q2~Q3</td>
+      <td>자본시장법 시행령 개정안 입법예고</td>
+      <td>금융위원회</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 2</strong></td>
+      <td>2025 Q3~2026 Q1</td>
+      <td>KRX 업무규정 최상 우선순위 조항 개정</td>
+      <td>KRX</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 3</strong></td>
+      <td>2025 Q4~2026 Q2</td>
+      <td>KSD 청산결제 업무규정 개정</td>
+      <td>KSD</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 4</strong></td>
+      <td>2026 Q1~Q2</td>
+      <td>시행세칙 세부 조항 개정, 시장감시규정 개정</td>
+      <td>KRX, 금감원</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 5</strong></td>
+      <td>2026 Q3~2027 Q2</td>
+      <td>야간시장 관련 업무규정 중 우선순위 조항 개정</td>
+      <td>KRX</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 6</strong></td>
+      <td>2027 Q1~Q3</td>
+      <td>BOK-Wire+ 연계, 외환건전성 규정 협의</td>
+      <td>한국은행</td>
+      </tr>
+      <tr>
+      <td><strong>Stage 7</strong></td>
+      <td>2027 Q2~Q4</td>
+      <td>세법 개정(양도소득세 거래일 기준), 하 우선순위 조항</td>
+      <td>기재부, KRX</td>
+      </tr>
+      </tbody>
+      </table>
+      <hr />
+      <h2 id="전문가-인사이트-및-시사점">6. 전문가 인사이트 및 시사점</h2>
+      <h3 id="글로벌-벤치마크에서-도출한-핵심-교훈">6.1 글로벌 벤치마크에서 도출한 핵심 교훈</h3>
+      <p><strong>교훈 1: 24시간 거래는 기술적으로 입증되었으나, 주식시장은 고유한 복잡성이 존재한다</strong></p>
+      <p>CME Globex의 1분 유지보수 정지는 24시간 연속 거래가 기술적으로 가능함을 입증하고 있다. 그러나 주식시장은 파생상품 시장과 달리 청산·결제·기업공시·배당락·권리락·지수 산출 등 다층적 복잡성이 존재하며, 1시간 유지보수 윈도우는 <strong>기술적 선택이 아닌 운영적 필수</strong>이다.</p>
+      <p><strong>교훈 2: T+1 전환과 24시간 전환의 동시 추진은 회피해야 할 초고위험 전략이다</strong></p>
+      <p>DTCC는 T+1 전환(2024년 5월)과 24x5 전환(2026년 6월)을 <strong>2년 간격으로 분리</strong> 추진하였다. 두 전환이 결제 인프라의 근본적 재설계를 요구하는 점에서, 동시 추진은 결제 실패 연쇄, 증거금 부족 위기, 시스템 장애 복구 불능 등 시스템적 리스크를 초래할 수 있다.</p>
+      <p><strong>교훈 3: 야간 유동성에 대한 현실적 기대 관리가 필요하다</strong></p>
+      <p>글로벌 경험상 야간 거래량은 전체의 <strong>1~10% 수준</strong>에 불과하다. 미국 시장에서도 Blue Ocean ATS의 야간 거래량은 정규 시간 대비 미미한 수준이다. 24시간 전환의 목적은 거래량 증대가 아니라 <strong>시간대 커버리지 확보와 경쟁 대응</strong>에 있음을 명확히 해야 한다.</p>
+      <p><strong>교훈 4: ATS 경쟁은 되돌릴 수 없는 구조적 변화이다</strong></p>
+      <p>미국 시장의 경험에서 알 수 있듯이, 일단 시작된 ATS 경쟁은 기존 거래소의 독점 회복으로 귀결되지 않는다. Nextrade의 39% 시장점유율(2026년 1월 기준)은 한국 시장의 <strong>구조적 분할(fragmentation)</strong>이 진행 중임을 의미하며, KRX의 시간 확장은 <strong>방어적 필수 전략</strong>이다.</p>
+      <h3 id="krx-고유의-도전-과제">6.2 KRX 고유의 도전 과제</h3>
+      <p><strong>과제 1: EXTURE 3.0 아키텍처의 근본적 한계</strong></p>
+      <p>EXTURE 3.0의 상태 보존형 일일 배치 아키텍처는 24시간 연속 운영과 구조적으로 상충한다. 단순한 업그레이드가 아닌 <strong>차세대 시스템으로의 전면 교체</strong>가 불가피하며, 이는 최소 18~24개월의 개발·테스트 기간과 수천억 원의 투자를 요구한다.</p>
+      <p><strong>과제 2: KSD 청산·결제 체계의 동시 전환</strong></p>
+      <p>KRX의 24시간 전환은 KSD(한국예탁결제원)의 청산·결제 체계 전환 없이는 불가능하다. KSD의 야간 배치 의존 구조를 실시간 24x5 청산으로 전환하는 것은 KRX 자체 시스템 전환만큼이나 복잡하고 위험한 과제이다.</p>
+      <p><strong>과제 3: BOK-Wire+ 비영업시간 제약</strong></p>
+      <p>한국은행 BOK-Wire+는 영업시간(09:00~17:30)에만 운영되어 야간 실시간 자금이체가 불가능하다. 이는 야간 마진콜 처리, 결제 자금 이체 등에 직접적 장벽이 된다. 중장기적으로는 <strong>토큰화 자산 기반 24/7 담보관리</strong>가 솔루션이 될 수 있으나, 이는 디지털 자산 규제 프레임워크의 성숙을 전제로 한다.</p>
+      <p><strong>과제 4: 증권업계 노동조합의 반발</strong></p>
+      <p>24시간 거래는 증권사 직원의 야간 근무를 요구하며, 한국 증권업계 노동조합의 강력한 반발이 예상된다. 이는 규제·기술적 과제와 별개로 <strong>실질적이고 즉각적인 장벽</strong>이다.</p>
+      <p><strong>대응 방안:</strong> - 야간 세션 참여를 회원사의 <strong>선택(opt-in)</strong>으로 설정하여 의무화 회피 - AI 기반 자동화 매매·감시 시스템 도입으로 야간 인력 수요 최소화 - Follow-the-Sun 모델(서울-런던-뉴욕 3교대)을 글로벌 증권사 대상으로 도입 - 야간 근무 수당 체계 및 교대 근무 기준 수립</p>
+      <p><strong>과제 5: Nextrade와의 경쟁 역학</strong></p>
+      <p>Nextrade가 이미 12시간 거래를 제공하고 있어, KRX의 Phase 1(12시간) 전환은 <strong>경쟁 균형 회복</strong>에 해당하며 차별화가 아니다. 진정한 경쟁 우위는 Phase 2(24시간)에서 달성되나, 이는 18개월 이후이다. 그 사이 Nextrade의 추가 시간 확장 가능성에도 대비해야 한다.</p>
+      <h3 id="리스크-요인-및-완화-방안">6.3 리스크 요인 및 완화 방안</h3>
+      <table>
+      <colgroup>
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      <col style="width: 25%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>리스크 요인</th>
+      <th>발생 확률</th>
+      <th>영향도</th>
+      <th>완화 방안</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>T+1 + 24시간 동시 전환 실패</td>
+      <td>높음</td>
+      <td>치명적</td>
+      <td>단계적 분리 추진 (T+1 선행)</td>
+      </tr>
+      <tr>
+      <td>EXTURE 3.0 차세대 전환 지연</td>
+      <td>중간</td>
+      <td>높음</td>
+      <td>병렬 개발, 외부 벤더 협력</td>
+      </tr>
+      <tr>
+      <td>KSD 청산 시스템 전환 지연</td>
+      <td>중간</td>
+      <td>높음</td>
+      <td>KSD 조기 협의, 공동 프로젝트</td>
+      </tr>
+      <tr>
+      <td>BOK-Wire+ 야간 운영 불가</td>
+      <td>높음</td>
+      <td>중간</td>
+      <td>사전예납 강화, 토큰화 담보 중장기</td>
+      </tr>
+      <tr>
+      <td>야간 유동성 부족</td>
+      <td>높음</td>
+      <td>중간</td>
+      <td>LP 인센티브, 과도한 기대 관리</td>
+      </tr>
+      <tr>
+      <td>법규 개정 지연</td>
+      <td>중간</td>
+      <td>높음</td>
+      <td>조기 입법예고, 금융위 사전 협의</td>
+      </tr>
+      <tr>
+      <td>증권업계 노동조합 반발</td>
+      <td>높음</td>
+      <td>중간</td>
+      <td>opt-in 모델, AI 자동화, 교대 근무</td>
+      </tr>
+      <tr>
+      <td>야간 시장조작/이상거래</td>
+      <td>중간</td>
+      <td>중간</td>
+      <td>AI 감시, Kill Switch, 주문 유형 제한</td>
+      </tr>
+      <tr>
+      <td>Nextrade 추가 시간 확장</td>
+      <td>중간</td>
+      <td>중간</td>
+      <td>Phase 2 일정 엄수, 차별화 전략</td>
+      </tr>
+      <tr>
+      <td>투자자 보호 문제 (야간 손실)</td>
+      <td>중간</td>
+      <td>높음</td>
+      <td>변동성 통제 강화, 증거금 상향, 교육</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="장단점-분석">6.4 장단점 분석</h3>
+      <h4 id="장점-benefits">장점 (Benefits)</h4>
+      <table>
+      <colgroup>
+      <col style="width: 50%" />
+      <col style="width: 50%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>상세</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>경쟁력 회복</strong></td>
+      <td>Nextrade의 12시간 거래에 대한 즉각적 대응, 시장점유율 방어</td>
+      </tr>
+      <tr>
+      <td><strong>글로벌 투자자 접근성</strong></td>
+      <td>아시아·유럽·미주 전 시간대 투자자의 실시간 거래 가능</td>
+      </tr>
+      <tr>
+      <td><strong>한국 투자자 편의</strong></td>
+      <td>미국 장 마감 후 한국 주식 포지션 즉시 조정 가능</td>
+      </tr>
+      <tr>
+      <td><strong>시간대 허브 지위</strong></td>
+      <td>아시아 24시간 거래 허브로서의 선도적 지위 확보</td>
+      </tr>
+      <tr>
+      <td><strong>유동성 흡수</strong></td>
+      <td>Blue Ocean ATS 등에 유출되는 한국 투자자 수요 국내 흡수</td>
+      </tr>
+      <tr>
+      <td><strong>위기 대응</strong></td>
+      <td>글로벌 이벤트(지정학, 경제지표) 발생 시 즉시 가격 반영</td>
+      </tr>
+      <tr>
+      <td><strong>인프라 현대화</strong></td>
+      <td>EXTURE 3.0 차세대 전환을 통한 기술 경쟁력 도약</td>
+      </tr>
+      </tbody>
+      </table>
+      <h4 id="단점-risks-costs">단점 (Risks &amp; Costs)</h4>
+      <table>
+      <colgroup>
+      <col style="width: 50%" />
+      <col style="width: 50%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>상세</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>막대한 투자비용</strong></td>
+      <td>차세대 시스템 개발, 24시간 운영 인프라 구축에 수천억 원 소요</td>
+      </tr>
+      <tr>
+      <td><strong>결제 리스크 증가</strong></td>
+      <td>T+1 전환 + 24시간 전환의 동시 추진에 따른 결제 실패 리스크</td>
+      </tr>
+      <tr>
+      <td><strong>야간 유동성 부족</strong></td>
+      <td>야간 거래량은 전체의 1~10%에 불과, 가격 왜곡 가능성</td>
+      </tr>
+      <tr>
+      <td><strong>투자자 보호 약화 우려</strong></td>
+      <td>야간 저유동성 환경에서의 개인투자자 손실 가능성</td>
+      </tr>
+      <tr>
+      <td><strong>운영 복잡성</strong></td>
+      <td>24시간 감시, 인력 교대, 시스템 유지보수의 복잡성 증가</td>
+      </tr>
+      <tr>
+      <td><strong>규정 개정 부담</strong></td>
+      <td>25개+ 업무규정, 10개+ 시행세칙, 상위 법규 연쇄 개정</td>
+      </tr>
+      <tr>
+      <td><strong>노동 문제</strong></td>
+      <td>증권업계 야간 근무에 대한 노동조합 반발</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3 id="최종-제언">6.5 최종 제언</h3>
+      <p>본 보고서의 분석을 종합하여, KRX 경영진에 다음의 <strong>7대 전략적 제언</strong>을 제시한다.</p>
+      <p><strong>제언 1: Phase 1(12시간)의 적시 시행은 비협상 사안이다</strong></p>
+      <p>Nextrade의 39% 시장점유율(2026년 1월 기준)은 KRX 역사상 전례 없는 위기이다. 2026년 9월 14일 Phase 1 시행이 지연될 경우 시장점유율 유출이 가속화될 것이며, 이는 되돌리기 극히 어렵다. Phase 1은 일정 엄수가 최우선이다.</p>
+      <p><strong>제언 2: T+1 전환과 24시간 전환을 단계적으로 분리하라</strong></p>
+      <p>DTCC가 2년 간격으로 분리한 두 전환을 동시 추진하는 것은 시스템적 리스크를 초래한다. T+1을 Phase 1 안정화 이후(2026 Q4)에 선행 시행하고, 24시간 전환(Phase 2)은 T+1 안정화를 확인한 후 추진하는 것을 강력히 권고한다.</p>
+      <p><strong>제언 3: EXTURE 3.0 차세대 전환을 지금 착수하라</strong></p>
+      <p>EXTURE 3.0의 상태 보존형 배치 아키텍처는 24시간 운영과 근본적으로 양립 불가하다. 24X/MEMX의 Aeron Sequencer 기반 복제 상태 머신 아키텍처를 벤치마크로 한 차세대 매칭 엔진 개발을 즉시 착수해야 한다. 최소 18~24개월의 개발 기간을 고려하면 시간이 촉박하다.</p>
+      <p><strong>제언 4: KSD와의 공동 프로젝트로 청산·결제 전환을 추진하라</strong></p>
+      <p>KRX의 24시간 전환은 KSD의 청산·결제 인프라 전환 없이는 불가능하다. KRX-KSD 공동 프로젝트 체계를 수립하고, DTCC의 24x5 전환 모델을 공동으로 벤치마크하여 추진해야 한다.</p>
+      <p><strong>제언 5: AI 기반 자동화를 24시간 운영의 핵심 동력으로 삼아라</strong></p>
+      <p>24시간 운영에 필요한 인력을 전통적 교대 근무로 충당하는 것은 비용·노동 양 측면에서 지속 불가능하다. LSE의 Amazon Bedrock + Claude 기반 AI 감시 모델을 벤치마크로, 야간 시장 감시·이상거래 탐지·리스크 모니터링을 AI가 주도하고 인력은 예외 상황 대응에 집중하는 모델을 구축해야 한다.</p>
+      <p><strong>제언 6: 야간 유동성에 대한 현실적 기대를 설정하라</strong></p>
+      <p>야간 거래량이 전체의 1~10%에 불과할 것이라는 글로벌 경험을 기반으로, 24시간 전환의 성과 지표(KPI)를 거래량 증대가 아닌 <strong>시간대 커버리지, 투자자 접근성, 글로벌 경쟁력</strong>으로 설정해야 한다. 과도한 거래량 기대는 내부적 실망과 외부적 비판을 초래할 수 있다.</p>
+      <p><strong>제언 7: 토큰화 자산 기반 24/7 담보관리를 중장기 전략으로 준비하라</strong></p>
+      <p>BOK-Wire+ 비영업시간 문제는 단기적으로 사전예납 강화로 대응하되, 중장기적으로는 토큰화 자산(tokenized collateral)을 활용한 24/7 실시간 담보관리가 근본적 솔루션이다. 이는 디지털 자산 규제의 성숙과 함께 추진해야 하며, KRX가 아시아 디지털 자산 인프라의 선도자로 자리매김할 기회이기도 하다.</p>
+      <hr />
+      <p><strong>부록 A: 용어 정의</strong></p>
+      <table>
+      <thead>
+      <tr>
+      <th>용어</th>
+      <th>정의</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>ATS</td>
+      <td>Alternative Trading System (대체거래시스템)</td>
+      </tr>
+      <tr>
+      <td>CB</td>
+      <td>Circuit Breaker (서킷브레이커)</td>
+      </tr>
+      <tr>
+      <td>CCP</td>
+      <td>Central Counterparty (중앙청산소)</td>
+      </tr>
+      <tr>
+      <td>DVP</td>
+      <td>Delivery versus Payment (증권 인도 대 대금 지급)</td>
+      </tr>
+      <tr>
+      <td>FIX</td>
+      <td>Financial Information eXchange Protocol</td>
+      </tr>
+      <tr>
+      <td>GTC</td>
+      <td>Good Till Cancelled (취소 시까지 유효 주문)</td>
+      </tr>
+      <tr>
+      <td>LP</td>
+      <td>Liquidity Provider (유동성공급자)</td>
+      </tr>
+      <tr>
+      <td>NBBO</td>
+      <td>National Best Bid and Offer (전국 최우선호가)</td>
+      </tr>
+      <tr>
+      <td>RSM</td>
+      <td>Replicated State Machine (복제 상태 머신)</td>
+      </tr>
+      <tr>
+      <td>SIP</td>
+      <td>Securities Information Processor (증권정보처리기관)</td>
+      </tr>
+      <tr>
+      <td>SMP</td>
+      <td>Self-Match Prevention (자기체결방지)</td>
+      </tr>
+      <tr>
+      <td>TIF</td>
+      <td>Time in Force (주문 유효기간)</td>
+      </tr>
+      <tr>
+      <td>VaR</td>
+      <td>Value at Risk (위험가치)</td>
+      </tr>
+      <tr>
+      <td>VI</td>
+      <td>Volatility Interruption (변동성완화장치)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>부록 B: 참고 분석 보고서 목록</strong></p>
+      <ol type="1">
+      <li>NYSE Arca 24시간 거래 체제 분석</li>
+      <li>NASDAQ 24시간 거래 체제 분석</li>
+      <li>24X Exchange 분석</li>
+      <li>CME Group/Globex 분석</li>
+      <li>LSE (London Stock Exchange) 분석</li>
+      <li>Eurex 분석</li>
+      <li>TSE/JPX (도쿄증권거래소) 분석</li>
+      <li>DTCC/NSCC 24시간 청산·결제 전환 분석</li>
+      <li>JSCC (일본증권청산기관) 분석</li>
+      <li>Blue Ocean ATS 분석</li>
+      <li>KRX 현행 시스템·규정 분석</li>
+      </ol>
+      <hr />
+      <p><em>본 보고서는 글로벌 11개 거래소·청산기관에 대한 개별 심층 분석 보고서를 종합한 마스터 보고서이며, KRX 24시간 거래 전환 전략의 실행 가이드로 활용될 것을 목적으로 작성되었다.</em></p>
+    </article>
+
+    <hr>
+    <footer>
+      <p>본 보고서는 KRX 24시간 거래 전환 전략 리서치 프로젝트의 일환으로 작성되었습니다.</p>
+      <p>&copy; 2026 | Generated from Markdown source</p>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  // Mobile toggle
+  var toggle = document.getElementById('tocToggle');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  var iconMenu = toggle ? toggle.querySelector('.icon-menu') : null;
+  var iconClose = toggle ? toggle.querySelector('.icon-close') : null;
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    if (iconMenu) iconMenu.style.display = 'none';
+    if (iconClose) iconClose.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    if (iconMenu) iconMenu.style.display = 'block';
+    if (iconClose) iconClose.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      if (sidebar && sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+
+  // Close sidebar on link click (mobile)
+  if (sidebar) {
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth < 1100) {
+          closeSidebar();
+        }
+      });
+    });
+  }
+
+  // Scroll spy: highlight active section in TOC
+  var headings = document.querySelectorAll('article h1[id], article h2[id], article h3[id]');
+  var tocLinks = sidebar ? sidebar.querySelectorAll('a[href^="#"]') : [];
+
+  if (headings.length > 0 && tocLinks.length > 0) {
+    var tocMap = {};
+    tocLinks.forEach(function(link) {
+      tocMap[link.getAttribute('href')] = link;
+    });
+
+    function updateActive() {
+      var scrollPos = window.scrollY + 120;
+      var current = null;
+
+      headings.forEach(function(h) {
+        if (h.offsetTop <= scrollPos) {
+          current = h;
+        }
+      });
+
+      tocLinks.forEach(function(link) {
+        link.classList.remove('active');
+      });
+
+      if (current) {
+        var activeLink = tocMap['#' + current.id];
+        if (activeLink) {
+          activeLink.classList.add('active');
+          // Scroll TOC to keep active item visible
+          var nav = document.getElementById('sidebarNav');
+          if (nav && window.innerWidth >= 1100) {
+            var linkTop = activeLink.offsetTop - nav.offsetTop;
+            var navScroll = nav.scrollTop;
+            var navHeight = nav.clientHeight;
+            if (linkTop < navScroll + 40 || linkTop > navScroll + navHeight - 40) {
+              nav.scrollTo({ top: linkTop - navHeight / 3, behavior: 'smooth' });
+            }
+          }
+        }
+      }
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    updateActive();
+  }
+
+  // Progress bar
+  var progressBar = document.createElement('div');
+  progressBar.className = 'reading-progress';
+  document.body.appendChild(progressBar);
+
+  window.addEventListener('scroll', function() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = (window.scrollY / docHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  });
+})();
+</script>
+
+</body>
+</html>

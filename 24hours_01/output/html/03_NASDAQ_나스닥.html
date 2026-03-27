@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASDAQ 나스닥 - 24시간 거래 체제 분석 리포트</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1a1a2e; --sidebar-bg: #f8f9fa; --border: #dee2e6;
+            --accent: #0066cc; --accent-light: #e7f1ff; --table-header: #0066cc;
+            --table-header-text: #ffffff; --table-border: #d0d7de; --code-bg: #f6f8fa;
+            --highlight: #fff3cd; --hover-bg: #e9ecef;
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f1a; --text: #d8d8e8; --sidebar-bg: #161625; --border: #2a2a45;
+            --accent: #4da6ff; --accent-light: #1a2a4a; --table-header: #1e3a5f;
+            --table-header-text: #e0e8f0; --table-border: #2a3a4a; --code-bg: #1e2a3a;
+            --highlight: #3a3520; --hover-bg: #1e1e35;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.75;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            overflow-y: auto; z-index: 100; transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-280px); }
+        .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 13px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-header select {
+            width: 100%; margin-top: 8px; padding: 7px 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+        }
+        .toc { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .toc a {
+            display: block; padding: 5px 16px; color: var(--text); text-decoration: none;
+            font-size: 12.5px; border-left: 3px solid transparent; transition: all 0.15s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toc a:hover { background: var(--hover-bg); }
+        .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: var(--accent-light); }
+        .toc a.depth-3 { padding-left: 30px; font-size: 11.5px; opacity: 0.85; }
+        .toc a.depth-4 { padding-left: 44px; font-size: 11px; opacity: 0.7; }
+
+        /* Top bar */
+        .topbar {
+            position: fixed; top: 0; right: 0; left: 280px; height: 48px;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 90;
+            transition: left 0.25s ease;
+        }
+        .topbar.expanded { left: 0; }
+        .topbar button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--sidebar-bg); color: var(--text); cursor: pointer; font-size: 13px;
+            white-space: nowrap;
+        }
+        .topbar button:hover { background: var(--hover-bg); }
+        .topbar input {
+            flex: 1; max-width: 350px; padding: 6px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--sidebar-bg); color: var(--text);
+        }
+        .search-count { font-size: 11px; color: var(--accent); min-width: 50px; }
+
+        /* Main content */
+        main {
+            margin-left: 280px; padding: 68px 50px 60px;
+            transition: margin-left 0.25s ease;
+        }
+        main.expanded { margin-left: 0; }
+        h1 { font-size: 26px; margin: 25px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+        h2 { font-size: 20px; margin: 28px 0 14px; color: var(--accent); }
+        h3 { font-size: 16px; margin: 22px 0 10px; }
+        h4 { font-size: 14px; margin: 18px 0 8px; }
+        p { margin: 8px 0; }
+        a { color: var(--accent); }
+
+        /* Tables - responsive */
+        .table-wrap {
+            overflow-x: auto; margin: 14px 0; border-radius: 8px;
+            border: 1px solid var(--table-border);
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        table { border-collapse: collapse; font-size: 12.5px; width: max-content; min-width: 100%; }
+        th { background: var(--table-header); color: var(--table-header-text); font-weight: 600;
+              padding: 9px 10px; text-align: left; border: 1px solid var(--table-border);
+              position: sticky; top: 0; white-space: nowrap; }
+        td { padding: 8px 10px; border: 1px solid var(--table-border); word-break: keep-all; }
+        tr:nth-child(even) { background: var(--sidebar-bg); }
+        tr:hover { background: var(--accent-light); }
+        /* First column sticky on wide tables */
+        th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: inherit; }
+        th:first-child { z-index: 2; }
+        tr:nth-child(odd) td:first-child { background: var(--bg); }
+        tr:nth-child(even) td:first-child { background: var(--sidebar-bg); }
+        tr:hover td:first-child { background: var(--accent-light); }
+        th:first-child { background: var(--table-header); }
+
+        code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        blockquote {
+            border-left: 4px solid var(--accent); padding: 10px 18px; margin: 14px 0;
+            background: var(--accent-light); border-radius: 0 8px 8px 0; font-size: 13px;
+        }
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 25px 0; }
+        mark { background: #ffe066; padding: 0 3px; border-radius: 2px; }
+        strong { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.mobile-show { transform: translateX(0); }
+            main { margin-left: 0 !important; padding: 60px 12px 40px; }
+            .topbar { left: 0 !important; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 7px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 17px; }
+            h3 { font-size: 14px; }
+        }
+        @media (max-width: 480px) {
+            main { padding: 56px 8px 30px; }
+            table { font-size: 10px; }
+            th, td { padding: 5px 5px; }
+            .topbar input { max-width: 150px; }
+        }
+        @media print {
+            .sidebar, .topbar { display: none !important; }
+            main { margin: 0 !important; padding: 10px !important; max-width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>24H Trading Report</h2>
+            <select onchange="if(this.value)location.href=this.value">
+                <option value="00_종합비교_요약.html">&#128202; 종합 비교 요약</option>
+<option value="01_KRX_한국거래소.html">&#127472;&#127479; KRX 한국거래소</option>
+<option value="02_NYSE_뉴욕증권거래소.html">&#127482;&#127480; NYSE 뉴욕증권거래소</option>
+<option value="03_NASDAQ_나스닥.html" selected>&#127482;&#127480; NASDAQ 나스닥</option>
+<option value="04_24X_Exchange.html">&#127482;&#127480; 24X Exchange</option>
+<option value="05_CME_Group.html">&#127482;&#127480; CME Group</option>
+<option value="06_DTCC_청산결제.html">&#127482;&#127480; DTCC 청산결제</option>
+<option value="07_LSE_런던증권거래소.html">&#127466;&#127482; LSE 런던증권거래소</option>
+<option value="08_JPX_도쿄증권거래소.html">&#127471;&#127477; JPX 도쿄증권거래소</option>
+<option value="09_Blue_Ocean_ATS.html">&#127482;&#127480; Blue Ocean ATS</option>
+<option value="10_유럽거래소_Eurex_Euronext.html">&#127466;&#127482; 유럽거래소 Eurex/Euronext</option>
+            </select>
+        </div>
+        <div class="toc" id="toc"></div>
+    </nav>
+
+    <div class="topbar" id="topbar">
+        <button id="toggleBtn" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="doSearch(this.value)">
+        <span class="search-count" id="searchCount"></span>
+        <button onclick="toggleTheme()" title="Toggle dark mode">&#9681;</button>
+        <button onclick="window.print()" title="Print">&#128424;</button>
+    </div>
+
+    <main id="main">
+        <h1 id="nasdaq-235-글로벌-거래-생태계-분석">NASDAQ 23/5 글로벌 거래 생태계 분석</h1>
+<h2 id="1-기관-개요">1. 기관 개요</h2>
+<h3 id="11-nasdaq-inc-구조-및-글로벌-위상">1.1 NASDAQ Inc. 구조 및 글로벌 위상</h3>
+<p>NASDAQ(National Association of Securities Dealers Automated Quotations)은 1971년 설립된 세계 최초의 전자식 주식 거래소로, 현재 글로벌 자본시장 인프라의 핵심 축을 담당하고 있다. 2025년 기준 NASDAQ에는 약 3,700개 이상의 기업이 상장되어 있으며, 일평균 거래대금은 수천억 달러에 달한다. Apple, Microsoft, Amazon, NVIDIA 등 세계 시가총액 상위 기업 대다수가 NASDAQ에 상장되어 있어, 사실상 글로벌 기술주 거래의 중심지 역할을 수행한다.</p>
+<p>NASDAQ Inc.는 단순한 거래소를 넘어 시장 기술(Market Technology) 공급자로서의 정체성을 강화하고 있다. 전 세계 130개 이상의 시장 운영자에게 거래소 기술 솔루션을 제공하며, 한국거래소(KRX)를 포함한 아시아 주요 거래소에도 기술 자문 및 플랫폼을 공급한 바 있다.</p>
+<h3 id="12-genium-inet-매칭엔진-및-eqlipse-기술-스택">1.2 Genium INET 매칭엔진 및 Eqlipse 기술 스택</h3>
+<p>NASDAQ의 거래 처리 핵심은 <strong>Genium INET</strong> 매칭엔진이다. 이 엔진은 마이크로초(microsecond) 단위의 주문 처리 성능을 제공하며, 결정론적(deterministic) 매칭 로직을 통해 동일한 입력에 대해 동일한 결과를 보장한다. 이는 고빈도매매(HFT) 참여자들의 핵심 요구사항이다.</p>
+<p>2024년부터 NASDAQ은 차세대 기술 스택인 <strong>Eqlipse</strong>로의 전환을 본격화하고 있다. Eqlipse의 주요 특징은 다음과 같다:</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>사양</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>아키텍처</td>
+<td>클라우드 네이티브 (AWS 파트너십)</td>
+</tr>
+<tr>
+<td>하드웨어 가속</td>
+<td>FPGA 기반 게이트웨이</td>
+</tr>
+<tr>
+<td>네트워크</td>
+<td>커널 바이패스(Kernel Bypass) 네트워킹 (Solarflare/Xilinx 기반)</td>
+</tr>
+<tr>
+<td>업데이트 방식</td>
+<td>Rolling Restart / Evergreen Update</td>
+</tr>
+<tr>
+<td>확장성</td>
+<td>마이크로서비스 아키텍처, 동적 인스턴스 확장</td>
+</tr>
+</tbody>
+</table>
+<p>Eqlipse는 24시간 운영 환경에서 가장 중요한 요건인 <strong>무중단 패치(Zero-Downtime Patching)</strong>를 지원한다. 개별 컴포넌트(게이트웨이, 시장데이터 퍼블리셔 등)를 매칭엔진 가동 중에 독립적으로 업데이트할 수 있으며, 이는 23/5 운영 모델의 기술적 전제 조건이다.</p>
+<hr />
+<h2 id="2-현행-거래시간-제도">2. 현행 거래시간 제도</h2>
+<p>NASDAQ의 현행 거래시간은 하루 총 16시간(04:00~20:00 ET)으로, 세 개의 세션으로 구분된다.</p>
+<h3 id="21-pre-market-04000930-et">2.1 Pre-Market (04:00~09:30 ET)</h3>
+<ul>
+<li><strong>운영시간</strong>: 5시간 30분</li>
+<li><strong>허용 주문유형</strong>: 지정가(Limit) 주문만 허용</li>
+<li><strong>특징</strong>: 공식 시가(Opening Price)가 형성되기 전 구간으로, 유동성이 제한적이며 스프레드가 넓다</li>
+<li><strong>참여자</strong>: 주로 기관투자자 및 전문 트레이더가 활용하며, 유럽 시장 개장 전후 뉴스 반영 거래가 활발</li>
+</ul>
+<h3 id="22-regular-market-09301600-et">2.2 Regular Market (09:30~16:00 ET)</h3>
+<ul>
+<li><strong>운영시간</strong>: 6시간 30분</li>
+<li><strong>핵심 메커니즘</strong>:</li>
+<li><strong>Opening Cross (09:30 ET)</strong>: Pre-Market 기간 축적된 주문을 집합하여 공식 시가를 결정하는 단일가 매매 메커니즘. 수요-공급 균형점에서 최대 체결량을 산출</li>
+<li><strong>Closing Cross (16:00 ET)</strong>: MOC(Market-on-Close), LOC(Limit-on-Close) 주문을 집합하여 공식 종가를 결정. 인덱스 펀드 리밸런싱 등 대규모 주문이 집중되어, 일일 거래량의 약 10~15%가 이 시점에 체결</li>
+<li><strong>규제</strong>: Regulation NMS Rule 611(Order Protection Rule)이 완전 적용되어, 타 거래소의 최우선호가보다 불리한 가격으로 체결되는 것(Trade-Through)을 금지</li>
+<li><strong>시장보호</strong>: LULD(Limit Up-Limit Down) 메커니즘이 작동하여 급격한 가격 변동 시 거래를 일시 정지</li>
+</ul>
+<h3 id="23-post-market-16002000-et">2.3 Post-Market (16:00~20:00 ET)</h3>
+<ul>
+<li><strong>운영시간</strong>: 4시간</li>
+<li><strong>허용 주문유형</strong>: 지정가 주문 위주</li>
+<li><strong>특징</strong>: 실적 발표 등 장 마감 후 뉴스에 대한 반응 거래가 주로 발생. 유동성은 정규시간 대비 현저히 낮으며, Reg NMS 보호가 완화된 환경</li>
+<li><strong>종료 시점</strong>: 20:00 ET에 모든 미체결 주문이 자동 취소(Order Flush)되며, 이는 현행 거래일의 종료를 의미</li>
+</ul>
+<hr />
+<h2 id="3-235-확장-제안-sr-nasdaq-2025-106">3. 23/5 확장 제안 (SR-NASDAQ-2025-106)</h2>
+<p>NASDAQ은 2025년 SEC에 규칙변경안 SR-NASDAQ-2025-106을 제출하여, 기존 16시간 거래를 <strong>23시간/주 5일</strong> 모델로 확장하는 방안을 제안하였다. 이는 단순한 시간 연장이 아닌, 거래일 수명주기(Session Lifecycle)의 <strong>근본적 재설계</strong>를 의미한다.</p>
+<h3 id="31-이중-세션-모델-bifurcated-session-model">3.1 이중 세션 모델 (Bifurcated Session Model)</h3>
+<p>NASDAQ은 거래일을 법적, 기술적, 운영적으로 구분되는 두 개의 세션으로 분할한다.</p>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간 (ET)</th>
+<th>운영시간</th>
+<th>성격</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Day Session</strong></td>
+<td>04:00~20:00</td>
+<td>16시간</td>
+<td>기존 운영 구조 유지 (Pre-Market + Regular + Post-Market)</td>
+</tr>
+<tr>
+<td><strong>Maintenance Pause</strong></td>
+<td>20:00~21:00</td>
+<td>1시간</td>
+<td>거래 중단, 시스템 정비, 거래일 전환</td>
+</tr>
+<tr>
+<td><strong>Night Session</strong></td>
+<td>21:00~04:00</td>
+<td>7시간</td>
+<td>신규 도입, 제한적 주문유형, 격리된 유동성 풀</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>거래주 시작</strong>: 일요일 21:00 ET (Night Session 개시)</li>
+<li><strong>거래주 종료</strong>: 금요일 20:00 ET (Day Session 종료)</li>
+<li><strong>Night Session 운영일</strong>: 일요일~목요일 (주 5회)</li>
+</ul>
+<h3 id="32-double-flush-메커니즘-2000-et-0400-et">3.2 "Double Flush" 메커니즘 (20:00 ET + 04:00 ET)</h3>
+<p>23/5 모델의 핵심 리스크 관리 장치는 <strong>이중 플러시(Double Flush)</strong> 메커니즘이다.</p>
+<p><strong>제1차 플러시 (20:00 ET)</strong>:
+- Day Session 종료 시점에 NASDAQ 주문대장(Order Book)의 <strong>모든 미체결 주문을 일괄 취소</strong>
+- Day, GTC, Extended Hours 등 모든 유형의 주문이 대상
+- 이를 통해 Day Session과 Night Session 사이에 <strong>깨끗한 상태(Clean Slate)</strong>를 확보
+- 20:00 ET 이전 정보를 기반으로 설정된 주문이 야간 시장 환경에서 부적절하게 체결되는 것을 방지</p>
+<p><strong>제2차 플러시 (04:00 ET)</strong>:
+- Night Session 종료 시점에 야간 주문대장의 <strong>모든 미체결 주문을 일괄 취소</strong>
+- 참여자는 04:00 ET Pre-Market 개시를 위해 주문을 <strong>완전히 재입력</strong>해야 함
+- 유럽/아시아 거시경제 뉴스로 인해 공정가치가 근본적으로 변동했을 수 있으므로, 야간 주문의 자동 이월을 차단</p>
+<p>이 메커니즘의 핵심 목적은 <strong>진부화된 주문(Stale Orders)</strong>의 체결을 방지하고, 참여자가 각 세션의 시장 상황에 맞게 능동적으로 주문을 관리하도록 강제하는 것이다.</p>
+<h3 id="33-trade-date-로직-2000-et-기준">3.3 Trade Date 로직 (20:00 ET 기준)</h3>
+<p>미국 금융 인프라는 <strong>20:00 ET</strong>를 거래일(Trade Date) 경계로 사용한다. DTCC/NSCC 및 은행 시스템의 결제주기와 정합성을 확보하기 위한 설계이다.</p>
+<h4 id="거래일-할당-시나리오">거래일 할당 시나리오</h4>
+<table>
+<thead>
+<tr>
+<th>시나리오</th>
+<th>거래 시점</th>
+<th>세션</th>
+<th>거래일 (Trade Date)</th>
+<th>결제일 (T+1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong></td>
+<td>월요일 15:30 ET</td>
+<td>Regular Market</td>
+<td>월요일 (T)</td>
+<td>화요일</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td>월요일 19:55 ET</td>
+<td>Post-Market (Day)</td>
+<td>월요일 (T)</td>
+<td>화요일</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td>월요일 20:00~21:00 ET</td>
+<td>Maintenance Pause</td>
+<td>거래 불가</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>월요일 21:05 ET</td>
+<td>Night Session</td>
+<td><strong>화요일</strong> (T+1)</td>
+<td>수요일</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td>화요일 02:30 ET</td>
+<td>Night Session</td>
+<td>화요일 (T+1)</td>
+<td>수요일</td>
+</tr>
+<tr>
+<td><strong>F</strong></td>
+<td>화요일 04:30 ET</td>
+<td>Pre-Market (Day)</td>
+<td>화요일 (T+1)</td>
+<td>수요일</td>
+</tr>
+<tr>
+<td><strong>G</strong></td>
+<td>일요일 21:05 ET</td>
+<td>Night Session (주 개시)</td>
+<td><strong>월요일</strong></td>
+<td>화요일</td>
+</tr>
+</tbody>
+</table>
+<p><strong>핵심 원칙</strong>: "월요일 밤" Night Session의 거래는 법적으로 "화요일"에 해당한다. 이는 현금 결제가 항상 연방준비제도(Federal Reserve)의 Fedwire 시스템 운영일에 이루어지도록 보장하기 위함이다.</p>
+<h3 id="34-gtc-주문-완전-폐지-2026년-2월">3.4 GTC 주문 완전 폐지 (2026년 2월~)</h3>
+<p>23/5 모델의 도입과 함께, NASDAQ은 <strong>Good-Til-Cancelled(GTC) 주문을 시스템에서 완전히 폐지</strong>한다.</p>
+<ul>
+<li><strong>시행 시기</strong>: 2026년 2월</li>
+<li><strong>근거</strong>: GTC 주문은 세션 간 경계를 넘어 무기한 존재할 수 있어, Double Flush 메커니즘의 목적을 무력화할 위험이 있음</li>
+<li><strong>대안</strong>: 참여자는 각 세션별로 적합한 Time-in-Force(TIF) 지시를 사용해야 하며, Day 또는 SDAY(System Day) TIF는 해당 세션의 물리적 플러시에 의해 엄격히 제한됨</li>
+<li><strong>영향</strong>: 장기 지정가 주문 전략을 사용하는 참여자는 자동 주문 관리 시스템을 구축하거나 매 세션 개시 시 주문을 재입력해야 함</li>
+</ul>
+<hr />
+<h2 id="4-night-session-상세">4. Night Session 상세</h2>
+<p>Night Session은 23/5 모델에서 새롭게 도입되는 운영 구조로, 기존 Day Session과는 본질적으로 다른 규제 및 운영 환경을 가진다.</p>
+<h3 id="41-허용-주문유형">4.1 허용 주문유형</h3>
+<p>Night Session에서는 시장 복잡성과 변동성 리스크를 최소화하기 위해 주문유형을 극도로 제한한다.</p>
+<table>
+<thead>
+<tr>
+<th>주문유형</th>
+<th>허용 여부</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Limit Order (지정가)</strong></td>
+<td><strong>허용</strong></td>
+<td>가격 확실성 확보를 위한 기본 주문</td>
+</tr>
+<tr>
+<td><strong>Intermarket Sweep Order (ISO)</strong></td>
+<td><strong>허용</strong></td>
+<td>Reg NMS 면제 환경에서의 다중 가격 수준 소화용</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-금지-주문유형">4.2 금지 주문유형</h3>
+<table>
+<thead>
+<tr>
+<th>주문유형</th>
+<th>금지 사유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Market Order (시장가)</strong></td>
+<td>유동성이 얇은 환경에서 극단적 불리한 가격 체결 위험</td>
+</tr>
+<tr>
+<td><strong>Pegged Order</strong></td>
+<td>야간에는 통합 NBBO(National Best Bid and Offer)가 존재하지 않아 기준가 부재</td>
+</tr>
+<tr>
+<td><strong>MOO/LOO (Market/Limit-on-Open)</strong></td>
+<td>Night Session에는 Opening Cross가 없음</td>
+</tr>
+<tr>
+<td><strong>MOC/LOC (Market/Limit-on-Close)</strong></td>
+<td>Night Session에는 Closing Cross가 없음</td>
+</tr>
+<tr>
+<td><strong>Discretionary Order</strong></td>
+<td>매칭엔진 복잡성 감소 및 야간 유동성 환경에서의 예측 불가능한 체결 방지</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-reg-nms-rule-611-미적용----격리된-유동성-풀">4.3 Reg NMS Rule 611 미적용 -- 격리된 유동성 풀</h3>
+<p>Regular Market Session(09:30~16:00 ET)에서는 Rule 611(Order Protection Rule)이 적용되어, 타 거래소의 보호호가(Protected Quote)보다 불리한 가격으로의 체결(Trade-Through)이 금지된다. 그러나 <strong>Night Session은 "Extended Hours"로 분류되어 Rule 611이 적용되지 않는다.</strong></p>
+<p>이는 다음과 같은 실질적 의미를 갖는다:</p>
+<ul>
+<li><strong>보호 NBBO 부재</strong>: 야간에는 통합된 최우선호가가 존재하지 않음</li>
+<li><strong>주문 회송(Routing) 의무 없음</strong>: NASDAQ이 AAPL을 $150.00에 제시하고 Blue Ocean ATS가 $149.90에 제시하더라도, NASDAQ은 Blue Ocean으로 주문을 회송할 의무가 없음</li>
+<li><strong>격리된 유동성 풀</strong>: Night Session은 사실상 독립적 유동성 풀(ECN과 유사)로 기능하며, 가격 형성(Price Discovery)이 해당 거래소에 국한됨</li>
+</ul>
+<h3 id="44-clearly-erroneous-execution-rule-11890-야간-확대-허용범위">4.4 Clearly Erroneous Execution (Rule 11890): 야간 확대 허용범위</h3>
+<p>LULD(Limit Up-Limit Down) 메커니즘이 정규시간에만 적용되므로, Night Session에서는 <strong>명백한 오류 체결(Clearly Erroneous Execution, CEE)</strong> 규칙(Rule 11890)이 시장 무결성의 주요 방어선 역할을 한다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>주간 (Regular Market)</th>
+<th>야간 (Night Session)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LULD 적용</strong></td>
+<td>적용 (5분 내 5% 변동 시 거래 일시 정지)</td>
+<td><strong>미적용</strong></td>
+</tr>
+<tr>
+<td><strong>CEE 검토 기준</strong></td>
+<td>약 <strong>3%</strong> 이탈</td>
+<td>약 <strong>20%</strong> 이탈</td>
+</tr>
+<tr>
+<td><strong>체결 취소 판단</strong></td>
+<td>엄격한 기준 적용</td>
+<td>넓은 스프레드를 감안한 완화 기준</td>
+</tr>
+</tbody>
+</table>
+<p>야간의 20% 허용범위는 유동성이 극도로 제한된 환경에서 정상적 스프레드 확대를 반영한 설계이다.</p>
+<h3 id="45-volatility-guards-내부-collars">4.5 Volatility Guards (내부 Collars)</h3>
+<p>LULD 부재를 보완하기 위해, NASDAQ은 자체적인 <strong>변동성 완화장치(Volatility Guards)</strong>를 Night Session에 적용한다.</p>
+<ul>
+<li><strong>내부 칼라(Internal Collars)</strong>: 최근 체결가(Last Sale Price) 대비 과도하게 공격적인 가격의 주문을 자동으로 거부</li>
+<li><strong>목적</strong>: 얇은 주문대장을 단일 대형 주문이 전면 소화하여 발생하는 "Flash Crash" 시나리오 방지</li>
+<li><strong>작동 방식</strong>: 정적 가격 밴드가 아닌, 동적으로 조정되는 참조가격 기반 필터</li>
+</ul>
+<hr />
+<h2 id="5-기술-인프라">5. 기술 인프라</h2>
+<h3 id="51-포트-분리-day-ports-vs-night-ports-물리적논리적-분리">5.1 포트 분리: Day Ports vs Night Ports (물리적/논리적 분리)</h3>
+<p>NASDAQ은 Night Session을 위해 <strong>별도의 논리적 포트(Logical Ports)</strong>를 의무화한다. 기존 Day Session 연결을 Night Session에 사용할 수 없다.</p>
+<table>
+<thead>
+<tr>
+<th>포트 유형</th>
+<th>운영시간 (ET)</th>
+<th>특성</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Day Ports</strong></td>
+<td>04:00~20:00</td>
+<td>기존 인프라, 해당 시간 외 주문 수신 거부 (Hard-Coded)</td>
+</tr>
+<tr>
+<td><strong>Night Ports</strong></td>
+<td>21:00~04:00</td>
+<td>신규 논리적 엔티티, 별도 주문 및 비용 발생</td>
+</tr>
+</tbody>
+</table>
+<p><strong>리스크 격리(Risk Isolation)의 원칙</strong>: 포트 분리를 통해 NASDAQ은 Night Session을 위한 독립적 매칭엔진 인스턴스 또는 파티션을 운영할 수 있다. Night Session 인스턴스에서 치명적 소프트웨어 장애(메모리 누수, 무한루프 등)가 발생하더라도, <strong>Day Session 인프라는 영향을 받지 않는다</strong>. 야간 장애의 "폭발 반경(Blast Radius)"이 물리적으로 차단되는 구조이다.</p>
+<h3 id="52-ouch-50-프로토콜">5.2 OUCH 5.0 프로토콜</h3>
+<p>OUCH는 NASDAQ의 네이티브 저레이턴시 바이너리 주문입력 프로토콜이다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>사양</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>형식</strong></td>
+<td>바이너리(Binary)</td>
+</tr>
+<tr>
+<td><strong>메시지 구조</strong></td>
+<td>고정 길이(Fixed-Length)</td>
+</tr>
+<tr>
+<td><strong>설계 철학</strong></td>
+<td>속도 우선, FIX 대비 핸드셰이킹 오버헤드 제거</td>
+</tr>
+<tr>
+<td><strong>세션 구분</strong></td>
+<td>Enter Order 메시지의 TIF 값(예: 99999 for Market Day)을 Day Port/Night Port에 따라 차별 해석</td>
+</tr>
+<tr>
+<td><strong>재접속 특성</strong></td>
+<td>FIX와 달리 풍부한 체결보고 이력을 제공하지 않으므로, 참여자의 실시간 노출(Exposure) 추적 필수</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-itch-데이터-피드">5.3 ITCH 데이터 피드</h3>
+<p>ITCH는 NASDAQ의 아웃바운드 독점 데이터 피드로, <strong>모든 개별 주문과 체결 정보(Level 3 데이터)</strong>를 방송한다.</p>
+<ul>
+<li><strong>Complete Feed</strong>: 23시간 전체 사이클을 단일 스트림으로 통합</li>
+<li><strong>Night Session Feed</strong>: 야간 데이터만 수신하고자 하는 참여자를 위한 별도 피드 (대역폭 최적화)</li>
+<li><strong>SIP 대비 우위</strong>: SIP(Consolidated Tape)가 최우선호가(Top-of-Book)만 집계하는 반면, ITCH는 <strong>전체 호가 심도(Full Depth-of-Book)</strong>를 제공</li>
+<li><strong>야간 중요성</strong>: 유동성이 희박한 Night Session에서 주문대장의 "공백(Air Pockets)"을 파악하여 적절한 주문 규모를 결정하는 데 필수적</li>
+</ul>
+<h3 id="54-core-fix-gateway">5.4 Core FIX Gateway</h3>
+<p>초저지연이 불필요한 참여자를 위해, NASDAQ은 <strong>Core FIX(Financial Information eXchange)</strong> 게이트웨이를 지원한다.</p>
+<ul>
+<li>FIX 메시지를 OUCH 명령으로 변환하여 매칭엔진에 전달</li>
+<li>기존 FIX 인프라를 보유한 <strong>해외 증권사(한국 증권사 포함)</strong>의 진입 장벽을 낮춤</li>
+<li>OUCH 개발 자원이 부족한 참여자에게 실질적 대안 제공</li>
+<li>FIX Tag 75(TradeDate)를 통해 Night Session 거래의 결제주기를 명확히 식별 가능</li>
+</ul>
+<h3 id="55-eqlipse-스택-클라우드-네이티브aws-fpga-가속-커널-바이패스">5.5 Eqlipse 스택: 클라우드 네이티브(AWS), FPGA 가속, 커널 바이패스</h3>
+<p>Eqlipse는 NASDAQ의 23/5 운영을 뒷받침하는 차세대 기술 플랫폼이다.</p>
+<table>
+<thead>
+<tr>
+<th>기술 요소</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>클라우드 네이티브</strong></td>
+<td>AWS 파트너십 기반, 매칭엔진 인스턴스 동적 확장 가능</td>
+</tr>
+<tr>
+<td><strong>FPGA 가속 게이트웨이</strong></td>
+<td>하드웨어 수준의 주문 전처리로 결정론적 레이턴시 보장</td>
+</tr>
+<tr>
+<td><strong>커널 바이패스 네트워킹</strong></td>
+<td>Solarflare/Xilinx 기반 기술로 OS 커널을 우회하여 네트워크 스택 지연 최소화</td>
+</tr>
+<tr>
+<td><strong>마이크로서비스 아키텍처</strong></td>
+<td>개별 컴포넌트(게이트웨이, 시장데이터 퍼블리셔 등) 독립 배포 가능</td>
+</tr>
+</tbody>
+</table>
+<h3 id="56-rolling-restart-evergreen-update">5.6 Rolling Restart / Evergreen Update</h3>
+<p>24시간 운영 환경에서 가장 핵심적 기술 요건은 <strong>다운타임 없는 시스템 업데이트</strong>이다.</p>
+<ul>
+<li><strong>Rolling Restart</strong>: 매칭엔진이 활성 상태인 동안 개별 컴포넌트를 순차적으로 재시작</li>
+<li><strong>Evergreen Update</strong>: 소프트웨어 패치를 무중단으로 적용하여, 1시간의 Maintenance Pause 내에 필수 업데이트를 완료</li>
+<li><strong>하드웨어 페일오버</strong>: Maintenance Pause를 활용하여 하드웨어 교체 및 메모리 캐시 플러싱 수행</li>
+</ul>
+<hr />
+<h2 id="6-리스크-관리">6. 리스크 관리</h2>
+<h3 id="61-luld-정규시간만-적용">6.1 LULD: 정규시간만 적용</h3>
+<p>Limit Up-Limit Down(LULD) 메커니즘은 <strong>Regular Market Hours(09:30~16:00 ET)에서만 작동</strong>한다. 이는 LULD가 다수의 거래소가 동시에 운영되는 통합 시장 환경을 전제로 설계되었기 때문이다.</p>
+<ul>
+<li>정규시간: 5분 내 참조가격 대비 약 5% 이상 변동 시 거래 일시 정지(Trading Pause)</li>
+<li>Pre-Market / Post-Market / Night Session: LULD 미적용</li>
+</ul>
+<h3 id="62-야간-변동성-관리">6.2 야간 변동성 관리</h3>
+<p>LULD 부재를 보완하는 Night Session의 변동성 관리 체계:</p>
+<table>
+<thead>
+<tr>
+<th>방어선</th>
+<th>메커니즘</th>
+<th>작동 방식</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>제1선</strong></td>
+<td>주문유형 제한</td>
+<td>Market Order 금지로 극단적 체결가 방지</td>
+</tr>
+<tr>
+<td><strong>제2선</strong></td>
+<td>Volatility Guards</td>
+<td>최근 체결가 대비 과도한 가격 주문 자동 거부</td>
+</tr>
+<tr>
+<td><strong>제3선</strong></td>
+<td>CEE Rule 11890</td>
+<td>체결 후 20% 이상 이탈 시 명백한 오류로 판정, 체결 취소 가능</td>
+</tr>
+<tr>
+<td><strong>제4선</strong></td>
+<td>Double Flush</td>
+<td>세션 간 진부화된 주문 자동 제거</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-브로커-고객-고지-의무">6.3 브로커 고객 고지 의무</h3>
+<p>SEC 및 FINRA는 연장시간 거래에 대해 브로커가 고객에게 다음 리스크를 <strong>명시적으로 고지</strong>할 것을 의무화한다:</p>
+<ol>
+<li><strong>유동성 저하(Lower Liquidity)</strong>: 원하는 가격에 주문 체결이 어려울 수 있음</li>
+<li><strong>변동성 증가(Higher Volatility)</strong>: 정규시간 대비 가격 변동폭이 크게 확대될 수 있음</li>
+<li><strong>가격 변동(Changing Prices)</strong>: 표시 가격이 통합 시장 가치를 반영하지 못할 수 있음</li>
+<li><strong>시장 비연결(Unlinked Markets)</strong>: 한 거래소의 가격이 다른 거래소의 가격과 일치하지 않을 수 있음</li>
+</ol>
+<hr />
+<h2 id="7-청산-및-결제-연동">7. 청산 및 결제 연동</h2>
+<p>24시간 거래의 가장 핵심적 병목지점은 주문 매칭이 아닌 <strong>청산(Clearing)</strong>이다. "거래시간"(24/7)과 "은행시간"(9-5)의 괴리가 심각한 신용 및 결제 리스크를 초래한다.</p>
+<h3 id="71-dtccnscc-utc-24x5-확장-q3-2026-목표">7.1 DTCC/NSCC UTC 24x5 확장 (Q3 2026 목표)</h3>
+<p>National Securities Clearing Corporation(NSCC)은 24/5 모델 지원을 위해 운영시간을 확장하고 있다.</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>현행</th>
+<th>확장 후</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>청산 운영시간</strong></td>
+<td>은행 영업시간 기반</td>
+<td>UTC 24x5 연속 운영</td>
+</tr>
+<tr>
+<td><strong>목표 시행 시기</strong></td>
+<td>-</td>
+<td><strong>2026년 Q3</strong></td>
+</tr>
+<tr>
+<td><strong>핵심 시스템</strong></td>
+<td>기존 배치 처리</td>
+<td>Universal Trade Capture (UTC)</td>
+</tr>
+<tr>
+<td><strong>거래 보증</strong></td>
+<td>T+1 일괄 처리</td>
+<td>실시간 처리</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-실시간-novation-ccp-보증">7.2 실시간 Novation (CCP 보증)</h3>
+<p>현행 시스템에서 거래는 배치(Batch) 방식으로 처리되는 경우가 많다. 확장된 모델에서는 <strong>즉시 중앙거래상대방(CCP) 보증</strong>이 제공된다.</p>
+<ul>
+<li><strong>작동 원리</strong>: NASDAQ에서 새벽 2시에 매칭된 거래가 NSCC에 보고되면, <strong>신용 리스크가 양 거래 당사자에서 CCP로 즉시 이전</strong></li>
+<li><strong>의의</strong>: 참여자가 비유동적 야간 시간에도 익명성과 신뢰를 가지고 거래할 수 있는 기반</li>
+<li><strong>실시간 Novation</strong>: 배치 처리가 아닌, 거래 단위별 실시간 청산 보증 제공</li>
+</ul>
+<h3 id="73-야간-증거금-var-기반-intraday-마진콜">7.3 야간 증거금: VaR 기반 Intraday 마진콜</h3>
+<p>야간 운영은 회원사의 증거금 부담을 증가시킨다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>증거금 산정</strong></td>
+<td>VaR(Value-at-Risk) 기반 변동성 증거금</td>
+</tr>
+<tr>
+<td><strong>마진콜 시점</strong></td>
+<td>은행 영업시간 외에도 일중(Intraday) 마진콜 가능</td>
+</tr>
+<tr>
+<td><strong>리스크 요인</strong></td>
+<td>은행 폐장 시간에 시장이 급변할 경우 마진콜 충족 불가 위험</td>
+</tr>
+<tr>
+<td><strong>대응 전략</strong></td>
+<td>VaR 가산금(Charge) 상향 또는 야간 활동 회원에 대한 추가 담보 요구</td>
+</tr>
+</tbody>
+</table>
+<h3 id="74-리테일-100-사전예탁pre-funding-정책">7.4 리테일 100% 사전예탁(Pre-funding) 정책</h3>
+<p>다수의 브로커는 야간 거래의 신용 리스크를 사실상 제거하기 위해 <strong>리테일 고객에 대한 100% 사전예탁(Pre-funding)</strong> 정책을 적용한다.</p>
+<ul>
+<li><strong>증거금 레버리지 금지</strong>: 야간 거래 시 마진(신용) 매매 불허</li>
+<li><strong>근거</strong>: 새벽 3시에 고객 계좌가 손실로 인해 마이너스가 되어도, 마진콜을 발행하거나 충족시킬 수 있는 시간이 없음</li>
+<li><strong>실질적 효과</strong>: 리테일 투자자의 야간 손실이 자기자본 범위 내로 제한되어 브로커의 신용 노출 제거</li>
+</ul>
+<hr />
+<h2 id="8-경쟁-환경-비교">8. 경쟁 환경 비교</h2>
+<h3 id="nasdaq-night-session-vs-blue-ocean-ats-vs-24x-national-exchange">NASDAQ Night Session vs Blue Ocean ATS vs 24X National Exchange</h3>
+<table>
+<thead>
+<tr>
+<th>비교 항목</th>
+<th>NASDAQ Night Session</th>
+<th>Blue Ocean ATS</th>
+<th>24X National Exchange</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>법적 구조</strong></td>
+<td>국가 증권거래소 (National Securities Exchange)</td>
+<td>대체거래시스템 (ATS, Broker-Dealer)</td>
+<td>국가 증권거래소</td>
+</tr>
+<tr>
+<td><strong>규제 체계</strong></td>
+<td>Section 19(b) / SRO 규칙</td>
+<td>Regulation ATS</td>
+<td>Section 19(b) / SRO 규칙</td>
+</tr>
+<tr>
+<td><strong>운영시간 (ET)</strong></td>
+<td>21:00~04:00 (7시간)</td>
+<td>20:00~04:00 (8시간)</td>
+<td>23시간/7일 (계획)</td>
+</tr>
+<tr>
+<td><strong>시장 데이터</strong></td>
+<td>ITCH (독점 + SIP)</td>
+<td>독점 피드 (SIP/벤더 배포)</td>
+<td>독점 피드</td>
+</tr>
+<tr>
+<td><strong>청산 방식</strong></td>
+<td>NSCC (실시간 Novation)</td>
+<td>NSCC (T+1 보고)</td>
+<td>NSCC (실시간 Novation)</td>
+</tr>
+<tr>
+<td><strong>주요 참여자</strong></td>
+<td>전 회원 (리테일 + 기관)</td>
+<td>리테일 어그리게이터 중심 (Robinhood, 삼성증권 등)</td>
+<td>리테일 + 기관</td>
+</tr>
+<tr>
+<td><strong>가격 보호</strong></td>
+<td>Rule 11890 (엄격 밴드)</td>
+<td>내부 ATS 통제</td>
+<td>거래소 규칙</td>
+</tr>
+<tr>
+<td><strong>유동성 원천</strong></td>
+<td>중앙지정가주문대장 (CLOB)</td>
+<td>마켓메이커 / 리테일 흐름</td>
+<td>중앙지정가주문대장</td>
+</tr>
+<tr>
+<td><strong>선발 우위</strong></td>
+<td>거래소 브랜드 신뢰성</td>
+<td>아시아 리테일 파트너십 구축 완료</td>
+<td>레거시 부채 없는 신규 기술 스택</td>
+</tr>
+</tbody>
+</table>
+<p><strong>경쟁 분석</strong>:
+- <strong>Blue Ocean ATS</strong>: 선발 우위와 한국 리테일 브로커와의 깊은 파트너십 보유. 그러나 거래상대방 리스크 및 규제 견고성 측면에서 거래소 대비 열위
+- <strong>NASDAQ</strong>: 거래소의 "안전성" 프리미엄 제공. Blue Ocean에 참여하지 않는 기관투자자가 NASDAQ 규제 Night Session에는 참여할 가능성
+- <strong>24X</strong>: "파괴자(Disruptor)" 위협. 레거시 기술 부채 없이 24/7 전용으로 설계된 거래소로서, NASDAQ의 개조(Retrofit) 스택 대비 낮은 비용 또는 우월한 기술을 제공할 잠재력 보유</p>
+<hr />
+<h2 id="9-sifma-가이드라인-및-운영-회복력">9. SIFMA 가이드라인 및 운영 회복력</h2>
+<p>Securities Industry and Financial Markets Association(SIFMA)은 24/5 전환이 시스템적 리스크를 유발하지 않도록 워킹그룹을 구성하여 가이드라인을 수립하였으며, NASDAQ은 이를 대부분 채택하고 있다.</p>
+<h3 id="91-야간-인력-운영-eyes-on-glass">9.1 야간 인력 운영 ("Eyes on Glass")</h3>
+<p>23/5 모델은 전통적인 "Follow-the-Sun" 지원 모델에 도전한다.</p>
+<table>
+<thead>
+<tr>
+<th>운영 영역</th>
+<th>요구사항</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>거래 감시</strong></td>
+<td>Night Session 기간 동안 "Eyes on Glass" 감시 역량 유지 필수</td>
+</tr>
+<tr>
+<td><strong>인력 배치</strong></td>
+<td>아시아 시간대 트레이딩 데스크 운영 또는 미국 내 교대근무(Rotation Shift)</td>
+</tr>
+<tr>
+<td><strong>권한 위임</strong></td>
+<td>야간 운영 책임자에게 시장 중단 및 Self-Help 선언 권한 명확히 위임</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-사이버보안-soc-247">9.2 사이버보안 SOC 24/7</h3>
+<ul>
+<li><strong>보안운영센터(SOC)</strong>: 24시간 365일 완전 가동 필수</li>
+<li><strong>야간 취약성</strong>: "조용한" 야간 시간대는 사이버 공격의 주요 표적이 될 수 있음</li>
+<li><strong>모니터링 범위</strong>: 네트워크 침입 탐지, 이상 거래 패턴 감시, DDoS 방어 등 포함</li>
+</ul>
+<h3 id="93-사고-대응-및-self-help-선언-권한">9.3 사고 대응 및 Self-Help 선언 권한</h3>
+<p>SIFMA 가이드라인은 야간 사고 발생 시 명확한 에스컬레이션 경로를 강조한다.</p>
+<ul>
+<li><strong>시나리오</strong>: 새벽 2시에 매칭엔진 장애 발생 시, 시장 중단(Halt) 또는 "Self-Help" 상황 선언 권한이 누구에게 있는가?</li>
+<li><strong>NASDAQ 대응</strong>: 야간 운영 책임자(Night-Shift Operations Lead)에게 의사결정 권한을 명시적으로 위임하는 프로토콜 수립</li>
+<li><strong>Self-Help 선언</strong>: 다른 거래소의 시스템 장애 시, 해당 거래소의 보호호가를 무시하고 자체적으로 거래를 계속할 수 있는 권한</li>
+</ul>
+<hr />
+<h2 id="10-krx와의-비교-및-시사점">10. KRX와의 비교 및 시사점</h2>
+<h3 id="기술-규제-운영-측면-비교">기술, 규제, 운영 측면 비교</h3>
+<table>
+<thead>
+<tr>
+<th>비교 항목</th>
+<th>NASDAQ 23/5</th>
+<th>KRX 현행</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>거래시간</strong></td>
+<td>23시간/주 5일 (제안)</td>
+<td>약 6.5시간 (정규) + 시간외</td>
+</tr>
+<tr>
+<td><strong>매칭엔진</strong></td>
+<td>Genium INET → Eqlipse (클라우드 네이티브)</td>
+<td>EXTURE 3.0 (50µs, 9.4억건/일)</td>
+</tr>
+<tr>
+<td><strong>프로토콜</strong></td>
+<td>OUCH 5.0 (바이너리), FIX, ITCH</td>
+<td>KRX 독자 프로토콜, FIX</td>
+</tr>
+<tr>
+<td><strong>야간 거래</strong></td>
+<td>Night Session (21:00~04:00 ET) 신설</td>
+<td>미운영</td>
+</tr>
+<tr>
+<td><strong>청산 인프라</strong></td>
+<td>NSCC 24x5 실시간 Novation (Q3 2026)</td>
+<td>KSD 영업시간 내 처리</td>
+</tr>
+<tr>
+<td><strong>결제 연동</strong></td>
+<td>Fedwire 연동, T+1</td>
+<td>BOK-Wire+ 연동, T+1 (2024~)</td>
+</tr>
+<tr>
+<td><strong>변동성 관리</strong></td>
+<td>LULD(주간) + CEE + Volatility Guards(야간)</td>
+<td>가격제한폭(상하한가) + VI(Volatility Interruption)</td>
+</tr>
+<tr>
+<td><strong>포트 분리</strong></td>
+<td>Day/Night 물리적 분리</td>
+<td>단일 세션 구조</td>
+</tr>
+<tr>
+<td><strong>GTC 주문</strong></td>
+<td>2026.2 폐지</td>
+<td>운용 중</td>
+</tr>
+<tr>
+<td><strong>규제 프레임워크</strong></td>
+<td>Reg NMS(주간) / 면제(야간) 이원 체계</td>
+<td>자본시장법 단일 체계</td>
+</tr>
+</tbody>
+</table>
+<h3 id="krx-도입-시-핵심-권고사항">KRX 도입 시 핵심 권고사항</h3>
+<p><strong>전략적 권고</strong>:</p>
+<ol>
+<li><strong>정비 창(Maintenance Window) 도입</strong>: 24시간 연속 운영을 즉시 시도하지 말고, NASDAQ의 20:00~21:00 ET 모델처럼 안전한 거래일 전환 및 시스템 정비를 위한 중단 시간 확보. 청산 시스템의 날짜 처리 오류 리스크 감소</li>
+<li><strong>거래소 브랜드 활용</strong>: ATS 대비 규제된 SRO로서의 감시, 명확한 오류 정책, 자본 요건을 강조하여 기관 자본 유치. Blue Ocean 등 "무규제" 야간 시장과의 차별화</li>
+<li><strong>KSD 동시 협력</strong>: 한국예탁결제원을 초기부터 핵심 파트너로 참여시켜 실시간 거래 포착 및 청산 보증 체계 구축. 이 없이는 미담보 신용 리스크만 축적</li>
+</ol>
+<p><strong>기술적 권고</strong>:</p>
+<ol start="4">
+<li><strong>매칭엔진 분리</strong>: 야간 세션을 위한 독립 논리 포트 또는 별도 매칭엔진 파티션 사용. 저거래량 야간 세션의 기술적 장애가 KOSPI/KOSDAQ 정규 시장 개장에 절대 영향을 미치지 않도록 "에어갭(Air-Gap)" 리스크 격리</li>
+<li><strong>주문유형 단순화</strong>: 야간 세션은 지정가 주문만 허용. 시장가, 페그, 복합 알고리즘 주문 제거. 매칭엔진 부하 감소 및 얇은 시장에서의 "Fat Finger" 오류 보호</li>
+<li><strong>프로토콜 정합성</strong>: KRX FIX 게이트웨이 및 KOSCOM 인프라가 "익일(Next Day)" 거래 보고 플래그를 처리할 수 있도록 보장. 체결보고(Execution Report)의 Tag 75(TradeDate)를 통해 참여자에게 결제주기 명확히 전달</li>
+</ol>
+<p><strong>규제적 권고</strong>:</p>
+<ol start="7">
+<li><strong>"연장시간" 명시적 정의</strong>: 외국 시장이 폐장된 상태에서 충족 불가능한 "최선 집행(Best Execution)" 또는 "Trade-Through" 의무를 면제하는 별도의 규제 범주 신설</li>
+<li><strong>엄격한 변동성 칼라 도입</strong>: 한국 주식이 야간에 유동적 참조가격을 가지지 못할 수 있으므로, 국내 종가 대비 ±15% 등 엄격한 가격 밴드를 적용하여 비현실적 벤치마크 설정을 방지</li>
+</ol>
+<hr />
+<h2 id="참고자료">참고자료</h2>
+<ol>
+<li>
+<p>Nasdaq Proposes Near-24-Hour Trading | Cadwalader, Wickersham &amp; Taft LLP - JDSupra
+   <a href="https://www.jdsupra.com/legalnews/nasdaq-proposes-near-24-hour-trading-6538509/">jdsupra.com/legalnews/nasdaq-proposes-nea...</a></p>
+</li>
+<li>
+<p>Nasdaq looks to extend trading hours as Wall Street eyes 24/7 move | Daily Sabah
+   <a href="https://www.dailysabah.com/business/finance/nasdaq-looks-to-extend-trading-hours-as-wall-street-eyes-247-move">dailysabah.com/business/finance/nasdaq-looks...</a></p>
+</li>
+<li>
+<p>Nasdaq Seeks SEC Approval For 23-Hour, Five-Day Trading Schedule | Nasdaq
+   <a href="https://www.nasdaq.com/articles/nasdaq-seeks-sec-approval-23-hour-five-day-trading-schedule">nasdaq.com/articles/nasdaq-seeks-sec-app...</a></p>
+</li>
+<li>
+<p>Blue Ocean ATS Joins Pyth Network: Institutional Overnight Hours US Equity Data
+   <a href="https://blueocean-tech.io/2025/09/25/pyth-blue-ocean-ats-joins-pyth-network-institutional-overnight-hours-us-equity-data/">blueocean-tech.io/2025/09/25/pyth-blue-ocean-at...</a></p>
+</li>
+<li>
+<p>Blue Ocean: Overnight trading could reach 10% of total volumes | Global Trading
+   <a href="https://www.globaltrading.net/blue-ocean-overnight-trading-could-reach-10-of-total-volumes/">globaltrading.net/blue-ocean-overnight-trading-...</a></p>
+</li>
+<li>
+<p>Market Spotlight: 24 Hour Trading | BlackRock
+   <a href="https://www.blackrock.com/corporate/literature/whitepaper/blackrock-market-spotlight-24-hour-trading.pdf">blackrock.com/corporate/literature/whitepap...</a></p>
+</li>
+<li>
+<p>Nasdaq Proposes to Extend Trading Hours During Weekdays | Practical Law - Westlaw
+   <a href="https://content.next.westlaw.com/practical-law/document/I52f988cfdaa111f098028aa0904d44cc/Nasdaq-Proposes-to-Extend-Trading-Hours-During-Weekdays?viewType=FullText&amp;transitionType=Default&amp;contextData=(sc.Default)">content.next.westlaw.com/practical-law/document/I52f98...</a></p>
+</li>
+<li>
+<p>SR-NASDAQ-2025-106 | NASDAQ Listing Center
+   <a href="https://listingcenter.nasdaq.com/assets/rulebook/nasdaq/filings/SR-NASDAQ-2025-106.pdf">listingcenter.nasdaq.com/assets/rulebook/nasdaq/filing...</a></p>
+</li>
+<li>
+<p>Extended Trading Hours: A New Frontier for US Equity Markets | SIFMA
+   <a href="https://www.sifma.org/news/blog/extended-trading-hours-a-new-frontier-for-us-equity-markets">sifma.org/news/blog/extended-trading-ho...</a></p>
+</li>
+<li>
+<p>Self-Regulatory Organizations; The Nasdaq Stock Market LLC; Notice of Filing of Proposed Rule Change | Federal Register
+    <a href="https://www.federalregister.gov/documents/2026/01/13/2026-00416/self-regulatory-organizations-the-nasdaq-stock-market-llc-notice-of-filing-of-proposed-rule-change">federalregister.gov/documents/2026/01/13/2026-004...</a></p>
+</li>
+<li>
+<p>Nasdaq Global Trading Hours FAQs | Nasdaq
+    <a href="https://www.nasdaq.com/docs/nasdaq-global-trading-hours-faqs">nasdaq.com/docs/nasdaq-global-trading-ho...</a></p>
+</li>
+<li>
+<p>24-Hour Market Trading Regulation Issues | Exegy
+    <a href="https://www.exegy.com/24-hour-market-trading-regulation-issues/">exegy.com/24-hour-market-trading-regula...</a></p>
+</li>
+<li>
+<p>Nasdaq Proposes "Night Session" Trading | Find Know Do
+    <a href="https://www.findknowdo.com/news/01/13/2026/nasdaq-proposes-night-session-trading">findknowdo.com/news/01/13/2026/nasdaq-propos...</a></p>
+</li>
+<li>
+<p>Future-Ready Markets - Preparing for 24/7 Trading | Nasdaq
+    <a href="https://www.nasdaq.com/solutions/fintech/resources/whitepapers/future-ready-markets-continuous-trading-hours">nasdaq.com/solutions/fintech/resources/w...</a></p>
+</li>
+<li>
+<p>O<em>U</em>C*H Protocol Specification | Nasdaq Trader
+    <a href="https://www.nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/ouch2.0a.pdf">nasdaqtrader.com/content/technicalsupport/spec...</a></p>
+</li>
+<li>
+<p>Two Sides to Every Match | Nasdaq
+    <a href="https://www.nasdaq.com/articles/two-sides-every-match-2014-10-08">nasdaq.com/articles/two-sides-every-matc...</a></p>
+</li>
+<li>
+<p>NASDAQ TotalView-ITCH 4.1 Specification | Nasdaq Trader
+    <a href="https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/nqtv-itch-v4_1.pdf">nasdaqtrader.com/content/technicalsupport/spec...</a></p>
+</li>
+<li>
+<p>Protocol Quick Reference | Nasdaq Trader
+    <a href="https://www.nasdaqtrader.com/content/ProductsServices/Trading/Protocols_quickref.pdf">nasdaqtrader.com/content/ProductsServices/Trad...</a></p>
+</li>
+<li>
+<p>Achieving Ultra-Low Latency in Trading Infrastructure | Exegy
+    <a href="https://www.exegy.com/ultra-low-latency-trading-infrastructure/">exegy.com/ultra-low-latency-trading-inf...</a></p>
+</li>
+<li>
+<p>Nasdaq Reaches 'New Base Camp' with Eqlipse | Markets Media
+    <a href="https://www.marketsmedia.com/nasdaq-reaches-new-base-camp-with-eqlipse/">marketsmedia.com/nasdaq-reaches-new-base-camp-...</a></p>
+</li>
+<li>
+<p>THE SHIFT TO 24X5 TRADING | DTCC
+    <a href="https://www.dtcc.com/-/media/Files/Downloads/Transformation/theshiftto24x5trading.pdf">dtcc.com/-/media/Files/Downloads/Trans...</a></p>
+</li>
+<li>
+<p>DTCC's NSCC to Increase Clearing Hours to Support Extended Trading | DTCC
+    <a href="https://www.dtcc.com/news/2025/march/18/dtccs-nscc-to-increase-clearing-hours-to-support-extended-trading">dtcc.com/news/2025/march/18/dtccs-nscc...</a></p>
+</li>
+<li>
+<p>DTCC prepares for 24-hour trading onslaught | Global Trading
+    <a href="https://www.globaltrading.net/dtcc-prepares-for-24-hour-trading-onslaught/">globaltrading.net/dtcc-prepares-for-24-hour-tra...</a></p>
+</li>
+<li>
+<p>24X National Exchange; Application for Registration | SIFMA
+    <a href="https://www.sifma.org/advocacy/letters/24x-national-exchange-application-for-registration">sifma.org/advocacy/letters/24x-national...</a></p>
+</li>
+<li>
+<p>Equity Market Structure | SIFMA
+    <a href="https://www.sifma.org/issues/market-structure/equity-market-structure">sifma.org/issues/market-structure/equit...</a></p>
+</li>
+<li>
+<p>Extended Trading Hours | SIFMA
+    <a href="https://www.sifma.org/issues/market-structure/extended-trading-hours">sifma.org/issues/market-structure/exten...</a></p>
+</li>
+<li>
+<p>The Future of Trading Is Always On: Why Market Infrastructure Must Lead the Way | Nasdaq
+    <a href="https://www.nasdaq.com/articles/fintech/always-on-market-infrastructure-must-lead-way">nasdaq.com/articles/fintech/always-on-ma...</a></p>
+</li>
+</ol>
+    </main>
+
+    <script>
+    (function() {
+        // --- Wrap tables ---
+        document.querySelectorAll('main table').forEach(t => {
+            if (!t.parentElement.classList.contains('table-wrap')) {
+                const w = document.createElement('div');
+                w.className = 'table-wrap';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            }
+        });
+
+        // --- Build TOC ---
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h1, main h2, main h3');
+        const tocLinks = [];
+        headings.forEach(h => {
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent;
+            a.dataset.id = h.id;
+            const depth = parseInt(h.tagName[1]);
+            if (depth >= 3) a.classList.add('depth-' + depth);
+            toc.appendChild(a);
+            tocLinks.push({ el: h, link: a });
+        });
+
+        // --- Scroll spy ---
+        let ticking = false;
+        function updateActive() {
+            const scrollY = window.scrollY + 100;
+            let current = tocLinks[0];
+            for (const item of tocLinks) {
+                if (item.el.offsetTop <= scrollY) current = item;
+            }
+            tocLinks.forEach(i => i.link.classList.remove('active'));
+            if (current) {
+                current.link.classList.add('active');
+                current.link.scrollIntoView({ block: 'nearest' });
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+        });
+        updateActive();
+
+        // --- Smooth scroll for TOC links ---
+        toc.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', e.target.href);
+            }
+        });
+
+        // --- Smooth scroll for in-content anchor links ---
+        document.querySelectorAll('main a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = decodeURIComponent(a.getAttribute('href').slice(1));
+                const target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    })();
+
+    // --- Sidebar toggle ---
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const tb = document.getElementById('topbar');
+        sb.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        tb.classList.toggle('expanded');
+    }
+
+    // --- Search ---
+    let searchTimeout;
+    function doSearch(q) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => _search(q), 200);
+    }
+    function _search(query) {
+        const main = document.getElementById('main');
+        // Remove old marks
+        main.querySelectorAll('mark[data-search]').forEach(m => {
+            const parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+        });
+        const countEl = document.getElementById('searchCount');
+        if (!query || query.length < 2) { countEl.textContent = ''; return; }
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+                regex.test(walker.currentNode.textContent)) {
+                nodes.push(walker.currentNode);
+                regex.lastIndex = 0;
+            }
+        }
+        let count = 0;
+        nodes.forEach(node => {
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            regex.lastIndex = 0;
+            let m;
+            while ((m = regex.exec(node.textContent)) !== null) {
+                frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+                const mark = document.createElement('mark');
+                mark.setAttribute('data-search', '');
+                mark.textContent = m[0];
+                frag.appendChild(mark);
+                last = regex.lastIndex;
+                count++;
+            }
+            frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+            node.parentNode.replaceChild(frag, node);
+        });
+        countEl.textContent = count > 0 ? count + '건' : '0건';
+        const first = main.querySelector('mark[data-search]');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- Theme ---
+    function toggleTheme() {
+        const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        document.body.dataset.theme = d;
+        try { localStorage.setItem('theme', d); } catch(e) {}
+    }
+    try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>

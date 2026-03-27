@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRX 한국거래소 - 24시간 거래 체제 분석 리포트</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1a1a2e; --sidebar-bg: #f8f9fa; --border: #dee2e6;
+            --accent: #0066cc; --accent-light: #e7f1ff; --table-header: #0066cc;
+            --table-header-text: #ffffff; --table-border: #d0d7de; --code-bg: #f6f8fa;
+            --highlight: #fff3cd; --hover-bg: #e9ecef;
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f1a; --text: #d8d8e8; --sidebar-bg: #161625; --border: #2a2a45;
+            --accent: #4da6ff; --accent-light: #1a2a4a; --table-header: #1e3a5f;
+            --table-header-text: #e0e8f0; --table-border: #2a3a4a; --code-bg: #1e2a3a;
+            --highlight: #3a3520; --hover-bg: #1e1e35;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.75;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            overflow-y: auto; z-index: 100; transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+        }
+        .sidebar.collapsed { transform: translateX(-280px); }
+        .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 13px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-header select {
+            width: 100%; margin-top: 8px; padding: 7px 8px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer;
+        }
+        .toc { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .toc a {
+            display: block; padding: 5px 16px; color: var(--text); text-decoration: none;
+            font-size: 12.5px; border-left: 3px solid transparent; transition: all 0.15s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toc a:hover { background: var(--hover-bg); }
+        .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: var(--accent-light); }
+        .toc a.depth-3 { padding-left: 30px; font-size: 11.5px; opacity: 0.85; }
+        .toc a.depth-4 { padding-left: 44px; font-size: 11px; opacity: 0.7; }
+
+        /* Top bar */
+        .topbar {
+            position: fixed; top: 0; right: 0; left: 280px; height: 48px;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 90;
+            transition: left 0.25s ease;
+        }
+        .topbar.expanded { left: 0; }
+        .topbar button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--sidebar-bg); color: var(--text); cursor: pointer; font-size: 13px;
+            white-space: nowrap;
+        }
+        .topbar button:hover { background: var(--hover-bg); }
+        .topbar input {
+            flex: 1; max-width: 350px; padding: 6px 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; background: var(--sidebar-bg); color: var(--text);
+        }
+        .search-count { font-size: 11px; color: var(--accent); min-width: 50px; }
+
+        /* Main content */
+        main {
+            margin-left: 280px; padding: 68px 50px 60px;
+            transition: margin-left 0.25s ease;
+        }
+        main.expanded { margin-left: 0; }
+        h1 { font-size: 26px; margin: 25px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+        h2 { font-size: 20px; margin: 28px 0 14px; color: var(--accent); }
+        h3 { font-size: 16px; margin: 22px 0 10px; }
+        h4 { font-size: 14px; margin: 18px 0 8px; }
+        p { margin: 8px 0; }
+        a { color: var(--accent); }
+
+        /* Tables - responsive */
+        .table-wrap {
+            overflow-x: auto; margin: 14px 0; border-radius: 8px;
+            border: 1px solid var(--table-border);
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        table { border-collapse: collapse; font-size: 12.5px; width: max-content; min-width: 100%; }
+        th { background: var(--table-header); color: var(--table-header-text); font-weight: 600;
+              padding: 9px 10px; text-align: left; border: 1px solid var(--table-border);
+              position: sticky; top: 0; white-space: nowrap; }
+        td { padding: 8px 10px; border: 1px solid var(--table-border); word-break: keep-all; }
+        tr:nth-child(even) { background: var(--sidebar-bg); }
+        tr:hover { background: var(--accent-light); }
+        /* First column sticky on wide tables */
+        th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: inherit; }
+        th:first-child { z-index: 2; }
+        tr:nth-child(odd) td:first-child { background: var(--bg); }
+        tr:nth-child(even) td:first-child { background: var(--sidebar-bg); }
+        tr:hover td:first-child { background: var(--accent-light); }
+        th:first-child { background: var(--table-header); }
+
+        code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+        blockquote {
+            border-left: 4px solid var(--accent); padding: 10px 18px; margin: 14px 0;
+            background: var(--accent-light); border-radius: 0 8px 8px 0; font-size: 13px;
+        }
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 25px 0; }
+        mark { background: #ffe066; padding: 0 3px; border-radius: 2px; }
+        strong { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-280px); }
+            .sidebar.mobile-show { transform: translateX(0); }
+            main { margin-left: 0 !important; padding: 60px 12px 40px; }
+            .topbar { left: 0 !important; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 7px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 17px; }
+            h3 { font-size: 14px; }
+        }
+        @media (max-width: 480px) {
+            main { padding: 56px 8px 30px; }
+            table { font-size: 10px; }
+            th, td { padding: 5px 5px; }
+            .topbar input { max-width: 150px; }
+        }
+        @media print {
+            .sidebar, .topbar { display: none !important; }
+            main { margin: 0 !important; padding: 10px !important; max-width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>24H Trading Report</h2>
+            <select onchange="if(this.value)location.href=this.value">
+                <option value="00_종합비교_요약.html">&#128202; 종합 비교 요약</option>
+<option value="01_KRX_한국거래소.html" selected>&#127472;&#127479; KRX 한국거래소</option>
+<option value="02_NYSE_뉴욕증권거래소.html">&#127482;&#127480; NYSE 뉴욕증권거래소</option>
+<option value="03_NASDAQ_나스닥.html">&#127482;&#127480; NASDAQ 나스닥</option>
+<option value="04_24X_Exchange.html">&#127482;&#127480; 24X Exchange</option>
+<option value="05_CME_Group.html">&#127482;&#127480; CME Group</option>
+<option value="06_DTCC_청산결제.html">&#127482;&#127480; DTCC 청산결제</option>
+<option value="07_LSE_런던증권거래소.html">&#127466;&#127482; LSE 런던증권거래소</option>
+<option value="08_JPX_도쿄증권거래소.html">&#127471;&#127477; JPX 도쿄증권거래소</option>
+<option value="09_Blue_Ocean_ATS.html">&#127482;&#127480; Blue Ocean ATS</option>
+<option value="10_유럽거래소_Eurex_Euronext.html">&#127466;&#127482; 유럽거래소 Eurex/Euronext</option>
+            </select>
+        </div>
+        <div class="toc" id="toc"></div>
+    </nav>
+
+    <div class="topbar" id="topbar">
+        <button id="toggleBtn" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="doSearch(this.value)">
+        <span class="search-count" id="searchCount"></span>
+        <button onclick="toggleTheme()" title="Toggle dark mode">&#9681;</button>
+        <button onclick="window.print()" title="Print">&#128424;</button>
+    </div>
+
+    <main id="main">
+        <h1 id="한국거래소krx-유가증권시장-현행-제도-및-24시간-거래-전환-분석">한국거래소(KRX) 유가증권시장 현행 제도 및 24시간 거래 전환 분석</h1>
+<hr />
+<h2 id="1-기관-개요">1. 기관 개요</h2>
+<h3 id="11-설립-배경-및-조직구조">1.1 설립 배경 및 조직구조</h3>
+<p>한국거래소(Korea Exchange, KRX)는 2005년 1월 27일 「자본시장과 금융투자업에 관한 법률」에 의거하여 구 한국증권거래소, 한국선물거래소, 코스닥위원회를 통합하여 설립된 대한민국 유일의 정규 증권거래소이다. 본사는 부산광역시에 소재하며, 서울사무소를 통해 상장심사, 시장감시 등 핵심 업무를 수행한다.</p>
+<p>KRX는 다음 4개 시장을 운영한다:</p>
+<table>
+<thead>
+<tr>
+<th>시장 구분</th>
+<th>대상</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>유가증권시장(KOSPI)</td>
+<td>대형 우량기업 주권, ETF, ETN, ELW 등</td>
+<td>업무규정 제4조 기반</td>
+</tr>
+<tr>
+<td>코스닥시장(KOSDAQ)</td>
+<td>중소/벤처기업</td>
+<td>별도 업무규정</td>
+</tr>
+<tr>
+<td>코넥스시장(KONEX)</td>
+<td>초기 중소기업</td>
+<td>2013.7 개설</td>
+</tr>
+<tr>
+<td>파생상품시장</td>
+<td>선물/옵션(KOSPI200 등)</td>
+<td>별도 업무규정</td>
+</tr>
+</tbody>
+</table>
+<p>유가증권시장 업무규정 제4조 제1항은 시장을 주식시장, 상장지수집합투자기구 집합투자증권시장, 상장지수증권시장, 신주인수권증서시장, 신주인수권증권시장, 주식워런트증권시장, 수익증권시장, 채무증권시장으로 세분화한다.</p>
+<h3 id="12-koscom과의-관계-및-exture-30-시스템">1.2 Koscom과의 관계 및 EXTURE 3.0 시스템</h3>
+<p>KRX의 매매체결 전산시스템은 자회사인 코스콤(Koscom)이 개발 및 운영한다. 2019년 정보화전략계획(ISP) 수립 후 2020년 10월부터 차세대 시스템 구축 프로젝트를 추진하여, <strong>2023년 1월 25일</strong> 1단계(매매체결·정보분배 시스템)를, <strong>2023년 10월 4일</strong> 2단계(청산결제 시스템)를 가동하며 현행 <strong>EXTURE 3.0</strong> 체제로 전환하였다.</p>
+<h4 id="exture-시스템-세대별-비교">EXTURE 시스템 세대별 비교</h4>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th style="text-align: center;">EXTURE (2009)</th>
+<th style="text-align: center;">EXTURE+ (2014)</th>
+<th style="text-align: center;"><strong>EXTURE 3.0 (2023)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>거래처리 레이턴시</strong></td>
+<td style="text-align: center;">~20,000µs</td>
+<td style="text-align: center;">70µs</td>
+<td style="text-align: center;"><strong>50µs</strong></td>
+</tr>
+<tr>
+<td><strong>일일 처리 용량</strong></td>
+<td style="text-align: center;">4,000만 건</td>
+<td style="text-align: center;">4억 2,000만 건</td>
+<td style="text-align: center;"><strong>9억 4,000만 건</strong></td>
+</tr>
+<tr>
+<td><strong>주문 대역폭</strong></td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">12Mbps</td>
+<td style="text-align: center;"><strong>45Mbps</strong></td>
+</tr>
+<tr>
+<td><strong>회선 수</strong></td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">7회선</td>
+<td style="text-align: center;"><strong>10회선</strong></td>
+</tr>
+<tr>
+<td><strong>아키텍처</strong></td>
+<td style="text-align: center;">단일 매칭엔진</td>
+<td style="text-align: center;">x86 Linux 기반, 3-tier DR</td>
+<td style="text-align: center;">시장별 멀티 매칭엔진, 유연 확장</td>
+</tr>
+</tbody>
+</table>
+<p>EXTURE 3.0의 핵심 개선 사항:
+- <strong>거래처리 속도 30% 향상</strong>: 70µs → 50µs로 레이턴시 단축
+- <strong>일일 처리 용량 2.2배 확대</strong>: 4.2억 건 → 9.4억 건
+- <strong>시장별 멀티 매매체결 방식</strong>: 특정 종목 호가 폭증 시 유연한 확장이 가능한 아키텍처 적용
+- <strong>파생 대용량 서비스</strong>: 부산 정보분배시스템에서 파생상품 전체에 대한 실시간 종합 시세정보 제공
+- <strong>2단계 청산결제 통합 플랫폼</strong>: 장내·외 청산결제 회원사 UI를 통합 UI로 일원화, 시장별 청산결제시스템을 EXTURE 3.0 기반 통합 플랫폼으로 재구축</p>
+<p>표준 FIX 프로토콜 및 고속 FIX/FAST 프로토콜을 통한 직접 주문 라우팅과 시장데이터 배포를 지원한다.</p>
+<hr />
+<h2 id="2-현행-거래시간-제도">2. 현행 거래시간 제도</h2>
+<blockquote>
+<p><strong>근거</strong>: 유가증권시장 업무규정 제4조(시장의 구분 및 매매거래시간)</p>
+</blockquote>
+<p>업무규정 제4조 제2항에 따라, 주식시장 및 상장지수집합투자기구 집합투자증권시장, 상장지수증권시장에는 정규시장 외에 시간외시장을 둔다. 제4조 제3항은 매매거래시간을 아래와 같이 규정하며, 거래소는 전산장애 발생 등 시장관리상 필요시 세칙으로 정하는 바에 따라 임시 변경할 수 있다(시행세칙 제8조).</p>
+<h3 id="21-정규시장-0900-1530">2.1 정규시장 (09:00 ~ 15:30)</h3>
+<p>정규시장 매매거래시간은 <strong>09:00부터 15:30까지</strong>이다(업무규정 제4조 제3항 제1호). 다만, 장중경쟁대량매매는 09:00부터 15:00까지로 한다.</p>
+<h4 id="1-시가결정---동시호가단일가격에-의한-개별경쟁매매">(1) 시가결정 - 동시호가(단일가격에 의한 개별경쟁매매)</h4>
+<ul>
+<li><strong>근거</strong>: 업무규정 제23조 제1항 제1호</li>
+<li><strong>방식</strong>: 장개시 전 호가접수시간(08:30~09:00, 시행세칙 제11조 제1항 제1호)에 접수된 호가를 대상으로, 매도호가의 합계수량과 매수호가의 합계수량이 합치하는 단일가격(합치가격)을 결정(업무규정 제23조 제4항)</li>
+<li><strong>호가범위</strong>: 장개시 30분 전부터 장개시 시점 및 이후 30초 이내에서 거래소가 무작위로 정하는 시간까지(시행세칙 제35조 제1항 제1호) - <strong>Random End(RE) 메커니즘</strong> 적용</li>
+<li>합치가격이 복수인 경우 직전 가격에 가장 가까운 가격으로 결정(업무규정 제23조 제5항)</li>
+</ul>
+<h4 id="2-접속매매---복수가격에-의한-개별경쟁매매">(2) 접속매매 - 복수가격에 의한 개별경쟁매매</h4>
+<ul>
+<li><strong>근거</strong>: 업무규정 제24조 제1항</li>
+<li>시가결정 이후 장종료 10분 전까지 계속적으로 매도호가와 매수호가의 경합에 의해 <strong>선행호가의 가격</strong>으로 매매거래를 성립(업무규정 제24조 제3항)</li>
+<li>호가 우선순위: 가격우선 &gt; 시간우선(업무규정 제22조 제2항)</li>
+</ul>
+<h4 id="3-종가결정---단일가격에-의한-개별경쟁매매">(3) 종가결정 - 단일가격에 의한 개별경쟁매매</h4>
+<ul>
+<li><strong>근거</strong>: 업무규정 제23조 제1항 제4호</li>
+<li>장종료 10분 전(15:20)부터 장종료시(15:30)까지 접수된 호가로 결정(시행세칙 제35조 제1항 제3호)</li>
+<li>Random End 메커니즘 적용: 장종료 시점부터 2분 이내 무작위 시점에서 체결(VI 발동 시)</li>
+</ul>
+<h3 id="22-시간외시장">2.2 시간외시장</h3>
+<blockquote>
+<p><strong>근거</strong>: 업무규정 제33조(시간외매매), 제4조 제3항 제2호</p>
+</blockquote>
+<h4 id="1-장개시전-시간외시장-0800-0900">(1) 장개시전 시간외시장 (08:00 ~ 09:00)</h4>
+<table>
+<thead>
+<tr>
+<th>매매유형</th>
+<th>시간</th>
+<th>가격결정</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>시간외종가매매</td>
+<td>08:30~08:40</td>
+<td>전일 종가</td>
+<td>업무규정 제34조</td>
+</tr>
+<tr>
+<td>시간외대량매매</td>
+<td>08:00~09:00</td>
+<td>상한가~하한가 이내 합의가격</td>
+<td>업무규정 제35조</td>
+</tr>
+<tr>
+<td>시간외바스켓매매</td>
+<td>08:00~09:00</td>
+<td>상한가~하한가 이내 합의가격</td>
+<td>업무규정 제36조</td>
+</tr>
+<tr>
+<td>시간외경쟁대량매매</td>
+<td>08:00~09:00</td>
+<td>당일 VWAP 또는 종가</td>
+<td>업무규정 제34조의3</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>시간외종가매매는 전일 정규시장 매매거래시간 중 매매거래가 성립하지 않은 경우 매매거래를 성립시키지 아니한다(업무규정 제34조 제1항 단서).</li>
+</ul>
+<h4 id="2-장종료후-시간외시장-1540-1800">(2) 장종료후 시간외시장 (15:40 ~ 18:00)</h4>
+<table>
+<thead>
+<tr>
+<th>매매유형</th>
+<th>시간</th>
+<th>가격결정</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>시간외종가매매</td>
+<td>15:40~16:00</td>
+<td>당일 종가</td>
+<td>업무규정 제34조</td>
+</tr>
+<tr>
+<td>시간외단일가매매</td>
+<td>16:00~18:00</td>
+<td>단일가매매(종가 기준 ±10%)</td>
+<td>업무규정 제34조의2</td>
+</tr>
+<tr>
+<td>시간외대량매매</td>
+<td>15:40~18:00</td>
+<td>상한가~하한가 이내 합의가격</td>
+<td>업무규정 제35조</td>
+</tr>
+<tr>
+<td>시간외바스켓매매</td>
+<td>15:40~18:00</td>
+<td>상한가~하한가 이내 합의가격</td>
+<td>업무규정 제36조</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>시간외단일가매매</strong> 호가 가능 가격: 당일 종가 기준 ±10% 이내이면서, 동시에 당일 상한가와 하한가 이내(업무규정 제34조의2 제3항)</li>
+<li>시간외종가매매 호가접수시간: 장종료시부터 16시까지(시행세칙 제11조 제1항 제2호 나목 (1))</li>
+<li>시간외단일가매매 호가접수시간: 16시부터 18시(최종가격 결정 시 당해 가격 결정 시점)까지(시행세칙 제11조 제1항 제2호 나목 (2))</li>
+</ul>
+<hr />
+<h2 id="3-호가-유형-및-주문-관리">3. 호가 유형 및 주문 관리</h2>
+<h3 id="31-8가지-호가유형">3.1 8가지 호가유형</h3>
+<blockquote>
+<p><strong>근거</strong>: 업무규정 제2조 제4항</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>번호</th>
+<th>호가유형</th>
+<th>정의</th>
+<th>도입시기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>지정가호가</strong></td>
+<td>종목, 수량, 가격을 모두 지정</td>
+<td>기존</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>시장가호가</strong></td>
+<td>종목, 수량 지정, 가격 미지정</td>
+<td>기존</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>조건부지정가호가</strong></td>
+<td>장종료 단일가매매시 시장가로 전환 조건부 지정가</td>
+<td>기존</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>최유리지정가호가</strong></td>
+<td>상대측 최우선호가 가격으로 지정(세칙 제3조)</td>
+<td>기존</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>최우선지정가호가</strong></td>
+<td>자기측 최우선호가 가격으로 지정(세칙 제4조)</td>
+<td>기존</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>경쟁대량매매호가</strong></td>
+<td>VWAP 등 기준가격으로 대량거래</td>
+<td>2010.7</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>중간가호가</strong></td>
+<td>최우선매도/매수호가의 산술평균 가격(세칙 제4조의2)</td>
+<td>2025.2 신설</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>스톱지정가호가</strong></td>
+<td>스톱가격 충족 시 지정가호가로 효력 발생(세칙 제4조의3)</td>
+<td>2025.2 신설</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-세션별-호가유형-적용-가능-여부">3.2 세션별 호가유형 적용 가능 여부</h3>
+<table>
+<thead>
+<tr>
+<th>호가유형</th>
+<th style="text-align: center;">정규시장(접속)</th>
+<th style="text-align: center;">정규시장(동시호가)</th>
+<th style="text-align: center;">시간외종가</th>
+<th style="text-align: center;">시간외단일가</th>
+<th style="text-align: center;">대량/바스켓</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>지정가</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+</tr>
+<tr>
+<td>시장가</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr>
+<td>조건부지정가</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr>
+<td>최유리지정가</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr>
+<td>최우선지정가</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr>
+<td>경쟁대량매매</td>
+<td style="text-align: center;">전용세션</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">전용</td>
+</tr>
+<tr>
+<td>중간가</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr>
+<td>스톱지정가</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>시간외종가매매 및 시간외단일가매매에서는 시장가호가, 조건부지정가호가를 입력할 수 없다(시행세칙 제14조 제2항 제1호 마목).</li>
+</ul>
+<h3 id="33-호가의-효력-시행세칙-제13조">3.3 호가의 효력 (시행세칙 제13조)</h3>
+<p>시행세칙 제13조는 다음의 호가에 대해 효력을 인정하지 아니한다:
+- 정규시장에서 장개시전 시간외시장에서 접수된 호가(제13조 제1항 제2호 가목)
+- 장종료후 시간외시장에서 장개시전 시간외시장 및 정규시장에서 접수된 호가(제13조 제1항 제3호 나목)
+- 시가기준가종목의 최초 가격결정 후 상한가 초과/하한가 미달 호가(제13조 제1항 제4호)</p>
+<p>이는 <strong>세션 간 주문 이월이 불가</strong>함을 의미하며, 24시간 거래 전환 시 가장 핵심적으로 개정이 필요한 규정이다.</p>
+<hr />
+<h2 id="4-가격제한-및-변동성-관리">4. 가격제한 및 변동성 관리</h2>
+<h3 id="41-가격제한폭-업무규정-제20조-30">4.1 가격제한폭 (업무규정 제20조: ±30%)</h3>
+<ul>
+<li>주권, 외국주식예탁증권, ETF, ETN, 수익증권의 호가가격은 기준가격의 <strong>±30%</strong> 범위 내로 제한(업무규정 제20조 제2항: "기준가격에 0.3을 곱하여 산출한 금액")</li>
+<li>레버리지 ETF/ETN의 경우 해당 배율을 곱한 금액 적용</li>
+<li>정리매매종목은 가격제한 미적용(업무규정 제20조 제3항)</li>
+<li>기준가격은 시행세칙 제16조에서 정하며, 원칙적으로 전일 종가</li>
+</ul>
+<h3 id="42-서킷브레이커-3단계-업무규정-제25조">4.2 서킷브레이커 3단계 (업무규정 제25조)</h3>
+<p>시장 전체의 급격한 하락 시 발동되는 시장 전체 거래중단 제도:</p>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>발동조건</th>
+<th>조치</th>
+<th>추가조건(시행세칙 제39조)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1단계</td>
+<td>코스피 전일 대비 <strong>8% 이상 하락</strong>, 1분간 지속</td>
+<td>20분간 매매거래 중단 후 재개</td>
+<td>당일 최초 해당 시만 적용, 장종료 40분 전 이후 미적용</td>
+</tr>
+<tr>
+<td>2단계</td>
+<td>1단계 재개 후 전일 대비 <strong>15% 이상 하락</strong>, 1분간 지속</td>
+<td>20분간 매매거래 중단 후 재개</td>
+<td>1단계 중단시점 대비 1% 이상 추가 하락 필요</td>
+</tr>
+<tr>
+<td>3단계</td>
+<td>2단계 재개 후 전일 대비 <strong>20% 이상 하락</strong>, 1분간 지속</td>
+<td>매매거래 중단 후 <strong>즉시 당일 매매거래 종결</strong></td>
+<td>2단계 중단시점 대비 1% 이상 추가 하락 필요, 장종료 40분 전 이후에도 적용</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>1단계의 1분간 지속 여부는 장개시 후 1분 경과 시부터 계산(시행세칙 제39조 제4항)</li>
+<li>매매거래 재개 전 전산장애 발생 시 복구 시점에 재개(시행세칙 제39조 제3항)</li>
+</ul>
+<h3 id="43-변동성완화장치vi-업무규정-제26조의2">4.3 변동성완화장치(VI) (업무규정 제26조의2)</h3>
+<p>개별 종목의 급격한 가격변동 시 발동되는 종목별 보호 장치:</p>
+<h4 id="동적vi-업무규정-제26조의2-제1항-제1호">동적VI (업무규정 제26조의2 제1항 제1호)</h4>
+<ul>
+<li><strong>발동조건</strong>: 정규시장 매매거래시간(시가결정시 제외) 및 시간외단일가매매 시간 중, 호가 접수시점의 직전 체결가격 대비 일정 비율 이상 상승/하락하는 경우</li>
+<li><strong>비율기준</strong> (시행세칙 제41조의2 제1항):</li>
+<li>코스피200 구성종목: <strong>3%</strong></li>
+<li>그 밖의 종목: <strong>6%</strong></li>
+<li>ETF/ETN: 코스피200 연동 시 3%, 그 밖의 경우 6%</li>
+<li>외국주식예탁증권, 수익증권: 6%</li>
+</ul>
+<h4 id="정적vi-업무규정-제26조의2-제1항-제2호">정적VI (업무규정 제26조의2 제1항 제2호)</h4>
+<ul>
+<li><strong>발동조건</strong>: 정규시장 매매거래시간 중, 호가 접수시점의 직전 단일가매매 결정가격(시가결정시에는 당일 기준가격) 대비 <strong>10% 이상</strong> 상승/하락하는 경우(시행세칙 제41조의2 제2항)</li>
+</ul>
+<h4 id="vi-발동-시-조치-시행세칙-제41조의2-제3항">VI 발동 시 조치 (시행세칙 제41조의2 제3항)</h4>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>조치</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>복수가격 개별경쟁매매 중</td>
+<td>단일가격에 의한 개별경쟁매매로 전환(2분간 호가접수 후 체결)</td>
+</tr>
+<tr>
+<td>단일가격 개별경쟁매매 중</td>
+<td>참여호가 범위 연장</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>정리매매종목, 단기과열종목 등에는 VI 미적용(시행세칙 제41조의2 제4항)</li>
+</ul>
+<hr />
+<h2 id="5-결제-제도">5. 결제 제도</h2>
+<h3 id="51-매매거래의-종류-및-결제주기-업무규정-제7조">5.1 매매거래의 종류 및 결제주기 (업무규정 제7조)</h3>
+<table>
+<thead>
+<tr>
+<th>거래유형</th>
+<th>결제시기</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>당일결제거래</td>
+<td>매매계약 체결 당일</td>
+<td>제7조 제1항 제1호</td>
+</tr>
+<tr>
+<td>익일결제거래</td>
+<td>체결일 다음 날</td>
+<td>제7조 제1항 제2호</td>
+</tr>
+<tr>
+<td><strong>보통거래</strong></td>
+<td><strong>체결일로부터 기산하여 3일째(T+2)</strong></td>
+<td>제7조 제1항 제3호</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>일수 계산 시 휴장일은 제외(업무규정 제7조 제2항)</li>
+<li>채무증권: 국채전문유통시장은 익일결제거래, 기타 채무증권은 당일결제거래(시행세칙 제9조 제2항)</li>
+</ul>
+<h3 id="52-ksd한국예탁결제원의-역할">5.2 KSD(한국예탁결제원)의 역할</h3>
+<p>한국예탁결제원(Korea Securities Depository)은 「자본시장법」에 근거하여 증권의 집중예탁, 계좌간 대체, 청산 및 결제 업무를 수행한다. 2025년 3월 4일 시행된 「증권시장 청산결제 업무규정」에 따라 KRX 내 청산결제 관련 규정이 독립적으로 정비되었다(업무규정 부칙 제2287호).</p>
+<h3 id="53-bok-wire-자금이체-시스템">5.3 BOK-Wire+ 자금이체 시스템</h3>
+<p>한국은행이 운영하는 BOK-Wire+는 금융기관 간 대금결제를 위한 실시간총액결제(RTGS) 시스템으로, 유가증권시장의 결제대금 이체에 활용된다. 시행세칙 제9조에서 익일결제거래의 결제일이 지급준비금적립마감일인 경우 다음 날로 연장하는 규정이 BOK-Wire+와의 연계를 반영한다.</p>
+<h3 id="54-t1-전환-계획">5.4 T+1 전환 계획</h3>
+<p>KRX는 글로벌 추세(미국·캐나다 2024.5월, EU·영국 2027.10월 T+1 시행 예정)에 맞추어 T+2에서 <strong>T+1으로의 결제주기 단축</strong>을 추진 중이다.</p>
+<ul>
+<li><strong>2025년 9월</strong>: KRX와 한국예탁결제원(KSD) 공동으로 T+1 전환 워킹그룹 출범. 금융투자협회, 증권사, 보관기관, 외국계 투자은행 등 참여</li>
+<li><strong>2026년 3월 18일</strong>: 정부가 T+1 전환을 공식 추진한다고 발표. 결제 체계 전반의 재설계 착수</li>
+<li><strong>구체적 시행 시점</strong>: 워킹그룹을 통해 논의 중이며, EU 사례(2년 이상 준비) 등을 참고하여 로드맵 수립 예정</li>
+</ul>
+<p><strong>핵심 과제</strong>: 외국인 투자자의 다층 결제 구조(해외 운용사 → 국내 상임대리인 → 예탁원)에서 시차로 인한 '시간의 벽' 문제 해결이 우선적 보완 과제이다. T+1 전환은 24시간 거래 확대와 동시에 진행되어야 하므로, 실시간 청산 및 장중 추가증거금 산출 체계의 구축이 필수적이다.</p>
+<hr />
+<h2 id="6-시장감시-및-규제-체계">6. 시장감시 및 규제 체계</h2>
+<h3 id="61-시장감시위원회-및-시장감시규정">6.1 시장감시위원회 및 시장감시규정</h3>
+<p>KRX 시장감시위원회는 「시장감시규정」에 의거하여 불공정거래 감시, 이상거래 탐지, 투자경고/위험/유의종목 지정 등의 업무를 수행한다. 이상급등종목에 대해서는 시장감시위원회의 요청에 따라 매매계약체결방법을 변경할 수 있다(업무규정 제38조의2 제2호).</p>
+<h3 id="62-종목별-매매거래정지-업무규정-제26조">6.2 종목별 매매거래정지 (업무규정 제26조)</h3>
+<p>거래소는 다음의 경우 종목별로 매매거래를 정지할 수 있다(업무규정 제26조 제1항):
+- 매매거래가 폭주하여 신속한 매매거래 성립이 불가한 경우(제2호)
+- 투자유의종목으로 지정된 종목 중 세칙 기준 해당 시(제2호의3)
+- 시장관리상 필요하다고 인정되는 종목(제3호)</p>
+<p>주권의 매매거래가 정지/중단되는 경우 해당 주권을 기초자산으로 하는 신주인수권증서, 신주인수권증권, ELW의 매매거래도 정지 가능(업무규정 제26조 제3항).</p>
+<h3 id="63-전산장애-대응-업무규정-제27조-시행세칙-제8조제70조">6.3 전산장애 대응 (업무규정 제27조, 시행세칙 제8조/제70조)</h3>
+<ul>
+<li><strong>업무규정 제27조</strong>: 전산장애 발생 시 또는 호가폭주로 시스템 장애 예상 시, 호가접수정지, 매매거래중단 등 필요한 조치를 할 수 있다.</li>
+<li><strong>시행세칙 제8조</strong>: 매매거래시간 임시변경의 구체적 요건을 규정</li>
+<li>회원시스템 장애(주식거래량 합계가 전체의 75% 이상인 경우 등)(제8조 제2항)</li>
+<li>장애복구 시점으로부터 장애시간만큼 순연하는 것이 원칙(제8조 제3항)</li>
+<li><strong>시행세칙 제70조</strong>: 전산장애가 장시간 계속되는 경우 장종료 전 일정시간까지 복구되지 않으면 장애발생시점에서 당일 매매거래 종결로 간주(제70조 제3항)</li>
+</ul>
+<hr />
+<h2 id="7-휴장일-규정-업무규정-제5조">7. 휴장일 규정 (업무규정 제5조)</h2>
+<p>업무규정 제5조에 따라, 거래소는 다음 각 호에 해당하는 날에 매매거래를 하지 아니한다:</p>
+<table>
+<thead>
+<tr>
+<th>호</th>
+<th>휴장사유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>관공서의 공휴일에 관한 규정에 의한 공휴일</td>
+</tr>
+<tr>
+<td>2</td>
+<td>근로자의날제정에관한법률에 의한 근로자의 날(5월 1일)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>토요일</td>
+</tr>
+<tr>
+<td>4</td>
+<td>12월 31일 (공휴일 또는 토요일인 경우 직전 매매거래일)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>경제사정의 급변 또는 급변 예상, 시장관리상 필요한 날</td>
+</tr>
+</tbody>
+</table>
+<p>연간 약 250일의 매매거래일이 운영되며, 24시간 거래 전환 시 제5조의 "매매거래를 하지 아니한다"의 의미가 완전 24시간 폐장인지, 야간세션만 운영인지에 대한 규정 명확화가 필요하다.</p>
+<hr />
+<h2 id="8-nextrade넥스트레이드-ats의-등장과-영향">8. Nextrade(넥스트레이드) ATS의 등장과 영향</h2>
+<h3 id="81-출범-및-거래시간">8.1 출범 및 거래시간</h3>
+<p>넥스트레이드(Nextrade)는 대한민국 최초의 대체거래시스템(ATS)으로, <strong>2025년 3월</strong>에 공식 출범하였다. 「자본시장법」에 근거한 다자간매매체결회사(MTF) 형태로 운영된다.</p>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>프리마켓</td>
+<td>08:00~08:50</td>
+<td>KRX 정규시장 개시 전</td>
+</tr>
+<tr>
+<td>정규</td>
+<td>09:00~15:25</td>
+<td>KRX와 중복</td>
+</tr>
+<tr>
+<td>애프터마켓</td>
+<td>15:30~20:00</td>
+<td>KRX 장종료 후 4시간 추가</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-시장점유율-급성장-2026년-3월-기준">8.2 시장점유율 급성장 (2026년 3월 기준)</h3>
+<p>Nextrade는 출범 1년간(2025.3~2026.3) 주식 거래 <strong>473억주, 거래대금 2,338조원</strong>을 기록하였다.</p>
+<table>
+<thead>
+<tr>
+<th>지표</th>
+<th>수치</th>
+<th>시점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>프리·애프터마켓 일평균 거래대금</td>
+<td>8.9조원 (전체 시장의 12.9%)</td>
+<td>2026.2월</td>
+</tr>
+<tr>
+<td>일평균 참여 계좌</td>
+<td>242만개</td>
+<td>2026.2월</td>
+</tr>
+<tr>
+<td>프리마켓 참여 계좌</td>
+<td>84만개 (35%)</td>
+<td>2026.2월</td>
+</tr>
+<tr>
+<td>애프터마켓 참여 계좌</td>
+<td>66만개 (28%)</td>
+<td>2026.2월</td>
+</tr>
+<tr>
+<td><strong>역대 최고 장중 점유율</strong></td>
+<td><strong>47.7%</strong> (급락장)</td>
+<td>2026.3.3</td>
+</tr>
+<tr>
+<td>일평균 거래대금</td>
+<td>20조원 돌파</td>
+<td>2026.2월</td>
+</tr>
+</tbody>
+</table>
+<p>특히 2026년 3월 3일 코스피 급락장에서 NXT 장중 거래대금 비중이 47.7%까지 치솟아 KRX(52.3%)와의 격차가 4%p까지 좁혀졌다. KRX의 영업이익은 1년 새 400억원이 감소하였으며, 연간 영업이익 2,000억원 하회 우려가 제기되고 있다.</p>
+<p>NXT 메인마켓(정규시간) 비중은 KRX 수수료 인하 영향으로 49.0% → 39.7%로 감소한 반면, 프리마켓(20.7%→23.9%)과 애프터마켓(15.2%→17.4%) 비중은 지속 확대되는 추세이다.</p>
+<h3 id="83-krx와의-경쟁-구도">8.3 KRX와의 경쟁 구도</h3>
+<p>Nextrade의 성장은 KRX 독점 체제를 근본적으로 위협하며, 24시간 거래 확대의 직접적인 촉발 요인이 되었다. 양 플랫폼 간 중복 운영 시간대에서의 최선호가(NBBO) 보호 메커니즘 부재는 미국의 Regulation NMS Rule 611(Trade-Through Prohibition)에 상응하는 국내 규정의 마련을 요구한다.</p>
+<p>Nextrade는 향후 <strong>ETF(2026.11월 목표)·조각투자·토큰증권(STO)</strong> 등으로 거래 대상 자산을 확대할 계획이며, 이는 KRX와의 경쟁을 더욱 심화시킬 전망이다.</p>
+<hr />
+<h2 id="9-krx-24시간-거래-전환-계획">9. KRX 24시간 거래 전환 계획</h2>
+<h3 id="91-단기-etf-시간외거래-우선-도입-2026년-9월-14일">9.1 단기: ETF 시간외거래 우선 도입 (2026년 9월 14일)</h3>
+<p>당초 2026년 6월 29일로 예정되었던 거래시간 연장이 증권업계·노조의 반발로 <strong>2026년 9월 14일</strong>로 연기되었다. 1단계로 <strong>ETF 종목에 대한 프리마켓·애프터마켓</strong>을 우선 도입한다.</p>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>시간</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>프리마켓(신설)</strong></td>
+<td>07:00~07:50</td>
+<td>ETF 연속매매 (NXT보다 1시간 선점)</td>
+</tr>
+<tr>
+<td>장개시전 시간외</td>
+<td>08:00~09:00</td>
+<td>기존 유지(종가매매/대량매매 등)</td>
+</tr>
+<tr>
+<td>정규시장</td>
+<td>09:00~15:30</td>
+<td>기존 유지</td>
+</tr>
+<tr>
+<td>장종료후 시간외</td>
+<td>15:40~16:00</td>
+<td>종가매매 유지</td>
+</tr>
+<tr>
+<td><strong>애프터마켓(확대)</strong></td>
+<td>16:00~20:00</td>
+<td>ETF 연속매매</td>
+</tr>
+</tbody>
+</table>
+<p><strong>주요 쟁점</strong>:
+- <strong>ETF 괴리율 우려</strong>: LP 참여가 선택적일 경우 매수·매도 호가 부족으로 NAV 대비 괴리율 확대 가능성
+- <strong>시간 공백 문제</strong>: KRX 프리마켓(07:00~07:50) 종료 후 NXT ETF 미개시(11월 목표) 기간 중 08:00~09:00 거래 공백 발생
+- <strong>업계 반발</strong>: LP 직원 2시간 조기 출근 필요, 주 52시간 근로제 충돌, 인력 충원·시차 출퇴근제 필요, 증권사당 전산 개발비 최소 10억원 추가 발생
+- <strong>노조 농성</strong>: 전국사무금융노조 증업종본부가 여의도 KRX 앞에서 '7시 개장 반대' 무기한 컨테이너 농성 진행 중</p>
+<h3 id="92-중기-12시간-체제-주식-전종목-확대">9.2 중기: 12시간 체제 (주식 전종목 확대)</h3>
+<p>ETF 시범 운영 이후, 주식 전종목으로 프리마켓·애프터마켓을 확대하여 <strong>12시간(07:00~20:00) 체제</strong>를 구현한다.</p>
+<p>핵심 기술 변화:
+- <strong>"One Board" 연속주문처리 시스템</strong>: 프리마켓, 정규시장, 애프터마켓 간 미체결 주문의 강제 소멸 없이 연속적으로 이월(carry-over) 처리
+- 현행 시간외단일가매매(16:00~18:00)를 폐지하고 연속매매로 대체
+- 시행세칙 제13조의 세션간 호가효력 불인정 규정 개정 필요</p>
+<h3 id="93-장기-2027년-이후-24시간-체제-목표">9.3 장기 (2027년 이후): 24시간 체제 목표</h3>
+<p>최종적으로 <strong>2027년 12월까지 24시간 거래 체제</strong>를 구현하는 것이 KRX의 전략 목표이다. 이를 위해:
+- 야간세션(20:00~07:00) 도입
+- 매일 1시간 기술적 점검 시간(Technical Pause) 도입 (예: 06:00~07:00 KST)
+- 논리적 거래일(Trade Date) 경계선 설정(예: 20:00 KST)
+- 미국 DTCC의 FIX Tag 715(Clearing Business Date)에 상응하는 결제일 구분 체계 구축</p>
+<h3 id="94-nxt의-etf-거래-대응">9.4 NXT의 ETF 거래 대응</h3>
+<p>넥스트레이드는 2026년 9월 14일까지 VI 제도 개편과 ETF 거래 시스템 구축을 완료한 후, 약 2개월간 금융당국 본인가 심사를 거쳐 <strong>2026년 11월 ETF 시장 개장</strong>을 추진 중이다. 초기 약 10개 종목으로 시작하여 최대 100개까지 확대하며, 수수료는 KRX 대비 20~40% 낮게 책정할 계획이다.</p>
+<hr />
+<h2 id="10-24시간-전환-시-규정-개정-필요사항">10. 24시간 전환 시 규정 개정 필요사항</h2>
+<h3 id="101-업무규정-개정-대상-조항">10.1 업무규정 개정 대상 조항</h3>
+<table>
+<thead>
+<tr>
+<th>조항</th>
+<th>현행 내용</th>
+<th>개정 방향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>제4조</strong> (매매거래시간)</td>
+<td>정규시장 09:00~15:30, 시간외 08:00~18:00</td>
+<td>프리마켓(07:00~08:00), 애프터마켓(16:00~20:00), 야간세션(20:00~07:00) 추가</td>
+</tr>
+<tr>
+<td><strong>제5조</strong> (휴장)</td>
+<td>공휴일, 토요일 등 전일 휴장</td>
+<td>야간세션의 공휴일 전날 운영 여부, 주말 야간세션 가능 여부 명확화</td>
+</tr>
+<tr>
+<td><strong>제7조</strong> (결제)</td>
+<td>T+2 보통거래</td>
+<td>T+1 전환 및 야간거래 결제일 산정 기준(Trade Date 경계) 신설</td>
+</tr>
+<tr>
+<td><strong>제20조</strong> (가격제한폭)</td>
+<td>기준가격 ±30%</td>
+<td>야간세션 별도 변동성 밴드(tier-based) 도입 검토(예: 20%/10%/6%)</td>
+</tr>
+<tr>
+<td><strong>제22~24조</strong> (경쟁매매)</td>
+<td>정규시장 기준 단일가/복수가</td>
+<td>연속 세션 간 매매방법 전환 규칙, 야간 세션 매매방법 규정</td>
+</tr>
+<tr>
+<td><strong>제25조</strong> (서킷브레이커)</td>
+<td>코스피 8%/15%/20% 하락 기준</td>
+<td>야간세션 별도 발동 기준, 기준지수 산정 방법 재정의</td>
+</tr>
+<tr>
+<td><strong>제26조</strong> (매매거래정지)</td>
+<td>종목별 정지</td>
+<td>야간세션 정지/재개 절차 추가</td>
+</tr>
+<tr>
+<td><strong>제26조의2</strong> (VI)</td>
+<td>정규시장+시간외단일가 적용</td>
+<td>전 세션 적용으로 확대, 야간 시간대 발동 비율 별도 설정</td>
+</tr>
+<tr>
+<td><strong>제33~36조</strong> (시간외매매)</td>
+<td>종가매매, 단일가매매, 대량/바스켓매매</td>
+<td>시간외 개념 자체의 재정의(연속매매 체제에서 시간외의 의미), 세션 구조 재편</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-시행세칙-개정-대상">10.2 시행세칙 개정 대상</h3>
+<table>
+<thead>
+<tr>
+<th>조항</th>
+<th>개정 방향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>제8조</strong> (매매거래시간변경)</td>
+<td>야간세션 전산장애 시 대응 절차 추가</td>
+</tr>
+<tr>
+<td><strong>제11조</strong> (호가접수시간)</td>
+<td>프리마켓/애프터마켓/야간세션 호가접수시간 신설</td>
+</tr>
+<tr>
+<td><strong>제13조</strong> (호가의 효력)</td>
+<td><strong>세션 간 주문 이월 허용</strong> - 현행 세션 경계 시 호가 소멸 규정 폐지</td>
+</tr>
+<tr>
+<td><strong>제16조</strong> (기준가격)</td>
+<td>24시간 체제 시 기준가격 산정 시점 재정의(Technical Pause 종료 시점?)</td>
+</tr>
+<tr>
+<td><strong>제17조</strong> (호가가격단위)</td>
+<td>야간세션 별도 호가가격단위 검토</td>
+</tr>
+<tr>
+<td><strong>제39조</strong> (서킷브레이커)</td>
+<td>야간 시간대 발동조건, 중단시간, 적용 제외 시점 재설정</td>
+</tr>
+<tr>
+<td><strong>제41조의2</strong> (VI 비율)</td>
+<td>야간 시간대 완화된 비율(예: 동적VI 코스피200 5%, 기타 10%)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="103-관련-타-규정-개정-필요">10.3 관련 타 규정 개정 필요</h3>
+<table>
+<thead>
+<tr>
+<th>규정명</th>
+<th>개정 사항</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>증권시장 청산결제 업무규정</strong></td>
+<td>T+1 결제주기, 야간거래 실시간 청산, 장중 마진콜 체계</td>
+</tr>
+<tr>
+<td><strong>시장감시규정</strong></td>
+<td>야간 시간대 불공정거래 감시, AI 기반 이상거래 탐지 확대</td>
+</tr>
+<tr>
+<td><strong>회원관리규정</strong></td>
+<td>야간 운영 인력 기준, LP(유동성공급자) 야간 의무</td>
+</tr>
+<tr>
+<td><strong>공시규정</strong></td>
+<td>야간 공시 접수 및 공표 절차, 매매거래정지 연계</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-기술-인프라-현황-및-과제">11. 기술 인프라 현황 및 과제</h2>
+<h3 id="111-exture-30-시스템의-한계">11.1 EXTURE 3.0 시스템의 한계</h3>
+<p>EXTURE 3.0은 EXTURE+를 대폭 개선(레이턴시 50µs, 일일 9.4억 건 처리)하였으나, 24시간 연속 운영을 전제로 설계되지 않아 다음의 구조적 한계가 존재한다:</p>
+<table>
+<thead>
+<tr>
+<th>한계 영역</th>
+<th>상세</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>야간 배치 의존</strong></td>
+<td>일일 장부 마감, 브로커 대사, 2단계 통합 청산결제 플랫폼 처리가 야간 배치에 의존. 24시간 운영 시 배치 윈도우 부재</td>
+</tr>
+<tr>
+<td><strong>세션 경계 주문 소멸</strong></td>
+<td>시행세칙 제13조에 따라 세션 전환 시 미체결 호가 효력 불인정. 연속 매매 불가</td>
+</tr>
+<tr>
+<td><strong>Stateful 아키텍처</strong></td>
+<td>시장별 멀티 매칭엔진 방식이나, 일일 주기의 상태(state)에 의존하여 설계. 자정 경계 처리 로직 부재</td>
+</tr>
+<tr>
+<td><strong>기업이벤트 처리</strong></td>
+<td>주식분할, 배당락 등 기업이벤트가 야간 배치에서 일괄 적용. 실시간 반영 체계 미구축</td>
+</tr>
+</tbody>
+</table>
+<h3 id="112-필요한-기술-전환">11.2 필요한 기술 전환</h3>
+<table>
+<thead>
+<tr>
+<th>과제</th>
+<th>해결 방향</th>
+<th>참고 사례</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>무중단 운영</strong></td>
+<td>매일 1시간 기술적 점검 시간(Technical Pause) 도입(예: 06:00~07:00 KST). NYSE Arca 2시간(23:30~01:30 ET), NASDAQ 1시간(20:00~21:00 ET) 모델 참조</td>
+<td>미국 3대 거래소</td>
+</tr>
+<tr>
+<td><strong>주문 이월(One Board)</strong></td>
+<td>매칭엔진을 무상태(stateless)로 전환. 글로벌 시퀀서가 모든 주문을 결정론적으로 로깅한 후 실행. MEMX의 Aeron Sequencer 아키텍처 참조</td>
+<td>24X National Exchange</td>
+</tr>
+<tr>
+<td><strong>실시간 청산</strong></td>
+<td>비동기 청산 원장(Asynchronous Clearing Ledger) 도입. 매칭엔진과 청산 DB의 물리적 분리. DTCC UTC 24/5 모델 참조</td>
+<td>DTCC/NSCC</td>
+</tr>
+<tr>
+<td><strong>제로다운타임 배포</strong></td>
+<td>DB 샤딩(Sharding) 및 블루-그린 배포(Blue-Green Deployment)를 통한 스키마 마이그레이션 시 무중단 운영</td>
+<td>Cloud-native 아키텍처</td>
+</tr>
+<tr>
+<td><strong>야간 유동성 확보</strong></td>
+<td>세션별 모듈형 LP 의무, 오프시간대 거래수수료 인센티브(NYSE Arca ETP Incentive Program 참조), 볼륨 기반 워런트 프로그램(24X 모델)</td>
+<td>NYSE Arca, 24X</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="참고자료">참고자료</h2>
+<h3 id="법규-원문">법규 원문</h3>
+<ol>
+<li>유가증권시장 업무규정 (2026.1.29 전문, 규정 제2405호)</li>
+<li>유가증권시장 업무규정 시행세칙 (2026.2.9 전문, 규정 제2396호)</li>
+<li>증권시장 청산결제 업무규정 (2025.3.4 시행, 규정 제2287호)</li>
+</ol>
+<h3 id="비교-분석-자료">비교 분석 자료</h3>
+<ol start="4">
+<li>KRX 24-Hour Trading: Global Comparison - Comparative Analysis of Global 24-Hour Trading Architectures</li>
+<li>NYSE Arca Rule Filing SR-NYSEArca-2024-89 (22시간 거래 확대)</li>
+<li>NASDAQ SR-NASDAQ-2025-106 (23/5 거래 체제)</li>
+<li>24X National Exchange Rules (SEC 승인, MEMX Technologies 기반)</li>
+<li>DTCC 24/5 Clearing Roadmap - UTC Extended Trading Hours</li>
+</ol>
+<h3 id="시장-동향">시장 동향</h3>
+<ol start="9">
+<li>Nextrade ATS 출범 및 거래시간 (08:00~20:00)</li>
+<li>KRX 12시간 거래 확대 계획 (2026.6월 예정)</li>
+<li>KRX 24시간 거래 최종 목표 (2027.12월)</li>
+<li>미국 T+1 결제 전환 (2024.5월 시행)</li>
+</ol>
+<hr />
+<h3 id="시장-동향-2026년-기준">시장 동향 (2026년 기준)</h3>
+<ol start="13">
+<li>EXTURE 3.0 1단계 가동 (2023.1.25, 매매체결·정보분배)</li>
+<li>EXTURE 3.0 2단계 가동 (2023.10.4, 청산결제)</li>
+<li>Nextrade ATS 출범 1주년 성과 (2025.3~2026.3, 거래대금 2,338조원)</li>
+<li>NXT 역대 최고 장중 점유율 47.7% (2026.3.3)</li>
+<li>KRX 거래시간 연장 9월 14일 확정 (당초 6월에서 연기)</li>
+<li>정부 T+1 결제 전환 공식 추진 발표 (2026.3.18)</li>
+<li>NXT ETF 시장 개장 추진 (2026.11월 목표)</li>
+</ol>
+<p><em>본 보고서는 유가증권시장 업무규정(2026.1.29 개정), 동 시행세칙(2026.2.9 개정), EXTURE 3.0 시스템 공개 자료, 및 KRX 24-Hour Trading Global Comparison 참조문서를 기반으로 작성되었다. 시장 동향은 2026년 3월 기준이다.</em></p>
+    </main>
+
+    <script>
+    (function() {
+        // --- Wrap tables ---
+        document.querySelectorAll('main table').forEach(t => {
+            if (!t.parentElement.classList.contains('table-wrap')) {
+                const w = document.createElement('div');
+                w.className = 'table-wrap';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            }
+        });
+
+        // --- Build TOC ---
+        const toc = document.getElementById('toc');
+        const headings = document.querySelectorAll('main h1, main h2, main h3');
+        const tocLinks = [];
+        headings.forEach(h => {
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.textContent = h.textContent;
+            a.dataset.id = h.id;
+            const depth = parseInt(h.tagName[1]);
+            if (depth >= 3) a.classList.add('depth-' + depth);
+            toc.appendChild(a);
+            tocLinks.push({ el: h, link: a });
+        });
+
+        // --- Scroll spy ---
+        let ticking = false;
+        function updateActive() {
+            const scrollY = window.scrollY + 100;
+            let current = tocLinks[0];
+            for (const item of tocLinks) {
+                if (item.el.offsetTop <= scrollY) current = item;
+            }
+            tocLinks.forEach(i => i.link.classList.remove('active'));
+            if (current) {
+                current.link.classList.add('active');
+                current.link.scrollIntoView({ block: 'nearest' });
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+        });
+        updateActive();
+
+        // --- Smooth scroll for TOC links ---
+        toc.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.id);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                history.replaceState(null, '', e.target.href);
+            }
+        });
+
+        // --- Smooth scroll for in-content anchor links ---
+        document.querySelectorAll('main a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = decodeURIComponent(a.getAttribute('href').slice(1));
+                const target = document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    })();
+
+    // --- Sidebar toggle ---
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const tb = document.getElementById('topbar');
+        sb.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+        tb.classList.toggle('expanded');
+    }
+
+    // --- Search ---
+    let searchTimeout;
+    function doSearch(q) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => _search(q), 200);
+    }
+    function _search(query) {
+        const main = document.getElementById('main');
+        // Remove old marks
+        main.querySelectorAll('mark[data-search]').forEach(m => {
+            const parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+        });
+        const countEl = document.getElementById('searchCount');
+        if (!query || query.length < 2) { countEl.textContent = ''; return; }
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+                regex.test(walker.currentNode.textContent)) {
+                nodes.push(walker.currentNode);
+                regex.lastIndex = 0;
+            }
+        }
+        let count = 0;
+        nodes.forEach(node => {
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            regex.lastIndex = 0;
+            let m;
+            while ((m = regex.exec(node.textContent)) !== null) {
+                frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+                const mark = document.createElement('mark');
+                mark.setAttribute('data-search', '');
+                mark.textContent = m[0];
+                frag.appendChild(mark);
+                last = regex.lastIndex;
+                count++;
+            }
+            frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+            node.parentNode.replaceChild(frag, node);
+        });
+        countEl.textContent = count > 0 ? count + '건' : '0건';
+        const first = main.querySelector('mark[data-search]');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --- Theme ---
+    function toggleTheme() {
+        const d = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        document.body.dataset.theme = d;
+        try { localStorage.setItem('theme', d); } catch(e) {}
+    }
+    try { if (localStorage.getItem('theme') === 'dark') document.body.dataset.theme = 'dark'; } catch(e) {}
+    </script>
+</body>
+</html>
