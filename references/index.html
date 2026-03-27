@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>거래소 레퍼런스 및 기술 사양</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface2: #334155;
+    --border: #475569;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-hover: #7dd3fc;
+    --link: #60a5fa;
+    --link-hover: #93bbfd;
+    --tag-bg: #1e3a5f;
+    --tag-text: #7dd3fc;
+    --note-bg: #1a2332;
+    --note-border: #2d4a6f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  header p {
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.75rem 1.1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  nav a:hover, nav a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: rgba(56, 189, 248, 0.05);
+  }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .exchange-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .exchange-section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .exchange-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #f1f5f9;
+  }
+
+  .exchange-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-group {
+    margin-bottom: 2rem;
+  }
+
+  .section-group h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    padding-left: 0.25rem;
+  }
+
+  .section-group h4 {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin: 1rem 0 0.5rem 0.5rem;
+  }
+
+  .link-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .link-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s;
+  }
+
+  .link-item:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateX(4px);
+  }
+
+  .link-item a {
+    color: var(--link);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline;
+  }
+
+  .link-item a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+  }
+
+  .link-item .desc {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-left: 0.25rem;
+  }
+
+  .link-item .badge {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+
+  .key-notes {
+    background: var(--note-bg);
+    border: 1px solid var(--note-border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .key-notes h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .key-notes ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .key-notes li {
+    padding: 0.3rem 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+  }
+
+  .key-notes li:last-child { border-bottom: none; }
+
+  .key-notes li strong {
+    color: var(--text);
+  }
+
+  .key-notes .sub-section {
+    margin-top: 1rem;
+  }
+
+  .key-notes .sub-section h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 0.4rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    nav ul { justify-content: flex-start; }
+    nav a { padding: 0.7rem 0.8rem; font-size: 0.8rem; }
+    main { padding: 1.5rem 1rem; }
+    .exchange-title { font-size: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>거래소 레퍼런스 및 기술 사양</h1>
+  <p>글로벌 거래소 매매시스템, 프로토콜, 규정 문서 모음</p>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#KRX" class="nav-link active" data-target="KRX">KRX</a></li>
+    <li><a href="#NYSE" class="nav-link" data-target="NYSE">NYSE</a></li>
+    <li><a href="#NASDAQ" class="nav-link" data-target="NASDAQ">NASDAQ</a></li>
+    <li><a href="#TSE" class="nav-link" data-target="TSE">TSE/JPX</a></li>
+    <li><a href="#LSE" class="nav-link" data-target="LSE">LSE</a></li>
+    <li><a href="#HKEX" class="nav-link" data-target="HKEX">HKEX</a></li>
+    <li><a href="#Eurex" class="nav-link" data-target="Eurex">Eurex</a></li>
+    <li><a href="#ASX" class="nav-link" data-target="ASX">ASX</a></li>
+    <li><a href="#SGX" class="nav-link" data-target="SGX">SGX</a></li>
+    <li><a href="#Common" class="nav-link" data-target="Common">공통</a></li>
+    <li><a href="#Glossary" class="nav-link" data-target="Glossary">용어사전</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- KRX -->
+  <section id="KRX" class="exchange-section active">
+    <h2 class="exchange-title">KRX (한국거래소)</h2>
+    <p class="exchange-subtitle">Korea Exchange - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 법규 및 규정</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://rule.krx.co.kr/" target="_blank">KRX 법무포털</a> <span class="desc">- 한국거래소 전체 규정 검색 (업무규정, 시행세칙 등)</span></li>
+        <li class="link-item"><a href="https://law.krx.co.kr/las/main.jsp" target="_blank">KRX 법규검색서비스</a> <span class="desc">- 내규 검색 서비스, 유가증권시장/코스닥시장 업무규정</span></li>
+        <li class="link-item"><a href="https://rule.krx.co.kr/out/index.do?param1=F" target="_blank">규정 제·개정예고</a> <span class="desc">- 규정 개정 예고 및 최신 변경사항</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. Global KRX (영문)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://global.krx.co.kr/main/main.jsp" target="_blank">Global KRX 메인</a> <span class="desc">- KRX 영문 포털</span></li>
+        <li class="link-item"><a href="https://global.krx.co.kr/contents/GLB/06/0602/0602010201/GLB0602010201.jsp" target="_blank">KOSPI 시장 매매규정</a> <span class="desc">- KOSPI 시장 매매제도 (영문)</span></li>
+        <li class="link-item"><a href="https://global.krx.co.kr/contents/GLB/06/0602/0602030101/GLB0602030101.jsp" target="_blank">KONEX 시장 매매규정</a> <span class="desc">- KONEX 시장 매매제도 (영문)</span></li>
+        <li class="link-item"><a href="https://global.krx.co.kr/contents/GLB/06/0603/0603010300/GLB0603010300.jsp" target="_blank">파생상품 매매시간 및 규정</a> <span class="desc">- 파생상품 매매시간 및 규정 (영문)</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. 시장 가이드 및 해설서</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://eng.kofia.or.kr/files/eng/2011_Introduction_to_Trading_at_KRX_Stock_Market.pdf" target="_blank">KRX 주식시장 매매 개요</a> <span class="badge">PDF</span> <span class="desc">- KOFIA 발행, 영문</span></li>
+        <li class="link-item"><a href="https://kind.krx.co.kr/external/dst/guidebook/2012_IPO%EB%A5%BC%20%EC%9C%84%ED%95%9C%20KRX%20%EC%83%81%EC%9E%A5%EC%8B%AC%EC%82%AC%20%EA%B0%80%EC%9D%B4%EB%93%9C%EB%B6%81(%EC%98%81%EB%AC%B8).pdf" target="_blank">KRX 상장심사 가이드북</a> <span class="badge">PDF</span> <span class="desc">- IPO를 위한 상장심사 가이드북 (영문)</span></li>
+        <li class="link-item"><a href="https://kind.krx.co.kr/external/dst/reference/10951/(%EA%B3%B5%EC%8B%9C)%2024%EB%85%84%EC%BD%94%EC%8A%A4%EB%8B%A5%EC%8B%9C%EC%9E%A5%EA%B3%B5%EC%8B%9C%EC%83%81%EC%9E%A5%EA%B4%80%EB%A6%AC%ED%95%B4%EC%84%A4%EC%84%9C.pdf" target="_blank">코스닥시장 공시·상장관리 해설서 2024</a> <span class="badge">PDF</span> <span class="desc">- 2024년판 코스닥시장 공시/상장관리 해설서</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 전산시스템 (EXTURE+)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.koscom.co.kr/eng/main/contents.do?menuNo=300005" target="_blank">KRX 매매시스템 (KOSCOM)</a> <span class="desc">- KOSCOM이 운영하는 EXTURE+ 매매시스템 개요</span></li>
+        <li class="link-item"><a href="https://data.krx.co.kr/" target="_blank">KRX 데이터 마켓플레이스</a> <span class="desc">- 시세, 통계 데이터</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>5. 공시</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://kind.krx.co.kr/" target="_blank">KIND (KRX 공시시스템)</a> <span class="desc">- 한국거래소 전자공시시스템</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <ul>
+        <li><strong>EXTURE+</strong> 시스템 기술 사양서는 회원사 대상으로만 제공 (비공개)</li>
+        <li><strong>가격제한폭:</strong> KOSPI/KOSDAQ 주식 &plusmn;30%</li>
+        <li><strong>매매시간:</strong> 09:00~15:30 (정규시장), 장전 08:30~09:00, 장후 15:40~16:00</li>
+        <li><strong>서킷브레이커:</strong> KOSPI가 전일 대비 8%/15%/20% 이상 하락 시 발동</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NYSE -->
+  <section id="NYSE" class="exchange-section">
+    <h2 class="exchange-title">NYSE (뉴욕증권거래소)</h2>
+    <p class="exchange-subtitle">New York Stock Exchange - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 규정 및 규칙</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.nyse.com/market-model" target="_blank">NYSE 시장 모델</a> <span class="desc">- NYSE 시장 모델 개요 (DMM 역할, 시장구조)</span></li>
+        <li class="link-item"><a href="https://www.nyse.com/markets/nyse/trading-info" target="_blank">NYSE 매매 정보</a> <span class="desc">- 매매 정보, 주문유형, 거래시간</span></li>
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/rule-interpretations/2014/14-2.pdf" target="_blank">NYSE 규정 104 - DMM 해석</a> <span class="badge">PDF</span> <span class="desc">- DMM 역할 및 책임에 관한 규정 해석</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. Pillar 매매 플랫폼 사양</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_FIX_Protocol_Specification.pdf" target="_blank">Pillar Gateway FIX 프로토콜 사양</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_Binary_Protocol_Specification.pdf" target="_blank">Pillar Gateway Binary 프로토콜 사양</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Options_Gateway_Binary_Protocol_Specification.pdf" target="_blank">Pillar 옵션 Gateway Binary 프로토콜</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Risk_Controls.pdf" target="_blank">Pillar 위험관리 사양</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. 주문유형 및 시장 차이</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Differences.pdf" target="_blank">Pillar 주문유형 차이</a> <span class="badge">PDF</span> <span class="desc">- NYSE 그룹 내 주문유형 차이</span></li>
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/Functional_Differences_NYSE_Pillar.pdf" target="_blank">NYSE Pillar 기능적 차이</a> <span class="badge">PDF</span> <span class="desc">- NYSE 그룹 거래소 간 기능적 차이</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 시장 데이터</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.nyse.com/publicdocs/nyse/data/Pillar_Options_Common_Client_Specification.pdf" target="_blank">Pillar 옵션 공통 클라이언트 사양</a> <span class="badge">PDF</span> <span class="desc">- 옵션 시장 데이터 클라이언트 사양</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>5. 추가 자료</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.finra.org/" target="_blank">NYSE 규제 (FINRA)</a> <span class="desc">- NYSE 자율규제 관련 (FINRA 이관)</span></li>
+        <li class="link-item"><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&company=NYSE&CIK=&type=19b-4&dateb=&owner=include&count=40&search_text=&action=getcompany" target="_blank">SEC EDGAR - NYSE 규정 변경 신청</a> <span class="desc">- SEC에 제출된 NYSE 규정 변경 신청</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <ul>
+        <li><strong>DMM (Designated Market Maker):</strong> NYSE 고유의 시장조성자 제도</li>
+        <li><strong>거래시간:</strong> 09:30~16:00 ET (정규시장)</li>
+        <li><strong>Opening/Closing Auction:</strong> DMM이 관리하는 가격결정 메커니즘</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NASDAQ -->
+  <section id="NASDAQ" class="exchange-section">
+    <h2 class="exchange-title">NASDAQ (나스닥)</h2>
+    <p class="exchange-subtitle">NASDAQ - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 규정 및 규칙</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://listingcenter.nasdaq.com/rulebook/nasdaq/rules" target="_blank">NASDAQ 규정집</a> <span class="desc">- NASDAQ 공식 규정집</span></li>
+        <li class="link-item"><a href="https://www.nasdaqtrader.com/content/marketregulation/regnms/rash_strategy.pdf" target="_blank">주문유형 및 라우팅 전략</a> <span class="badge">PDF</span> <span class="desc">- 주문유형 및 라우팅 전략 레퍼런스 가이드</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. 매매 프로토콜 및 사양</h3>
+      <h4>OUCH 프로토콜 (주문진입)</h4>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.nasdaqtrader.com/Trader.aspx?id=OUCH" target="_blank">OUCH 개요</a> <span class="desc">- OUCH 프로토콜 개요 페이지</span></li>
+        <li class="link-item"><a href="https://nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/Ouch5.0.pdf" target="_blank">OUCH 5.0 사양</a> <span class="badge">PDF</span> <span class="desc">- 최신 OUCH 5.0 주문진입 사양</span></li>
+        <li class="link-item"><a href="https://nasdaqtrader.com/content/productsservices/trading/OUCH_5.0_FAQ.pdf" target="_blank">OUCH 5.0 FAQ</a> <span class="badge">PDF</span> <span class="desc">- 자주 묻는 질문</span></li>
+        <li class="link-item"><a href="https://www.nasdaqtrader.com/content/technicalsupport/specifications/tradingproducts/ouch4.2.pdf" target="_blank">OUCH 4.2 사양</a> <span class="badge">PDF</span> <span class="desc">- 레거시 사양</span></li>
+      </ul>
+
+      <h4>ITCH 프로토콜 (시장 데이터)</h4>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.nasdaq.com/docs/2025/11/13/Nordic-Equity-TotalView-ITCH-3.04.X.pdf" target="_blank">Nordic Equity TotalView-ITCH 3.04.X</a> <span class="badge">PDF</span> <span class="desc">- TotalView-ITCH 프로토콜 사양</span></li>
+        <li class="link-item"><a href="https://data.nasdaq.com/databases/NTV" target="_blank">NASDAQ TotalView</a> <span class="desc">- TotalView 데이터 제품 개요</span></li>
+        <li class="link-item"><a href="https://www.nasdaq.com/solutions/data/equities/nasdaq-totalview" target="_blank">NASDAQ TotalView Solutions</a> <span class="desc">- TotalView 시장 깊이 정보</span></li>
+        <li class="link-item"><a href="https://help.data.nasdaq.com/category/970-nasdaq-totalview-itch" target="_blank">TotalView-ITCH 도움말 센터</a> <span class="desc">- 기술 지원 문서</span></li>
+      </ul>
+
+      <h4>INET 프로토콜 (Nordic)</h4>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.nasdaq.com/solutions/inet-nordic-protocol-specifications" target="_blank">INET Nordic 프로토콜 사양</a> <span class="desc">- INET Nordic 프로토콜 사양 모음</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. Opening/Closing Cross</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://nasdaqtrader.com/Trader.aspx?id=OpenClose" target="_blank">NASDAQ Opening/Closing Cross</a> <span class="desc">- Opening/Closing Cross 개요</span></li>
+        <li class="link-item"><a href="https://nasdaqtrader.com/content/productsservices/trading/crosses/openclose_faqs.pdf" target="_blank">Opening/Closing Cross FAQ</a> <span class="badge">PDF</span> <span class="desc">- 크로스 매매 FAQ</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <ul>
+        <li><strong>OUCH:</strong> 저수준 고성능 주문진입 프로토콜 (아웃바운드 전용 ITCH와 구분)</li>
+        <li><strong>ITCH:</strong> 아웃바운드 시장 데이터 피드 전용 (주문진입 미지원)</li>
+        <li><strong>Opening Cross:</strong> 09:25~09:30 ET 사이 주문 불균형 정보 배포</li>
+        <li><strong>Closing Cross:</strong> 15:50~16:00 ET 사이 주문 불균형 정보 배포</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TSE -->
+  <section id="TSE" class="exchange-section">
+    <h2 class="exchange-title">TSE / JPX (도쿄증권거래소)</h2>
+    <p class="exchange-subtitle">Tokyo Stock Exchange / Japan Exchange Group - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 매매규정 및 규칙</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/equities/trading/domestic/index.html" target="_blank">국내 주식 매매규정 개요</a> <span class="desc">- 국내 주식 매매규정 개요 (영문)</span></li>
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/equities/trading/domestic/04.html" target="_blank">매매방식 (이타요세 및 자라바)</a> <span class="desc">- 이타요세(板寄せ) 및 자라바(ザラバ) 매매방식 설명</span></li>
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/equities/trading/domestic/tvdivq000000tpfi-att/eg.pdf" target="_blank">주식 매매 가이드 2024</a> <span class="badge">PDF</span> <span class="desc">- 2024년판 주식 매매 가이드 (영문)</span></li>
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/equities/trading/domestic/06.html" target="_blank">일일 가격제한폭</a></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. 파생상품 매매</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/derivatives/rules/trading-methods/index.html" target="_blank">파생상품 매매방식</a></li>
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/derivatives/rules/trading-methods/tvdivq0000004h12-att/tvdivq000000ueul.pdf" target="_blank">파생상품 매매방식 상세</a> <span class="badge">PDF</span> <span class="desc">- 영문 PDF</span></li>
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/derivatives/rules/others/01.html" target="_blank">기타 파생상품 매매규정</a></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. arrowhead 매매시스템</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/systems/equities-trading/01.html" target="_blank">arrowhead 시스템 개요</a> <span class="desc">- 현물 매매시스템 소개</span></li>
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/systems/equities-trading/index.html" target="_blank">주식 매매 서비스</a> <span class="desc">- 주식 매매 서비스 전체 목록</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 교육 자료</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.jpx.co.jp/english/corporate/learning/resources/index.html" target="_blank">JPX 교육 자료 모음</a></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <div class="sub-section">
+        <h4>이타요세 (板寄せ, 단일가매매)</h4>
+        <ul>
+          <li>시가/종가 결정에 사용</li>
+          <li>거래량 최대화, 미체결 잔량 최소화 원칙으로 단일가격 결정</li>
+          <li>가격우선·시간우선 원칙 적용</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>자라바 (ザラバ, 연속매매)</h4>
+        <ul>
+          <li>장중 연속매매에 사용</li>
+          <li>최저 매도호가와 최고 매수호가가 일치할 때 체결</li>
+          <li>가격우선·시간우선 원칙 적용</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>arrowhead 4.0 (2024.11 가동)</h4>
+        <ul>
+          <li>4세대 시스템 (초대 2010년 가동 이후)</li>
+          <li>매매시간 연장, 종가매매세션(Closing Auction Session) 도입</li>
+          <li>글로벌 최고 수준의 저지연·고신뢰·확장성</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- LSE -->
+  <section id="LSE" class="exchange-section">
+    <h2 class="exchange-title">LSE (런던증권거래소)</h2>
+    <p class="exchange-subtitle">London Stock Exchange - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 매매시스템 가이드</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://docs.londonstockexchange.com/sites/default/files/documents/draft-mit201-guide-to-the-trading-system-15.7.pdf" target="_blank">MIT201 - 매매시스템 가이드 (Draft 15.7)</a> <span class="badge">PDF</span> <span class="desc">- LSE 매매시스템 종합 가이드 (최신 드래프트)</span></li>
+        <li class="link-item"><a href="https://docs.londonstockexchange.com/sites/default/files/documents/draftguidetothetradingsystem2.pdf" target="_blank">MIT201 - 매매시스템 가이드 (v14.9)</a> <span class="badge">PDF</span> <span class="desc">- 이전 버전</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. 매매 서비스</h3>
+      <h4>SETS (전자주문장 매매 서비스)</h4>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.londonstockexchange.com/equities-trading/asset-classes/shares-trading/setsqx-and-seaq" target="_blank">LSE 주식 매매 - SETSqx 및 SEAQ</a> <span class="desc">- SETS, SETSqx, SEAQ 매매서비스 개요</span></li>
+      </ul>
+
+      <h4>SETSqx 개선사항</h4>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://docs.londonstockexchange.com/sites/default/files/documents/Further%20improvements%20to%20auctions%20on%20the%20SETSqx%20Trading%20Service.pdf" target="_blank">SETSqx 경매 개선사항 팩트시트</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. 추가 자료</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://docs.londonstockexchange.com/" target="_blank">LSE 공식 문서 포털</a></li>
+        <li class="link-item"><a href="https://www.stockexchangesecrets.com/london-stock-exchange-SETS.html" target="_blank">SETS 시스템 해설 (StockExchangeSecrets)</a></li>
+        <li class="link-item"><a href="https://aim-watch.com/project/seaq-sets-setsqx/" target="_blank">SEAQ, SETS, SETSqx 해설 (AIM-Watch)</a> <span class="desc">- 3개 매매시스템 비교 설명</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <div class="sub-section">
+        <h4>SETS (주요 유동성 종목)</h4>
+        <ul>
+          <li>1997년 도입된 전자 주문장(order book) 시스템</li>
+          <li>정규 거래시간: 08:00~16:30 (런던 시간)</li>
+          <li>주문유형: At Best, Limit, Stop, Iceberg 등</li>
+          <li>FTSE 100, FTSE 250 등 주요 종목 거래</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>SETSqx (중간 유동성 종목)</h4>
+        <ul>
+          <li>SETS + Quote 혼합 시스템 (2007년 도입)</li>
+          <li>시장조성자(Market Maker) 상시 유동성 제공</li>
+          <li>하루 4회 정기 경매(auction uncrossing)로 주문장 유동성 집중</li>
+          <li>Named Order: 비익명(non-anonymous) 지정가 주문</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>SEAQ (저유동성 종목)</h4>
+        <ul>
+          <li>호가 기반(quote-driven) 시스템</li>
+          <li>시장조성자 호가에 의해서만 거래</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- HKEX -->
+  <section id="HKEX" class="exchange-section">
+    <h2 class="exchange-title">HKEX (홍콩거래소)</h2>
+    <p class="exchange-subtitle">Hong Kong Exchanges and Clearing - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 매매 메커니즘 및 규칙</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.hkex.com.hk/Services/Trading/Securities/Overview/Trading-Mechanism?sc_lang=en" target="_blank">매매 메커니즘 개요</a> <span class="desc">- 매매 세션, 주문유형, 거래유형, 호가규칙, VCM 개요</span></li>
+        <li class="link-item"><a href="https://www.hkex.com.hk/eng/market/sec_tradinfra/vcm_cas/Documents/Trading%20Mechanism%20of%20the%20CAS%20in%20the%20Securities%20Market.pdf" target="_blank">종가매매세션(CAS) 매매 메커니즘</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. 변동성 통제 메커니즘 (VCM)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.hkex.com.hk/-/media/HKEX-Market/Services/Trading/Derivatives/Trading-Mechanism/Volatility-Control-Mechanism-(VCM)/Trading-Mechanism-for-VCM-Eng.pdf" target="_blank">VCM 매매 메커니즘 (파생상품)</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.hkex.com.hk/-/media/HKEX-Market/Services/Trading/Securities/Overview/Trading-Mechanism/Trading-Mechanism-for-VCM_E.pdf?la=en" target="_blank">VCM 정보 문서 - 증권시장</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. Orion 매매 플랫폼 (OTP) 사양</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.hkex.com.hk/Services/Trading/Securities/Infrastructure/Overview?sc_lang=en" target="_blank">OTP 인프라 개요</a> <span class="desc">- Orion Trading Platform 인프라 개요</span></li>
+        <li class="link-item"><a href="https://www.hkex.com.hk/-/media/HKEX-Market/Services/Trading/Securities/Infrastructure/Orion-Trading-Platform-Securities-Market-OTP-C/OTPC/HKEX_OCG_Binary_Trading_Interface_Specifications_v2_1.pdf?la=en" target="_blank">OCG Binary 매매 인터페이스 사양</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.hkex.com.hk/-/media/HKEX-Market/Services/Trading/Securities/Infrastructure/Orion-Trading-Platform-Securities-Market-OTP-C/OTPC/HKEX_OCG_FIX_Drop_Copy_Interface_Specifications_v2_1(With_Track_Changes).pdf?la=en" target="_blank">OCG FIX Drop Copy 인터페이스 사양</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 시장 데이터 플랫폼 (OMD)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.hkex.com.hk/eng/prod/dataprod/Documents/HKEX_OMD-C_Binary_Interface_Specifications_v1.39b.pdf" target="_blank">OMD-C Binary 인터페이스 사양</a> <span class="badge">PDF</span> <span class="desc">- 증권시장 시장데이터 Binary 인터페이스 사양</span></li>
+        <li class="link-item"><a href="https://www.hkex.com.hk/-/media/HKEX-Market/Services/Market-Data-Services/Infrastructure/HKEX-Orion-Market-Data-Platform-Derivatives-Market-OMD-D/HKEX-OMDD-Developers-Guide-v1,-d-,26.pdf" target="_blank">OMD-D 개발자 가이드</a> <span class="badge">PDF</span> <span class="desc">- 파생상품 시장데이터 개발자 가이드</span></li>
+        <li class="link-item"><a href="https://www.hkex.com.hk/-/media/HKEX-Market/Services/Market-Data-Services/Infrastructure/HKEX-Orion-Market-Data-Platform-Derivatives-Market-OMD-D/Introduction-of-DLite/OMDD-Interface-Specifications-(DLite)-v1,-d-,4d-(for-G4).pdf?la=en" target="_blank">OMD-D DLite 인터페이스 사양</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <ul>
+        <li><strong>거래시간:</strong> 09:30~12:00, 13:00~16:00 (HKT), CAS 16:00~16:10</li>
+        <li><strong>VCM:</strong> 5분 모니터링 기간 중 기준가 대비 &plusmn;10%(증권)/&plusmn;5%(파생) 이탈 시 5분 냉각기간 발동</li>
+        <li><strong>Orion Trading Platform:</strong> 증권시장(OTP-C) 및 파생상품시장(OTP-D) 지원</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Eurex -->
+  <section id="Eurex" class="exchange-section">
+    <h2 class="exchange-title">Eurex (유렉스)</h2>
+    <p class="exchange-subtitle">Eurex Exchange - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 거래규칙 및 주문유형</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.eurex.com/ex-en/trade/order-book-trading/order-types" target="_blank">Eurex 주문유형</a> <span class="desc">- 주문유형 개요 (Limit, Market, Stop, OCO, Iceberg 등)</span></li>
+        <li class="link-item"><a href="https://www.eurex.com/ex-en/find/circulars/circular-3763988" target="_blank">거래규칙 회보 (2024)</a> <span class="desc">- Eurex Deutschland 거래규칙 변경사항</span></li>
+        <li class="link-item"><a href="https://www.eurex.com/ex-en/find/circulars/circular-4176840" target="_blank">거래규칙 회보 (2025)</a> <span class="desc">- 거래규칙/조건/계약사양 변경</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. T7 매매시스템</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.eurex.com/ex-en/support/initiatives/t7-release13" target="_blank">T7 릴리즈 13 개요</a> <span class="desc">- T7 릴리즈 13 개요 및 변경사항</span></li>
+        <li class="link-item"><a href="https://www.eurexchange.com/resource/blob/297838/54cd4e591b23d7e3d60ef8e707c21a56/data/eurex_eti_manual_V31.pdf" target="_blank">T7 ETI (Enhanced Trading Interface) 매뉴얼</a> <span class="badge">PDF</span> <span class="desc">- 현물 및 파생상품 매매 인터페이스</span></li>
+        <li class="link-item"><a href="https://www.eurexchange.com/resource/blob/279888/c6872432b05d4085a6642319104cc320/data/Eurex-Trader-and-Admin-GUI-User-Manual.pdf" target="_blank">T7 Eurex Trader/Admin GUI 사용자 매뉴얼</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.eurex.com/resource/blob/4332334/61e2e29f08a63ff88d20ee30c4dc2049/data/T7_R.13.1_Derivatives_Market_-_Participant_and_User_Maintenance_Manual_Version_1.pdf" target="_blank">T7 R13.1 참가자 및 사용자 관리 매뉴얼</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. 시뮬레이션 및 테스트</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.eurex.com/resource/blob/3470820/d69f12028fc9ad9f443095efd392196b/data/T7_R.11.1_Participant_Simulation_Guide_v.1.0.pdf" target="_blank">T7 R11.1 참가자 시뮬레이션 가이드</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.eurex.com/resource/blob/2900446/3073bfef838e8a5762db9ad340143178/data/T7_R.10.0_Participant_Simulation_Guide_v.1.1.pdf" target="_blank">T7 R10.0 참가자 시뮬레이션 가이드</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <div class="sub-section">
+        <h4>주요 주문유형</h4>
+        <ul>
+          <li><strong>Limit Order:</strong> 지정가 주문</li>
+          <li><strong>Market Order:</strong> 시장가 주문</li>
+          <li><strong>Stop Order:</strong> 특정 가격 도달 시 시장가로 전환</li>
+          <li><strong>OCO:</strong> 지정가 + Stop 결합, 하나의 Order ID로 관리</li>
+          <li><strong>Iceberg:</strong> 일부 수량만 공개, 체결 시 다음 수량 노출</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>T7 시스템</h4>
+        <ul>
+          <li>Eurex와 Xetra 공용 매매 플랫폼</li>
+          <li>ETI (Enhanced Trading Interface): 세션 기반 TCP/IP 접속</li>
+          <li>Application Gateway를 통한 참가자 접속</li>
+          <li>사전거래통제(Pre-trade Controls): 최대 주문가치, 최대 주문수량 제한</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ASX -->
+  <section id="ASX" class="exchange-section">
+    <h2 class="exchange-title">ASX (호주증권거래소)</h2>
+    <p class="exchange-subtitle">Australian Securities Exchange - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 매매 개요</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading.html" target="_blank">ASX 주식 매매</a> <span class="desc">- ASX 주식 매매 개요 (Lit Markets, Centre Point, Auctions)</span></li>
+        <li class="link-item"><a href="https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/order-controls" target="_blank">ASX 주문 통제</a> <span class="desc">- 주문 통제 메커니즘</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. Centre Point (다크풀)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/asx-centre-point.html" target="_blank">ASX Centre Point</a> <span class="desc">- 호주 최대 다크풀 매칭 시스템 소개</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. 주문유형</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.asx.com.au/documents/resources/asx_trade_new_order_types.pdf" target="_blank">ASX Trade 주문유형 안내</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 운영규칙 및 절차</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.asx.com.au/documents/rules/Draft_ASX_Operating_Rules_procedures.pdf" target="_blank">ASX 운영규칙 절차 (드래프트)</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://www.asx.com.au/documents/rules/asx_or_procedures.pdf" target="_blank">ASX 운영규칙 절차 (2010년)</a> <span class="badge">PDF</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <div class="sub-section">
+        <h4>Centre Point 크로싱</h4>
+        <ul>
+          <li>익명(anonymous) 다크풀 주문</li>
+          <li>당일 주문(Day order) 전용, 최소 주문 크기 없음</li>
+          <li>4자리 소수점 off-tick 체결 허용</li>
+          <li>크로스 개시 후 최대 30초간 활성 (CLOB 가격 변동과 무관)</li>
+          <li>체결 즉시 Course of Sales에 CXXT 코드로 보고</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>주요 주문유형</h4>
+        <ul>
+          <li><strong>Fill-or-Kill (FOK):</strong> 전량 즉시 체결 또는 전량 취소</li>
+          <li><strong>Good for Day (GFD):</strong> 당일 유효</li>
+          <li><strong>Good-Till-Cancel (GTC):</strong> 취소 시까지 유효</li>
+          <li><strong>Iceberg:</strong> 대량 주문을 소량 자식 주문으로 분할 노출</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>거래시간</h4>
+        <ul>
+          <li>장전(Pre-Open): 07:00~10:00 AEST</li>
+          <li>정규매매(Normal Trading): 10:00~16:00 AEST</li>
+          <li>종가경매(Closing Auction): 16:00~16:10 AEST</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SGX -->
+  <section id="SGX" class="exchange-section">
+    <h2 class="exchange-title">SGX (싱가포르거래소)</h2>
+    <p class="exchange-subtitle">Singapore Exchange - 레퍼런스 및 기술 사양</p>
+
+    <div class="section-group">
+      <h3>1. 규정 및 규칙</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://rulebook.sgx.com/" target="_blank">SGX 규정집 포털</a> <span class="desc">- SGX 공식 규정집 포털</span></li>
+        <li class="link-item"><a href="https://rulebook.sgx.com/rulebook/sgx-st-rules-0" target="_blank">SGX-ST 규정</a> <span class="desc">- SGX Securities Trading 규정 전문</span></li>
+        <li class="link-item"><a href="https://rulebook.sgx.com/sites/default/files/net_file_store/SGX_ST_June_3_2019_Clean_Version.pdf" target="_blank">SGX-ST 규정 정리본</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://rulebook.sgx.com/rulebook/chapter-13-trading-practices-and-conduct-0" target="_blank">제13장 - 매매관행 및 행위규범</a></li>
+        <li class="link-item"><a href="https://rulebook.sgx.com/rulebook/sgx-rulebooks" target="_blank">SGX 규정집 목록</a> <span class="desc">- 전체 규정집 목록</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. 실무지침</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://rulebook.sgx.com/rulebook/practice-notes-2" target="_blank">실무지침 목록</a> <span class="desc">- SGX-ST 실무지침 목록</span></li>
+        <li class="link-item"><a href="https://rulebook.sgx.com/rulebook/practice-note-7b-monitoring-and-querying-unusual-trading-activity" target="_blank">실무지침 7B - 이상거래 모니터링</a></li>
+        <li class="link-item"><a href="https://rulebook.sgx.com/rulebook/practice-note-1381-market-manipulation-and-false-market" target="_blank">실무지침 13.8.1 - 시장조작 및 허위시장</a></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. Titan 매매시스템</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.sgx.com/titan-dt-dc-portal" target="_blank">Titan DT & DC 포털</a> <span class="desc">- Titan 파생상품 매매/청산 포털</span></li>
+        <li class="link-item"><a href="https://www.sgx.com/titan-otc-portal" target="_blank">Titan OTC 포털</a> <span class="desc">- OTC 거래 포털</span></li>
+        <li class="link-item"><a href="https://api2.sgx.com/sites/default/files/2018-09/Titan%20ITCH%20&%20GLIMPSE%20Protocol%20Specifications.pdf" target="_blank">Titan ITCH & GLIMPSE 프로토콜 사양</a> <span class="badge">PDF</span> <span class="desc">- Release 1.4</span></li>
+        <li class="link-item"><a href="https://api2.sgx.com/sites/default/files/2019-12/SGX%20-%20FIX%20Specification%20-%20v1%205%205.pdf" target="_blank">Titan OTC FIX API 사양</a> <span class="badge">PDF</span> <span class="desc">- v1.5.5</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 시장 접속 및 플랫폼</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.sgx.com/derivatives/platforms" target="_blank">SGX 파생상품 플랫폼</a> <span class="desc">- 파생상품 매매 플랫폼 목록</span></li>
+        <li class="link-item"><a href="https://www.sgx.com/data-connectivity/market-access" target="_blank">SGX 시장 접속</a> <span class="desc">- 시장 접속 및 데이터 연결</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>주요 참고사항</h3>
+      <div class="sub-section">
+        <h4>주요 주문유형</h4>
+        <ul>
+          <li><strong>MKT (Fill and Kill):</strong> 시장가 주문 (미체결분 즉시 취소)</li>
+          <li><strong>Limit:</strong> 지정가 주문</li>
+          <li><strong>STP (Fill and Kill):</strong> Stop 트리거 후 시장가</li>
+          <li><strong>STP Limit:</strong> Stop 트리거 후 지정가</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>Titan 시스템</h4>
+        <ul>
+          <li>파생상품 전용 매매/청산 플랫폼</li>
+          <li>ITCH: 아웃바운드 시장데이터 피드</li>
+          <li>GLIMPSE: 주문장 현재 상태 스냅샷 제공 (point-to-point)</li>
+          <li>QUEST: 전자 매매 플랫폼 (회원사 OMS를 통해 접속)</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>거래시간 (증권)</h4>
+        <ul>
+          <li>장전(Pre-Open): 08:30~09:00 SGT</li>
+          <li>정규매매(Normal Trading): 09:00~17:00 SGT</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Common -->
+  <section id="Common" class="exchange-section">
+    <h2 class="exchange-title">공통 자료</h2>
+    <p class="exchange-subtitle">거래소 간 비교 연구, 보고서 및 학술 논문</p>
+
+    <div class="section-group">
+      <h3>1. IOSCO (국제증권감독기구)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.iosco.org/v2/publications/?subsection=public_reports" target="_blank">IOSCO 공개 보고서</a> <span class="desc">- IOSCO 공개 보고서 전체 목록</span></li>
+        <li class="link-item"><a href="https://www.iosco.org/library/pubdocs/pdf/IOSCOPD789.pdf" target="_blank">IOSCO 2025년 업무계획</a> <span class="badge">PDF</span> <span class="desc">- 시장 미시구조 영향 재검토 포함</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. BIS (국제결제은행)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.bis.org/publ/work1290.pdf" target="_blank">BIS Working Paper No. 1290 - 고빈도거래의 속도 프리미엄</a> <span class="badge">PDF</span> <span class="desc">- Aquilina, Ibikunle, Rzayev, Wang, 2025</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. WFE (세계거래소연합)</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://www.world-exchanges.org/our-work/research" target="_blank">WFE 리서치</a> <span class="desc">- 시장구조, 기술, ESG, 신흥시장 등 리서치 보고서</span></li>
+        <li class="link-item"><a href="https://www.world-exchanges.org/our-work/statistics" target="_blank">WFE 통계</a> <span class="desc">- 글로벌 거래소 통계 데이터</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 학술 연구 및 세미나</h3>
+      <ul class="link-list">
+        <li class="link-item"><a href="https://microstructure.exchange/" target="_blank">The Microstructure Exchange</a> <span class="desc">- 시장 미시구조 세미나 시리즈</span></li>
+        <li class="link-item"><a href="https://www.globaltrading.net/research-on-the-web-in-2024/" target="_blank">2024년 필독 시장미시구조 논문 6편</a> <span class="desc">- 2024년 필독 논문 큐레이션</span></li>
+        <li class="link-item"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4858807" target="_blank">고빈도거래, 자산가격결정, 시장미시구조 (SSRN)</a> <span class="desc">- Wai Man Tse</span></li>
+        <li class="link-item"><a href="https://www.nber.org/system/files/working_papers/w33434/w33434.pdf" target="_blank">시장 거시구조: 제도와 자산가격 (NBER)</a> <span class="badge">PDF</span></li>
+        <li class="link-item"><a href="https://msbfile03.usc.edu/digitalmeasures/lharris/intellcont/Harris%20WFE%20Chapter%20Market%20Microstructure%20and%20Exchanges-1.doc" target="_blank">시장미시구조와 거래소 (WFE 챕터)</a> <span class="desc">- Larry Harris</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>거래소 간 비교 핵심 주제</h3>
+      <div class="sub-section">
+        <h4>가격발견 메커니즘</h4>
+        <ul>
+          <li>단일가매매(Call Auction) vs 연속매매(Continuous Trading)
+            <br>&nbsp;&nbsp;- TSE/JPX: 이타요세(板寄せ, Itayose, "호가판을 모은다") = 단일가매매 / 자라바(ザラバ, Zaraba, "잡다한 장") = 연속매매
+            <br>&nbsp;&nbsp;- KRX: 동시호가 = 단일가매매 / 접속매매 = 연속매매
+            <br>&nbsp;&nbsp;- NYSE/NASDAQ: Opening/Closing Cross·Auction = 단일가매매</li>
+          <li>DMM/시장조성자 역할 비교 (NYSE DMM vs LSE Market Maker vs 기타)</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>주문유형 분류</h4>
+        <ul>
+          <li><strong>기본:</strong> 시장가(Market), 지정가(Limit), 조건부(Stop)</li>
+          <li><strong>고급:</strong> Iceberg, OCO, Fill-or-Kill, Good-Till-Cancel</li>
+          <li><strong>다크:</strong> Centre Point (ASX), Midpoint (기타)</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>변동성 통제</h4>
+        <ul>
+          <li><strong>서킷브레이커:</strong> KRX (8%/15%/20%), LULD (미국)</li>
+          <li><strong>VCM:</strong> HKEX (&plusmn;10% 증권, &plusmn;5% 파생)</li>
+          <li><strong>일일 가격제한폭:</strong> TSE, KRX</li>
+        </ul>
+      </div>
+      <div class="sub-section">
+        <h4>시장 데이터 프로토콜</h4>
+        <ul>
+          <li><strong>ITCH:</strong> NASDAQ, SGX Titan</li>
+          <li><strong>FIX:</strong> NYSE Pillar, HKEX OCG, SGX Titan OTC</li>
+          <li><strong>Binary:</strong> NYSE Pillar, HKEX OCG/OMD, Eurex T7 ETI</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Glossary -->
+  <section id="Glossary" class="exchange-section">
+    <h2 class="exchange-title">거래소 주요 용어 사전</h2>
+    <p class="exchange-subtitle">글로벌 주요 거래소에서 사용되는 핵심 용어 정리 (130+ 항목) &mdash; <a href="glossary/exchange_glossary.md" target="_blank">원본 MD 파일</a></p>
+
+    <div class="section-group">
+      <h3>1. 매매 메커니즘 (Trading Mechanisms)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>Continuous Trading (연속매매)</strong> <span class="desc">- 매수·매도 주문이 실시간 대조 체결. KRX: 접속매매 / TSE: 자라바(ザラバ) / NYSE: 정규시장</span></li>
+        <li class="link-item"><strong>Call Auction (단일가매매, 동시호가)</strong> <span class="desc">- 주문을 모아 단일가 일괄 체결. KRX: 동시호가 / TSE: 이타요세(板寄せ) / NYSE: Auction / NASDAQ: Cross</span></li>
+        <li class="link-item"><strong>Opening Auction (시초가 경매)</strong> <span class="desc">- 시가 결정을 위한 단일가매매. KRX: 장전 동시호가(08:30~09:00)</span></li>
+        <li class="link-item"><strong>Closing Auction (종가 경매)</strong> <span class="desc">- 종가 결정을 위한 단일가매매. KRX: 장후 동시호가(15:20~15:30)</span></li>
+        <li class="link-item"><strong>Auction Uncrossing (경매 체결)</strong> <span class="desc">- 단일가 기간 종료 시 일괄 체결. LSE/SETSqx: 하루 4회 정기 체결</span></li>
+        <li class="link-item"><strong>Pre-Open (장전 세션)</strong> <span class="desc">- 정규매매 전 주문 접수 시간대</span></li>
+        <li class="link-item"><strong>Post-Close (장후 세션)</strong> <span class="desc">- 정규매매 후 추가 매매 시간대. KRX: 시간외매매(15:40~16:00)</span></li>
+        <li class="link-item"><strong>Dark Pool (다크풀)</strong> <span class="desc">- 비공개 매매 장소. ASX Centre Point: 호주 최대 다크풀</span></li>
+        <li class="link-item"><strong>Crossing (크로싱)</strong> <span class="desc">- 매수·매도 주문을 맞대어 체결. ASX Centre Point / NASDAQ Cross</span></li>
+        <li class="link-item"><strong>Block Trade (대량매매)</strong> <span class="desc">- 일반 주문장 외 대규모 거래. KRX: 시간외 대량매매 / Eurex: Block Trade Facility</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>2. 주문유형 (Order Types)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>Market Order (시장가 주문)</strong> <span class="desc">- 가격 미지정, 최우선 호가로 즉시 체결</span></li>
+        <li class="link-item"><strong>Limit Order (지정가 주문)</strong> <span class="desc">- 체결 희망 가격 명시. 전 거래소 공통</span></li>
+        <li class="link-item"><strong>Stop Order (조건부 주문)</strong> <span class="desc">- 트리거 가격 도달 시 시장가 전환. Eurex: Stop-Loss</span></li>
+        <li class="link-item"><strong>Stop-Limit Order (조건부 지정가 주문)</strong> <span class="desc">- 트리거 도달 시 지정가 전환. SGX: STP Limit</span></li>
+        <li class="link-item"><strong>Iceberg Order (빙산 주문)</strong> <span class="desc">- 일부 수량만 공개, 체결 시 다음 수량 노출. NYSE: Reserve Order</span></li>
+        <li class="link-item"><strong>FOK &mdash; Fill-or-Kill (전량즉시체결)</strong> <span class="desc">- 전량 즉시 체결 불가 시 전량 취소</span></li>
+        <li class="link-item"><strong>IOC &mdash; Immediate-or-Cancel (즉시체결잔량취소)</strong> <span class="desc">- 체결 가능분만 체결, 잔량 즉시 취소</span></li>
+        <li class="link-item"><strong>GFD &mdash; Good-for-Day (당일유효)</strong> <span class="desc">- 해당 거래일에만 유효, 장 마감 시 자동 취소</span></li>
+        <li class="link-item"><strong>GTC &mdash; Good-Till-Cancel (취소시까지유효)</strong> <span class="desc">- 투자자 취소 또는 체결까지 유효</span></li>
+        <li class="link-item"><strong>OCO &mdash; One-Cancels-the-Other (양자택일)</strong> <span class="desc">- 지정가+Stop 결합, 하나 체결 시 다른 하나 취소. Eurex 지원</span></li>
+        <li class="link-item"><strong>Pegged Order (추종 주문)</strong> <span class="desc">- 최우선 호가/중간가에 자동 가격 조정. NYSE/NASDAQ</span></li>
+        <li class="link-item"><strong>MOO/MOC (시초가/종가 시장가 주문)</strong> <span class="desc">- Opening/Closing Auction에서만 체결. NYSE/NASDAQ</span></li>
+        <li class="link-item"><strong>LOO/LOC (시초가/종가 지정가 주문)</strong> <span class="desc">- Opening/Closing Auction에서만 체결. NYSE/NASDAQ</span></li>
+        <li class="link-item"><strong>Named Order (기명 주문)</strong> <span class="desc">- 참가자 이름 공개. LSE/SETSqx</span></li>
+        <li class="link-item"><strong>Hidden Order (숨김 주문)</strong> <span class="desc">- 주문장에 미표시. NASDAQ: Non-Displayed Order</span></li>
+        <li class="link-item"><strong>Midpoint Order (중간가 주문)</strong> <span class="desc">- 최우선 매수/매도 중간가 체결. NYSE/ASX Centre Point</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>3. 시장 구조 및 참여자 (Market Structure)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>DMM &mdash; Designated Market Maker (지정 시장조성자)</strong> <span class="desc">- NYSE 고유. 시가/종가 결정 관리, 유동성 공급 의무</span></li>
+        <li class="link-item"><strong>Market Maker (시장조성자)</strong> <span class="desc">- 양방향 호가 제시. KRX: LP / LSE: Market Maker / Eurex: Market Maker</span></li>
+        <li class="link-item"><strong>LP &mdash; Liquidity Provider (유동성공급자)</strong> <span class="desc">- KRX: ETF, ETN 등 유동성 공급</span></li>
+        <li class="link-item"><strong>CLOB &mdash; Central Limit Order Book (중앙지정가주문장)</strong> <span class="desc">- 전자거래소 핵심 구조</span></li>
+        <li class="link-item"><strong>Order-Driven Market (주문 기반 시장)</strong> <span class="desc">- KRX, TSE, NASDAQ 등</span></li>
+        <li class="link-item"><strong>Quote-Driven Market (호가 기반 시장)</strong> <span class="desc">- LSE/SEAQ: 시장조성자 호가로만 거래</span></li>
+        <li class="link-item"><strong>Hybrid Market (혼합형 시장)</strong> <span class="desc">- NYSE: CLOB + DMM / LSE/SETSqx: SETS + Quote</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>4. 가격 및 호가 (Price & Quotation)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>Tick Size (호가 단위)</strong> <span class="desc">- 최소 가격 변동 단위. KRX: 구간별 차등 / NYSE: $0.01</span></li>
+        <li class="link-item"><strong>Lot Size (매매 단위)</strong> <span class="desc">- 최소 주문 수량. KRX: 1주 / TSE: 100주 / HKEX: 종목별 상이</span></li>
+        <li class="link-item"><strong>NBBO &mdash; National Best Bid and Offer (전국 최우선 호가)</strong> <span class="desc">- 미국 전 거래소 통합 최우선 호가. Reg NMS 보호</span></li>
+        <li class="link-item"><strong>Spread (스프레드)</strong> <span class="desc">- 최우선 매수/매도 호가 간 가격 차이</span></li>
+        <li class="link-item"><strong>VWAP &mdash; Volume-Weighted Average Price (거래량가중평균가격)</strong> <span class="desc">- 기관투자자 주요 벤치마크</span></li>
+        <li class="link-item"><strong>TWAP &mdash; Time-Weighted Average Price (시간가중평균가격)</strong> <span class="desc">- 시간 균등 평균가</span></li>
+        <li class="link-item"><strong>Reference Price (기준가격)</strong> <span class="desc">- 가격제한폭/서킷브레이커 기준. 통상 전일 종가</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>5. 변동성 통제 (Volatility Controls)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>Circuit Breaker (서킷브레이커)</strong> <span class="desc">- 시장 전체 급변 시 매매 중단. KRX: 8%/15%/20% / 미국: 7%/13%/20%</span></li>
+        <li class="link-item"><strong>LULD &mdash; Limit Up-Limit Down (상한가-하한가)</strong> <span class="desc">- 미국 개별종목 가격밴드. Tier1: &plusmn;5%, Tier2: &plusmn;10%</span></li>
+        <li class="link-item"><strong>Price Limit (가격제한폭)</strong> <span class="desc">- 일일 최대 변동 범위. KRX: &plusmn;30% / TSE: 구간별 차등</span></li>
+        <li class="link-item"><strong>VI &mdash; Volatility Interruption (변동성완화장치)</strong> <span class="desc">- KRX 개별종목. 정적VI: &plusmn;10% / 동적VI: &plusmn;3~6%. 2분 단일가매매</span></li>
+        <li class="link-item"><strong>VCM &mdash; Volatility Control Mechanism</strong> <span class="desc">- HKEX. &plusmn;10%(증권)/&plusmn;5%(파생) 이탈 시 5분 냉각기간</span></li>
+        <li class="link-item"><strong>Trading Halt (매매 거래정지)</strong> <span class="desc">- 특정 종목/시장 전체 매매 일시 정지</span></li>
+        <li class="link-item"><strong>Pre-trade Risk Controls (사전거래통제)</strong> <span class="desc">- 주문 제출 전 가격/수량 검증. Eurex T7: 최대 주문가치/수량 제한</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>6. 청산 및 결제 (Clearing & Settlement)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>CCP &mdash; Central Counterparty (중앙청산소)</strong> <span class="desc">- 결제 이행 보증. KRX 청산부문 / Eurex Clearing / ASX Clear</span></li>
+        <li class="link-item"><strong>Settlement Cycle (결제주기)</strong> <span class="desc">- KRX/TSE/HKEX: T+2 / 미국: T+1 (2024.05~)</span></li>
+        <li class="link-item"><strong>DVP &mdash; Delivery Versus Payment (증권인도 대 대금결제)</strong> <span class="desc">- 인도와 결제 동시 처리</span></li>
+        <li class="link-item"><strong>Margin (증거금)</strong> <span class="desc">- 파생상품 이행 보증금. KRX: 위탁/유지증거금</span></li>
+        <li class="link-item"><strong>SPAN &mdash; Standard Portfolio Analysis of Risk</strong> <span class="desc">- 포트폴리오 기반 증거금 산출. KRX/SGX/HKEX 적용</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>7. 시장 데이터 및 프로토콜 (Protocols)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>FIX &mdash; Financial Information eXchange</strong> <span class="desc">- 국제 표준 메시징 프로토콜. NYSE Pillar / HKEX OCG / SGX Titan OTC</span></li>
+        <li class="link-item"><strong>ITCH</strong> <span class="desc">- 아웃바운드 전용 시장 데이터 피드. NASDAQ TotalView-ITCH / SGX Titan ITCH</span></li>
+        <li class="link-item"><strong>OUCH</strong> <span class="desc">- NASDAQ 고성능 주문진입 프로토콜. ITCH와 상호보완</span></li>
+        <li class="link-item"><strong>GLIMPSE</strong> <span class="desc">- 주문장 스냅샷. SGX Titan: point-to-point 방식</span></li>
+        <li class="link-item"><strong>Binary Protocol (바이너리 프로토콜)</strong> <span class="desc">- 저지연 이진 형식. NYSE Pillar / HKEX OCG·OMD / Eurex T7 ETI</span></li>
+        <li class="link-item"><strong>ETI &mdash; Enhanced Trading Interface</strong> <span class="desc">- Eurex T7 고성능 매매 인터페이스. 세션 기반 TCP/IP</span></li>
+        <li class="link-item"><strong>Drop Copy (체결 사본)</strong> <span class="desc">- 실시간 체결/주문 사본. HKEX OCG FIX Drop Copy</span></li>
+        <li class="link-item"><strong>Co-location (코로케이션)</strong> <span class="desc">- 매칭엔진 인접 서버 설치. KRX(KOSCOM) / NYSE(Mahwah) / TSE</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>8. 매매시스템 (Trading Systems)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>EXTURE+</strong> <span class="desc">- KRX 차세대 매매시스템 (2014~, KOSCOM 운영)</span></li>
+        <li class="link-item"><strong>Pillar</strong> <span class="desc">- NYSE 그룹 통합 매매 플랫폼</span></li>
+        <li class="link-item"><strong>arrowhead</strong> <span class="desc">- TSE/JPX 현물 매매시스템. 4.0(2024.11): 4세대, 종가매매세션 도입</span></li>
+        <li class="link-item"><strong>T7</strong> <span class="desc">- Eurex/Xetra 공용 매매 플랫폼</span></li>
+        <li class="link-item"><strong>SETS / SETSqx / SEAQ</strong> <span class="desc">- LSE 매매시스템. SETS(주문장) / SETSqx(혼합) / SEAQ(호가 기반)</span></li>
+        <li class="link-item"><strong>OTP &mdash; Orion Trading Platform</strong> <span class="desc">- HKEX 매매 플랫폼. OTP-C(증권) / OTP-D(파생)</span></li>
+        <li class="link-item"><strong>Titan</strong> <span class="desc">- SGX 파생상품 전용 매매/청산 플랫폼</span></li>
+        <li class="link-item"><strong>ASX Trade</strong> <span class="desc">- ASX 현물 매매 플랫폼. Lit Markets / Centre Point / Auctions 통합</span></li>
+        <li class="link-item"><strong>INET</strong> <span class="desc">- NASDAQ 매매 엔진. Nordic 거래소에도 적용</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>9. 규제 기관 (Regulators)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>FSC/FSS (금융위원회/금융감독원)</strong> <span class="desc">- 한국</span></li>
+        <li class="link-item"><strong>SEC (미국 증권거래위원회)</strong> <span class="desc">- 미국</span></li>
+        <li class="link-item"><strong>FINRA (금융산업규제기관)</strong> <span class="desc">- 미국 자율규제기관, NYSE 자율규제 이관</span></li>
+        <li class="link-item"><strong>JFSA (일본 금융청)</strong> <span class="desc">- 일본</span></li>
+        <li class="link-item"><strong>FCA (금융행위감독청)</strong> <span class="desc">- 영국</span></li>
+        <li class="link-item"><strong>SFC (증권선물위원회)</strong> <span class="desc">- 홍콩</span></li>
+        <li class="link-item"><strong>BaFin (독일 연방금융감독청)</strong> <span class="desc">- 독일/Eurex</span></li>
+        <li class="link-item"><strong>ASIC (호주증권투자위원회)</strong> <span class="desc">- 호주</span></li>
+        <li class="link-item"><strong>MAS (싱가포르 통화감독청)</strong> <span class="desc">- 싱가포르</span></li>
+        <li class="link-item"><strong>IOSCO (국제증권감독기구)</strong> <span class="desc">- 세계 각국 증권감독기관 국제 협의체</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>10. 규제 제도 (Regulations)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>Reg NMS (전국시장시스템 규정)</strong> <span class="desc">- 미국. 최우선 호가 보호, 시장 접근, Sub-Penny Rule</span></li>
+        <li class="link-item"><strong>MiFID II (금융상품시장지침 II)</strong> <span class="desc">- EU. 투명성 요구, 거래 보고, 다크풀 제한</span></li>
+        <li class="link-item"><strong>Reg SHO (공매도 규정)</strong> <span class="desc">- 미국. 차입 확인(locate) 의무, FTD 규제</span></li>
+        <li class="link-item"><strong>SSR &mdash; Short Sale Restriction (공매도 제한)</strong> <span class="desc">- 미국. 10% 하락 시 Alternative Uptick Rule 적용</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>11. 기술 및 인프라 (Technology)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>Matching Engine (매칭엔진)</strong> <span class="desc">- 매수·매도 주문 대조·체결 핵심 시스템</span></li>
+        <li class="link-item"><strong>Latency (지연시간)</strong> <span class="desc">- 주문 전송~체결 확인 소요 시간 (μs 단위)</span></li>
+        <li class="link-item"><strong>HFT &mdash; High-Frequency Trading (고빈도거래)</strong> <span class="desc">- 극초단 대량 알고리즘 매매</span></li>
+        <li class="link-item"><strong>DMA &mdash; Direct Market Access (직접시장접속)</strong> <span class="desc">- 브로커 인프라 경유 거래소 직접 주문</span></li>
+        <li class="link-item"><strong>OMS (주문관리시스템)</strong> <span class="desc">- 주문 생성/라우팅/체결/관리 통합</span></li>
+        <li class="link-item"><strong>Smart Order Router (스마트주문라우터)</strong> <span class="desc">- 최적 체결 장소 자동 분배. 미국 Reg NMS 필수</span></li>
+        <li class="link-item"><strong>STP &mdash; Straight-Through Processing (직통처리)</strong> <span class="desc">- 주문~결제 전 과정 자동화</span></li>
+      </ul>
+    </div>
+
+    <div class="section-group">
+      <h3>12. 기타 (Others)</h3>
+      <ul class="link-list">
+        <li class="link-item"><strong>Short Selling (공매도)</strong> <span class="desc">- 미보유 주식 차입 매도. KRX: 개인투자자 공매도 제한</span></li>
+        <li class="link-item"><strong>ATS &mdash; Alternative Trading System (대체거래시스템)</strong> <span class="desc">- 정규 거래소 외 매매장소. 한국: 2025년 도입 예정</span></li>
+        <li class="link-item"><strong>MTF &mdash; Multilateral Trading Facility</strong> <span class="desc">- EU 대체거래시스템. MiFID 규제</span></li>
+        <li class="link-item"><strong>Best Execution (최선 집행)</strong> <span class="desc">- 가격/비용/속도/체결가능성 종합 최선 조건 집행 의무</span></li>
+        <li class="link-item"><strong>Market Microstructure (시장 미시구조)</strong> <span class="desc">- 매매 메커니즘·가격 형성·정보 역할 연구 분야</span></li>
+        <li class="link-item"><strong>Maker-Taker Fee (메이커-테이커 수수료)</strong> <span class="desc">- 유동성 공급자 리베이트, 소비자 수수료. NASDAQ/NYSE</span></li>
+        <li class="link-item"><strong>Spoofing (스푸핑)</strong> <span class="desc">- 체결 의사 없는 대량 주문으로 시장 기만. 불법</span></li>
+        <li class="link-item"><strong>Order-to-Trade Ratio (주문-체결 비율)</strong> <span class="desc">- 제출 주문 대비 체결 건수 비율. HFT 감시 지표</span></li>
+      </ul>
+    </div>
+
+    <div class="key-notes">
+      <h3>약어 총정리 (주요 항목)</h3>
+      <ul>
+        <li><strong>AP</strong> Authorized Participant (지정참가회사)</li>
+        <li><strong>ATS</strong> Alternative Trading System (대체거래시스템)</li>
+        <li><strong>CAS</strong> Closing Auction Session (종가매매세션)</li>
+        <li><strong>CCP</strong> Central Counterparty (중앙청산소)</li>
+        <li><strong>CLOB</strong> Central Limit Order Book (중앙지정가주문장)</li>
+        <li><strong>DMA</strong> Direct Market Access (직접시장접속)</li>
+        <li><strong>DMM</strong> Designated Market Maker (지정 시장조성자)</li>
+        <li><strong>DVP</strong> Delivery Versus Payment (증권인도 대 대금결제)</li>
+        <li><strong>ETI</strong> Enhanced Trading Interface (향상된 매매 인터페이스)</li>
+        <li><strong>FIX</strong> Financial Information eXchange (금융정보교환 프로토콜)</li>
+        <li><strong>FOK</strong> Fill or Kill (전량즉시체결)</li>
+        <li><strong>GFD</strong> Good for Day (당일유효)</li>
+        <li><strong>GTC</strong> Good Till Cancel (취소시까지유효)</li>
+        <li><strong>HFT</strong> High-Frequency Trading (고빈도거래)</li>
+        <li><strong>IOC</strong> Immediate or Cancel (즉시체결잔량취소)</li>
+        <li><strong>IOSCO</strong> International Organization of Securities Commissions (국제증권감독기구)</li>
+        <li><strong>LULD</strong> Limit Up-Limit Down (상한가-하한가 제도)</li>
+        <li><strong>MiFID</strong> Markets in Financial Instruments Directive (금융상품시장지침)</li>
+        <li><strong>NBBO</strong> National Best Bid and Offer (전국 최우선 호가)</li>
+        <li><strong>OCO</strong> One Cancels the Other (양자택일 주문)</li>
+        <li><strong>SPAN</strong> Standard Portfolio Analysis of Risk (포트폴리오 위험분석)</li>
+        <li><strong>VCM</strong> Volatility Control Mechanism (변동성 통제 메커니즘)</li>
+        <li><strong>VI</strong> Volatility Interruption (변동성완화장치)</li>
+        <li><strong>VWAP</strong> Volume-Weighted Average Price (거래량가중평균가격)</li>
+      </ul>
+      <p style="margin-top: 0.75rem; font-size: 0.82rem;">전체 약어 70개 이상은 <a href="glossary/exchange_glossary.md" target="_blank" style="color: var(--link);">원본 MD 파일</a>의 부록 참조</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  거래소 레퍼런스 및 기술 사양 &mdash; 생성일 2026-03-27
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.exchange-section');
+
+  function showSection(target) {
+    sections.forEach(s => s.classList.remove('active'));
+    navLinks.forEach(l => l.classList.remove('active'));
+    const section = document.getElementById(target);
+    const link = document.querySelector(`[data-target="${target}"]`);
+    if (section) section.classList.add('active');
+    if (link) link.classList.add('active');
+  }
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      showSection(this.dataset.target);
+      history.replaceState(null, '', '#' + this.dataset.target);
+    });
+  });
+
+  // Handle initial hash
+  const hash = window.location.hash.replace('#', '');
+  if (hash && document.getElementById(hash)) {
+    showSection(hash);
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LSE (London Stock Exchange) — Exchange Report</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1-exchange-overview">1. Exchange Overview</a></li>
+<li><a href="#2-institutional-philosophy">2. Institutional Philosophy</a></li>
+<li><a href="#3-order-types-basic">3. Order Types — Basic</a></li>
+<li class="h3"><a href="#31-limit-order-ref1-ref2">3.1 Limit Order [1] [2]</a></li>
+<li class="h3"><a href="#32-market-order-ref1">3.2 Market Order [1]</a></li>
+<li class="h3"><a href="#33-at-best-order-ref1-webstockexchangesecretscom">3.3 At Best Order [1] [W]</a></li>
+<li><a href="#4-order-types-advanced">4. Order Types — Advanced</a></li>
+<li class="h3"><a href="#41-iceberg-random-peak-size-order-ref1-ref2">4.1 Iceberg (Random Peak Size) Order [1] [2]</a></li>
+<li class="h3"><a href="#42-hidden-order-ref1-weblse-hidden-orders">4.2 Hidden Order [1] [W]</a></li>
+<li class="h3"><a href="#43-mid-price-pegged-order-ref1-ref2">4.3 Mid-Price Pegged Order [1] [2]</a></li>
+<li class="h3"><a href="#44-stop-order-ref1-ref2">4.4 Stop Order [1] [2]</a></li>
+<li class="h3"><a href="#45-stop-limit-order-ref1-ref2">4.5 Stop-Limit Order [1] [2]</a></li>
+<li class="h3"><a href="#46-time-in-force-options-ref1">4.6 Time-in-Force Options [1]</a></li>
+<li><a href="#5-order-types-exchange-specific">5. Order Types — Exchange-Specific</a></li>
+<li class="h3"><a href="#51-named-order-setsqx-ref3-webaim-watchcom">5.1 Named Order (SETSqx) [3] [W]</a></li>
+<li class="h3"><a href="#52-at-best-order-ref1">5.2 At Best Order [1]</a></li>
+<li class="h3"><a href="#53-executable-quote-setsqx-seaq-ref3">5.3 Executable Quote (SETSqx / SEAQ) [3]</a></li>
+<li class="h3"><a href="#54-random-peak-size-iceberg-ref1">5.4 Random Peak Size Iceberg [1]</a></li>
+<li><a href="#6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</a></li>
+<li class="h3"><a href="#trading-system-millennium-exchange-webwikipedia-millennium-weblsegcom">Trading System: Millennium Exchange [W] [W]</a></li>
+<li class="h3"><a href="#matching-algorithm-sets-price-time-priority-ref1">Matching Algorithm (SETS): Price-Time Priority [1]</a></li>
+<li class="h3"><a href="#opening-auction-sets-webtradinghourscom">Opening Auction (SETS) [W]</a></li>
+<li class="h3"><a href="#closing-auction-sets-webtradinghourscom">Closing Auction (SETS) [W]</a></li>
+<li class="h3"><a href="#setsqx-auctions-ref3-webaim-watchcom">SETSqx Auctions [3] [W]</a></li>
+<li class="h3"><a href="#tick-size-regime-webmifid-tick-size">Tick Size Regime [W]</a></li>
+<li class="h3"><a href="#lot-size">Lot Size</a></li>
+<li><a href="#7-safeguard-mechanisms">7. Safeguard Mechanisms</a></li>
+<li class="h3"><a href="#71-dynamic-circuit-breaker-webfcaorguk-weblse-orderly-markets">7.1 Dynamic Circuit Breaker [W] [W]</a></li>
+<li class="h3"><a href="#72-static-circuit-breaker-webfcaorguk-weblse-orderly-markets">7.2 Static Circuit Breaker [W] [W]</a></li>
+<li class="h3"><a href="#73-etp-price-monitoring-weblse-etp-monitoring">7.3 ETP Price Monitoring [W]</a></li>
+<li class="h3"><a href="#74-no-market-wide-circuit-breaker">7.4 No Market-Wide Circuit Breaker</a></li>
+<li class="h3"><a href="#75-mifid-ii-pre-trade-controls">7.5 MiFID II Pre-Trade Controls</a></li>
+<li><a href="#8-special-sessions">8. Special Sessions</a></li>
+<li class="h3"><a href="#81-pre-trading-05050750-webtradinghourscom">8.1 Pre-Trading (05:05–07:50) [W]</a></li>
+<li class="h3"><a href="#82-opening-auction-07500800-webtradinghourscom">8.2 Opening Auction (07:50–08:00) [W]</a></li>
+<li class="h3"><a href="#83-continuous-trading-08001630-ref1">8.3 Continuous Trading (08:00–16:30) [1]</a></li>
+<li class="h3"><a href="#84-intraday-auction-12001202-webtradinghourscom">8.4 Intraday Auction (~12:00–12:02) [W]</a></li>
+<li class="h3"><a href="#85-closing-auction-16301635-webtradinghourscom">8.5 Closing Auction (16:30–16:35) [W]</a></li>
+<li class="h3"><a href="#86-post-trading-16401715-webtradinghourscom">8.6 Post-Trading (16:40–17:15) [W]</a></li>
+<li class="h3"><a href="#87-turquoise-pan-european-mtf-weblsegcom">8.7 Turquoise (Pan-European MTF) [W]</a></li>
+<li><a href="#9-lp-market-maker-obligations">9. LP / Market Maker Obligations</a></li>
+<li class="h3"><a href="#91-sets-market-makers-voluntary-ref1">9.1 SETS Market Makers (Voluntary) [1]</a></li>
+<li class="h3"><a href="#92-setsqx-market-makers-obligatory-for-service-ref3-webaim-watchcom">9.2 SETSqx Market Makers (Obligatory for Service) [3] [W]</a></li>
+<li class="h3"><a href="#93-seaq-market-makers-core-to-service-ref3-webwikipedia-seaq">9.3 SEAQ Market Makers (Core to Service) [3] [W]</a></li>
+<li class="h3"><a href="#94-comparison-with-batch-12-exchanges">9.4 Comparison with Batch 1/2 Exchanges</a></li>
+<li><a href="#10-source-bibliography">10. Source Bibliography</a></li>
+<li class="h3"><a href="#reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</a></li>
+<li class="h3"><a href="#web-sources-priority-3-gap-fill-supplementary">Web Sources (Priority 3 — Gap Fill / Supplementary)</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="lse-london-stock-exchange-exchange-report">LSE (London Stock Exchange) — Exchange Report</h1>
+<hr />
+<h2 id="1-exchange-overview">1. Exchange Overview</h2>
+<p><strong>Full Legal Name</strong>: London Stock Exchange plc
+<strong>Country</strong>: United Kingdom
+<strong>Founding Year</strong>: 1801 (formally); trading since 1698 at Jonathan's Coffee House <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>Parent Group</strong>: London Stock Exchange Group (LSEG) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>Market Model</strong>: Three-tier system — order-driven (SETS), hybrid (SETSqx), quote-driven (SEAQ) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></p>
+<p><strong>Asset Classes Traded</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Equities (Main Market, AIM)
+- ETFs, ETPs, Bonds, GDRs
+- Derivatives (via LSEG subsidiary venues)
+- International Order Book (IOB — depositary receipts)</p>
+<p><strong>Regular Trading Hours (GMT/BST)</strong>: <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup>
+- Pre-trading: 05:05–07:50
+- Opening auction: 07:50–08:00 (uncrossing at 08:00)
+- Continuous trading: 08:00–16:30
+- Closing auction: 16:30–16:35
+- Post-trading: 16:40–17:15</p>
+<p><strong>Key Statistics</strong>: <sup class="cite"><a href="#web-statista" title="WEB: statista">[W]</a></sup> <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Listed companies: ~1,900+ from 60+ countries
+- Market capitalization: ~£4.5 trillion / ~$5.9 trillion (April 2025)
+- FTSE 100 surpassed 10,000 points for first time (early 2026) <sup class="cite"><a href="#web-statista" title="WEB: statista">[W]</a></sup></p>
+<hr />
+<h2 id="2-institutional-philosophy">2. Institutional Philosophy</h2>
+<p><strong>Primary Market Model</strong>: Segmented three-tier system based on security liquidity <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></p>
+<p><strong>SETS (Stock Exchange Electronic Trading Service)</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-stockexchangesecrets-com" title="WEB: stockexchangesecrets.com">[W]</a></sup>
+- Pure electronic order book for most liquid securities
+- FTSE 100, FTSE 250, FTSE SmallCap, most liquid AIM stocks, ETFs
+- Continuous order-driven trading + opening/closing auctions
+- No mandatory market makers</p>
+<p><strong>SETSqx (SETS quotes and crosses)</strong>: <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-aim-watch-com" title="WEB: aim-watch.com">[W]</a></sup>
+- Hybrid system for less liquid securities
+- Combines periodic auctions (4x daily) + continuous market maker quotes
+- Market makers provide continuous liquidity between auctions
+- Named Orders: non-anonymous limit orders unique to this platform <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></p>
+<p><strong>SEAQ (Stock Exchange Automated Quotation)</strong>: <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-aim-watch-com" title="WEB: aim-watch.com">[W]</a></sup>
+- Pure quote-driven system for least liquid securities
+- Minimum 2 market makers per security required <sup class="cite"><a href="#web-wikipedia-seaq" title="WEB: wikipedia-seaq">[W]</a></sup>
+- No electronic order book — trading via market maker quotes only
+- Similar to original NASDAQ model (pre-electronic order book)</p>
+<p><strong>Evolution</strong>: Coffee house trading (1698) → physical floor → SEAQ electronic quotes (1986 Big Bang) → SETS order book (1997) → SETSqx hybrid (2007) → Millennium Exchange platform (2011) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<hr />
+<h2 id="3-order-types-basic">3. Order Types — Basic</h2>
+<h3 id="31-limit-order-ref1-ref2">3.1 Limit Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Specifies maximum buy / minimum sell price</li>
+<li>Rests on order book if not immediately matched</li>
+<li>Available on SETS and SETSqx (during auctions)</li>
+<li>Time-in-force: Day (default), GTC, IOC, FOK, GTD</li>
+</ul>
+<h3 id="32-market-order-ref1">3.2 Market Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Executes at best available price</li>
+<li>Available on SETS during continuous trading</li>
+<li>Converts to limit if partially filled (remainder at last execution price)</li>
+</ul>
+<h3 id="33-at-best-order-ref1-webstockexchangesecretscom">3.3 At Best Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-stockexchangesecrets-com" title="WEB: stockexchangesecrets.com">[W]</a></sup></h3>
+<ul>
+<li>Similar to market order but fills at a single price level only</li>
+<li>If not fully filled at best price, remainder cancelled</li>
+<li>Unique LSE variant providing single-price execution guarantee</li>
+</ul>
+<hr />
+<h2 id="4-order-types-advanced">4. Order Types — Advanced</h2>
+<h3 id="41-iceberg-random-peak-size-order-ref1-ref2">4.1 Iceberg (Random Peak Size) Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Displays random portion of total quantity</li>
+<li>Peak size randomized between specified minimum and maximum <sup class="cite"><a href="#web-lse-hidden-orders" title="WEB: lse-hidden-orders">[W]</a></sup></li>
+<li>Reserve replenishes automatically</li>
+<li>Available on SETS</li>
+</ul>
+<h3 id="42-hidden-order-ref1-weblse-hidden-orders">4.2 Hidden Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-lse-hidden-orders" title="WEB: lse-hidden-orders">[W]</a></sup></h3>
+<ul>
+<li>Fully non-displayed order</li>
+<li>MiFID II requirement: Must exceed Large-in-Scale (LIS) threshold for MiFID securities <sup class="cite"><a href="#web-lse-hidden-orders" title="WEB: lse-hidden-orders">[W]</a></sup></li>
+<li>Lower priority than displayed orders at same price</li>
+</ul>
+<h3 id="43-mid-price-pegged-order-ref1-ref2">4.3 Mid-Price Pegged Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Pegged to midpoint of best bid and offer</li>
+<li>Non-displayed</li>
+<li>Optional: user-defined minimum execution size per trade</li>
+<li>Optional: automatic parking when midpoint moves outside specified range</li>
+<li>IOC/FOK variants not subject to LIS validation <sup class="cite"><a href="#web-lse-hidden-orders" title="WEB: lse-hidden-orders">[W]</a></sup></li>
+</ul>
+<h3 id="44-stop-order-ref1-ref2">4.4 Stop Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Triggered when stop price reached; becomes market order</li>
+<li>Available on SETS</li>
+</ul>
+<h3 id="45-stop-limit-order-ref1-ref2">4.5 Stop-Limit Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Triggered when stop price reached; becomes limit order at specified price</li>
+</ul>
+<h3 id="46-time-in-force-options-ref1">4.6 Time-in-Force Options <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>Day</strong>: Expires at session end</li>
+<li><strong>GTC</strong>: Good until cancelled (persistent across days)</li>
+<li><strong>IOC</strong>: Immediate or cancel</li>
+<li><strong>FOK</strong>: Fill or kill</li>
+<li><strong>GTD</strong>: Good till specified date</li>
+<li>Note: GTC and GTD available — unlike KRX and TSE (day-only)</li>
+</ul>
+<hr />
+<h2 id="5-order-types-exchange-specific">5. Order Types — Exchange-Specific</h2>
+<h3 id="51-named-order-setsqx-ref3-webaim-watchcom">5.1 Named Order (SETSqx) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-aim-watch-com" title="WEB: aim-watch.com">[W]</a></sup></h3>
+<ul>
+<li><strong>LSE-unique</strong>: Non-anonymous limit order where counterparty identity is visible</li>
+<li>Available only on SETSqx platform</li>
+<li>Market makers and brokers can see who placed the order</li>
+<li>Rationale: In less liquid markets, knowing counterparty identity helps assess order quality and encourages bilateral negotiation</li>
+<li>Contrasts with all other major exchanges where order books are anonymous</li>
+</ul>
+<h3 id="52-at-best-order-ref1">5.2 At Best Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>LSE-specific variant: Fills at single best price only; cancels unfilled remainder</li>
+<li>Differs from standard market orders that sweep multiple levels</li>
+<li>Provides protection against adverse multi-level execution</li>
+</ul>
+<h3 id="53-executable-quote-setsqx-seaq-ref3">5.3 Executable Quote (SETSqx / SEAQ) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li>Market maker firm quote — executable on demand</li>
+<li>Two-sided (bid/offer) with specified size</li>
+<li>Provides continuous liquidity on quote-driven segments</li>
+</ul>
+<h3 id="54-random-peak-size-iceberg-ref1">5.4 Random Peak Size Iceberg <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>LSE enhancement: Peak display size randomized between min/max bounds</li>
+<li>Reduces pattern detection by algorithmic traders</li>
+<li>Standard icebergs on other exchanges use fixed display quantity</li>
+</ul>
+<hr />
+<h2 id="6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</h2>
+<h3 id="trading-system-millennium-exchange-webwikipedia-millennium-weblsegcom">Trading System: Millennium Exchange <sup class="cite"><a href="#web-wikipedia-millennium" title="WEB: wikipedia-millennium">[W]</a></sup> <sup class="cite"><a href="#web-lseg-com" title="WEB: lseg.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Launch</strong>: 2011 (replaced TradElect) <sup class="cite"><a href="#web-wikipedia-millennium" title="WEB: wikipedia-millennium">[W]</a></sup></li>
+<li><strong>Developer</strong>: MillenniumIT (LSEG subsidiary, Sri Lanka) <sup class="cite"><a href="#web-wikipedia-millennium" title="WEB: wikipedia-millennium">[W]</a></sup></li>
+<li><strong>Architecture</strong>: Multi-market, multi-asset platform <sup class="cite"><a href="#web-lseg-com" title="WEB: lseg.com">[W]</a></sup></li>
+<li><strong>Latency</strong>: Average 126 μs (native API); 196 μs (FIX 5.0) <sup class="cite"><a href="#web-wikipedia-millennium" title="WEB: wikipedia-millennium">[W]</a></sup></li>
+<li><strong>Market Data</strong>: Group Ticker Plant (GTP) — multicast UDP delivery <sup class="cite"><a href="#web-lse-gtp" title="WEB: lse-gtp">[W]</a></sup></li>
+<li><strong>Used by</strong>: LSE, Borsa Italiana, Johannesburg Stock Exchange, and others <sup class="cite"><a href="#web-wikipedia-millennium" title="WEB: wikipedia-millennium">[W]</a></sup></li>
+</ul>
+<h3 id="matching-algorithm-sets-price-time-priority-ref1">Matching Algorithm (SETS): Price-Time Priority <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ol>
+<li>Price priority: Best price first</li>
+<li>Time priority: Among same-price orders, earliest first</li>
+<li>Hidden orders: Lower priority than displayed at same price</li>
+</ol>
+<h3 id="opening-auction-sets-webtradinghourscom">Opening Auction (SETS) <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li><strong>07:50–08:00</strong>: Order accumulation (no matching)</li>
+<li><strong>08:00</strong>: Uncrossing — single price maximizing volume</li>
+<li>Orders from pre-trading session participate</li>
+</ul>
+<h3 id="closing-auction-sets-webtradinghourscom">Closing Auction (SETS) <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li><strong>16:30</strong>: Continuous trading ends; closing auction begins</li>
+<li><strong>16:35</strong>: Uncrossing — closing price determined</li>
+<li>Intraday auction (SETS): ~12:00–12:02 (optional midday price discovery)</li>
+</ul>
+<h3 id="setsqx-auctions-ref3-webaim-watchcom">SETSqx Auctions <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-aim-watch-com" title="WEB: aim-watch.com">[W]</a></sup></h3>
+<ul>
+<li><strong>4 scheduled auctions per day</strong>: ~08:00, 11:00, 14:30, 16:35</li>
+<li>Between auctions: market maker quotes provide liquidity</li>
+<li>At auction: order book crosses with accumulated orders</li>
+</ul>
+<h3 id="tick-size-regime-webmifid-tick-size">Tick Size Regime <sup class="cite"><a href="#web-mifid-tick-size" title="WEB: mifid-tick-size">[W]</a></sup></h3>
+<ul>
+<li>MiFID II harmonized tick size table (RTS 11)</li>
+<li>Tick size depends on: price level AND average daily number of transactions (liquidity band)</li>
+<li>Applied uniformly across all EU/UK venues for same security</li>
+<li>Typically: £0.01 for liquid stocks under £10; wider for less liquid</li>
+</ul>
+<h3 id="lot-size">Lot Size</h3>
+<ul>
+<li>Standard: 1 share (no minimum lot requirement for most securities)</li>
+<li>Market makers may set minimum dealing sizes</li>
+</ul>
+<hr />
+<h2 id="7-safeguard-mechanisms">7. Safeguard Mechanisms</h2>
+<h3 id="71-dynamic-circuit-breaker-webfcaorguk-weblse-orderly-markets">7.1 Dynamic Circuit Breaker <sup class="cite"><a href="#web-fca-org-uk" title="WEB: fca.org.uk">[W]</a></sup> <sup class="cite"><a href="#web-lse-orderly-markets" title="WEB: lse-orderly-markets">[W]</a></sup></h3>
+<ul>
+<li><strong>Trigger</strong>: Potential trade price &gt; <strong>3%</strong> from last executed order book price (FTSE 100)</li>
+<li><strong>Action</strong>: 5-minute call auction (no continuous trading)</li>
+<li>Calibrated per instrument based on liquidity</li>
+<li>Wider thresholds for less liquid securities</li>
+</ul>
+<h3 id="72-static-circuit-breaker-webfcaorguk-weblse-orderly-markets">7.2 Static Circuit Breaker <sup class="cite"><a href="#web-fca-org-uk" title="WEB: fca.org.uk">[W]</a></sup> <sup class="cite"><a href="#web-lse-orderly-markets" title="WEB: lse-orderly-markets">[W]</a></sup></h3>
+<ul>
+<li><strong>Trigger</strong>: Potential trade price &gt; <strong>8%</strong> from last auction price (FTSE 100)</li>
+<li><strong>Action</strong>: 5-minute call auction</li>
+<li>Static threshold resets after each auction completion</li>
+</ul>
+<h3 id="73-etp-price-monitoring-weblse-etp-monitoring">7.3 ETP Price Monitoring <sup class="cite"><a href="#web-lse-etp-monitoring" title="WEB: lse-etp-monitoring">[W]</a></sup></h3>
+<ul>
+<li>Additional monitoring for ETFs/ETPs</li>
+<li>Separate dynamic/static bands calibrated for ETP characteristics</li>
+</ul>
+<h3 id="74-no-market-wide-circuit-breaker">7.4 No Market-Wide Circuit Breaker</h3>
+<ul>
+<li>UK does not have a US-style market-wide halt (S&amp;P 500 7%/13%/20%)</li>
+<li>Individual security circuit breakers only</li>
+<li>FCA oversees market integrity; can impose trading suspensions</li>
+</ul>
+<h3 id="75-mifid-ii-pre-trade-controls">7.5 MiFID II Pre-Trade Controls</h3>
+<ul>
+<li>Maximum order size/value limits</li>
+<li>Price collar validation</li>
+<li>Kill switch functionality required for algorithmic traders</li>
+</ul>
+<hr />
+<h2 id="8-special-sessions">8. Special Sessions</h2>
+<h3 id="81-pre-trading-05050750-webtradinghourscom">8.1 Pre-Trading (05:05–07:50) <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li>Order entry period — no matching</li>
+<li>Trade reporting for off-book transactions</li>
+</ul>
+<h3 id="82-opening-auction-07500800-webtradinghourscom">8.2 Opening Auction (07:50–08:00) <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li>Order accumulation → uncrossing at 08:00</li>
+<li>SETS securities only</li>
+</ul>
+<h3 id="83-continuous-trading-08001630-ref1">8.3 Continuous Trading (08:00–16:30) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>SETS: Full electronic order book matching</li>
+<li>SETSqx: Market maker quotes + order book</li>
+<li>SEAQ: Market maker quotes only</li>
+</ul>
+<h3 id="84-intraday-auction-12001202-webtradinghourscom">8.4 Intraday Auction (~12:00–12:02) <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li>Brief midday auction on SETS</li>
+<li>Helps price discovery during lunch period</li>
+</ul>
+<h3 id="85-closing-auction-16301635-webtradinghourscom">8.5 Closing Auction (16:30–16:35) <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li>SETS closing uncrossing at 16:35</li>
+<li>SETSqx closing auction at 16:35</li>
+</ul>
+<h3 id="86-post-trading-16401715-webtradinghourscom">8.6 Post-Trading (16:40–17:15) <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li>Trade reporting only — no new matching</li>
+</ul>
+<h3 id="87-turquoise-pan-european-mtf-weblsegcom">8.7 Turquoise (Pan-European MTF) <sup class="cite"><a href="#web-lseg-com" title="WEB: lseg.com">[W]</a></sup></h3>
+<ul>
+<li>LSEG-owned Multilateral Trading Facility</li>
+<li><strong>Turquoise Lit</strong>: Displayed order book with price-time priority</li>
+<li><strong>Turquoise Plato (Dark)</strong>: Non-displayed midpoint matching</li>
+<li><strong>Turquoise Plato Block Discovery</strong>: Block-size indications of interest</li>
+<li>MiFID II compliant; competes with national exchanges across EU/UK</li>
+</ul>
+<hr />
+<h2 id="9-lp-market-maker-obligations">9. LP / Market Maker Obligations</h2>
+<h3 id="91-sets-market-makers-voluntary-ref1">9.1 SETS Market Makers (Voluntary) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>No mandatory market maker program for SETS securities</li>
+<li>Liquidity from natural order flow (similar to TSE)</li>
+<li>Optional registered market makers may participate for fee advantages</li>
+</ul>
+<h3 id="92-setsqx-market-makers-obligatory-for-service-ref3-webaim-watchcom">9.2 SETSqx Market Makers (Obligatory for Service) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-aim-watch-com" title="WEB: aim-watch.com">[W]</a></sup></h3>
+<ul>
+<li>Market makers provide continuous two-sided quotes between auctions</li>
+<li>Must deal at displayed price and size when hit <sup class="cite"><a href="#web-aim-watch-com" title="WEB: aim-watch.com">[W]</a></sup></li>
+<li>Multiple MMs per security (competitive model)</li>
+<li>Named Orders allow identity-visible trading</li>
+</ul>
+<h3 id="93-seaq-market-makers-core-to-service-ref3-webwikipedia-seaq">9.3 SEAQ Market Makers (Core to Service) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-wikipedia-seaq" title="WEB: wikipedia-seaq">[W]</a></sup></h3>
+<ul>
+<li><strong>Minimum 2 market makers per security</strong> <sup class="cite"><a href="#web-wikipedia-seaq" title="WEB: wikipedia-seaq">[W]</a></sup></li>
+<li>Continuous two-sided firm quotes (bid/offer with size)</li>
+<li>Must honor displayed quotes</li>
+<li>Pure quote-driven — all liquidity from MMs</li>
+<li>Spread represents MM profit margin</li>
+</ul>
+<h3 id="94-comparison-with-batch-12-exchanges">9.4 Comparison with Batch 1/2 Exchanges</h3>
+<ul>
+<li>LSE's three-tier approach is unique: different MM obligations by liquidity segment</li>
+<li><strong>vs. NYSE</strong>: NYSE has single hybrid model; LSE segments by liquidity</li>
+<li><strong>vs. NASDAQ</strong>: NASDAQ competitive MMs everywhere; LSE only on SETSqx/SEAQ</li>
+<li><strong>vs. TSE</strong>: Both lack general equity MMs on main order book</li>
+<li><strong>vs. KRX</strong>: KRX has LP/MM programs for all; LSE only for less-liquid segments</li>
+</ul>
+<hr />
+<h2 id="10-source-bibliography">10. Source Bibliography</h2>
+<h3 id="reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</h3>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> LSE, "MIT201 — Guide to the Trading System (Draft 15.7, PDF)", <a href="https://docs.londonstockexchange.com/sites/default/files/documents/draft-mit201-guide-to-the-trading-system-15.7.pdf" target="_blank">https://docs.londonstockexchange.com/sites/default/files/documents/draft-mit201-guide-to-the-trading-system-15.7.pdf</a></p>
+<p><span id="ref-2"><strong>[REF:#2]</strong></span> LSE, "MIT201 — Guide to the Trading System (v14.9, PDF)", <a href="https://docs.londonstockexchange.com/sites/default/files/documents/draftguidetothetradingsystem2.pdf" target="_blank">https://docs.londonstockexchange.com/sites/default/files/documents/draftguidetothetradingsystem2.pdf</a></p>
+<p><span id="ref-3"><strong>[REF:#3]</strong></span> LSE, "Shares Trading — SETSqx and SEAQ", <a href="https://www.londonstockexchange.com/equities-trading/asset-classes/shares-trading/setsqx-and-seaq" target="_blank">https://www.londonstockexchange.com/equities-trading/asset-classes/shares-trading/setsqx-and-seaq</a></p>
+<p><span id="ref-4"><strong>[REF:#4]</strong></span> LSE, "SETSqx Auction Improvements Factsheet (PDF)", <a href="https://docs.londonstockexchange.com/sites/default/files/documents/Further%20improvements%20to%20auctions%20on%20the%20SETSqx%20Trading%20Service.pdf" target="_blank">https://docs.londonstockexchange.com/sites/default/files/documents/Further%20improvements%20to%20auctions%20on%20the%20SETSqx%20Trading%20Service.pdf</a></p>
+<p><span id="ref-5"><strong>[REF:#5]</strong></span> LSE, "Official Documentation Portal", <a href="https://docs.londonstockexchange.com/" target="_blank">https://docs.londonstockexchange.com/</a></p>
+<p><span id="ref-6"><strong>[REF:#6]</strong></span> StockExchangeSecrets, "SETS Explained", <a href="https://www.stockexchangesecrets.com/london-stock-exchange-SETS.html" target="_blank">https://www.stockexchangesecrets.com/london-stock-exchange-SETS.html</a></p>
+<p><span id="ref-7"><strong>[REF:#7]</strong></span> AIM-Watch, "SEAQ, SETS &amp; SETSqx Explained", <a href="https://aim-watch.com/project/seaq-sets-setsqx/" target="_blank">https://aim-watch.com/project/seaq-sets-setsqx/</a></p>
+<h3 id="web-sources-priority-3-gap-fill-supplementary">Web Sources (Priority 3 — Gap Fill / Supplementary)</h3>
+<p><span id="web-wikipedia"><strong>[WEB:wikipedia]</strong></span> London Stock Exchange — Wikipedia, <a href="https://en.wikipedia.org/wiki/London_Stock_Exchange" target="_blank">https://en.wikipedia.org/wiki/London_Stock_Exchange</a> Accessed 2026-03-27</p>
+<p><span id="web-wikipedia-millennium"><strong>[WEB:wikipedia-millennium]</strong></span> Millennium Exchange — Wikipedia, <a href="https://en.wikipedia.org/wiki/Millennium_Exchange" target="_blank">https://en.wikipedia.org/wiki/Millennium_Exchange</a> Accessed 2026-03-27</p>
+<p><span id="web-wikipedia-seaq"><strong>[WEB:wikipedia-seaq]</strong></span> SEAQ — Wikipedia, <a href="https://en.wikipedia.org/wiki/SEAQ" target="_blank">https://en.wikipedia.org/wiki/SEAQ</a> Accessed 2026-03-27</p>
+<p><span id="web-lseg-com"><strong>[WEB:lseg.com]</strong></span> LSEG Markets Technology, <a href="https://www.lseg.com/en/capital-markets/market-infrastructure-business-development" target="_blank">https://www.lseg.com/en/capital-markets/market-infrastructure-business-development</a> Accessed 2026-03-27</p>
+<p><span id="web-statista"><strong>[WEB:statista]</strong></span> "Market cap of firms on the LSE 2025", <a href="https://www.statista.com/statistics/324578/market-value-of-companies-on-the-london-stock-exchange/" target="_blank">https://www.statista.com/statistics/324578/market-value-of-companies-on-the-london-stock-exchange/</a> Accessed 2026-03-27</p>
+<p><span id="web-tradinghours-com"><strong>[WEB:tradinghours.com]</strong></span> "LSE Market Hours", <a href="https://www.tradinghours.com/markets/lse" target="_blank">https://www.tradinghours.com/markets/lse</a> Accessed 2026-03-27</p>
+<p><span id="web-fca-org-uk"><strong>[WEB:fca.org.uk]</strong></span> FCA, "Analysis of Circuit Breakers in UK Equity Markets", <a href="https://www.fca.org.uk/publications/research/analysis-circuit-breakers-uk-equity-markets" target="_blank">https://www.fca.org.uk/publications/research/analysis-circuit-breakers-uk-equity-markets</a> Accessed 2026-03-27</p>
+<p><span id="web-lse-hidden-orders"><strong>[WEB:lse-hidden-orders]</strong></span> LSE, "SETS Hidden Order Enhancements", <a href="https://docs.londonstockexchange.com/sites/default/files/documents/LSEG_CM_SETS_HIDDEN_ORDERS_BROCHURE_CMYK_LR.pdf" target="_blank">https://docs.londonstockexchange.com/sites/default/files/documents/LSEG_CM_SETS_HIDDEN_ORDERS_BROCHURE_CMYK_LR.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-lse-orderly-markets"><strong>[WEB:lse-orderly-markets]</strong></span> LSE, "Maintaining Orderly Markets", <a href="https://docs.londonstockexchange.com/sites/default/files/documents/maintaining-orderly-markets.pdf" target="_blank">https://docs.londonstockexchange.com/sites/default/files/documents/maintaining-orderly-markets.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-lse-etp-monitoring"><strong>[WEB:lse-etp-monitoring]</strong></span> LSE, "ETP Price Monitoring Mechanisms", <a href="https://docs.londonstockexchange.com/sites/default/files/documents/LSE_ETP_Price_Monitoring_Mechanisms_factsheet.pdf" target="_blank">https://docs.londonstockexchange.com/sites/default/files/documents/LSE_ETP_Price_Monitoring_Mechanisms_factsheet.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-aim-watch-com"><strong>[WEB:aim-watch.com]</strong></span> "SEAQ, SETS &amp; SETSqx Explained", <a href="https://aim-watch.com/project/seaq-sets-setsqx/" target="_blank">https://aim-watch.com/project/seaq-sets-setsqx/</a> Accessed 2026-03-27</p>
+<p><span id="web-stockexchangesecrets-com"><strong>[WEB:stockexchangesecrets.com]</strong></span> "London Stock Exchange SETS", <a href="https://www.stockexchangesecrets.com/london-stock-exchange-SETS.html" target="_blank">https://www.stockexchangesecrets.com/london-stock-exchange-SETS.html</a> Accessed 2026-03-27</p>
+<p><span id="web-mifid-tick-size"><strong>[WEB:mifid-tick-size]</strong></span> "MiFID II tick-size regime", <a href="https://www.emissions-euets.com/tick-size-regime" target="_blank">https://www.emissions-euets.com/tick-size-regime</a> Accessed 2026-03-27</p>
+<hr />
+<p><em>Report version: 1.0 | Batch: 2 | Created: 2026-03-27 | Language: English</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

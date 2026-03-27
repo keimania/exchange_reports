@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TSE / JPX (도쿄증권거래소) — 거래소 보고서</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1">1. 거래소 개요</a></li>
+<li><a href="#2">2. 제도적 철학</a></li>
+<li><a href="#3">3. 주문유형 — 기본</a></li>
+<li class="h3"><a href="#31-limit-order-ref2">3.1 지정가 주문 (指値注文, Limit Order) [2]</a></li>
+<li class="h3"><a href="#32-market-order-ref2">3.2 시장가 주문 (成行注文, Market Order) [2]</a></li>
+<li class="h3"><a href="#33-moo-webppro8wiki">3.3 시초가 시장가 주문 (寄付注文, MOO) [W]</a></li>
+<li class="h3"><a href="#34-moc-webppro8wiki">3.4 종가 시장가 주문 (引け注文, MOC) [W]</a></li>
+<li class="h3"><a href="#3536-looloc-webppro8wiki">3.5/3.6 시초가/종가 지정가 주문 (LOO/LOC) [W]</a></li>
+<li><a href="#4">4. 주문유형 — 고급</a></li>
+<li class="h3"><a href="#41-ioc-ref3">4.1 즉시체결-잔량취소 (IOC) [3]</a></li>
+<li class="h3"><a href="#42-fok-ref3">4.2 전량체결-전량취소 (FOK) [3]</a></li>
+<li class="h3"><a href="#43-ref1">4.3 조건 주문 (스톱) [1]</a></li>
+<li class="h3"><a href="#44-day-ioc-fok-gtc-ref3">4.4 유효기간: Day(기본), IOC, FOK — GTC 미지원 [3]</a></li>
+<li><a href="#5">5. 주문유형 — 거래소 고유</a></li>
+<li class="h3"><a href="#51-funari-order-ref2">5.1 후나리 주문 (引成注文, Funari Order) [2]</a></li>
+<li class="h3"><a href="#52-tokubetsu-kehai-special-quote-webwikipedia">5.2 특별기배 (特別気配, Tokubetsu Kehai / Special Quote) [W]</a></li>
+<li><a href="#6">6. 매칭엔진 및 가격 발견</a></li>
+<li class="h3"><a href="#arrowhead-40-ref8-webfujitsucom">매매시스템: arrowhead 4.0 [8] [W]</a></li>
+<li class="h3"><a href="#ref2">매칭 알고리즘 [2]</a></li>
+<li class="h3"><a href="#cas-webjpxcojp">종가 결정 — 종가매매세션(CAS) [W]</a></li>
+<li class="h3"><a href="#tick-size-topix-500-webjpxcojptick-size">호가단위 (Tick Size) — TOPIX 500 구성종목 [W]</a></li>
+<li class="h3"><a href="#100-201810-webjpxcojpunit">매매수량단위: 100주 통일 (2018.10부터) [W]</a></li>
+<li><a href="#7">7. 안전장치 메커니즘</a></li>
+<li class="h3"><a href="#71-ref4">7.1 가격제한폭 (値幅制限) [4]</a></li>
+<li class="h3"><a href="#72-tokubetsu-kehai-webnberorg">7.2 특별기배 (Tokubetsu Kehai) [W]</a></li>
+<li class="h3"><a href="#73-webjpxcojpcb">7.3 서킷브레이커 (파생상품) [W]</a></li>
+<li><a href="#8">8. 특별 세션</a></li>
+<li class="h3"><a href="#81-09001130">8.1 전장 (09:00–11:30): 이타요세 개장 → 자라바 → 이타요세 폐장</a></li>
+<li class="h3"><a href="#82-11301230">8.2 점심 휴장 (11:30–12:30)</a></li>
+<li class="h3"><a href="#83-12301525">8.3 후장 (12:30–15:25): 이타요세 개장 → 자라바</a></li>
+<li class="h3"><a href="#84-cas-15251530">8.4 종가매매세션(CAS) (15:25–15:30): 사전종가 주문접수 → 이타요세 종가 결정 — 신규</a></li>
+<li class="h3"><a href="#85-tostnet-tostnet-1-tostnet-2-tostnet-3">8.5 ToSTNeT (장외 매매): ToSTNeT-1(단일종목), ToSTNeT-2(바스켓), ToSTNeT-3(자사주매입)</a></li>
+<li><a href="#9">9. 유동성공급자 / 시장조성자 의무</a></li>
+<li class="h3"><a href="#91-etf-webjpxcojpetf-mm">9.1 ETF 시장조성 인센티브 제도 [W]</a></li>
+<li class="h3"><a href="#92">9.2 일반 주식 시장조성자</a></li>
+<li><a href="#10">10. 출처 목록</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="tse-jpx">TSE / JPX (도쿄증권거래소) — 거래소 보고서</h1>
+<hr />
+<h2 id="1">1. 거래소 개요</h2>
+<p><strong>정식 법인명</strong>: 주식회사 도쿄증권거래소 (Tokyo Stock Exchange, Inc.)
+<strong>국가</strong>: 일본
+<strong>설립연도</strong>: 1878년 (원래); 1949년 재설립; 2013년 JPX 합병 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>모기관</strong>: Japan Exchange Group, Inc. (JPX) — 2013년 TSE와 OSE 합병으로 설립 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>시장 모델</strong>: 순수 주문주도형 — 이타요세(판기매, Call Auction) + 자라바(연속매매) 이중 메커니즘 <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></p>
+<p><strong>거래 자산 유형</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- 주식 (프라임, 스탠다드, 그로스, TOKYO PRO 시장)
+- ETF, ETN, REIT, 인프라 펀드
+- 파생상품 (OSE 경유 — 닛케이225 선물/옵션, TOPIX 선물, JGB 선물)</p>
+<p><strong>정규 매매시간 (JST, UTC+9)</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- 전장: 09:00–11:30 | 점심 휴장: 11:30–12:30
+- 후장: 12:30–15:25 (자라바) | <strong>종가매매세션(CAS)</strong>: 15:25–15:30 (신규)</p>
+<p><strong>주요 통계</strong>: <sup class="cite"><a href="#web-jpx-co-jp" title="WEB: jpx.co.jp">[W]</a></sup> <sup class="cite"><a href="#web-statista" title="WEB: statista">[W]</a></sup>
+- 상장기업 수: 약 3,945개 (프라임 1,599, 스탠다드 1,569, 그로스 614, PRO 163)
+- 연간 매매대금(2025): ¥1,419.6조 (프라임 국내보통주 사상 최고) <sup class="cite"><a href="#web-jpx-co-jp-trading-overview" title="WEB: jpx.co.jp/trading-overview">[W]</a></sup></p>
+<p><strong>최근 주요 변경사항</strong>: <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup>
+- 2024.11.05: arrowhead 4.0 출범, 매매시간 30분 연장, 종가매매세션(CAS) 도입
+- 2022.04: 시장 구조 개편 (1부/2부/마더스/JASDAQ → 프라임/스탠다드/그로스)</p>
+<hr />
+<h2 id="2">2. 제도적 철학</h2>
+<p><strong>기본 시장 모델</strong>: 순수 주문주도형, 이중 경매 메커니즘 <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup>
+- <strong>이타요세(板寄せ)</strong>: 개장/폐장/거래중단 후 재개 시 단일가 결정에 사용
+- <strong>자라바(ザラバ)</strong>: 장중 연속매매에 사용
+- 일반 주식에 대한 지정 시장조성자 없음 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>발전 과정</strong>: 물리적 플로어(1878) → 전자화(1999) → arrowhead 1.0(2010) → 2.0(2015) → 3.0(2019) → <strong>4.0(2024.11)</strong> <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></p>
+<hr />
+<h2 id="3">3. 주문유형 — 기본</h2>
+<h3 id="31-limit-order-ref2">3.1 지정가 주문 (指値注文, Limit Order) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>가격, 수량, 방향 지정; 미체결 시 주문장에 등록</li>
+<li>유효기간: 당일 유효 (기본)</li>
+</ul>
+<h3 id="32-market-order-ref2">3.2 시장가 주문 (成行注文, Market Order) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>가격 미지정; 이타요세 시 가격제한폭 내 의향가로 취급</li>
+<li>자라바 시 가용 가격으로 순차 체결</li>
+</ul>
+<h3 id="33-moo-webppro8wiki">3.3 시초가 시장가 주문 (寄付注文, MOO) <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<h3 id="34-moc-webppro8wiki">3.4 종가 시장가 주문 (引け注文, MOC) <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<h3 id="3536-looloc-webppro8wiki">3.5/3.6 시초가/종가 지정가 주문 (LOO/LOC) <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<hr />
+<h2 id="4">4. 주문유형 — 고급</h2>
+<h3 id="41-ioc-ref3">4.1 즉시체결-잔량취소 (IOC) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<h3 id="42-fok-ref3">4.2 전량체결-전량취소 (FOK) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<h3 id="43-ref1">4.3 조건 주문 (스톱) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<h3 id="44-day-ioc-fok-gtc-ref3">4.4 유효기간: Day(기본), IOC, FOK — GTC 미지원 <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<hr />
+<h2 id="5">5. 주문유형 — 거래소 고유</h2>
+<h3 id="51-funari-order-ref2">5.1 후나리 주문 (引成注文, Funari Order) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li><strong>TSE 고유</strong>: 자라바 중 지정가 → 종가 이타요세/CAS 시 시장가로 자동 전환</li>
+<li>KRX 조건부지정가호가와 유사 개념</li>
+<li>장중 지정가 규율과 종가 참여를 결합</li>
+</ul>
+<h3 id="52-tokubetsu-kehai-special-quote-webwikipedia">5.2 특별기배 (特別気配, Tokubetsu Kehai / Special Quote) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></h3>
+<ul>
+<li><strong>TSE 고유 메커니즘</strong>: 주문 불균형 시 시스템 생성 참고 호가</li>
+<li>점진적 가격 이동으로 상대방 주문 유인 — "서행 경매"</li>
+<li>경성 매매정지(hard halt)의 대안 — 가격 발견을 중단하지 않고 감속</li>
+</ul>
+<hr />
+<h2 id="6">6. 매칭엔진 및 가격 발견</h2>
+<h3 id="arrowhead-40-ref8-webfujitsucom">매매시스템: arrowhead 4.0 <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup> <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></h3>
+<ul>
+<li><strong>출범</strong>: 2024.11.05 (2010년 이후 4세대)</li>
+<li><strong>인프라</strong>: Fujitsu PRIMERGY RX2540 M6 서버 462대</li>
+<li><strong>소프트웨어</strong>: Primesoft Server — 초고속 인메모리 데이터 관리</li>
+<li><strong>지연시간</strong>: 마이크로초 수준 (정확 수치 비공개; 이전 세대: ~0.5ms)</li>
+<li><strong>신뢰성</strong>: 메모리 3중 복제, 병렬 서버 운영, 초 단위 장애 복구</li>
+</ul>
+<h3 id="ref2">매칭 알고리즘 <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<p><strong>이타요세</strong>: 동시호가 → 거래량 최대화·미체결 최소화 단일가 결정 (시간 우선 미적용)
+<strong>자라바</strong>: 가격·시간 우선원칙 연속 매칭</p>
+<h3 id="cas-webjpxcojp">종가 결정 — 종가매매세션(CAS) <sup class="cite"><a href="#web-jpx-co-jp" title="WEB: jpx.co.jp">[W]</a></sup></h3>
+<ul>
+<li>15:25: 자라바 종료, 사전종가 주문접수 개시 (매매 미실행)</li>
+<li>15:30: 이타요세로 종가 결정</li>
+<li>후나리 주문 → 시장가 전환; 종가 주문 등록</li>
+</ul>
+<h3 id="tick-size-topix-500-webjpxcojptick-size">호가단위 (Tick Size) — TOPIX 500 구성종목 <sup class="cite"><a href="#web-jpx-co-jp-tick-size" title="WEB: jpx.co.jp/tick-size">[W]</a></sup></h3>
+<table>
+<thead>
+<tr>
+<th>가격 범위 (¥)</th>
+<th>호가단위 (¥)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 1,000</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>1,000–2,999</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>3,000–4,999</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5,000–9,999</td>
+<td>5</td>
+</tr>
+<tr>
+<td>10,000–29,999</td>
+<td>5</td>
+</tr>
+<tr>
+<td>30,000–49,999</td>
+<td>10</td>
+</tr>
+<tr>
+<td>≥ 50,000</td>
+<td>50–100</td>
+</tr>
+</tbody>
+</table>
+<h3 id="100-201810-webjpxcojpunit">매매수량단위: <strong>100주</strong> 통일 (2018.10부터) <sup class="cite"><a href="#web-jpx-co-jp-unit" title="WEB: jpx.co.jp/unit">[W]</a></sup></h3>
+<hr />
+<h2 id="7">7. 안전장치 메커니즘</h2>
+<h3 id="71-ref4">7.1 가격제한폭 (値幅制限) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>기준가(전일종가) 수준별 절대 엔화 금액 제한 (비율제가 아닌 금액제)</li>
+<li>예: 기준가 ¥1,000–1,499 → ±¥300 <sup class="cite"><a href="#web-futunn-com" title="WEB: futunn.com">[W]</a></sup></li>
+<li>개별 종목 연속 상/하한 도달 시 확대 가능</li>
+</ul>
+<h3 id="72-tokubetsu-kehai-webnberorg">7.2 특별기배 (Tokubetsu Kehai) <sup class="cite"><a href="#web-nber-org" title="WEB: nber.org">[W]</a></sup></h3>
+<ul>
+<li>주문 불균형 시 참고 호가 발행 → 점진적 가격 이동으로 주문 유인</li>
+<li>TSE 고유 "연성 서킷브레이커" — 매매중단 아닌 감속</li>
+</ul>
+<h3 id="73-webjpxcojpcb">7.3 서킷브레이커 (파생상품) <sup class="cite"><a href="#web-jpx-co-jp-cb" title="WEB: jpx.co.jp/cb">[W]</a></sup></h3>
+<ul>
+<li>닛케이225/TOPIX 선물: ~8% 하락 시 10분 정지</li>
+<li>주식은 시장 전체 서킷브레이커 없음 — 가격제한폭 + 특별기배로 대체</li>
+</ul>
+<hr />
+<h2 id="8">8. 특별 세션</h2>
+<h3 id="81-09001130">8.1 전장 (09:00–11:30): 이타요세 개장 → 자라바 → 이타요세 폐장</h3>
+<h3 id="82-11301230">8.2 점심 휴장 (11:30–12:30)</h3>
+<h3 id="83-12301525">8.3 후장 (12:30–15:25): 이타요세 개장 → 자라바</h3>
+<h3 id="84-cas-15251530">8.4 종가매매세션(CAS) (15:25–15:30): 사전종가 주문접수 → 이타요세 종가 결정 — <strong>신규</strong></h3>
+<h3 id="85-tostnet-tostnet-1-tostnet-2-tostnet-3">8.5 ToSTNeT (장외 매매): ToSTNeT-1(단일종목), ToSTNeT-2(바스켓), ToSTNeT-3(자사주매입)</h3>
+<hr />
+<h2 id="9">9. 유동성공급자 / 시장조성자 의무</h2>
+<h3 id="91-etf-webjpxcojpetf-mm">9.1 ETF 시장조성 인센티브 제도 <sup class="cite"><a href="#web-jpx-co-jp-etf-mm" title="WEB: jpx.co.jp/etf-mm">[W]</a></sup></h3>
+<ul>
+<li>2018.07 도입; ETF 종목 대상 지정 시장조성자</li>
+<li>최소 5개 ETF 호가, 연속경매 시간의 80% 이상 호가 유지</li>
+<li>수수료 환급/인센티브 구조; 분기별 실적 평가</li>
+</ul>
+<h3 id="92">9.2 일반 주식 시장조성자</h3>
+<ul>
+<li>TSE는 일반 주식에 대한 의무적 시장조성자 프로그램 <strong>없음</strong></li>
+<li>NYSE DMM, NASDAQ MM, KRX LP/MM과 대조적</li>
+<li>유동성은 전적으로 자연 주문 흐름에 의존</li>
+</ul>
+<hr />
+<h2 id="10">10. 출처 목록</h2>
+<p>[REF:#1–10] 영문 보고서 §10 참조 (JPX 공식 소스 10개)
+[WEB 출처] 영문 보고서 §10 참조 (14개 웹 소스)</p>
+<hr />
+<p><em>보고서 버전: 1.0 | 배치: 2 | 작성일: 2026-03-27 | 언어: 한국어</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

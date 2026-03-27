@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NASDAQ (나스닥) — 거래소 보고서</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1">1. 거래소 개요</a></li>
+<li><a href="#2">2. 제도적 철학</a></li>
+<li><a href="#3">3. 주문유형 — 기본</a></li>
+<li class="h3"><a href="#31-market-order-ref1">3.1 시장가 주문 (Market Order) [1]</a></li>
+<li class="h3"><a href="#32-limit-order-ref1">3.2 지정가 주문 (Limit Order) [1]</a></li>
+<li class="h3"><a href="#33-moo-ref7">3.3 시초가 시장가 주문 (MOO) [7]</a></li>
+<li class="h3"><a href="#34-loo-ref7">3.4 시초가 지정가 주문 (LOO) [7]</a></li>
+<li class="h3"><a href="#35-moc-ref7">3.5 종가 시장가 주문 (MOC) [7]</a></li>
+<li class="h3"><a href="#36-loc-ref7">3.6 종가 지정가 주문 (LOC) [7]</a></li>
+<li><a href="#4">4. 주문유형 — 고급</a></li>
+<li class="h3"><a href="#41-reserveiceberg-order-ref1">4.1 빙산 주문 (Reserve/Iceberg Order) [1]</a></li>
+<li class="h3"><a href="#42-pegged-orders-ref1">4.2 페그 주문 (Pegged Orders) [1]</a></li>
+<li class="h3"><a href="#43-post-only-order-ref1">4.3 게시 전용 주문 (Post-Only Order) [1]</a></li>
+<li class="h3"><a href="#44-iso-ref1">4.4 시장간 일괄체결 주문 (ISO) [1]</a></li>
+<li class="h3"><a href="#45-io-orders-ref7">4.5 불균형 전용 주문 (IO Orders) [7]</a></li>
+<li class="h3"><a href="#46-non-displayed-order-ref1">4.6 비표시 주문 (Non-Displayed Order) [1]</a></li>
+<li class="h3"><a href="#47-ref1">4.7 주문 유효기간 옵션 [1]</a></li>
+<li><a href="#5">5. 주문유형 — 거래소 고유</a></li>
+<li class="h3"><a href="#51-m-elo-webnasdaqcommelo">5.1 중간가 연장수명 주문 (M-ELO) [W]</a></li>
+<li class="h3"><a href="#52-m-elo-dynamic-m-elo-webnasdaqcomdynamic-melo">5.2 동적 M-ELO (Dynamic M-ELO) [W]</a></li>
+<li class="h3"><a href="#53-m-elocb-webnasdaqcommelo">5.3 M-ELO+CB [W]</a></li>
+<li class="h3"><a href="#54-mppo-webnasdaqtradercommppo">5.4 중간가 페그 게시 전용 주문 (MPPO) [W]</a></li>
+<li class="h3"><a href="#55-mm-peg-order-webnasdaqtradercommmpeg">5.5 시장조성자 페그 주문 (MM Peg Order) [W]</a></li>
+<li class="h3"><a href="#56-openingclosing-cross-ref7-ref8">5.6 Opening/Closing Cross [7] [8]</a></li>
+<li><a href="#6">6. 매칭엔진 및 가격 발견</a></li>
+<li class="h3"><a href="#inet-ref2-ref3-webnasdaqcommatching">매매시스템: INET [2] [3] [W]</a></li>
+<li class="h3"><a href="#ref2-ref3">프로토콜 [2] [3]</a></li>
+<li class="h3"><a href="#ref2">매칭 알고리즘: 가격·시간 우선원칙 [2]</a></li>
+<li class="h3"><a href="#opening-cross-ref7">시가 결정 — Opening Cross [7]</a></li>
+<li class="h3"><a href="#closing-cross-ref7">종가 결정 — Closing Cross [7]</a></li>
+<li class="h3"><a href="#tick-size">호가단위 (Tick Size)</a></li>
+<li class="h3"><a href="#lot-size">매매수량단위 (Lot Size)</a></li>
+<li><a href="#7">7. 안전장치 메커니즘</a></li>
+<li class="h3"><a href="#71-mwcb">7.1 시장 전체 서킷브레이커 (MWCB)</a></li>
+<li class="h3"><a href="#72-luld-webluldplancom">7.2 상·하한가 제한 (LULD) [W]</a></li>
+<li class="h3"><a href="#73-cee-ref1">7.3 명백히 착오적인 체결 (CEE) [1]</a></li>
+<li class="h3"><a href="#74-ref1">7.4 규제 매매정지 [1]</a></li>
+<li class="h3"><a href="#75-ref2">7.5 사전거래위험관리 [2]</a></li>
+<li><a href="#8">8. 특별 세션</a></li>
+<li class="h3"><a href="#81-webtradinghourscom">8.1 장전 매매 [W]</a></li>
+<li class="h3"><a href="#82-opening-cross-ref7">8.2 Opening Cross [7]</a></li>
+<li class="h3"><a href="#83-ref1">8.3 핵심 매매시간 [1]</a></li>
+<li class="h3"><a href="#84-closing-cross-ref7">8.4 Closing Cross [7]</a></li>
+<li class="h3"><a href="#85-webtradinghourscom">8.5 장후 매매 [W]</a></li>
+<li class="h3"><a href="#86-halt-cross-ipo-cross-ref1-webnasdaqcom">8.6 Halt Cross / IPO Cross [1] [W]</a></li>
+<li><a href="#9">9. 유동성공급자 / 시장조성자 의무</a></li>
+<li class="h3"><a href="#91-ref1">9.1 나스닥 시장조성자 (경쟁 모델) [1]</a></li>
+<li class="h3"><a href="#92-webnasdaqcom">9.2 수수료 구조 / 인센티브 [W]</a></li>
+<li class="h3"><a href="#93-nyse-dmm-ref1">9.3 NYSE DMM과 비교 [1]</a></li>
+<li><a href="#10">10. 출처 목록</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="nasdaq">NASDAQ (나스닥) — 거래소 보고서</h1>
+<hr />
+<h2 id="1">1. 거래소 개요</h2>
+<p><strong>정식 법인명</strong>: The Nasdaq Stock Market LLC (나스닥 주식시장)
+<strong>국가</strong>: 미국
+<strong>설립연도</strong>: 1971년 (최초 전자 주식시장); 2006년 공식 거래소 등록 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>모기관</strong>: Nasdaq, Inc. <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup></p>
+<p><strong>시장 모델</strong>: 순수 전자 주문주도형 시장 + 경쟁적 시장조성자 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>거래 자산 유형</strong>: <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup>
+- 주식 (Nasdaq, Nasdaq BX, Nasdaq PSX)
+- 옵션 (Nasdaq Options Market, ISE, GEMX, MRX, PHLX)
+- ETF, ETN</p>
+<p><strong>정규 매매시간 (ET, UTC−5/−4)</strong>: <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup>
+- 장전 매매: 04:00–09:30
+- 핵심 매매시간: 09:30–16:00
+- 장후 매매: 16:00–20:00
+- <strong>제안 중</strong>: 23시간 매매 (21:00–20:00 ET) 2025.12 신청 <sup class="cite"><a href="#web-federalregister-gov" title="WEB: federalregister.gov">[W]</a></sup></p>
+<p><strong>주요 통계</strong>: <sup class="cite"><a href="#web-marketcap-company" title="WEB: marketcap.company">[W]</a></sup> <sup class="cite"><a href="#web-bestbrokers" title="WEB: bestbrokers">[W]</a></sup>
+- 상장기업 수: 약 4,000–4,278개
+- 시가총액: 약 $28조 이상
+- 일평균 거래량: 약 40억주 이상</p>
+<hr />
+<h2 id="2">2. 제도적 철학</h2>
+<p><strong>기본 시장 모델</strong>: 순수 전자, 주문주도형, 물리적 거래 플로어 없음 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></p>
+<p><strong>설계 근거</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- 1971년 세계 최초 전자 주식시장으로 설립 — 처음부터 속도와 기술 중심 설계
+- 플로어 없음, 전문가(specialist) 없음, 체결 과정 인적 중개 없음 — 전량 알고리즘 매칭
+- 저지연 접속, 투명한 가격 발견, 프로토콜 효율성(OUCH/ITCH) 강조
+- 독점 DMM이 아닌 경쟁적 시장조성자 모델 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>중개 기관의 역할</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- <strong>등록 시장조성자</strong>: 종목당 복수 MM (경쟁 모델, 비독점)
+- 지정 비율 이내에서 지속적 양방향 호가 유지 의무 <sup class="cite"><a href="#web-federalregister-gov-rule4613" title="WEB: federalregister.gov/rule4613">[W]</a></sup>
+- 확정호가 규칙: 게시 호가에서 반드시 체결 <sup class="cite"><a href="#web-finra-org" title="WEB: finra.org">[W]</a></sup></p>
+<p><strong>발전 과정</strong>: 전자 호가 시스템(1971) → ECN 통합 → INET 매칭엔진(2006 Instinet 인수) → 글로벌 기술 제공자(Nasdaq OMX) → 핀테크 플랫폼(2025+) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<hr />
+<h2 id="3">3. 주문유형 — 기본</h2>
+<h3 id="31-market-order-ref1">3.1 시장가 주문 (Market Order) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>최적 가용 가격으로 즉시 체결</li>
+</ul>
+<h3 id="32-limit-order-ref1">3.2 지정가 주문 (Limit Order) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>최대 매수가 / 최소 매도가 지정; 미체결 시 주문장에 등록</li>
+<li>유효기간: Day, GTC, IOC, FOK, Extended Hours, System Hours</li>
+</ul>
+<h3 id="33-moo-ref7">3.3 시초가 시장가 주문 (MOO) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>Opening Cross 전용 시장가 주문</li>
+</ul>
+<h3 id="34-loo-ref7">3.4 시초가 지정가 주문 (LOO) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>Opening Cross 전용 지정가 주문</li>
+</ul>
+<h3 id="35-moc-ref7">3.5 종가 시장가 주문 (MOC) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>Closing Cross 전용 시장가 주문</li>
+</ul>
+<h3 id="36-loc-ref7">3.6 종가 지정가 주문 (LOC) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>Closing Cross 전용 지정가 주문</li>
+</ul>
+<hr />
+<h2 id="4">4. 주문유형 — 고급</h2>
+<h3 id="41-reserveiceberg-order-ref1">4.1 빙산 주문 (Reserve/Iceberg Order) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>일부만 표시; 숨겨진 잔량이 자동 보충</li>
+</ul>
+<h3 id="42-pegged-orders-ref1">4.2 페그 주문 (Pegged Orders) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>Primary Peg</strong>: 같은 쪽 내부호가에 연동</li>
+<li><strong>Market Peg</strong>: 상대쪽 내부호가에 연동</li>
+<li><strong>Midpoint Peg</strong>: NBBO 중간가에 연동</li>
+</ul>
+<h3 id="43-post-only-order-ref1">4.3 게시 전용 주문 (Post-Only Order) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>주문장에만 등록; 즉시 체결 시 취소/재가격</li>
+<li>메이커 리베이트 추구 참가자 대상</li>
+</ul>
+<h3 id="44-iso-ref1">4.4 시장간 일괄체결 주문 (ISO) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>나스닥에서 복수 가격 단계 관통; 발주자가 타 시장 보호 책임</li>
+</ul>
+<h3 id="45-io-orders-ref7">4.5 불균형 전용 주문 (IO Orders) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>IO Open / IO Close: 경매 불균형 상계 전용 지정가 주문</li>
+</ul>
+<h3 id="46-non-displayed-order-ref1">4.6 비표시 주문 (Non-Displayed Order) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>주문장에 미표시; 중간가 이상에서 체결</li>
+<li>동일 가격 표시 주문보다 낮은 우선순위</li>
+</ul>
+<h3 id="47-ref1">4.7 주문 유효기간 옵션 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Day, GTC, IOC, FOK, Extended Hours(04:00–20:00), System Hours(전 세션), Market Hours(09:30–16:00)</li>
+</ul>
+<hr />
+<h2 id="5">5. 주문유형 — 거래소 고유</h2>
+<h3 id="51-m-elo-webnasdaqcommelo">5.1 중간가 연장수명 주문 (M-ELO) <sup class="cite"><a href="#web-nasdaq-com-melo" title="WEB: nasdaq.com/melo">[W]</a></sup></h3>
+<ul>
+<li><strong>나스닥 고유</strong>: 비표시 중간가 주문 + 의무 보유기간 (최소 0.5초)</li>
+<li>다른 M-ELO 또는 M-ELO+CB와만 체결 가능</li>
+<li>설계 근거: 정보 누출 감소, 역선택 방지</li>
+</ul>
+<h3 id="52-m-elo-dynamic-m-elo-webnasdaqcomdynamic-melo">5.2 동적 M-ELO (Dynamic M-ELO) <sup class="cite"><a href="#web-nasdaq-com-dynamic-melo" title="WEB: nasdaq.com/dynamic-melo">[W]</a></sup></h3>
+<ul>
+<li>AI/ML로 30초마다 보유기간 재계산</li>
+<li>안정 시장 = 짧은 보유, 변동 시장 = 긴 보유</li>
+<li>2023.09 SEC 승인 <sup class="cite"><a href="#web-federalregister-gov-melo" title="WEB: federalregister.gov/melo">[W]</a></sup></li>
+</ul>
+<h3 id="53-m-elocb-webnasdaqcommelo">5.3 M-ELO+CB <sup class="cite"><a href="#web-nasdaq-com-melo" title="WEB: nasdaq.com/melo">[W]</a></sup></h3>
+<ul>
+<li>M-ELO + 연속장 상호작용 결합</li>
+<li>M-ELO뿐 아니라 비표시 중간가/MPPO 주문과도 체결 가능</li>
+</ul>
+<h3 id="54-mppo-webnasdaqtradercommppo">5.4 중간가 페그 게시 전용 주문 (MPPO) <sup class="cite"><a href="#web-nasdaqtrader-com-mppo" title="WEB: nasdaqtrader.com/mppo">[W]</a></sup></h3>
+<ul>
+<li>비표시, NBBO 중간가 설정; 경제적 유리 시에만 입력 시 체결</li>
+<li>보유기간 없음 (M-ELO와 구별)</li>
+</ul>
+<h3 id="55-mm-peg-order-webnasdaqtradercommmpeg">5.5 시장조성자 페그 주문 (MM Peg Order) <sup class="cite"><a href="#web-nasdaqtrader-com-mmpeg" title="WEB: nasdaqtrader.com/mmpeg">[W]</a></sup></h3>
+<ul>
+<li>등록 시장조성자 전용; 호가 의무 준수를 위해 자동 재가격</li>
+<li>수동 호가 관리 부담 감소</li>
+</ul>
+<h3 id="56-openingclosing-cross-ref7-ref8">5.6 Opening/Closing Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li><strong>Opening Cross</strong>: 09:25–09:30 NOII 배포 → 09:30 단일가 체결</li>
+<li><strong>Closing Cross</strong>: 15:50–16:00 NOII 배포 → 16:00 단일가 체결</li>
+<li>전체 NMS 증권 대상 <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></li>
+</ul>
+<hr />
+<h2 id="6">6. 매칭엔진 및 가격 발견</h2>
+<h3 id="inet-ref2-ref3-webnasdaqcommatching">매매시스템: INET <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-nasdaq-com-matching" title="WEB: nasdaq.com/matching">[W]</a></sup></h3>
+<ul>
+<li><strong>유래</strong>: Instinet 인수(2006), Island ECN 기술 기반 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></li>
+<li><strong>아키텍처</strong>: 수평 확장 가능 매칭엔진, 범용 하드웨어 <sup class="cite"><a href="#web-nasdaq-com-matching" title="WEB: nasdaq.com/matching">[W]</a></sup></li>
+<li><strong>지연시간</strong>: 40마이크로초 미만; 코로케이션 OUCH: &lt;25μs, FIX: &lt;80μs <sup class="cite"><a href="#web-nasdaqtrader-com-latency" title="WEB: nasdaqtrader.com/latency">[W]</a></sup></li>
+<li><strong>네트워크</strong>: 40 Gbps 인프라 <sup class="cite"><a href="#web-tradersmagazine-com" title="WEB: tradersmagazine.com">[W]</a></sup></li>
+<li><strong>강화</strong>: FPGA 기술로 결정론적 피크 시간 동작 <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></li>
+</ul>
+<h3 id="ref2-ref3">프로토콜 <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li><strong>OUCH 5.0</strong>: 저지연 주문 진입 프로토콜 (인바운드) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></li>
+<li><strong>ITCH 5.0</strong>: 시장 데이터 피드 프로토콜 (아웃바운드) <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup></li>
+<li><strong>FIX</strong>: 업계 표준 주문 진입 (OUCH 대비 높은 지연시간)</li>
+</ul>
+<h3 id="ref2">매칭 알고리즘: 가격·시간 우선원칙 <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ol>
+<li><strong>가격 우선</strong>: 최우선 가격 먼저</li>
+<li><strong>시간 우선</strong>: 동일가 중 먼저 접수된 주문 우선</li>
+<li><strong>표시 우선</strong>: 동일가에서 표시 주문이 비표시 주문에 우선</li>
+</ol>
+<h3 id="opening-cross-ref7">시가 결정 — Opening Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>04:00: 주문 접수 시작 → 09:25: NOII 배포 시작 → 09:30: 단일가 체결</li>
+</ul>
+<h3 id="closing-cross-ref7">종가 결정 — Closing Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>15:50: NOII 배포 시작 → 16:00: 단일가 체결</li>
+<li>일부 종목 일 거래량의 ~15% 종가에서 체결</li>
+</ul>
+<h3 id="tick-size">호가단위 (Tick Size)</h3>
+<ul>
+<li>표준: $0.01 (가격 &gt;$1.00); 서브페니: $0.0001 (가격 &lt;$1.00)</li>
+<li>중간가 체결: 하프페니($0.005) 단위 허용</li>
+</ul>
+<h3 id="lot-size">매매수량단위 (Lot Size)</h3>
+<ul>
+<li>표준: 100주 (정규거래단위); 단주(&lt;100주) 완전 지원</li>
+</ul>
+<hr />
+<h2 id="7">7. 안전장치 메커니즘</h2>
+<h3 id="71-mwcb">7.1 시장 전체 서킷브레이커 (MWCB)</h3>
+<ul>
+<li>NYSE와 동일 국가 규정 (S&amp;P 500 기준 7%/13%/20%)</li>
+</ul>
+<h3 id="72-luld-webluldplancom">7.2 상·하한가 제한 (LULD) <sup class="cite"><a href="#web-luldplan-com" title="WEB: luldplan.com">[W]</a></sup></h3>
+<ul>
+<li>NYSE와 동일 국가 플랜 (Tier 1: ±5%, Tier 2: ±10%/±20%)</li>
+<li>나스닥 고유: LULD 밴드 도달 후 15초 → 5분 매매 일시정지</li>
+<li>재개: Nasdaq Halt Cross 메커니즘</li>
+</ul>
+<h3 id="73-cee-ref1">7.3 명백히 착오적인 체결 (CEE) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>30분 이내 검토 요청; 기준가 비율 기반 임계값</li>
+</ul>
+<h3 id="74-ref1">7.4 규제 매매정지 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>T1/T2 (뉴스 대기/배포), T12 (IPO), LUDP (LULD 일시정지)</li>
+<li>재개: Halt Cross로 재개장</li>
+</ul>
+<h3 id="75-ref2">7.5 사전거래위험관리 <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>주문 가격 합리성 검사, 최대 주문 규모 제한</li>
+<li>킬 스위치, Drop Copy 실시간 위험 모니터링</li>
+</ul>
+<hr />
+<h2 id="8">8. 특별 세션</h2>
+<h3 id="81-webtradinghourscom">8.1 장전 매매 <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li>04:00–09:30 ET; 연속 전자 매칭; 지정가만 (Extended Hours TIF)</li>
+</ul>
+<h3 id="82-opening-cross-ref7">8.2 Opening Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>09:25–09:30 NOII 배포; 09:30 단일가 체결</li>
+<li>MOO, LOO, IO Open, 일반 지정가/시장가</li>
+</ul>
+<h3 id="83-ref1">8.3 핵심 매매시간 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>09:30–16:00 ET; INET 연속 가격·시간 우선 매칭</li>
+<li>M-ELO, MPPO, 페그 등 전 주문유형 사용 가능</li>
+</ul>
+<h3 id="84-closing-cross-ref7">8.4 Closing Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>15:50–16:00 NOII 배포; 16:00 단일가 체결</li>
+<li>MOC, LOC, IO Close</li>
+</ul>
+<h3 id="85-webtradinghourscom">8.5 장후 매매 <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li>16:00–20:00 ET; 연속 전자 매칭; 지정가만</li>
+</ul>
+<h3 id="86-halt-cross-ipo-cross-ref1-webnasdaqcom">8.6 Halt Cross / IPO Cross <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup></h3>
+<ul>
+<li>규제 정지 후 재개장 및 신규 상장 첫 거래에 사용</li>
+<li>NOII 배포 후 단일가 체결 — 전량 전자, DMM 없음</li>
+</ul>
+<hr />
+<h2 id="9">9. 유동성공급자 / 시장조성자 의무</h2>
+<h3 id="91-ref1">9.1 나스닥 시장조성자 (경쟁 모델) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<p><strong>구조</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- 종목당 <strong>복수 시장조성자</strong> (경쟁적, 비독점)
+- 모든 등록 브로커-딜러가 하나 이상의 종목에서 MM 등록 가능</p>
+<p><strong>호가 의무 (Rule 4613)</strong>: <sup class="cite"><a href="#web-federalregister-gov-rule4613" title="WEB: federalregister.gov/rule4613">[W]</a></sup>
+- 매매시간 중 지속적 양방향 호가 유지
+- 지정 비율(Designated Percentage) 이내 호가 가격 유지
+- 정규거래단위(100주) 이상 게시 호가에서 체결 의무</p>
+<p><strong>확정호가 규칙</strong>: <sup class="cite"><a href="#web-finra-org" title="WEB: finra.org">[W]</a></sup>
+- 게시 호가·수량에서 반드시 체결 — 다른 FINRA 회원과의 거래</p>
+<p><strong>도구</strong>: <sup class="cite"><a href="#web-nasdaqtrader-com-mmpeg" title="WEB: nasdaqtrader.com/mmpeg">[W]</a></sup>
+- 시장조성자 페그 주문: 의무 준수를 위한 자동 재가격</p>
+<h3 id="92-webnasdaqcom">9.2 수수료 구조 / 인센티브 <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup></h3>
+<ul>
+<li><strong>메이커-테이커 모델</strong>: 표시 유동성 추가 시 리베이트, 제거 시 수수료</li>
+<li>일반 리베이트: 체결 주당 ~$0.002–0.003</li>
+<li>거래량 임계값 기반 단계별 가격 책정</li>
+</ul>
+<h3 id="93-nyse-dmm-ref1">9.3 NYSE DMM과 비교 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>NYSE</strong>: 종목당 독점 DMM 1사, 의무 + 특권</li>
+<li><strong>나스닥</strong>: 종목당 다수 MM, 경쟁적 호가, 독점권 없음</li>
+<li><strong>결과</strong>: NYSE = 보장된 깊은 유동성; 나스닥 = 폭넓은 경쟁적 압력</li>
+</ul>
+<hr />
+<h2 id="10">10. 출처 목록</h2>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> Nasdaq, "NASDAQ Rule Book", <a href="https://listingcenter.nasdaq.com/rulebook/nasdaq/rules" target="_blank">https://listingcenter.nasdaq.com/rulebook/nasdaq/rules</a>
+<span id="ref-2"><strong>[REF:#2]</strong></span> Nasdaq, "OUCH Overview", <a href="https://www.nasdaqtrader.com/Trader.aspx?id=OUCH" target="_blank">https://www.nasdaqtrader.com/Trader.aspx?id=OUCH</a>
+<span id="ref-3"><strong>[REF:#3]</strong></span> Nasdaq, "OUCH 5.0 Specification", <a href="https://nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/Ouch5.0.pdf" target="_blank">https://nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/Ouch5.0.pdf</a>
+<span id="ref-4"><strong>[REF:#4]</strong></span> Nasdaq, "OUCH 5.0 FAQ", <a href="https://nasdaqtrader.com/content/productsservices/trading/OUCH_5.0_FAQ.pdf" target="_blank">https://nasdaqtrader.com/content/productsservices/trading/OUCH_5.0_FAQ.pdf</a>
+<span id="ref-5"><strong>[REF:#5]</strong></span> Nasdaq, "Nordic Equity TotalView-ITCH 3.04.X", <a href="https://www.nasdaq.com/docs/2025/11/13/Nordic-Equity-TotalView-ITCH-3.04.X.pdf" target="_blank">https://www.nasdaq.com/docs/2025/11/13/Nordic-Equity-TotalView-ITCH-3.04.X.pdf</a>
+<span id="ref-6"><strong>[REF:#6]</strong></span> Nasdaq, "NASDAQ TotalView", <a href="https://data.nasdaq.com/databases/NTV" target="_blank">https://data.nasdaq.com/databases/NTV</a>
+<span id="ref-7"><strong>[REF:#7]</strong></span> Nasdaq, "Opening and Closing Crosses", <a href="https://nasdaqtrader.com/Trader.aspx?id=OpenClose" target="_blank">https://nasdaqtrader.com/Trader.aspx?id=OpenClose</a>
+<span id="ref-8"><strong>[REF:#8]</strong></span> Nasdaq, "Opening/Closing Cross FAQ", <a href="https://nasdaqtrader.com/content/productsservices/trading/crosses/openclose_faqs.pdf" target="_blank">https://nasdaqtrader.com/content/productsservices/trading/crosses/openclose_faqs.pdf</a>
+<span id="ref-9"><strong>[REF:#9]</strong></span> Nasdaq, "Order Types &amp; Routing Strategies", <a href="https://www.nasdaqtrader.com/content/marketregulation/regnms/rash_strategy.pdf" target="_blank">https://www.nasdaqtrader.com/content/marketregulation/regnms/rash_strategy.pdf</a>
+[REF:#10–13] 추가 참조 출처 (TotalView Solutions, Help Center, OUCH 4.2, INET Nordic)</p>
+<p>[WEB 출처] 전체 목록은 영문 보고서 §10 참조</p>
+<hr />
+<p><em>보고서 버전: 1.0 | 배치: 1 | 작성일: 2026-03-27 | 언어: 한국어</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

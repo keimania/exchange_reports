@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eurex Exchange — Exchange Report</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1-exchange-overview">1. Exchange Overview</a></li>
+<li><a href="#2-institutional-philosophy">2. Institutional Philosophy</a></li>
+<li><a href="#3-order-types-basic">3. Order Types — Basic</a></li>
+<li class="h3"><a href="#31-limit-order-ref1">3.1 Limit Order [1]</a></li>
+<li class="h3"><a href="#32-market-order-ref1">3.2 Market Order [1]</a></li>
+<li class="h3"><a href="#33-market-to-limit-order-ref1">3.3 Market-to-Limit Order [1]</a></li>
+<li><a href="#4-order-types-advanced">4. Order Types — Advanced</a></li>
+<li class="h3"><a href="#41-stop-order-stop-loss-market-ref1">4.1 Stop Order (Stop-Loss Market) [1]</a></li>
+<li class="h3"><a href="#42-stop-limit-order-ref1">4.2 Stop-Limit Order [1]</a></li>
+<li class="h3"><a href="#43-one-cancels-the-other-oco-ref1">4.3 One-Cancels-the-Other (OCO) [1]</a></li>
+<li class="h3"><a href="#44-iceberg-order-ref1">4.4 Iceberg Order [1]</a></li>
+<li class="h3"><a href="#45-book-or-cancel-boc-ref1">4.5 Book-or-Cancel (BOC) [1]</a></li>
+<li class="h3"><a href="#46-closing-auction-order-ref1">4.6 Closing Auction Order [1]</a></li>
+<li class="h3"><a href="#47-opening-auction-order-ref1">4.7 Opening Auction Order [1]</a></li>
+<li class="h3"><a href="#48-auction-only-order-ref1">4.8 Auction-Only Order [1]</a></li>
+<li class="h3"><a href="#49-time-in-force-options-ref1">4.9 Time-in-Force Options [1]</a></li>
+<li><a href="#5-order-types-exchange-specific">5. Order Types — Exchange-Specific</a></li>
+<li class="h3"><a href="#51-oco-one-cancels-the-other-ref1">5.1 OCO (One-Cancels-the-Other) [1]</a></li>
+<li class="h3"><a href="#52-book-or-cancel-boc-ref1">5.2 Book-or-Cancel (BOC) [1]</a></li>
+<li class="h3"><a href="#53-strategy-orders-webeurexcom">5.3 Strategy Orders [W]</a></li>
+<li class="h3"><a href="#54-volume-discovery-orders-webeurexcom">5.4 Volume Discovery Orders [W]</a></li>
+<li class="h3"><a href="#55-auction-specific-order-variants-ref1">5.5 Auction-Specific Order Variants [1]</a></li>
+<li><a href="#6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</a></li>
+<li class="h3"><a href="#trading-system-t7-ref4-ref5-webeurexcomt7">Trading System: T7 [4] [5] [W]</a></li>
+<li class="h3"><a href="#matching-algorithm-price-time-priority-ref1">Matching Algorithm: Price-Time Priority [1]</a></li>
+<li class="h3"><a href="#auction-phases-webeurexcomtrading-phases">Auction Phases [W]</a></li>
+<li class="h3"><a href="#volatility-interruptions-webeurexcomvi">Volatility Interruptions [W]</a></li>
+<li class="h3"><a href="#tick-size">Tick Size</a></li>
+<li class="h3"><a href="#lot-size">Lot Size</a></li>
+<li><a href="#7-safeguard-mechanisms">7. Safeguard Mechanisms</a></li>
+<li class="h3"><a href="#71-volatility-interruptions-webeurexcomvi-webeurexcomsafeguards">7.1 Volatility Interruptions [W] [W]</a></li>
+<li class="h3"><a href="#72-pre-trade-risk-controls-ref5-ref7-webeurexcomsafeguards">7.2 Pre-Trade Risk Controls [5] [7] [W]</a></li>
+<li class="h3"><a href="#73-no-market-wide-circuit-breaker-eurex-specific">7.3 No Market-Wide Circuit Breaker (Eurex-specific)</a></li>
+<li class="h3"><a href="#74-stressed-market-conditions">7.4 Stressed Market Conditions</a></li>
+<li><a href="#8-special-sessions">8. Special Sessions</a></li>
+<li class="h3"><a href="#81-pre-trading-0100-cet-webeurexcomtrading-hours">8.1 Pre-Trading (01:00 CET) [W]</a></li>
+<li class="h3"><a href="#82-opening-auction-webeurexcomtrading-phases">8.2 Opening Auction [W]</a></li>
+<li class="h3"><a href="#83-continuous-trading-ref1">8.3 Continuous Trading [1]</a></li>
+<li class="h3"><a href="#84-closing-auction-webeurexcomtrading-phases">8.4 Closing Auction [W]</a></li>
+<li class="h3"><a href="#85-post-trading-webeurexcomtrading-hours">8.5 Post-Trading [W]</a></li>
+<li class="h3"><a href="#86-off-book-trading-t7-entry-service-webeurexcom">8.6 Off-Book Trading (T7 Entry Service) [W]</a></li>
+<li class="h3"><a href="#87-extended-trading-hours-webeurexcomthx">8.7 Extended Trading Hours [W]</a></li>
+<li><a href="#9-lp-market-maker-obligations">9. LP / Market Maker Obligations</a></li>
+<li class="h3"><a href="#91-market-making-models-webeurexcommm">9.1 Market Making Models [W]</a></li>
+<li class="h3"><a href="#92-quoting-requirements-webeurexcommm">9.2 Quoting Requirements [W]</a></li>
+<li class="h3"><a href="#93-comparison">9.3 Comparison</a></li>
+<li><a href="#10-source-bibliography">10. Source Bibliography</a></li>
+<li class="h3"><a href="#reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</a></li>
+<li class="h3"><a href="#web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="eurex-exchange-exchange-report">Eurex Exchange — Exchange Report</h1>
+<hr />
+<h2 id="1-exchange-overview">1. Exchange Overview</h2>
+<p><strong>Full Legal Name</strong>: Eurex Frankfurt AG / Eurex Zürich AG
+<strong>Country</strong>: Germany / Switzerland
+<strong>Founding Year</strong>: 1998 (merger of DTB and SOFFEX) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>Parent Group</strong>: Deutsche Börse AG <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>Market Model</strong>: Hybrid auction + continuous trading; primarily derivatives-focused with shared T7 platform (also powers Xetra cash) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></p>
+<p><strong>Asset Classes Traded</strong>: <sup class="cite"><a href="#web-eurex-com-markets" title="WEB: eurex.com/markets">[W]</a></sup>
+- Equity index derivatives (EURO STOXX 50, DAX, etc.)
+- Single stock options &amp; futures
+- Interest rate derivatives (Bund, Bobl, Schatz futures)
+- Dividend, volatility, ETF/ETC, FX, credit, commodity, cryptocurrency derivatives
+- Eurex Repo (fixed income repo market)</p>
+<p><strong>Regular Trading Hours (CET)</strong>: <sup class="cite"><a href="#web-eurex-com-trading-hours" title="WEB: eurex.com/trading-hours">[W]</a></sup>
+- System available: 01:00 CET
+- Regular trading: 08:00–22:00 CET (varies by product)
+- Pre-trading, opening auction, continuous, closing auction, post-trading phases per product</p>
+<p><strong>Key Statistics</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#web-eurex-com" title="WEB: eurex.com">[W]</a></sup>
+- One of the world's largest derivatives exchanges
+- Products: 2,000+ listed derivative contracts
+- ~1.9 billion contracts traded annually (peak years)</p>
+<p><strong>Recent Major Changes</strong>: <sup class="cite"><a href="#web-eurex-com" title="WEB: eurex.com">[W]</a></sup>
+- 2025.03: T7 Release 13.1 — latency improvements, Colo 2.0 hardware upgrade
+- 2025.05–07: New EURO STOXX 50 options liquidity framework
+- 2025.11: T7 Release 14.0 planned for Xetra/Börse Frankfurt</p>
+<hr />
+<h2 id="2-institutional-philosophy">2. Institutional Philosophy</h2>
+<p><strong>Primary Market Model</strong>: Electronic order-driven with strong market maker infrastructure <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-eurex-com" title="WEB: eurex.com">[W]</a></sup>
+- Derivatives-first exchange — designed around options/futures microstructure
+- Shared T7 platform with Xetra (cash equities) — unique dual-use architecture <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup>
+- Heavy emphasis on pre-trade risk controls and market integrity <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></p>
+<p><strong>Design Rationale</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Born electronic (1998) — never had physical trading floor
+- Consolidated European derivatives liquidity (replaced floor-based DTB/SOFFEX)
+- Market maker programs critical for options markets (quotes required across strikes/maturities)
+- T7 designed for ultra-low latency and high throughput</p>
+<p><strong>Role of Intermediaries</strong>: <sup class="cite"><a href="#web-eurex-com-mm" title="WEB: eurex.com/mm">[W]</a></sup>
+- <strong>Regular Market Makers (RMM)</strong>: Standard quoting obligations
+- <strong>Permanent Market Makers (PMM)</strong>: Continuous quoting, stricter obligations, higher incentives
+- <strong>Advanced Market Makers (AMM)</strong>: Most demanding obligations, best incentives
+- <strong>Designated Market Makers</strong>: Product-specific incentive schemes with fee rebates <sup class="cite"><a href="#web-eurex-com-mm" title="WEB: eurex.com/mm">[W]</a></sup>
+- Market makers essential for options liquidity (unlike equities where natural flow dominates)</p>
+<p><strong>Evolution</strong>: DTB electronic (1990) + SOFFEX → Eurex (1998) → T7 migration (2012) → T7 Release 13 (2024) → R14 planned (2025) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<hr />
+<h2 id="3-order-types-basic">3. Order Types — Basic</h2>
+<h3 id="31-limit-order-ref1">3.1 Limit Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Specified price limit; execution at limit or better</li>
+<li>Time-in-force: GFD (day), GTC (up to 1 year), GTD (specified date), IOC</li>
+<li>Available in all sessions</li>
+</ul>
+<h3 id="32-market-order-ref1">3.2 Market Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>No price specified; matches at best available contra-side price</li>
+<li>Not visible in order book</li>
+<li>Not available for strategy/calendar spread instruments</li>
+<li>Converts to limit at last execution price if partially filled</li>
+</ul>
+<h3 id="33-market-to-limit-order-ref1">3.3 Market-to-Limit Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Executes as market order; remainder converts to limit at last execution price</li>
+<li>Prevents adverse multi-level sweep</li>
+</ul>
+<hr />
+<h2 id="4-order-types-advanced">4. Order Types — Advanced</h2>
+<h3 id="41-stop-order-stop-loss-market-ref1">4.1 Stop Order (Stop-Loss Market) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Inactive until stop price triggered → becomes market order</li>
+<li>No execution guarantee at stop price</li>
+</ul>
+<h3 id="42-stop-limit-order-ref1">4.2 Stop-Limit Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Inactive until stop price triggered → becomes limit order at specified limit</li>
+<li>Two prices: stop (trigger) and limit (execution)</li>
+</ul>
+<h3 id="43-one-cancels-the-other-oco-ref1">4.3 One-Cancels-the-Other (OCO) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Combines limit order + stop market order under single order ID</li>
+<li>Limit side active immediately; stop side inactive until triggered</li>
+<li>Execution of either cancels the other</li>
+<li>Unique implementation with single-ID management</li>
+</ul>
+<h3 id="44-iceberg-order-ref1">4.4 Iceberg Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Partial display; hidden reserve replenishes on execution</li>
+<li>Peak quantity visible; total quantity hidden</li>
+</ul>
+<h3 id="45-book-or-cancel-boc-ref1">4.5 Book-or-Cancel (BOC) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>Rejected if immediately executable</strong> — accepted only if would rest on book</li>
+<li>Opposite of IOC — ensures order adds liquidity, never removes</li>
+<li>Similar to NYSE ALO / NASDAQ Post-Only</li>
+</ul>
+<h3 id="46-closing-auction-order-ref1">4.6 Closing Auction Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Limit or market variant</li>
+<li>Active only during Closing Auction and Closing Auction Freeze states</li>
+</ul>
+<h3 id="47-opening-auction-order-ref1">4.7 Opening Auction Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Limit or market variant</li>
+<li>Active only during Opening Auction and Opening Auction Freeze states</li>
+</ul>
+<h3 id="48-auction-only-order-ref1">4.8 Auction-Only Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Active across all auction states (opening, intraday, closing)</li>
+<li>Not active during continuous trading</li>
+</ul>
+<h3 id="49-time-in-force-options-ref1">4.9 Time-in-Force Options <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>GFD</strong>: Good for day (default)</li>
+<li><strong>GTC</strong>: Good till cancelled (up to 1 year auto-cancel)</li>
+<li><strong>GTD</strong>: Good till specified date (up to 1 year)</li>
+<li><strong>IOC</strong>: Immediate or cancel</li>
+</ul>
+<hr />
+<h2 id="5-order-types-exchange-specific">5. Order Types — Exchange-Specific</h2>
+<h3 id="51-oco-one-cancels-the-other-ref1">5.1 OCO (One-Cancels-the-Other) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Eurex implementation is distinctive: single order ID manages both limit and stop legs</li>
+<li>Most exchanges implement OCO as two separate linked orders</li>
+<li>Rationale: Simplifies order management for derivatives traders hedging directional risk</li>
+</ul>
+<h3 id="52-book-or-cancel-boc-ref1">5.2 Book-or-Cancel (BOC) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Post-only variant specific to Eurex T7</li>
+<li>Ensures passive execution only — important for market maker strategies seeking spread capture</li>
+</ul>
+<h3 id="53-strategy-orders-webeurexcom">5.3 Strategy Orders <sup class="cite"><a href="#web-eurex-com" title="WEB: eurex.com">[W]</a></sup></h3>
+<ul>
+<li>Multi-leg orders for options strategies (spreads, straddles, strangles, etc.)</li>
+<li>Only limit orders supported for strategy instruments</li>
+<li>T7 handles leg allocation and execution atomically</li>
+</ul>
+<h3 id="54-volume-discovery-orders-webeurexcom">5.4 Volume Discovery Orders <sup class="cite"><a href="#web-eurex-com" title="WEB: eurex.com">[W]</a></sup></h3>
+<ul>
+<li>Mechanism for block-size price discovery in derivatives</li>
+<li>Allows large orders to find counterparty interest without market impact</li>
+<li>Part of Eurex's off-book trading capabilities</li>
+</ul>
+<h3 id="55-auction-specific-order-variants-ref1">5.5 Auction-Specific Order Variants <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Opening/Closing/Auction-Only — three distinct session-targeted types</li>
+<li>More granular than most exchanges (which typically offer only MOO/MOC)</li>
+<li>Rationale: Derivatives products have complex auction mechanics with volatility interruptions</li>
+</ul>
+<hr />
+<h2 id="6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</h2>
+<h3 id="trading-system-t7-ref4-ref5-webeurexcomt7">Trading System: T7 <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup> <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup> <sup class="cite"><a href="#web-eurex-com-t7" title="WEB: eurex.com/t7">[W]</a></sup></h3>
+<ul>
+<li><strong>Platform</strong>: Shared with Xetra (cash), EEX (energy), Nodal Exchange <sup class="cite"><a href="#web-databento-com" title="WEB: databento.com">[W]</a></sup></li>
+<li><strong>Current version</strong>: Release 13.1 (March 2025); R14.0 planned Nov 2025</li>
+<li><strong>Latency</strong>: Minimum reaction time ~2,787 ns (nanosecond level); top 10 participants &lt;2,830 ns <sup class="cite"><a href="#web-eurex-com-insights" title="WEB: eurex.com/insights">[W]</a></sup></li>
+<li><strong>EOBI market data</strong>: Median 1.5 μs faster than ETI response <sup class="cite"><a href="#web-eurex-com-insights" title="WEB: eurex.com/insights">[W]</a></sup></li>
+<li><strong>Throughput</strong>: ~8,000 kHz at core; ~500 kHz at participant level <sup class="cite"><a href="#web-eurex-com-insights" title="WEB: eurex.com/insights">[W]</a></sup></li>
+<li><strong>Interface</strong>: ETI (Enhanced Trading Interface) — session-based TCP/IP <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup></li>
+<li><strong>Infrastructure</strong>: Colo 2.0 — upgraded in 2025 <sup class="cite"><a href="#web-eurex-com-insights" title="WEB: eurex.com/insights">[W]</a></sup></li>
+<li><strong>Timestamping</strong>: Nanosecond-precision for regulatory and analysis purposes <sup class="cite"><a href="#web-databento-com" title="WEB: databento.com">[W]</a></sup></li>
+</ul>
+<h3 id="matching-algorithm-price-time-priority-ref1">Matching Algorithm: Price-Time Priority <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ol>
+<li>Best price first</li>
+<li>Same price: earliest order first</li>
+<li>Market orders: highest priority (treated as accepting any price)</li>
+<li>Pro-rata matching available for some products (e.g., certain options)</li>
+</ol>
+<h3 id="auction-phases-webeurexcomtrading-phases">Auction Phases <sup class="cite"><a href="#web-eurex-com-trading-phases" title="WEB: eurex.com/trading-phases">[W]</a></sup></h3>
+<ul>
+<li><strong>Pre-Trading</strong>: System open, order entry allowed, no matching</li>
+<li><strong>Opening Auction</strong>: Order accumulation → freeze → uncrossing at equilibrium price</li>
+<li><strong>Continuous Trading</strong>: Price-time priority matching</li>
+<li><strong>Closing Auction</strong>: Order accumulation → freeze → uncrossing</li>
+<li><strong>Post-Trading</strong>: Trade confirmation, no new orders</li>
+</ul>
+<h3 id="volatility-interruptions-webeurexcomvi">Volatility Interruptions <sup class="cite"><a href="#web-eurex-com-vi" title="WEB: eurex.com/vi">[W]</a></sup></h3>
+<ul>
+<li>Triggered when next execution price deviates beyond short/long time-window bands</li>
+<li>Execution prevented → market switches to <strong>volatility auction</strong> (intraday auction)</li>
+<li>Participants can submit/cancel orders; no matching during auction</li>
+<li>No minimum duration for dynamic volatility interruptions <sup class="cite"><a href="#web-eurex-com-vi" title="WEB: eurex.com/vi">[W]</a></sup></li>
+<li>Separate from opening/closing auctions — specific to intraday continuous trading</li>
+</ul>
+<h3 id="tick-size">Tick Size</h3>
+<ul>
+<li>Product-specific; set per contract specification <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></li>
+<li>Eurex/Xetra: Configurable by instrument, typically aligned with MiFID II RTS 11 for cash equities</li>
+</ul>
+<h3 id="lot-size">Lot Size</h3>
+<ul>
+<li>Standard: 1 contract (derivatives)</li>
+<li>Scaled instruments: Users can create intraday instruments with scaled lot sizes <sup class="cite"><a href="#web-eurex-com" title="WEB: eurex.com">[W]</a></sup></li>
+</ul>
+<hr />
+<h2 id="7-safeguard-mechanisms">7. Safeguard Mechanisms</h2>
+<h3 id="71-volatility-interruptions-webeurexcomvi-webeurexcomsafeguards">7.1 Volatility Interruptions <sup class="cite"><a href="#web-eurex-com-vi" title="WEB: eurex.com/vi">[W]</a></sup> <sup class="cite"><a href="#web-eurex-com-safeguards" title="WEB: eurex.com/safeguards">[W]</a></sup></h3>
+<ul>
+<li><strong>Dynamic</strong>: Short-window price deviation triggers intraday volatility auction</li>
+<li><strong>Extended</strong>: Long-window deviation triggers extended auction</li>
+<li>Product-specific parameters (adjustable by Eurex per market conditions)</li>
+<li>Recent: Parameters adjusted for products with Asian/US trading hours <sup class="cite"><a href="#web-eurex-com-vi-circular" title="WEB: eurex.com/vi-circular">[W]</a></sup></li>
+</ul>
+<h3 id="72-pre-trade-risk-controls-ref5-ref7-webeurexcomsafeguards">7.2 Pre-Trade Risk Controls <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup> <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#web-eurex-com-safeguards" title="WEB: eurex.com/safeguards">[W]</a></sup></h3>
+<ul>
+<li><strong>Maximum order quantity</strong>: Per-product limits</li>
+<li><strong>Maximum order value</strong>: Monetary limits per order</li>
+<li><strong>Price reasonability checks</strong>: Orders outside bands rejected</li>
+<li><strong>Delta-equivalent controls</strong>: For options — position limits in delta-equivalent futures units</li>
+<li><strong>Throttling</strong>: Message rate limits per session</li>
+<li><strong>Kill Switch</strong>: Bulk cancellation capability</li>
+</ul>
+<h3 id="73-no-market-wide-circuit-breaker-eurex-specific">7.3 No Market-Wide Circuit Breaker (Eurex-specific)</h3>
+<ul>
+<li>Eurex uses per-product volatility interruptions rather than market-wide halts</li>
+<li>Different from US-style S&amp;P 500-based MWCB</li>
+<li>Consistent with European regulatory framework</li>
+</ul>
+<h3 id="74-stressed-market-conditions">7.4 Stressed Market Conditions</h3>
+<ul>
+<li>Eurex Market Supervision can adjust volatility interruption parameters</li>
+<li>Emergency procedures for system-wide issues</li>
+</ul>
+<hr />
+<h2 id="8-special-sessions">8. Special Sessions</h2>
+<h3 id="81-pre-trading-0100-cet-webeurexcomtrading-hours">8.1 Pre-Trading (01:00 CET) <sup class="cite"><a href="#web-eurex-com-trading-hours" title="WEB: eurex.com/trading-hours">[W]</a></sup></h3>
+<ul>
+<li>System opens; order entry/modification allowed</li>
+<li>No matching</li>
+</ul>
+<h3 id="82-opening-auction-webeurexcomtrading-phases">8.2 Opening Auction <sup class="cite"><a href="#web-eurex-com-trading-phases" title="WEB: eurex.com/trading-phases">[W]</a></sup></h3>
+<ul>
+<li>Product-specific start times (typically ~08:00–08:50 CET)</li>
+<li>Accumulation → Freeze → Uncrossing</li>
+<li>Opening/Auction-Only orders active</li>
+</ul>
+<h3 id="83-continuous-trading-ref1">8.3 Continuous Trading <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Core trading session; price-time priority matching</li>
+<li>All order types available (except auction-only)</li>
+<li>Volatility interruptions may pause matching</li>
+</ul>
+<h3 id="84-closing-auction-webeurexcomtrading-phases">8.4 Closing Auction <sup class="cite"><a href="#web-eurex-com-trading-phases" title="WEB: eurex.com/trading-phases">[W]</a></sup></h3>
+<ul>
+<li>Product-specific times (varies widely)</li>
+<li>Accumulation → Freeze → Uncrossing</li>
+<li>Closing Auction orders active</li>
+</ul>
+<h3 id="85-post-trading-webeurexcomtrading-hours">8.5 Post-Trading <sup class="cite"><a href="#web-eurex-com-trading-hours" title="WEB: eurex.com/trading-hours">[W]</a></sup></h3>
+<ul>
+<li>Trade confirmation and reporting</li>
+<li>No new order entry</li>
+</ul>
+<h3 id="86-off-book-trading-t7-entry-service-webeurexcom">8.6 Off-Book Trading (T7 Entry Service) <sup class="cite"><a href="#web-eurex-com" title="WEB: eurex.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Block Trades</strong>: Pre-negotiated, reported to exchange</li>
+<li><strong>EFP/EFS/EFR</strong>: Exchange for Physical/Swap/Related position</li>
+<li><strong>Volume Discovery</strong>: Mechanism for large order price discovery</li>
+<li><strong>Eurex EnLight</strong>: Request-for-quote platform for off-book negotiation</li>
+</ul>
+<h3 id="87-extended-trading-hours-webeurexcomthx">8.7 Extended Trading Hours <sup class="cite"><a href="#web-eurex-com-thx" title="WEB: eurex.com/thx">[W]</a></sup></h3>
+<ul>
+<li>Select products: Trading until 22:00 CET</li>
+<li>Asian hours access for Nikkei, KOSPI products</li>
+<li>US hours overlap for interest rate products</li>
+</ul>
+<hr />
+<h2 id="9-lp-market-maker-obligations">9. LP / Market Maker Obligations</h2>
+<h3 id="91-market-making-models-webeurexcommm">9.1 Market Making Models <sup class="cite"><a href="#web-eurex-com-mm" title="WEB: eurex.com/mm">[W]</a></sup></h3>
+<p><strong>Regular Market Making (RMM)</strong>:
+- Standard quoting obligations (response to quote requests)
+- Basic fee rebates</p>
+<p><strong>Permanent Market Making (PMM)</strong>: <sup class="cite"><a href="#web-eurex-com-mm" title="WEB: eurex.com/mm">[W]</a></sup>
+- Continuous quoting required (not just quote response)
+- Stricter spread/size obligations
+- Higher fee rebates
+- Must quote all maturities and wide delta range (for options) <sup class="cite"><a href="#web-eurex-com-oesx-lp" title="WEB: eurex.com/oesx-lp">[W]</a></sup></p>
+<p><strong>Advanced Market Making (AMM)</strong>:
+- Most demanding obligations
+- Best incentive structure
+- Reserved for highest-commitment participants</p>
+<p><strong>Designated Market Making</strong>: <sup class="cite"><a href="#web-eurex-com-dmm" title="WEB: eurex.com/dmm">[W]</a></sup>
+- Product-specific schemes
+- 50% transaction fee reimbursement upon fulfillment <sup class="cite"><a href="#web-eurex-com-dmm" title="WEB: eurex.com/dmm">[W]</a></sup>
+- Time-limited programs for specific products</p>
+<h3 id="92-quoting-requirements-webeurexcommm">9.2 Quoting Requirements <sup class="cite"><a href="#web-eurex-com-mm" title="WEB: eurex.com/mm">[W]</a></sup></h3>
+<ul>
+<li>Minimum quote sizes set per product</li>
+<li>Spread requirements calibrated to market conditions</li>
+<li>90% coverage requirement for EURO STOXX 50 options (new 2025) <sup class="cite"><a href="#web-eurex-com-oesx-lp" title="WEB: eurex.com/oesx-lp">[W]</a></sup></li>
+<li>Monthly average fulfillment assessment</li>
+<li>MiFID II regulatory market-making compliance</li>
+</ul>
+<h3 id="93-comparison">9.3 Comparison</h3>
+<ul>
+<li><strong>vs. NYSE DMM</strong>: Eurex has multiple MM tiers (RMM/PMM/AMM) vs. NYSE's single exclusive DMM</li>
+<li><strong>vs. NASDAQ</strong>: Both competitive models; Eurex more structured with explicit tiers</li>
+<li><strong>vs. KRX/TSE/HKEX</strong>: Those exchanges have limited/no equity MMs; Eurex's MM programs are central to derivatives liquidity</li>
+</ul>
+<hr />
+<h2 id="10-source-bibliography">10. Source Bibliography</h2>
+<h3 id="reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</h3>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> Eurex, "Order Types", <a href="https://www.eurex.com/ex-en/trade/order-book-trading/order-types" target="_blank">https://www.eurex.com/ex-en/trade/order-book-trading/order-types</a>
+<span id="ref-2"><strong>[REF:#2]</strong></span> Eurex, "Exchange Rules Circular (2024)", <a href="https://www.eurex.com/ex-en/find/circulars/circular-3763988" target="_blank">https://www.eurex.com/ex-en/find/circulars/circular-3763988</a>
+<span id="ref-3"><strong>[REF:#3]</strong></span> Eurex, "Exchange Rules Circular (2025)", <a href="https://www.eurex.com/ex-en/find/circulars/circular-4176840" target="_blank">https://www.eurex.com/ex-en/find/circulars/circular-4176840</a>
+<span id="ref-4"><strong>[REF:#4]</strong></span> Eurex, "T7 Release 13 Overview", <a href="https://www.eurex.com/ex-en/support/initiatives/t7-release13" target="_blank">https://www.eurex.com/ex-en/support/initiatives/t7-release13</a>
+<span id="ref-5"><strong>[REF:#5]</strong></span> Eurex, "ETI Manual (PDF)", <a href="https://www.eurexchange.com/resource/blob/297838/54cd4e591b23d7e3d60ef8e707c21a56/data/eurex_eti_manual_V31.pdf" target="_blank">https://www.eurexchange.com/resource/blob/297838/54cd4e591b23d7e3d60ef8e707c21a56/data/eurex_eti_manual_V31.pdf</a>
+<span id="ref-6"><strong>[REF:#6]</strong></span> Eurex, "Eurex Trader &amp; Admin GUI Manual (PDF)", <a href="https://www.eurexchange.com/resource/blob/279888/c6872432b05d4085a6642319104cc320/data/Eurex-Trader-and-Admin-GUI-User-Manual.pdf" target="_blank">https://www.eurexchange.com/resource/blob/279888/c6872432b05d4085a6642319104cc320/data/Eurex-Trader-and-Admin-GUI-User-Manual.pdf</a>
+<span id="ref-7"><strong>[REF:#7]</strong></span> Eurex, "T7 R13.1 Participant Maintenance Manual (PDF)", <a href="https://www.eurex.com/resource/blob/4332334/61e2e29f08a63ff88d20ee30c4dc2049/data/T7_R.13.1_Derivatives_Market_-_Participant_and_User_Maintenance_Manual_Version_1.pdf" target="_blank">https://www.eurex.com/resource/blob/4332334/61e2e29f08a63ff88d20ee30c4dc2049/data/T7_R.13.1_Derivatives_Market_-_Participant_and_User_Maintenance_Manual_Version_1.pdf</a></p>
+<h3 id="web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</h3>
+<p><span id="web-wikipedia"><strong>[WEB:wikipedia]</strong></span> Eurex — Wikipedia, <a href="https://en.wikipedia.org/wiki/Eurex" target="_blank">https://en.wikipedia.org/wiki/Eurex</a> Accessed 2026-03-27
+<span id="web-eurex-com"><strong>[WEB:eurex.com]</strong></span> Eurex main, <a href="https://www.eurex.com/ex-en/" target="_blank">https://www.eurex.com/ex-en/</a> Accessed 2026-03-27
+<span id="web-eurex-com-mm"><strong>[WEB:eurex.com/mm]</strong></span> "Market-Making and Liquidity Provisioning", <a href="https://www.eurex.com/ex-en/trade/market-making-and-liquidity-provisioning" target="_blank">https://www.eurex.com/ex-en/trade/market-making-and-liquidity-provisioning</a> Accessed 2026-03-27
+<span id="web-eurex-com-trading-hours"><strong>[WEB:eurex.com/trading-hours]</strong></span> "Trading Hours", <a href="https://www.eurex.com/ex-en/trade/trading-hours" target="_blank">https://www.eurex.com/ex-en/trade/trading-hours</a> Accessed 2026-03-27
+<span id="web-eurex-com-trading-phases"><strong>[WEB:eurex.com/trading-phases]</strong></span> "Trading Phases", <a href="https://www.eurex.com/ex-en/trade/trading-hours/trading-phases" target="_blank">https://www.eurex.com/ex-en/trade/trading-hours/trading-phases</a> Accessed 2026-03-27
+<span id="web-eurex-com-vi"><strong>[WEB:eurex.com/vi]</strong></span> "Volatility Interruption Functionality", <a href="https://www.eurex.com/ex-en/support/emergencies-and-safeguards/volatility-interruption-functionality" target="_blank">https://www.eurex.com/ex-en/support/emergencies-and-safeguards/volatility-interruption-functionality</a> Accessed 2026-03-27
+<span id="web-eurex-com-safeguards"><strong>[WEB:eurex.com/safeguards]</strong></span> "Trading Safeguards (Oct 2025 PDF)", <a href="https://www.eurex.com/resource/blob/2448162/28033c3a73ea19078860573d526f8f33/data/presentation-trading-safeguards.pdf" target="_blank">https://www.eurex.com/resource/blob/2448162/28033c3a73ea19078860573d526f8f33/data/presentation-trading-safeguards.pdf</a> Accessed 2026-03-27
+<span id="web-eurex-com-insights"><strong>[WEB:eurex.com/insights]</strong></span> "Insights into Trading System Dynamics (Mar 2025 PDF)", <a href="https://www.eurex.com/resource/blob/48918/4f724c9415d2731cfb27295db6269c9c/data/presentation-insights-into-trading-system-dynamics.pdf" target="_blank">https://www.eurex.com/resource/blob/48918/4f724c9415d2731cfb27295db6269c9c/data/presentation-insights-into-trading-system-dynamics.pdf</a> Accessed 2026-03-27
+<span id="web-eurex-com-oesx-lp"><strong>[WEB:eurex.com/oesx-lp]</strong></span> "New EURO STOXX 50 Options Liquidity Framework", <a href="https://www.eurex.com/ex-en/find/news-center/news/oesx-new-lp-scheme-4321212" target="_blank">https://www.eurex.com/ex-en/find/news-center/news/oesx-new-lp-scheme-4321212</a> Accessed 2026-03-27
+<span id="web-databento-com"><strong>[WEB:databento.com]</strong></span> "What is the T7 trading platform?", <a href="https://databento.com/microstructure/t7" target="_blank">https://databento.com/microstructure/t7</a> Accessed 2026-03-27</p>
+<hr />
+<p><em>Report version: 1.0 | Batch: 3 | Created: 2026-03-27 | Language: English</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

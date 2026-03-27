@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>9대 거래소 종합비교 보고서</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#executive-summary">요약 (Executive Summary)</a></li>
+<li class="h3"><a href="#_1">핵심 발견사항</a></li>
+<li><a href="#a">표 A: 시장 철학 비교</a></li>
+<li><a href="#b">표 B: 주문유형 가용성 매트릭스</a></li>
+<li><a href="#c">표 C: 안전장치 메커니즘 비교</a></li>
+<li><a href="#d">표 D: 매매시간 구조 (현지시간)</a></li>
+<li><a href="#e">표 E: 유동성공급자 / 시장조성자 비교</a></li>
+<li><a href="#_2">거래소별 고유 특징</a></li>
+<li><a href="#_3">기술 비교</a></li>
+<li><a href="#_4">연구 갭 종합</a></li>
+<li class="h3"><a href="#_5">공통 미해결 갭</a></li>
+<li class="h3"><a href="#_6">거래소별 잔여 갭</a></li>
+<li><a href="#_7">주요 분석 주제</a></li>
+<li class="h3"><a href="#1">1. 전자 주문주도형 수렴</a></li>
+<li class="h3"><a href="#2">2. 변동성 통제의 다양한 접근</a></li>
+<li class="h3"><a href="#3-vs">3. 다크풀 통합 vs 분리</a></li>
+<li class="h3"><a href="#4">4. 종가 결정 메커니즘 혁신</a></li>
+<li class="h3"><a href="#5">5. 시장조성자 프로그램 스펙트럼</a></li>
+<li class="h3"><a href="#6-vs">6. 프로토콜 표준화 vs 독자</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="9">9대 거래소 종합비교 보고서</h1>
+<blockquote>
+<p>프로젝트: compare_exchange_01 | 작성일: 2026-03-27 | Session 4 종합</p>
+</blockquote>
+<hr />
+<h2 id="executive-summary">요약 (Executive Summary)</h2>
+<p>본 보고서는 전 세계 9개 주요 거래소의 시장 미시구조를 체계적으로 비교 분석한 결과물이다.</p>
+<p><strong>대상 거래소</strong>: KRX (한국), NYSE (미국), NASDAQ (미국), TSE (일본), LSE (영국), HKEX (홍콩), Eurex (독일/스위스), ASX (호주), SGX (싱가포르)</p>
+<h3 id="_1">핵심 발견사항</h3>
+<ol>
+<li><strong>시장 모델 스펙트럼</strong>: 순수 주문주도형(KRX, NASDAQ, TSE, HKEX, ASX, SGX) → 혼합형(NYSE, Eurex) → 호가주도형(LSE SEAQ). NYSE만이 물리적 거래 플로어를 유지.</li>
+<li><strong>변동성 통제 5가지 접근</strong>: 시장 전체 서킷브레이커(미국), 가격제한폭+VI(KRX), 가격제한폭+특별기배(TSE), 종목별 냉각기간(HKEX/SGX), 변동성 경매(Eurex/LSE), 이상주문 거부(ASX).</li>
+<li><strong>시장조성자 다양성</strong>: 독점 DMM(NYSE) → 경쟁적 MM(NASDAQ) → 계층적 MM(Eurex RMM/PMM/AMM) → 유동성별 차등(LSE) → ETF/파생상품만(TSE, HKEX, ASX, SGX).</li>
+<li><strong>기술 수렴</strong>: OUCH/ITCH 프로토콜이 NASDAQ 외 ASX, SGX로 확산. FIX는 전 거래소 공통. 나노초 타임스탬프(Eurex T7)가 최첨단.</li>
+<li><strong>종가 결정 혁신</strong>: TSE CAS(2024.11 신규), HKEX CAS(±5% 가격대+무작위 종료), NYSE 경매 칼라, NASDAQ Closing Cross — 종가 무결성이 글로벌 화두.</li>
+</ol>
+<hr />
+<h2 id="a">표 A: 시장 철학 비교</h2>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>시장 모델</th>
+<th>물리적 플로어</th>
+<th>주요 중개자</th>
+<th>매칭 알고리즘</th>
+<th>점심 휴장</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KRX</strong></td>
+<td>순수 주문주도형</td>
+<td>없음</td>
+<td>LP + MM (자발적)</td>
+<td>가격·시간 우선</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>NYSE</strong></td>
+<td>혼합형 (전자+플로어+DMM)</td>
+<td><strong>있음</strong> (유일)</td>
+<td>독점 DMM + SLP</td>
+<td>가격/동등/우선</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>NASDAQ</strong></td>
+<td>순수 전자 주문주도형</td>
+<td>없음</td>
+<td>경쟁적 MM (복수)</td>
+<td>가격·시간·표시 우선</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>TSE</strong></td>
+<td>이타요세+자라바 이중</td>
+<td>없음</td>
+<td>ETF MM만</td>
+<td>가격·시간 우선 (자라바)</td>
+<td><strong>있음</strong> (11:30–12:30)</td>
+</tr>
+<tr>
+<td><strong>LSE</strong></td>
+<td>3단계 (SETS/SETSqx/SEAQ)</td>
+<td>없음</td>
+<td>유동성별 차등 MM</td>
+<td>가격·시간 우선 (SETS)</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>HKEX</strong></td>
+<td>주문주도+VCM 안전장치</td>
+<td>없음</td>
+<td>파생상품/ETP MM만</td>
+<td>가격·시간 우선; 경매 시 유형 우선</td>
+<td><strong>있음</strong> (12:00–13:00)</td>
+</tr>
+<tr>
+<td><strong>Eurex</strong></td>
+<td>파생상품 중심 혼합</td>
+<td>없음</td>
+<td>RMM/PMM/AMM 계층</td>
+<td>가격·시간 우선; 일부 비례배분</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>ASX</strong></td>
+<td>주문주도+통합 다크풀</td>
+<td>없음</td>
+<td>ETO/ETP MM만</td>
+<td>가격·시간 우선 (릿); 중간가 (다크)</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>SGX</strong></td>
+<td>주문주도+파생허브</td>
+<td>없음</td>
+<td>ETF DMM + 파생 MM</td>
+<td>가격·시간 우선; PPM/비례배분</td>
+<td>없음</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="b">표 B: 주문유형 가용성 매트릭스</h2>
+<table>
+<thead>
+<tr>
+<th>주문유형</th>
+<th style="text-align: center;">KRX</th>
+<th style="text-align: center;">NYSE</th>
+<th style="text-align: center;">NASDAQ</th>
+<th style="text-align: center;">TSE</th>
+<th style="text-align: center;">LSE</th>
+<th style="text-align: center;">HKEX</th>
+<th style="text-align: center;">Eurex</th>
+<th style="text-align: center;">ASX</th>
+<th style="text-align: center;">SGX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>시장가 (Market)</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅*</td>
+<td style="text-align: center;">✅†</td>
+</tr>
+<tr>
+<td>지정가 (Limit)</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>스톱 (Stop)</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅†</td>
+</tr>
+<tr>
+<td>스톱 지정가</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>시장가-지정가 전환</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅*</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>빙산 (Iceberg)</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>비표시 (Hidden)</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>페그 (Pegged)</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>중간가 (Midpoint)</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>게시전용 (Post-Only)</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>OCO</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>MOO/LOO</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>MOC/LOC</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>IOC</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>FOK</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>GTC</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>GTD</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td><strong>고유 주문유형</strong></td>
+<td style="text-align: center;">최유리/최우선/조건부/중간가</td>
+<td style="text-align: center;">D-Order, MPL, ALO</td>
+<td style="text-align: center;">M-ELO, MPPO</td>
+<td style="text-align: center;">후나리</td>
+<td style="text-align: center;">Named, At Best, Random Iceberg</td>
+<td style="text-align: center;">증강지정가, 특별지정가, 경매주문</td>
+<td style="text-align: center;">BOC, Strategy, OCO</td>
+<td style="text-align: center;">Centre Point, Sweep</td>
+<td style="text-align: center;">MKT=FAK, TAC</td>
+</tr>
+</tbody>
+</table>
+<p>* ASX 시장가 = 시장가→지정가 전환 (기본)
+† SGX 시장가 = FAK 방식 (잔량 취소); SGX 스톱 = FAK 방식</p>
+<hr />
+<h2 id="c">표 C: 안전장치 메커니즘 비교</h2>
+<table>
+<thead>
+<tr>
+<th>메커니즘</th>
+<th>KRX</th>
+<th>NYSE</th>
+<th>NASDAQ</th>
+<th>TSE</th>
+<th>LSE</th>
+<th>HKEX</th>
+<th>Eurex</th>
+<th>ASX</th>
+<th>SGX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>시장 전체 CB</strong></td>
+<td>✅ 8/15/20%</td>
+<td>✅ 7/13/20%</td>
+<td>✅ 7/13/20%</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>종목별 VI</strong></td>
+<td>동적 3/6% + 정적 10%</td>
+<td>LULD 5/10/20%</td>
+<td>LULD 5/10/20%</td>
+<td>특별기배</td>
+<td>동적 3% / 정적 8%</td>
+<td>VCM ±10%</td>
+<td>변동성 중단</td>
+<td>AOT ±10%</td>
+<td>CB ±10%</td>
+</tr>
+<tr>
+<td><strong>VI 대응</strong></td>
+<td>2분 단일가</td>
+<td>15초→5분 정지</td>
+<td>15초→5분 정지</td>
+<td>점진적 참고호가</td>
+<td>5분 단일가경매</td>
+<td>5분 냉각 (매매계속)</td>
+<td>변동성경매</td>
+<td>주문거부+2분정지</td>
+<td>5분 냉각 (매매계속)</td>
+</tr>
+<tr>
+<td><strong>가격제한폭</strong></td>
+<td>±30%</td>
+<td>없음</td>
+<td>없음</td>
+<td>절대 엔화 금액</td>
+<td>없음</td>
+<td>없음 (9배 규칙)</td>
+<td>없음</td>
+<td>없음</td>
+<td>없음</td>
+</tr>
+<tr>
+<td><strong>고유 기능</strong></td>
+<td>이중보호 (한도+VI)</td>
+<td>경매 칼라</td>
+<td>명확착오체결</td>
+<td>특별기배 (연성 CB)</td>
+<td>종목별 정밀 교정</td>
+<td>냉각 중 거래 지속</td>
+<td>상품별 매개변수</td>
+<td>ASIC 가격개선 규칙</td>
+<td>HKEX와 유사</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="d">표 D: 매매시간 구조 (현지시간)</h2>
+<table>
+<thead>
+<tr>
+<th>세션</th>
+<th>KRX</th>
+<th>NYSE</th>
+<th>NASDAQ</th>
+<th>TSE</th>
+<th>LSE</th>
+<th>HKEX</th>
+<th>Eurex</th>
+<th>ASX</th>
+<th>SGX</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>사전매매</strong></td>
+<td>08:00</td>
+<td>06:30</td>
+<td>04:00</td>
+<td>08:00</td>
+<td>05:05</td>
+<td>—</td>
+<td>01:00</td>
+<td>07:00</td>
+<td>08:30</td>
+</tr>
+<tr>
+<td><strong>개장경매</strong></td>
+<td>08:00–09:00</td>
+<td>09:30</td>
+<td>09:25–09:30</td>
+<td>09:00</td>
+<td>07:50–08:00</td>
+<td>09:00–09:30</td>
+<td>상품별</td>
+<td>~09:59</td>
+<td>08:30–09:00</td>
+</tr>
+<tr>
+<td><strong>연속매매</strong></td>
+<td>09:00–15:20</td>
+<td>09:30–16:00</td>
+<td>09:30–16:00</td>
+<td>09:00–15:25</td>
+<td>08:00–16:30</td>
+<td>09:30–16:00</td>
+<td>08:00–22:00</td>
+<td>10:00–16:00</td>
+<td>09:00–17:00</td>
+</tr>
+<tr>
+<td><strong>점심 휴장</strong></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>11:30–12:30</td>
+<td>—</td>
+<td>12:00–13:00</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>종가경매</strong></td>
+<td>15:20–15:30</td>
+<td>15:50–16:00</td>
+<td>15:50–16:00</td>
+<td>15:25–15:30</td>
+<td>16:30–16:35</td>
+<td>16:00–16:10</td>
+<td>상품별</td>
+<td>16:10–16:12</td>
+<td>17:00–17:06</td>
+</tr>
+<tr>
+<td><strong>장후매매</strong></td>
+<td>15:40–18:00</td>
+<td>16:00–20:00</td>
+<td>16:00–20:00</td>
+<td>ToSTNeT</td>
+<td>16:40–17:15</td>
+<td>—</td>
+<td>~22:00</td>
+<td>—</td>
+<td>TAC 17:06–17:16</td>
+</tr>
+<tr>
+<td><strong>시간대(UTC)</strong></td>
+<td>UTC+9</td>
+<td>UTC-5</td>
+<td>UTC-5</td>
+<td>UTC+9</td>
+<td>UTC+0</td>
+<td>UTC+8</td>
+<td>UTC+1</td>
+<td>UTC+10</td>
+<td>UTC+8</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="e">표 E: 유동성공급자 / 시장조성자 비교</h2>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>일반 주식 MM</th>
+<th>ETF/ETP MM</th>
+<th>파생상품 MM</th>
+<th>모델 유형</th>
+<th>핵심 의무</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KRX</strong></td>
+<td>✅ MM (저유동성) + LP</td>
+<td>✅ LP</td>
+<td>✅</td>
+<td>계약+선정</td>
+<td>양방향 호가; 의무스프레드; 분기 평가</td>
+</tr>
+<tr>
+<td><strong>NYSE</strong></td>
+<td>✅ DMM (독점)</td>
+<td>✅ DMM</td>
+<td>N/A</td>
+<td>독점 배정</td>
+<td>NBBO 5-25% 시간; 경매 주도; 자본 투입</td>
+</tr>
+<tr>
+<td><strong>NASDAQ</strong></td>
+<td>✅ 경쟁적 MM</td>
+<td>❌</td>
+<td>N/A</td>
+<td>자발적 등록</td>
+<td>연속 양방향 호가; 확정호가 규칙</td>
+</tr>
+<tr>
+<td><strong>TSE</strong></td>
+<td>❌</td>
+<td>✅ 인센티브제</td>
+<td>N/A (OSE)</td>
+<td>인센티브 기반</td>
+<td>5개 ETF 이상; 80% 시간 호가유지</td>
+</tr>
+<tr>
+<td><strong>LSE</strong></td>
+<td>SETS: ❌ / SETSqx: ✅ / SEAQ: ✅ (≥2명)</td>
+<td>선택적</td>
+<td>N/A</td>
+<td>유동성별 차등</td>
+<td>SETSqx: 경쟁호가; SEAQ: 확정호가 의무</td>
+</tr>
+<tr>
+<td><strong>HKEX</strong></td>
+<td>❌</td>
+<td>✅ 지정전문가</td>
+<td>✅ PMM/GMM</td>
+<td>상품유형별</td>
+<td>연속호가; 호가요청 응대</td>
+</tr>
+<tr>
+<td><strong>Eurex</strong></td>
+<td>❌ (파생상품 거래소)</td>
+<td>N/A</td>
+<td>✅ RMM/PMM/AMM</td>
+<td><strong>3단계 계층</strong></td>
+<td>90% 커버리지 (OESX); 수수료 50% 환급</td>
+</tr>
+<tr>
+<td><strong>ASX</strong></td>
+<td>❌</td>
+<td>✅ ETP MM</td>
+<td>✅ ETO MM</td>
+<td>계약 기반</td>
+<td>50%+70% 벤치마크; 스프레드 한도</td>
+</tr>
+<tr>
+<td><strong>SGX</strong></td>
+<td>❌</td>
+<td>✅ ETF DMM</td>
+<td>✅ 상품별</td>
+<td>지정 기반</td>
+<td>연속 호가; 2025.12 의무 간소화</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_2">거래소별 고유 특징</h2>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>가장 독특한 특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KRX</strong></td>
+<td>최유리/최우선/조건부지정가 자동가격 주문; ±30% 가격제한 + VI 이중보호; 2025년 스톱지정가·중간가 도입</td>
+</tr>
+<tr>
+<td><strong>NYSE</strong></td>
+<td>세계 유일 물리적 플로어 + 독점 DMM; D-Order (플로어 전용); 경매 칼라; 동등 배분</td>
+</tr>
+<tr>
+<td><strong>NASDAQ</strong></td>
+<td>M-ELO (AI/ML 보유기간 조정); OUCH/ITCH 프로토콜 생태계; 23시간 매매 제안 (2025.12)</td>
+</tr>
+<tr>
+<td><strong>TSE</strong></td>
+<td>이타요세/자라바 이중 메커니즘; 특별기배 (연성 서킷브레이커); arrowhead 4.0 + CAS (2024.11)</td>
+</tr>
+<tr>
+<td><strong>LSE</strong></td>
+<td>3단계 시스템 (SETS/SETSqx/SEAQ) — 유일한 주요 거래소의 주문주도+혼합+호가주도 병행; 기명 주문</td>
+</tr>
+<tr>
+<td><strong>HKEX</strong></td>
+<td>증강/특별 지정가 (10단계 관통); VCM 냉각기간 중 매매 지속; CAS ±5% + 무작위 종료; Stock Connect</td>
+</tr>
+<tr>
+<td><strong>Eurex</strong></td>
+<td>T7 ~2,787ns 반응시간 (최빠른 공개 지연시간); RMM/PMM/AMM 3단계 MM; Xetra와 플랫폼 공유</td>
+</tr>
+<tr>
+<td><strong>ASX</strong></td>
+<td>Centre Point (유일한 거래소 통합 다크풀); ASX Sweep (다크→릿 통합 라우팅); ASIC 의미있는 가격개선 규칙</td>
+</tr>
+<tr>
+<td><strong>SGX</strong></td>
+<td>시장가=FAK (잔량 자동취소); TAC 10분 종가매매; 아시아 파생상품 허브; QUEST+Titan 이중 플랫폼</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_3">기술 비교</h2>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>매매시스템</th>
+<th>공개 지연시간</th>
+<th>처리량</th>
+<th>프로토콜</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KRX</td>
+<td>EXTURE+</td>
+<td>30–50 μs</td>
+<td>100,000+ TPS</td>
+<td>FIX/FAST</td>
+</tr>
+<tr>
+<td>NYSE</td>
+<td>Pillar</td>
+<td>밀리초 미만 (비공개)</td>
+<td>비공개</td>
+<td>FIX + Binary</td>
+</tr>
+<tr>
+<td>NASDAQ</td>
+<td>INET</td>
+<td>&lt;25 μs (OUCH 코로케이션)</td>
+<td>비공개</td>
+<td>OUCH + ITCH + FIX</td>
+</tr>
+<tr>
+<td>TSE</td>
+<td>arrowhead 4.0</td>
+<td>마이크로초 수준 (비공개)</td>
+<td>비공개</td>
+<td>독자 + FIX</td>
+</tr>
+<tr>
+<td>LSE</td>
+<td>Millennium Exchange</td>
+<td>126 μs (네이티브 API)</td>
+<td>비공개</td>
+<td>네이티브 + FIX 5.0</td>
+</tr>
+<tr>
+<td>HKEX</td>
+<td>Orion (OTP-C/D)</td>
+<td>비공개</td>
+<td>비공개</td>
+<td>OCG Binary + FIX</td>
+</tr>
+<tr>
+<td>Eurex</td>
+<td>T7 R13.1</td>
+<td><strong>~2,787 ns</strong> (최빠른 공개)</td>
+<td>~8,000 kHz (코어)</td>
+<td>ETI + EOBI + FIX</td>
+</tr>
+<tr>
+<td>ASX</td>
+<td>ASX Trade</td>
+<td>비공개</td>
+<td>비공개</td>
+<td>OMNet + OUCH + FIX</td>
+</tr>
+<tr>
+<td>SGX</td>
+<td>QUEST + Titan</td>
+<td>비공개</td>
+<td>비공개</td>
+<td>OMAPI + ITCH + GLIMPSE + FIX</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_4">연구 갭 종합</h2>
+<h3 id="_5">공통 미해결 갭</h3>
+<table>
+<thead>
+<tr>
+<th>갭</th>
+<th>심각도</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>결제 주기 비교 (T+1 vs T+2)</td>
+<td>중간</td>
+<td>미국 T+1 (2024); 대부분 T+2; 영국 T+1 계획 (2027)</td>
+</tr>
+<tr>
+<td>수수료 구조 비교</td>
+<td>중간</td>
+<td>메이커-테이커 vs 정률 vs 단계별 — 미분석</td>
+</tr>
+<tr>
+<td>규제 체계 비교</td>
+<td>중간</td>
+<td>SEC/FSC/FCA/SFC/MAS/ASIC/JFSA/BaFin — 미분석</td>
+</tr>
+<tr>
+<td>다크풀 거래량 비교</td>
+<td>중간</td>
+<td>ASX Centre Point, 미국 ATS, 일본 PTS, EU MTF — 데이터 수집 미완</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">거래소별 잔여 갭</h3>
+<table>
+<thead>
+<tr>
+<th>거래소</th>
+<th>주요 갭</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KRX</td>
+<td>EXTURE+ 내부 아키텍처 (회원사 전용)</td>
+</tr>
+<tr>
+<td>NYSE</td>
+<td>Pillar 정확 지연시간 (비공개)</td>
+</tr>
+<tr>
+<td>NASDAQ</td>
+<td>M-ELO 체결 통계 (비공개)</td>
+</tr>
+<tr>
+<td>TSE</td>
+<td>arrowhead 4.0 정확 지연시간 (비공개); 완전 호가단위표 (JPX 403 차단)</td>
+</tr>
+<tr>
+<td>LSE</td>
+<td>Turquoise Plato 상세 매칭 규칙</td>
+</tr>
+<tr>
+<td>HKEX</td>
+<td>OTP-C 정확 지연시간 (비공개); Stock Connect 일일 한도 상세 메커니즘</td>
+</tr>
+<tr>
+<td>Eurex</td>
+<td>변동성 중단 임계값 상품별 상세</td>
+</tr>
+<tr>
+<td>ASX</td>
+<td>ASX Trade 지연시간 (비공개); CHESS 교체 일정</td>
+</tr>
+<tr>
+<td>SGX</td>
+<td>QUEST 지연시간 (비공개); 증권 호가단위표 상세</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_7">주요 분석 주제</h2>
+<h3 id="1">1. 전자 주문주도형 수렴</h3>
+<p>9개 거래소 중 7개가 순수 또는 우세적 주문주도형. NYSE의 물리적 플로어와 LSE의 SEAQ만이 비전자·비주문장 요소를 유지. 글로벌 추세는 명확히 전자 주문장 중심.</p>
+<h3 id="2">2. 변동성 통제의 다양한 접근</h3>
+<p>"매매 중단" vs "매매 계속 (대역 제한)" — 두 가지 철학이 공존. HKEX/SGX는 냉각기간 중 매매 지속을 선택, 미국은 경성 정지, TSE는 특별기배라는 고유한 "연성" 접근 채택.</p>
+<h3 id="3-vs">3. 다크풀 통합 vs 분리</h3>
+<p>ASX만이 거래소 운영 통합 다크풀(Centre Point) 보유. 미국은 별도 ATS, EU/UK는 별도 MTF(Turquoise), 아시아(KRX/TSE/HKEX/SGX)는 다크풀 미미 또는 부재.</p>
+<h3 id="4">4. 종가 결정 메커니즘 혁신</h3>
+<p>TSE CAS(2024.11 신규), HKEX CAS(±5% 대역+무작위 종료), NYSE 경매 칼라, NASDAQ Closing Cross — 종가 무결성이 전 세계적으로 핵심 과제.</p>
+<h3 id="5">5. 시장조성자 프로그램 스펙트럼</h3>
+<p>NYSE DMM(독점 1:1) → NASDAQ(경쟁적 복수) → Eurex(RMM/PMM/AMM 3단계) → LSE(유동성별 차등) → KRX(주식 MM+ETF LP) → TSE/HKEX/ASX/SGX(ETF/파생만). 일반 주식에 MM 의무가 있는 거래소는 KRX, NYSE, NASDAQ, LSE(SETSqx/SEAQ)뿐.</p>
+<h3 id="6-vs">6. 프로토콜 표준화 vs 독자</h3>
+<p>FIX는 전 거래소 공통이나 최저 지연시간 접근을 위해 독자 프로토콜(OUCH, ITCH, ETI, EOBI, OCG Binary) 병행. OUCH/ITCH가 NASDAQ → ASX/SGX로 확산되어 사실상 아시아태평양 표준화 진행 중.</p>
+<hr />
+<p><em>종합비교 보고서 v1.0 | 140 용어 통합 용어집 기반 | 9개 거래소 × 10개 보고서 섹션 | 2026-03-27</em></p>
+
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Glossary — Market Structure Terms (English / Korean)</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#a-mechanisms">A. Mechanisms (매매 메커니즘)</a></li>
+<li><a href="#b-order-types-basic">B. Order Types — Basic (기본 주문유형)</a></li>
+<li><a href="#c-order-types-advanced">C. Order Types — Advanced (고급 주문유형)</a></li>
+<li><a href="#d-order-types-exchange-specific">D. Order Types — Exchange-Specific (거래소 고유 주문유형)</a></li>
+<li><a href="#e-market-models-participants">E. Market Models &amp; Participants (시장 모델 · 참가자)</a></li>
+<li><a href="#f-venues">F. Venues (거래 장소)</a></li>
+<li><a href="#g-safeguards">G. Safeguards (안전장치)</a></li>
+<li><a href="#h-sessions">H. Sessions (세션)</a></li>
+<li><a href="#i-price-structure">I. Price &amp; Structure (가격 · 구조)</a></li>
+<li><a href="#j-protocols-systems">J. Protocols &amp; Systems (프로토콜 · 시스템)</a></li>
+<li><a href="#k-settlement-programs">K. Settlement &amp; Programs (결제 · 프로그램)</a></li></ul>
+  <a class="home-link" href="index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="glossary-market-structure-terms-english-korean">Glossary — Market Structure Terms (English / Korean)</h1>
+<blockquote>
+<p>Unified bilingual glossary for the 9-exchange comparison project.
+140 terms covering: order types, market models, mechanisms, session names, safeguards, systems, protocols.
+Merged from: glossary.md (v1.0) + glossary_batch1.md + glossary_batch2.md + glossary_batch3.md
+Conflicts resolved: see synthesis_changelog.md</p>
+</blockquote>
+<hr />
+<h2 id="a-mechanisms">A. Mechanisms (매매 메커니즘)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Continuous Trading</td>
+<td>접속매매 (연속매매)</td>
+<td>Mechanism</td>
+<td>KRX: 접속매매; TSE: Zaraba; standard intraday matching</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Call Auction</td>
+<td>단일가매매 (동시호가)</td>
+<td>Mechanism</td>
+<td>Opening/closing price determination</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Opening Auction</td>
+<td>시초가 경매 (장전 동시호가)</td>
+<td>Mechanism</td>
+<td>KRX 08:30-09:00; NYSE/NASDAQ opening cross</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Closing Auction</td>
+<td>종가 경매 (장후 동시호가)</td>
+<td>Mechanism</td>
+<td>KRX 15:20-15:30; HKEX CAS 16:00-16:10</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Auction Uncrossing</td>
+<td>경매 체결 (단일가 체결)</td>
+<td>Mechanism</td>
+<td>Moment accumulated orders execute at single price</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Price-Time Priority</td>
+<td>가격·시간 우선원칙</td>
+<td>Mechanism</td>
+<td>Primary matching rule across most exchanges</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Pro-Rata Matching</td>
+<td>비례배분 체결</td>
+<td>Mechanism</td>
+<td>Eurex options, SGX selected products</td>
+</tr>
+<tr>
+<td>84</td>
+<td>Parity Allocation</td>
+<td>동등 배분</td>
+<td>Mechanism</td>
+<td>NYSE: allocation among resting orders at same price</td>
+</tr>
+<tr>
+<td>91</td>
+<td>Itayose (板寄せ)</td>
+<td>이타요세 (판기매)</td>
+<td>Mechanism</td>
+<td>TSE: call auction for open/close/halt resumption</td>
+</tr>
+<tr>
+<td>92</td>
+<td>Zaraba (ザラバ)</td>
+<td>자라바 (연속매매)</td>
+<td>Mechanism</td>
+<td>TSE: continuous price-time priority matching</td>
+</tr>
+</tbody>
+</table>
+<h2 id="b-order-types-basic">B. Order Types — Basic (기본 주문유형)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>Market Order</td>
+<td>시장가 주문</td>
+<td>Order Type</td>
+<td>Execute at best available price; SGX: FAK-style</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Limit Order</td>
+<td>지정가 주문</td>
+<td>Order Type</td>
+<td>Execute at specified price or better</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Stop Order</td>
+<td>조건부지정가 주문 (스톱 주문)</td>
+<td>Order Type</td>
+<td>Triggered when price reaches stop level</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Stop-Limit Order</td>
+<td>스톱 지정가 주문</td>
+<td>Order Type</td>
+<td>Stop trigger + limit price execution</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Market-to-Limit Order</td>
+<td>시장가-지정가 전환 주문</td>
+<td>Order Type</td>
+<td>Converts to limit at execution price; ASX default</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Fill-or-Kill (FOK)</td>
+<td>전량체결-전량취소 주문</td>
+<td>Order Type</td>
+<td>Must fill entirely or cancel completely</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Fill-and-Kill (FAK)</td>
+<td>즉시체결-잔량취소 주문</td>
+<td>Order Type</td>
+<td>Fill available, cancel remainder; aka IOC</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Immediate-or-Cancel (IOC)</td>
+<td>즉시체결-잔량취소 (IOC)</td>
+<td>Order Type</td>
+<td>Synonym for FAK in most markets</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Good-for-Day (GFD)</td>
+<td>당일 유효 주문</td>
+<td>Order Type</td>
+<td>Expires at end of trading day</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Good-Till-Cancel (GTC)</td>
+<td>취소시까지 유효 주문</td>
+<td>Order Type</td>
+<td>Remains active; NYSE/NASDAQ/LSE/ASX/SGX/Eurex</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Good-Till-Date (GTD)</td>
+<td>지정일까지 유효 주문</td>
+<td>Order Type</td>
+<td>Expires on specified date; LSE, Eurex</td>
+</tr>
+<tr>
+<td>78</td>
+<td>Market-on-Open (MOO)</td>
+<td>시초가 시장가 주문</td>
+<td>Order Type</td>
+<td>NYSE/NASDAQ/TSE: opening auction market order</td>
+</tr>
+<tr>
+<td>79</td>
+<td>Market-on-Close (MOC)</td>
+<td>종가 시장가 주문</td>
+<td>Order Type</td>
+<td>NYSE/NASDAQ/TSE: closing auction market order</td>
+</tr>
+<tr>
+<td>80</td>
+<td>Limit-on-Open (LOO)</td>
+<td>시초가 지정가 주문</td>
+<td>Order Type</td>
+<td>Opening auction limit order</td>
+</tr>
+<tr>
+<td>81</td>
+<td>Limit-on-Close (LOC)</td>
+<td>종가 지정가 주문</td>
+<td>Order Type</td>
+<td>Closing auction limit order</td>
+</tr>
+</tbody>
+</table>
+<h2 id="c-order-types-advanced">C. Order Types — Advanced (고급 주문유형)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>13</td>
+<td>Iceberg Order</td>
+<td>빙산 주문 (비공개잔량주문)</td>
+<td>Order Type</td>
+<td>Partial display; reserve hidden</td>
+</tr>
+<tr>
+<td>20</td>
+<td>One-Cancels-the-Other (OCO)</td>
+<td>양자택일 주문 (OCO)</td>
+<td>Order Type</td>
+<td>Eurex: single-ID limit+stop; others: linked pair</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Pegged Order</td>
+<td>페그 주문 (연동 주문)</td>
+<td>Order Type</td>
+<td>Auto-adjusts to reference (mid, best bid/ask)</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Midpoint Peg</td>
+<td>중간가 페그</td>
+<td>Order Type</td>
+<td>Pegged to NBBO/BBO midpoint</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Minimum Quantity Order</td>
+<td>최소수량 주문</td>
+<td>Order Type</td>
+<td>Requires minimum fill size per execution</td>
+</tr>
+<tr>
+<td>77</td>
+<td>Post-Only Order</td>
+<td>게시 전용 주문</td>
+<td>Order Type</td>
+<td>Posts only; cancels if would remove liquidity</td>
+</tr>
+<tr>
+<td>100</td>
+<td>Random Peak Size Iceberg</td>
+<td>무작위 피크 빙산 주문</td>
+<td>Order Type</td>
+<td>LSE: randomized display quantity</td>
+</tr>
+<tr>
+<td>119</td>
+<td>Book-or-Cancel (BOC)</td>
+<td>게시전용 주문 (BOC)</td>
+<td>Order Type</td>
+<td>Eurex: rejected if immediately executable</td>
+</tr>
+<tr>
+<td>122</td>
+<td>Strategy Order</td>
+<td>전략 주문 (다리 주문)</td>
+<td>Order Type</td>
+<td>Eurex: multi-leg options strategy</td>
+</tr>
+<tr>
+<td>123</td>
+<td>Volume Discovery Order</td>
+<td>거래량 발견 주문</td>
+<td>Order Type</td>
+<td>Eurex: block-size price discovery</td>
+</tr>
+<tr>
+<td>88</td>
+<td>Market Maker Peg Order</td>
+<td>시장조성자 페그 주문</td>
+<td>Order Type</td>
+<td>NASDAQ: auto-repricing for MM compliance</td>
+</tr>
+</tbody>
+</table>
+<h2 id="d-order-types-exchange-specific">D. Order Types — Exchange-Specific (거래소 고유 주문유형)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>25</td>
+<td>D-Order</td>
+<td>D-주문 (플로어 브로커 재량 주문)</td>
+<td>Order Type</td>
+<td>NYSE: floor broker discretionary auction interest</td>
+</tr>
+<tr>
+<td>66</td>
+<td>Stop-Limit Order (KRX)</td>
+<td>스톱지정가호가</td>
+<td>Order Type</td>
+<td>KRX: introduced 2025.02.05</td>
+</tr>
+<tr>
+<td>67</td>
+<td>Midpoint Order (KRX)</td>
+<td>중간가호가</td>
+<td>Order Type</td>
+<td>KRX: introduced 2025.02.27; arithmetic mean of BBO</td>
+</tr>
+<tr>
+<td>68</td>
+<td>Conditional Limit Order</td>
+<td>조건부지정가호가</td>
+<td>Order Type</td>
+<td>KRX: limit during continuous → market at close</td>
+</tr>
+<tr>
+<td>69</td>
+<td>Best Limit Order</td>
+<td>최유리지정가호가</td>
+<td>Order Type</td>
+<td>KRX: auto-prices at counterparty best</td>
+</tr>
+<tr>
+<td>70</td>
+<td>Best Quote Order</td>
+<td>최우선지정가호가</td>
+<td>Order Type</td>
+<td>KRX: auto-prices at own-side best</td>
+</tr>
+<tr>
+<td>72</td>
+<td>Midpoint Passive Liquidity (MPL)</td>
+<td>중간가 수동 유동성 주문</td>
+<td>Order Type</td>
+<td>NYSE: non-displayed midpoint</td>
+</tr>
+<tr>
+<td>73</td>
+<td>Add Liquidity Only (ALO)</td>
+<td>유동성 추가 전용 주문</td>
+<td>Order Type</td>
+<td>NYSE: post-only variant</td>
+</tr>
+<tr>
+<td>74</td>
+<td>Midpoint Extended Life Order (M-ELO)</td>
+<td>중간가 연장수명 주문 (M-ELO)</td>
+<td>Order Type</td>
+<td>NASDAQ: midpoint with 0.5s hold</td>
+</tr>
+<tr>
+<td>75</td>
+<td>Dynamic M-ELO</td>
+<td>동적 M-ELO</td>
+<td>Order Type</td>
+<td>NASDAQ: AI/ML-adjusted holding periods</td>
+</tr>
+<tr>
+<td>76</td>
+<td>Midpoint Peg Post-Only (MPPO)</td>
+<td>중간가 페그 게시 전용 주문</td>
+<td>Order Type</td>
+<td>NASDAQ: passive midpoint, no hold</td>
+</tr>
+<tr>
+<td>93</td>
+<td>Funari Order (引成注文)</td>
+<td>후나리 주문 (인성주문)</td>
+<td>Order Type</td>
+<td>TSE: limit→market at closing auction</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Named Order</td>
+<td>기명 주문</td>
+<td>Order Type</td>
+<td>LSE SETSqx: non-anonymous limit order</td>
+</tr>
+<tr>
+<td>99</td>
+<td>At Best Order</td>
+<td>최우선가 주문</td>
+<td>Order Type</td>
+<td>LSE: single-price fill, remainder cancelled</td>
+</tr>
+<tr>
+<td>114</td>
+<td>Executable Quote</td>
+<td>체결 가능 호가</td>
+<td>Order Type</td>
+<td>LSE SETSqx/SEAQ: MM firm quote</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Special Limit Order (HKEX)</td>
+<td>특별지정가 주문 (特別限價盤)</td>
+<td>Order Type</td>
+<td>HKEX: 10-level sweep, remainder cancelled</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Enhanced Limit Order (HKEX)</td>
+<td>증강지정가 주문 (增強限價盤)</td>
+<td>Order Type</td>
+<td>HKEX: 10-level sweep, remainder rests</td>
+</tr>
+<tr>
+<td>29</td>
+<td>At-Auction Order</td>
+<td>경매주문 (競價盤)</td>
+<td>Order Type</td>
+<td>HKEX: unpriced, highest auction priority</td>
+</tr>
+<tr>
+<td>30</td>
+<td>At-Auction Limit Order</td>
+<td>경매지정가 주문 (競價限價盤)</td>
+<td>Order Type</td>
+<td>HKEX: priced auction, carry-forward</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Centre Point Order</td>
+<td>센터포인트 주문</td>
+<td>Order Type</td>
+<td>ASX: integrated dark pool midpoint</td>
+</tr>
+<tr>
+<td>126</td>
+<td>ASX Sweep</td>
+<td>ASX Sweep (다크→릿 통합 라우팅)</td>
+<td>Order Type</td>
+<td>ASX: dark-then-lit routing</td>
+</tr>
+<tr>
+<td>134</td>
+<td>NLT (Negotiated Large Trade)</td>
+<td>NLT (협의대량거래)</td>
+<td>Order Type</td>
+<td>SGX: off-book large trade facility</td>
+</tr>
+<tr>
+<td>136</td>
+<td>Market Order as FAK</td>
+<td>시장가(FAK) 방식</td>
+<td>Order Type</td>
+<td>SGX: market order cancels remainder</td>
+</tr>
+</tbody>
+</table>
+<h2 id="e-market-models-participants">E. Market Models &amp; Participants (시장 모델 · 참가자)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31</td>
+<td>Order-Driven Market</td>
+<td>주문주도형 시장</td>
+<td>Market Model</td>
+<td>KRX, NASDAQ, TSE, ASX, SGX</td>
+</tr>
+<tr>
+<td>32</td>
+<td>Quote-Driven Market</td>
+<td>호가주도형 시장</td>
+<td>Market Model</td>
+<td>LSE SEAQ</td>
+</tr>
+<tr>
+<td>33</td>
+<td>Hybrid Market</td>
+<td>혼합형 시장</td>
+<td>Market Model</td>
+<td>NYSE with DMM, LSE SETSqx, Eurex</td>
+</tr>
+<tr>
+<td>34</td>
+<td>Designated Market Maker (DMM)</td>
+<td>지정 시장조성자</td>
+<td>Participant</td>
+<td>NYSE: exclusive per security</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Market Maker (MM)</td>
+<td>시장조성자</td>
+<td>Participant</td>
+<td>Continuous two-sided quotes</td>
+</tr>
+<tr>
+<td>36</td>
+<td>Liquidity Provider (LP)</td>
+<td>유동성 공급자</td>
+<td>Participant</td>
+<td>Contractual liquidity obligation</td>
+</tr>
+<tr>
+<td>85</td>
+<td>Supplemental Liquidity Provider (SLP)</td>
+<td>보충적 유동성공급자 (SLP)</td>
+<td>Participant</td>
+<td>NYSE: electronic LP</td>
+</tr>
+<tr>
+<td>86</td>
+<td>Retail Liquidity Program</td>
+<td>소매 유동성 프로그램</td>
+<td>Program</td>
+<td>NYSE: price improvement for retail</td>
+</tr>
+<tr>
+<td>138</td>
+<td>Regular/Permanent/Advanced MM</td>
+<td>일반/상시/고급 시장조성자</td>
+<td>Participant</td>
+<td>Eurex: tiered MM model (RMM/PMM/AMM)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="f-venues">F. Venues (거래 장소)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>37</td>
+<td>Dark Pool</td>
+<td>다크풀 (비공개 매매장소)</td>
+<td>Venue</td>
+<td>ASX Centre Point, US ATS</td>
+</tr>
+<tr>
+<td>38</td>
+<td>Alternative Trading System (ATS)</td>
+<td>대체거래시스템</td>
+<td>Venue</td>
+<td>US: non-exchange venue</td>
+</tr>
+<tr>
+<td>39</td>
+<td>Multilateral Trading Facility (MTF)</td>
+<td>다자간매매체결시설</td>
+<td>Venue</td>
+<td>EU/UK: Turquoise, BATS Europe</td>
+</tr>
+<tr>
+<td>96</td>
+<td>ToSTNeT</td>
+<td>ToSTNeT (장외매매시스템)</td>
+<td>Venue</td>
+<td>TSE: off-auction block/basket/buyback</td>
+</tr>
+<tr>
+<td>102</td>
+<td>SETS</td>
+<td>SETS (주식전자거래서비스)</td>
+<td>Venue</td>
+<td>LSE: order book for liquid stocks</td>
+</tr>
+<tr>
+<td>103</td>
+<td>SETSqx</td>
+<td>SETSqx (호가+교차)</td>
+<td>Venue</td>
+<td>LSE: hybrid for mid-liquidity</td>
+</tr>
+<tr>
+<td>104</td>
+<td>SEAQ</td>
+<td>SEAQ (주식자동호가시스템)</td>
+<td>Venue</td>
+<td>LSE: quote-driven for low-liquidity</td>
+</tr>
+<tr>
+<td>113</td>
+<td>Turquoise</td>
+<td>터쿼이즈</td>
+<td>Venue</td>
+<td>LSEG: pan-European MTF</td>
+</tr>
+<tr>
+<td>124</td>
+<td>Eurex EnLight</td>
+<td>Eurex EnLight</td>
+<td>Venue</td>
+<td>Eurex: RFQ off-book negotiation</td>
+</tr>
+<tr>
+<td>140</td>
+<td>Trade Reporting Facility (TRF)</td>
+<td>거래보고시설 (TRF)</td>
+<td>Venue</td>
+<td>ASX: off-market trade reporting</td>
+</tr>
+</tbody>
+</table>
+<h2 id="g-safeguards">G. Safeguards (안전장치)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>40</td>
+<td>Circuit Breaker</td>
+<td>서킷브레이커</td>
+<td>Safeguard</td>
+<td>KRX 8%/15%/20%; US 7%/13%/20%</td>
+</tr>
+<tr>
+<td>41</td>
+<td>Volatility Control Mechanism (VCM)</td>
+<td>변동성완화장치</td>
+<td>Safeguard</td>
+<td>HKEX ±10%(증권)/±5%(파생), SGX ±10%</td>
+</tr>
+<tr>
+<td>42</td>
+<td>Volatility Interruption (VI)</td>
+<td>변동성 완화장치 (VI)</td>
+<td>Safeguard</td>
+<td>KRX: dynamic 3%/6%, static 10%</td>
+</tr>
+<tr>
+<td>43</td>
+<td>Daily Price Limit</td>
+<td>가격제한폭</td>
+<td>Safeguard</td>
+<td>KRX ±30%; TSE varies by price level</td>
+</tr>
+<tr>
+<td>44</td>
+<td>Limit Up-Limit Down (LULD)</td>
+<td>상·하한가 제한 (LULD)</td>
+<td>Safeguard</td>
+<td>US: dynamic bands by tier</td>
+</tr>
+<tr>
+<td>45</td>
+<td>Trading Halt</td>
+<td>매매거래 정지</td>
+<td>Safeguard</td>
+<td>Regulatory/news-driven suspension</td>
+</tr>
+<tr>
+<td>46</td>
+<td>Pre-Trade Risk Control</td>
+<td>사전거래위험관리</td>
+<td>Safeguard</td>
+<td>Max order size/value (Eurex T7, NYSE Pillar)</td>
+</tr>
+<tr>
+<td>47</td>
+<td>Kill Switch</td>
+<td>긴급주문취소 (킬 스위치)</td>
+<td>Safeguard</td>
+<td>Emergency bulk cancellation</td>
+</tr>
+<tr>
+<td>83</td>
+<td>Auction Collar</td>
+<td>경매 칼라 (가격 제한대)</td>
+<td>Safeguard</td>
+<td>NYSE: closing auction price collar</td>
+</tr>
+<tr>
+<td>94</td>
+<td>Special Quote (Tokubetsu Kehai)</td>
+<td>특별기배 (특별 참고호가)</td>
+<td>Safeguard</td>
+<td>TSE: indicative quote for imbalance</td>
+</tr>
+<tr>
+<td>110</td>
+<td>9-Times Rule</td>
+<td>9배 가격편차 규칙</td>
+<td>Safeguard</td>
+<td>HKEX: order price ≤9× nominal</td>
+</tr>
+<tr>
+<td>121</td>
+<td>Volatility Interruption (Eurex)</td>
+<td>변동성 중단</td>
+<td>Safeguard</td>
+<td>Eurex: volatility auction trigger</td>
+</tr>
+<tr>
+<td>127</td>
+<td>Anomalous Order Threshold (AOT)</td>
+<td>이상주문임계값 (AOT)</td>
+<td>Safeguard</td>
+<td>ASX/ASIC: VWAP ±10% rejection</td>
+</tr>
+<tr>
+<td>128</td>
+<td>Extreme Trade Range (ETR)</td>
+<td>극단거래범위 (ETR)</td>
+<td>Safeguard</td>
+<td>ASX: 2-min pause</td>
+</tr>
+<tr>
+<td>129</td>
+<td>Meaningful Price Improvement</td>
+<td>의미 있는 가격 개선</td>
+<td>Regulation</td>
+<td>ASIC: dark pool midpoint rule</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h-sessions">H. Sessions (세션)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>48</td>
+<td>Opening Cross</td>
+<td>시초가 크로스</td>
+<td>Session</td>
+<td>NASDAQ: 09:28-09:30 ET</td>
+</tr>
+<tr>
+<td>49</td>
+<td>Closing Cross</td>
+<td>종가 크로스</td>
+<td>Session</td>
+<td>NASDAQ: 15:50-16:00 ET</td>
+</tr>
+<tr>
+<td>50</td>
+<td>Closing Auction Session (CAS)</td>
+<td>종가매매세션 (CAS)</td>
+<td>Session</td>
+<td>HKEX 16:00-16:10; TSE 15:25-15:30</td>
+</tr>
+<tr>
+<td>51</td>
+<td>Pre-Opening Session</td>
+<td>장전 세션 (개장전 세션)</td>
+<td>Session</td>
+<td>Order acceptance before market open</td>
+</tr>
+<tr>
+<td>52</td>
+<td>After-Hours Trading</td>
+<td>시간외 거래 (장후 거래)</td>
+<td>Session</td>
+<td>Trading after regular session close</td>
+</tr>
+<tr>
+<td>53</td>
+<td>Block Trade</td>
+<td>대량매매</td>
+<td>Session</td>
+<td>Large-size negotiated trade</td>
+</tr>
+<tr>
+<td>54</td>
+<td>Off-Book Trade</td>
+<td>장외 매매 (비주문장 매매)</td>
+<td>Session</td>
+<td>Negotiated trade reported to exchange</td>
+</tr>
+<tr>
+<td>87</td>
+<td>Competitive Block Trade</td>
+<td>경쟁대량매매</td>
+<td>Session</td>
+<td>KRX: block at VWAP</td>
+</tr>
+<tr>
+<td>89</td>
+<td>Halt Cross</td>
+<td>정지 후 재개장 크로스</td>
+<td>Session</td>
+<td>NASDAQ: reopening after halt</td>
+</tr>
+<tr>
+<td>90</td>
+<td>IPO Cross</td>
+<td>IPO 크로스</td>
+<td>Session</td>
+<td>NASDAQ: first-day trading</td>
+</tr>
+<tr>
+<td>135</td>
+<td>Trading-at-Close (TAC)</td>
+<td>TAC (종가매매세션)</td>
+<td>Session</td>
+<td>SGX: 10-min post-close</td>
+</tr>
+</tbody>
+</table>
+<h2 id="i-price-structure">I. Price &amp; Structure (가격 · 구조)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>55</td>
+<td>Tick Size</td>
+<td>호가단위 (틱 사이즈)</td>
+<td>Price</td>
+<td>Minimum price increment</td>
+</tr>
+<tr>
+<td>56</td>
+<td>Lot Size</td>
+<td>매매단위 (거래 단위)</td>
+<td>Price</td>
+<td>Minimum tradable quantity</td>
+</tr>
+<tr>
+<td>57</td>
+<td>Best Bid and Offer (BBO)</td>
+<td>최우선 매수·매도 호가</td>
+<td>Price</td>
+<td>Best prices on an exchange</td>
+</tr>
+<tr>
+<td>58</td>
+<td>National Best Bid and Offer (NBBO)</td>
+<td>전국 최우선 매수·매도호가</td>
+<td>Price</td>
+<td>US: best across all venues</td>
+</tr>
+<tr>
+<td>59</td>
+<td>Order Book</td>
+<td>주문장 (호가창)</td>
+<td>Structure</td>
+<td>Buy/sell queue by price level</td>
+</tr>
+<tr>
+<td>60</td>
+<td>Order Imbalance</td>
+<td>주문 불균형</td>
+<td>Structure</td>
+<td>Difference buy vs sell interest</td>
+</tr>
+<tr>
+<td>82</td>
+<td>Net Order Imbalance Indicator (NOII)</td>
+<td>순 주문불균형 지표 (NOII)</td>
+<td>Structure</td>
+<td>NASDAQ: pre-cross imbalance data</td>
+</tr>
+<tr>
+<td>109</td>
+<td>Indicative Equilibrium Price (IEP)</td>
+<td>참고균형가격 (IEP)</td>
+<td>Price</td>
+<td>HKEX: auction matching price</td>
+</tr>
+<tr>
+<td>115</td>
+<td>Board Lot</td>
+<td>보드롯 (매매단위)</td>
+<td>Price</td>
+<td>HKEX: varies 10–100,000 shares</td>
+</tr>
+</tbody>
+</table>
+<h2 id="j-protocols-systems">J. Protocols &amp; Systems (프로토콜 · 시스템)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>61</td>
+<td>OUCH Protocol</td>
+<td>OUCH 프로토콜</td>
+<td>Protocol</td>
+<td>NASDAQ/ASX: low-latency order entry</td>
+</tr>
+<tr>
+<td>62</td>
+<td>ITCH Protocol</td>
+<td>ITCH 프로토콜</td>
+<td>Protocol</td>
+<td>NASDAQ/SGX: outbound market data</td>
+</tr>
+<tr>
+<td>63</td>
+<td>FIX Protocol</td>
+<td>FIX 프로토콜</td>
+<td>Protocol</td>
+<td>Industry-standard messaging</td>
+</tr>
+<tr>
+<td>117</td>
+<td>ETI (Enhanced Trading Interface)</td>
+<td>ETI (향상 매매 인터페이스)</td>
+<td>Protocol</td>
+<td>Eurex T7: session-based TCP/IP</td>
+</tr>
+<tr>
+<td>118</td>
+<td>EOBI (Enhanced Order Book Interface)</td>
+<td>EOBI (향상 주문장 인터페이스)</td>
+<td>Protocol</td>
+<td>Eurex T7: low-latency market data</td>
+</tr>
+<tr>
+<td>133</td>
+<td>GLIMPSE</td>
+<td>GLIMPSE (주문장 스냅샷)</td>
+<td>Protocol</td>
+<td>SGX Titan: point-to-point snapshot</td>
+</tr>
+<tr>
+<td>97</td>
+<td>arrowhead 4.0</td>
+<td>애로헤드 4.0</td>
+<td>System</td>
+<td>TSE: 4th-gen equity trading (2024.11)</td>
+</tr>
+<tr>
+<td>101</td>
+<td>Millennium Exchange</td>
+<td>밀레니엄 익스체인지</td>
+<td>System</td>
+<td>LSE: trading platform since 2011</td>
+</tr>
+<tr>
+<td>111</td>
+<td>Orion Trading Platform (OTP)</td>
+<td>오리온 매매 플랫폼 (OTP)</td>
+<td>System</td>
+<td>HKEX: OTP-C/OTP-D</td>
+</tr>
+<tr>
+<td>116</td>
+<td>T7 Trading System</td>
+<td>T7 매매시스템</td>
+<td>System</td>
+<td>Deutsche Börse: Eurex + Xetra</td>
+</tr>
+<tr>
+<td>131</td>
+<td>QUEST</td>
+<td>QUEST (전자매매플랫폼)</td>
+<td>System</td>
+<td>SGX: securities electronic platform</td>
+</tr>
+<tr>
+<td>132</td>
+<td>Titan</td>
+<td>Titan (타이탄)</td>
+<td>System</td>
+<td>SGX: derivatives platform</td>
+</tr>
+<tr>
+<td>139</td>
+<td>Colo 2.0</td>
+<td>Colo 2.0 (코로케이션 2.0)</td>
+<td>Infrastructure</td>
+<td>Eurex: upgraded co-location (2025)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="k-settlement-programs">K. Settlement &amp; Programs (결제 · 프로그램)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>English Term</th>
+<th>Korean Official Term</th>
+<th>Category</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>64</td>
+<td>Clearing</td>
+<td>청산</td>
+<td>Settlement</td>
+<td>Post-trade netting and confirmation</td>
+</tr>
+<tr>
+<td>65</td>
+<td>Central Counterparty (CCP)</td>
+<td>중앙청산소 (CCP)</td>
+<td>Settlement</td>
+<td>Guarantees settlement</td>
+</tr>
+<tr>
+<td>130</td>
+<td>CHESS</td>
+<td>CHESS (전자등록결제시스템)</td>
+<td>Settlement</td>
+<td>ASX: Clearing House Electronic Sub-register</td>
+</tr>
+<tr>
+<td>112</td>
+<td>Stock Connect</td>
+<td>스톡 커넥트 (후강통/선강통)</td>
+<td>Program</td>
+<td>HKEX-SSE/SZSE cross-border channel</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>140 terms | Version 2.0 (Unified) | Created: 2026-03-27 | Merged: Session 4</em>
+<em>Conflicts resolved: #25 D-Order updated with Batch 1 description; #27/#28 updated with Chinese terms; #7 updated with SGX note; duplicates #98/#125/#105/#106/#107/#108/#120/#137 merged into originals</em></p>
+
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

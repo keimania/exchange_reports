@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NYSE (New York Stock Exchange) — Exchange Report</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1-exchange-overview">1. Exchange Overview</a></li>
+<li><a href="#2-institutional-philosophy">2. Institutional Philosophy</a></li>
+<li><a href="#3-order-types-basic">3. Order Types — Basic</a></li>
+<li class="h3"><a href="#31-market-order-ref2">3.1 Market Order [2]</a></li>
+<li class="h3"><a href="#32-limit-order-ref2">3.2 Limit Order [2]</a></li>
+<li class="h3"><a href="#33-stop-order-ref2">3.3 Stop Order [2]</a></li>
+<li class="h3"><a href="#34-stop-limit-order-ref2">3.4 Stop-Limit Order [2]</a></li>
+<li class="h3"><a href="#35-market-on-open-moo-ref2-ref6">3.5 Market-on-Open (MOO) [2] [6]</a></li>
+<li class="h3"><a href="#36-limit-on-open-loo-ref2-ref6">3.6 Limit-on-Open (LOO) [2] [6]</a></li>
+<li class="h3"><a href="#37-market-on-close-moc-ref2-webnysecomclosing-auction">3.7 Market-on-Close (MOC) [2] [W]</a></li>
+<li class="h3"><a href="#38-limit-on-close-loc-ref2-webnysecomclosing-auction">3.8 Limit-on-Close (LOC) [2] [W]</a></li>
+<li><a href="#4-order-types-advanced">4. Order Types — Advanced</a></li>
+<li class="h3"><a href="#41-reserve-iceberg-order-ref6">4.1 Reserve (Iceberg) Order [6]</a></li>
+<li class="h3"><a href="#42-pegged-orders-ref6">4.2 Pegged Orders [6]</a></li>
+<li class="h3"><a href="#43-midpoint-passive-liquidity-mpl-order-ref6">4.3 Midpoint Passive Liquidity (MPL) Order [6]</a></li>
+<li class="h3"><a href="#44-add-liquidity-only-alo-order-ref6">4.4 Add Liquidity Only (ALO) Order [6]</a></li>
+<li class="h3"><a href="#45-intermarket-sweep-order-iso-ref6">4.5 Intermarket Sweep Order (ISO) [6]</a></li>
+<li class="h3"><a href="#46-imbalance-offset-io-orders-webnysecomclosing-auction">4.6 Imbalance Offset (IO) Orders [W]</a></li>
+<li class="h3"><a href="#47-tracking-orders-ref6">4.7 Tracking Orders [6]</a></li>
+<li><a href="#5-order-types-exchange-specific">5. Order Types — Exchange-Specific</a></li>
+<li class="h3"><a href="#51-d-order-closing-d-order-opening-d-order-webnysecomd-orders">5.1 D-Order (Closing D-Order / Opening D-Order) [W]</a></li>
+<li class="h3"><a href="#52-dmm-interest-orders-ref3">5.2 DMM Interest Orders [3]</a></li>
+<li class="h3"><a href="#53-retail-liquidity-program-orders-ref1">5.3 Retail Liquidity Program Orders [1]</a></li>
+<li class="h3"><a href="#54-slp-interest-ref1">5.4 SLP Interest [1]</a></li>
+<li><a href="#6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</a></li>
+<li class="h3"><a href="#trading-system-pillar-ref4-ref5">Trading System: Pillar [4] [5]</a></li>
+<li class="h3"><a href="#matching-algorithm-priceparitypriority-ref1">Matching Algorithm: Price/Parity/Priority [1]</a></li>
+<li class="h3"><a href="#opening-auction-ref1-webnysecomauction">Opening Auction [1] [W]</a></li>
+<li class="h3"><a href="#closing-auction-webnysecomclosing-auction">Closing Auction [W]</a></li>
+<li class="h3"><a href="#tick-size-websecgov">Tick Size [W]</a></li>
+<li class="h3"><a href="#lot-size">Lot Size</a></li>
+<li><a href="#7-safeguard-mechanisms">7. Safeguard Mechanisms</a></li>
+<li class="h3"><a href="#71-market-wide-circuit-breakers-mwcb-ref2-webinvestorgov">7.1 Market-Wide Circuit Breakers (MWCB) [2] [W]</a></li>
+<li class="h3"><a href="#72-limit-up-limit-down-luld-webluldplancom">7.2 Limit Up-Limit Down (LULD) [W]</a></li>
+<li class="h3"><a href="#73-trading-halts-ref2">7.3 Trading Halts [2]</a></li>
+<li class="h3"><a href="#74-pre-trade-risk-controls-pillar-ref7">7.4 Pre-Trade Risk Controls (Pillar) [7]</a></li>
+<li class="h3"><a href="#75-clearly-erroneous-execution-cee-ref2">7.5 Clearly Erroneous Execution (CEE) [2]</a></li>
+<li><a href="#8-special-sessions">8. Special Sessions</a></li>
+<li class="h3"><a href="#81-pre-opening-session-ref2">8.1 Pre-Opening Session [2]</a></li>
+<li class="h3"><a href="#82-opening-auction-ref1-webnysecomauction">8.2 Opening Auction [1] [W]</a></li>
+<li class="h3"><a href="#83-core-trading-session-ref2">8.3 Core Trading Session [2]</a></li>
+<li class="h3"><a href="#84-closing-auction-webnysecomclosing-auction">8.4 Closing Auction [W]</a></li>
+<li class="h3"><a href="#85-after-hours-late-trading-ref2">8.5 After-Hours / Late Trading [2]</a></li>
+<li class="h3"><a href="#86-block-trade-large-orders">8.6 Block Trade / Large Orders</a></li>
+<li><a href="#9-lp-market-maker-obligations">9. LP / Market Maker Obligations</a></li>
+<li class="h3"><a href="#91-designated-market-makers-dmms-ref1-ref3">9.1 Designated Market Makers (DMMs) [1] [3]</a></li>
+<li class="h3"><a href="#92-supplemental-liquidity-providers-slps-ref1-webliquidity-providercom">9.2 Supplemental Liquidity Providers (SLPs) [1] [W]</a></li>
+<li class="h3"><a href="#93-retail-liquidity-program-ref1">9.3 Retail Liquidity Program [1]</a></li>
+<li><a href="#10-source-bibliography">10. Source Bibliography</a></li>
+<li class="h3"><a href="#reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</a></li>
+<li class="h3"><a href="#web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="nyse-new-york-stock-exchange-exchange-report">NYSE (New York Stock Exchange) — Exchange Report</h1>
+<hr />
+<h2 id="1-exchange-overview">1. Exchange Overview</h2>
+<p><strong>Full Legal Name</strong>: New York Stock Exchange LLC
+<strong>Country</strong>: United States of America
+<strong>Founding Year</strong>: 1792 (Buttonwood Agreement); formally organized 1817 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>Parent Group</strong>: Intercontinental Exchange (ICE), acquired 2013 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>Market Model</strong>: Hybrid — electronic order-driven with Designated Market Maker (DMM) and physical trading floor <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>Asset Classes Traded</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Equities (NYSE, NYSE Arca, NYSE American, NYSE National, NYSE Texas)
+- Options (NYSE Arca Options, NYSE American Options)
+- Bonds (NYSE Bonds)
+- ETFs, ETNs, Closed-End Funds, SPACs</p>
+<p><strong>Regular Trading Hours (ET, UTC−5/−4)</strong>: <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup>
+- Pre-opening (order queuing): 06:30
+- Early trading (Tapes B&amp;C, Arca): from 04:00 (Arca) or 07:00
+- Core trading: 09:30–16:00
+- Late trading (Arca, American): 16:00–20:00</p>
+<p><strong>Key Statistics</strong>: <sup class="cite"><a href="#web-bestbrokers" title="WEB: bestbrokers">[W]</a></sup> <sup class="cite"><a href="#web-statista" title="WEB: statista">[W]</a></sup>
+- Listed companies: ~2,400+ (NYSE primary)
+- Market capitalization: ~$30+ trillion (largest exchange globally)
+- Average daily volume: ~1.54 billion shares / ~$80.6 billion (Nov 2025)</p>
+<p><strong>Recent Major Changes</strong>: <sup class="cite"><a href="#web-nyse-com" title="WEB: nyse.com">[W]</a></sup>
+- 2024: Closing D-Order imbalance threshold moved to 3:50 PM for transparency
+- 2025.08: Floor brokers migrated to automated OMS for D-Order entry
+- Extended trading hours expansion across NYSE group venues</p>
+<hr />
+<h2 id="2-institutional-philosophy">2. Institutional Philosophy</h2>
+<p><strong>Primary Market Model</strong>: Hybrid — combines electronic matching with human-facilitated price discovery <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>Design Rationale</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-nyse-com-market-model" title="WEB: nyse.com/market-model">[W]</a></sup>
+- NYSE uniquely retains a <strong>physical trading floor</strong> where DMMs and floor brokers interact
+- The hybrid model aims to capture benefits of both: electronic speed/efficiency + human judgment for complex situations (large imbalances, volatility events, IPO pricing)
+- DMMs serve as assigned specialists per security, providing continuous two-sided liquidity and managing opening/closing auctions <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Floor brokers represent institutional clients, accessing unique order types (D-Orders) available only on the floor <sup class="cite"><a href="#web-nyse-com-d-orders" title="WEB: nyse.com/d-orders">[W]</a></sup></p>
+<p><strong>Parity/Priority Allocation</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- NYSE uses a unique allocation model that "rewards price setters and then allocates incoming orders across multiple participants resting at the same price"
+- Differs from pure price-time priority used at KRX/NASDAQ</p>
+<p><strong>Evolution</strong>: Physical floor (1792) → specialist system → hybrid electronic + floor (2006 merger with Archipelago) → Pillar platform migration (2016–present) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>Role of Intermediaries</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- <strong>DMMs</strong>: Exclusive assignment per security; obligated to maintain fair and orderly markets <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup>
+- <strong>Supplemental Liquidity Providers (SLPs)</strong>: Electronic high-volume members adding displayed liquidity <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- <strong>Floor Brokers</strong>: Human representatives executing institutional orders with access to D-Orders <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<hr />
+<h2 id="3-order-types-basic">3. Order Types — Basic</h2>
+<h3 id="31-market-order-ref2">3.1 Market Order <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>No price specified; executes at best available price</li>
+<li>Available in all sessions</li>
+<li>During opening/closing auctions: participates at auction price</li>
+</ul>
+<h3 id="32-limit-order-ref2">3.2 Limit Order <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Specifies maximum buy / minimum sell price</li>
+<li>Available in all sessions</li>
+<li>Time-in-force: Day (default), GTC, IOC, FOK</li>
+</ul>
+<h3 id="33-stop-order-ref2">3.3 Stop Order <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Becomes market order when stop price is reached</li>
+<li>Buy stop: triggered at or above stop price</li>
+<li>Sell stop: triggered at or below stop price</li>
+</ul>
+<h3 id="34-stop-limit-order-ref2">3.4 Stop-Limit Order <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Becomes limit order when stop price is reached</li>
+<li>Two prices specified: stop (trigger) and limit (execution)</li>
+</ul>
+<h3 id="35-market-on-open-moo-ref2-ref6">3.5 Market-on-Open (MOO) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Market order for opening auction only</li>
+<li>Guaranteed participation in opening price determination</li>
+</ul>
+<h3 id="36-limit-on-open-loo-ref2-ref6">3.6 Limit-on-Open (LOO) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Limit order for opening auction only</li>
+<li>Participates at specified price or better in opening auction</li>
+</ul>
+<h3 id="37-market-on-close-moc-ref2-webnysecomclosing-auction">3.7 Market-on-Close (MOC) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#web-nyse-com-closing-auction" title="WEB: nyse.com/closing-auction">[W]</a></sup></h3>
+<ul>
+<li>Market order for closing auction</li>
+<li>Entry cutoff: 3:50 PM ET</li>
+<li>Guaranteed fill at closing auction price</li>
+</ul>
+<h3 id="38-limit-on-close-loc-ref2-webnysecomclosing-auction">3.8 Limit-on-Close (LOC) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#web-nyse-com-closing-auction" title="WEB: nyse.com/closing-auction">[W]</a></sup></h3>
+<ul>
+<li>Limit order for closing auction</li>
+<li>Entry cutoff: 3:50 PM ET</li>
+<li>Participates at closing auction price if within limit</li>
+</ul>
+<hr />
+<h2 id="4-order-types-advanced">4. Order Types — Advanced</h2>
+<h3 id="41-reserve-iceberg-order-ref6">4.1 Reserve (Iceberg) Order <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Displays only a portion (MaxFloor) of total quantity</li>
+<li>Hidden reserve replenishes as displayed quantity executes</li>
+<li>Mixed lot MaxFloor allowed <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></li>
+</ul>
+<h3 id="42-pegged-orders-ref6">4.2 Pegged Orders <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li><strong>Primary Peg</strong>: Pegged to same-side NBBO (best bid for buy, best offer for sell)</li>
+<li><strong>Market Peg</strong>: Pegged to contra-side NBBO</li>
+<li><strong>Midpoint Peg</strong>: Pegged to NBBO midpoint</li>
+<li>Discretionary offset available for all peg types</li>
+</ul>
+<h3 id="43-midpoint-passive-liquidity-mpl-order-ref6">4.3 Midpoint Passive Liquidity (MPL) Order <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Non-displayed order priced at NBBO midpoint</li>
+<li>Provides passive price improvement</li>
+<li>Available only during core trading</li>
+</ul>
+<h3 id="44-add-liquidity-only-alo-order-ref6">4.4 Add Liquidity Only (ALO) Order <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Posts to book only; does not remove liquidity on arrival</li>
+<li>Cancelled or repriced if it would execute immediately</li>
+<li>Used by participants seeking maker rebates</li>
+</ul>
+<h3 id="45-intermarket-sweep-order-iso-ref6">4.5 Intermarket Sweep Order (ISO) <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Enables sweeping across multiple price levels on NYSE</li>
+<li>Sender responsible for simultaneously routing to away markets at better prices (Reg NMS compliance)</li>
+</ul>
+<h3 id="46-imbalance-offset-io-orders-webnysecomclosing-auction">4.6 Imbalance Offset (IO) Orders <sup class="cite"><a href="#web-nyse-com-closing-auction" title="WEB: nyse.com/closing-auction">[W]</a></sup></h3>
+<ul>
+<li><strong>Closing Offset (CO)</strong>: Offsets closing auction imbalance; accepted after 3:50 PM</li>
+<li><strong>Opening IO</strong>: Offsets opening auction imbalance</li>
+<li>Can only offset published imbalance direction</li>
+</ul>
+<h3 id="47-tracking-orders-ref6">4.7 Tracking Orders <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Non-displayed limit orders on NYSE floor</li>
+<li>Trade at DMM or floor broker discretion within specified price range</li>
+</ul>
+<hr />
+<h2 id="5-order-types-exchange-specific">5. Order Types — Exchange-Specific</h2>
+<h3 id="51-d-order-closing-d-order-opening-d-order-webnysecomd-orders">5.1 D-Order (Closing D-Order / Opening D-Order) <sup class="cite"><a href="#web-nyse-com-d-orders" title="WEB: nyse.com/d-orders">[W]</a></sup></h3>
+<ul>
+<li><strong>NYSE-unique</strong>: Available only through floor brokers</li>
+<li>Closing D-Order: Discretionary interest for closing auction with undisplayed price range</li>
+<li>Opening D-Order: DMM interest for opening auction</li>
+<li>Entry deadline: 3:59:50 PM for Closing D-Orders</li>
+<li>As of Aug 2025: Automated via third-party OMS <sup class="cite"><a href="#web-nyse-com" title="WEB: nyse.com">[W]</a></sup></li>
+<li>Rationale: Combines human judgment with electronic execution for large auction interest</li>
+</ul>
+<h3 id="52-dmm-interest-orders-ref3">5.2 DMM Interest Orders <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li><strong>DMM Proprietary Orders</strong>: DMMs trade for their own account to maintain orderly markets</li>
+<li>DMMs can add capital to offset auction imbalances <sup class="cite"><a href="#web-nyse-com-closing-auction" title="WEB: nyse.com/closing-auction">[W]</a></sup></li>
+<li>Subject to Rule 104 restrictions (e.g., last 10 minutes position rules) <sup class="cite"><a href="#web-sec-gov-rule104" title="WEB: sec.gov/rule104">[W]</a></sup></li>
+</ul>
+<h3 id="53-retail-liquidity-program-orders-ref1">5.3 Retail Liquidity Program Orders <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>Retail Taker Orders</strong>: Agency orders from natural persons</li>
+<li><strong>Retail Price Improvement (RPI) Orders</strong>: Non-displayed interest priced better than PBBO</li>
+<li><strong>Retail Attested Orders</strong>: Enhanced economics for individual investors</li>
+<li>NYSE-specific program to attract retail order flow with price improvement</li>
+</ul>
+<h3 id="54-slp-interest-ref1">5.4 SLP Interest <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>SLP-Prop and SLMM order categories</li>
+<li>Must maintain NBBO at least 10% of trading day per assigned security <sup class="cite"><a href="#web-liquidity-provider-com" title="WEB: liquidity-provider.com">[W]</a></sup></li>
+<li>Receive financial rebates for adding displayed liquidity</li>
+</ul>
+<hr />
+<h2 id="6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</h2>
+<h3 id="trading-system-pillar-ref4-ref5">Trading System: Pillar <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup> <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup></h3>
+<ul>
+<li><strong>Launch</strong>: Phased migration 2016–present</li>
+<li><strong>Architecture</strong>: Unified technology platform for all NYSE group exchanges <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup></li>
+<li><strong>Protocols</strong>: FIX Protocol + Binary Protocol <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup> <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup></li>
+<li><strong>Risk Controls</strong>: Integrated pre-trade controls (see §7) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></li>
+<li><strong>Latency</strong>: Sub-millisecond (specific figures not publicly disclosed)</li>
+</ul>
+<h3 id="matching-algorithm-priceparitypriority-ref1">Matching Algorithm: Price/Parity/Priority <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ol>
+<li><strong>Price priority</strong>: Best-priced orders first</li>
+<li><strong>Parity allocation</strong>: At same price level, orders allocated among multiple participants</li>
+<li><strong>Priority for price setters</strong>: First order establishing a new best price gets priority
+- This differs from pure price-time priority (KRX, NASDAQ) — NYSE's model rewards liquidity provision more broadly</li>
+</ol>
+<h3 id="opening-auction-ref1-webnysecomauction">Opening Auction <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-nyse-com-auction" title="WEB: nyse.com/auction">[W]</a></sup></h3>
+<ul>
+<li>Orders accumulate from 06:30 ET</li>
+<li>At 09:30: DMM facilitates opening price determination</li>
+<li><strong>Imbalance information</strong>: Published starting ~09:28 for primary-listed securities</li>
+<li>DMM can add capital to offset imbalances</li>
+<li>Single equilibrium price maximizing matched volume</li>
+</ul>
+<h3 id="closing-auction-webnysecomclosing-auction">Closing Auction <sup class="cite"><a href="#web-nyse-com-closing-auction" title="WEB: nyse.com/closing-auction">[W]</a></sup></h3>
+<ul>
+<li><strong>3:50 PM</strong>: MOC/LOC entry cutoff; imbalance publication begins (1-second intervals)</li>
+<li><strong>3:50–4:00 PM</strong>: Closing Offset orders accepted; D-Orders active</li>
+<li><strong>3:59:50 PM</strong>: D-Orders frozen</li>
+<li><strong>4:00 PM</strong>: Auction executes within <strong>Auction Collars</strong>:</li>
+<li>Price ≤$25: ±5% collar</li>
+<li>Price $25–$50: ±2% collar</li>
+<li>Price &gt;$50: ±1% collar</li>
+<li>Minimum collar: $0.15 or percentage, whichever greater</li>
+</ul>
+<h3 id="tick-size-websecgov">Tick Size <sup class="cite"><a href="#web-sec-gov" title="WEB: sec.gov">[W]</a></sup></h3>
+<ul>
+<li>Standard: $0.01 for stocks priced &gt;$1.00</li>
+<li>Sub-penny: $0.001 for stocks priced &lt;$1.00</li>
+<li>Midpoint executions at half-penny increments permitted</li>
+</ul>
+<h3 id="lot-size">Lot Size</h3>
+<ul>
+<li>Standard lot: 100 shares (round lot)</li>
+<li>Odd lots: &lt;100 shares (increasingly relevant; now included in some auction calculations)</li>
+</ul>
+<hr />
+<h2 id="7-safeguard-mechanisms">7. Safeguard Mechanisms</h2>
+<h3 id="71-market-wide-circuit-breakers-mwcb-ref2-webinvestorgov">7.1 Market-Wide Circuit Breakers (MWCB) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#web-investor-gov" title="WEB: investor.gov">[W]</a></sup></h3>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Trigger (S&amp;P 500 decline from prior close)</th>
+<th>Duration</th>
+<th>Time Restriction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level 1</td>
+<td>≥ 7%</td>
+<td>15-min halt</td>
+<td>Before 3:25 PM ET only</td>
+</tr>
+<tr>
+<td>Level 2</td>
+<td>≥ 13%</td>
+<td>15-min halt</td>
+<td>Before 3:25 PM ET only</td>
+</tr>
+<tr>
+<td>Level 3</td>
+<td>≥ 20%</td>
+<td>Trading halted for remainder of day</td>
+<td>Anytime</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Levels reset daily based on prior day's S&amp;P 500 closing price <sup class="cite"><a href="#web-investor-gov" title="WEB: investor.gov">[W]</a></sup></li>
+<li>April 7, 2025: Level 1 circuit breaker triggered on tariff announcement <sup class="cite"><a href="#web-cnbc-com" title="WEB: cnbc.com">[W]</a></sup></li>
+</ul>
+<h3 id="72-limit-up-limit-down-luld-webluldplancom">7.2 Limit Up-Limit Down (LULD) <sup class="cite"><a href="#web-luldplan-com" title="WEB: luldplan.com">[W]</a></sup></h3>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Securities</th>
+<th>Regular Hours (9:45–3:35)</th>
+<th>Open/Close (9:30–9:45, 3:35–4:00)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tier 1</td>
+<td>S&amp;P 500, Russell 1000, select ETPs</td>
+<td>±5%</td>
+<td>±10% (doubled)</td>
+</tr>
+<tr>
+<td>Tier 2</td>
+<td>All other NMS stocks &gt;$3.00</td>
+<td>±10%</td>
+<td>±20% (doubled)</td>
+</tr>
+<tr>
+<td>Tier 2</td>
+<td>NMS stocks ≤$3.00</td>
+<td>±20%</td>
+<td>±40% (doubled)</td>
+</tr>
+<tr>
+<td>Low-priced</td>
+<td>Stocks ≤$0.75</td>
+<td>Lesser of $0.15 or 75%</td>
+<td>Lesser of $0.30 or 150%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Reference price: 5-minute arithmetic mean of eligible reported transactions <sup class="cite"><a href="#web-luldplan-com" title="WEB: luldplan.com">[W]</a></sup></li>
+<li>Updated every 30 seconds</li>
+<li>If stock hits LULD band: 15-second trading pause → if still at limit, 5-minute halt</li>
+</ul>
+<h3 id="73-trading-halts-ref2">7.3 Trading Halts <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li><strong>Regulatory halts</strong>: News-pending (T1/T2), SEC suspension</li>
+<li><strong>LULD halts</strong>: Triggered by price band violations</li>
+<li><strong>Operational halts</strong>: Technical issues</li>
+<li>Resume via reopening auction with DMM facilitation</li>
+</ul>
+<h3 id="74-pre-trade-risk-controls-pillar-ref7">7.4 Pre-Trade Risk Controls (Pillar) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li><strong>Maximum order size/value limits</strong>: Configurable per firm</li>
+<li><strong>Price reasonability checks</strong>: Orders outside bands rejected</li>
+<li><strong>Kill Switch</strong>: Firms can cancel all open orders and block new entry <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></li>
+<li><strong>Cancel on Disconnect</strong>: Auto-cancels orders if connectivity lost <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></li>
+<li><strong>Gross Credit Controls</strong>: Position and credit limit monitoring</li>
+<li>Extended hours LULD: Optional double-wide bands (20%/10%/6%) <sup class="cite"><a href="#web-nyse-com" title="WEB: nyse.com">[W]</a></sup></li>
+</ul>
+<h3 id="75-clearly-erroneous-execution-cee-ref2">7.5 Clearly Erroneous Execution (CEE) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Members may request execution review within 30 minutes</li>
+<li>Reference price-based thresholds for bust/adjust decisions</li>
+</ul>
+<hr />
+<h2 id="8-special-sessions">8. Special Sessions</h2>
+<h3 id="81-pre-opening-session-ref2">8.1 Pre-Opening Session <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li><strong>Hours</strong>: 06:30 ET (order queuing begins)</li>
+<li><strong>NYSE Primary (Tape A)</strong>: Orders queued until 09:30 opening auction</li>
+<li><strong>NYSE Arca</strong>: Early trading from 04:00 ET; Early Open Auction at 04:00</li>
+<li><strong>NYSE American/National/Texas</strong>: Early trading from 07:00 ET</li>
+<li><strong>Order types</strong>: Limit orders primarily</li>
+</ul>
+<h3 id="82-opening-auction-ref1-webnysecomauction">8.2 Opening Auction <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-nyse-com-auction" title="WEB: nyse.com/auction">[W]</a></sup></h3>
+<ul>
+<li><strong>Time</strong>: 09:30 ET</li>
+<li><strong>Mechanism</strong>: DMM-facilitated single-price auction</li>
+<li><strong>Order types</strong>: MOO, LOO, Limit, Market, IO orders</li>
+<li><strong>Imbalance info</strong>: Published starting ~09:28 for primary-listed</li>
+<li>Floor broker and DMM participation for price discovery</li>
+</ul>
+<h3 id="83-core-trading-session-ref2">8.3 Core Trading Session <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li><strong>Hours</strong>: 09:30–16:00 ET</li>
+<li><strong>Mechanism</strong>: Continuous electronic matching (Pillar) + floor interaction</li>
+<li>All order types available</li>
+<li>DMM continuous quoting obligations active</li>
+</ul>
+<h3 id="84-closing-auction-webnysecomclosing-auction">8.4 Closing Auction <sup class="cite"><a href="#web-nyse-com-closing-auction" title="WEB: nyse.com/closing-auction">[W]</a></sup></h3>
+<ul>
+<li><strong>Imbalance period</strong>: 3:50–4:00 PM ET</li>
+<li><strong>Mechanism</strong>: DMM-facilitated single-price auction with Auction Collars</li>
+<li><strong>Order types</strong>: MOC, LOC, Closing IO, Closing D-Orders</li>
+<li>~10% of daily volume executes at close <sup class="cite"><a href="#web-nyse-com-closing-auction" title="WEB: nyse.com/closing-auction">[W]</a></sup></li>
+</ul>
+<h3 id="85-after-hours-late-trading-ref2">8.5 After-Hours / Late Trading <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li><strong>NYSE Arca</strong>: 16:00–20:00 ET</li>
+<li><strong>NYSE American</strong>: 16:00–20:00 ET</li>
+<li><strong>NYSE Primary</strong>: No formal late session for Tape A securities (traded on Arca after hours)</li>
+<li><strong>Order types</strong>: Limit orders only; no market orders</li>
+</ul>
+<h3 id="86-block-trade-large-orders">8.6 Block Trade / Large Orders</h3>
+<ul>
+<li>No formal separate block facility — large orders handled via:</li>
+<li>Floor broker discretion with D-Orders and Tracking Orders</li>
+<li>Dark pool / ATS alternatives (external)</li>
+<li>SLP institutional-size interest</li>
+<li>Auction participation for large closing interest</li>
+</ul>
+<hr />
+<h2 id="9-lp-market-maker-obligations">9. LP / Market Maker Obligations</h2>
+<h3 id="91-designated-market-makers-dmms-ref1-ref3">9.1 Designated Market Makers (DMMs) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<p><strong>Structure</strong>: <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup>
+- One DMM firm assigned per NYSE-listed security
+- Currently 3 firms: Citadel Securities, Virtu Americas, GTS Securities <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Operate both electronically and manually on trading floor</p>
+<p><strong>Obligations (Rule 104)</strong>: <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-sec-gov-rule104" title="WEB: sec.gov/rule104">[W]</a></sup>
+- Maintain continuous two-sided quotes
+- Quoting at NBBO for:
+  - Securities with CADV ≥ 1M shares: ≥ 5% of trading day
+  - Securities with CADV &lt; 1M shares: ≥ 10% of trading day
+  - Listed ETPs: ≥ 25% of trading day
+- Facilitate opening and closing auctions — set prices, absorb imbalances <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Maintain fair and orderly markets — engage in stabilizing transactions <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup>
+- Subject to restrictions on proprietary trading in last 10 minutes <sup class="cite"><a href="#web-sec-gov-rule104" title="WEB: sec.gov/rule104">[W]</a></sup></p>
+<p><strong>Privileges</strong>:
+- Exclusive assignment per security
+- Access to floor-based information flow
+- Fee advantages and participation in allocation model</p>
+<h3 id="92-supplemental-liquidity-providers-slps-ref1-webliquidity-providercom">9.2 Supplemental Liquidity Providers (SLPs) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-liquidity-provider-com" title="WEB: liquidity-provider.com">[W]</a></sup></h3>
+<p><strong>Structure (Rule 107B)</strong>: <sup class="cite"><a href="#web-sec-gov-slp" title="WEB: sec.gov/slp">[W]</a></sup>
+- Two categories: SLP-Prop (proprietary) and SLMM (registered market makers) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Electronic participants — no floor presence required</p>
+<p><strong>Obligations</strong>: <sup class="cite"><a href="#web-liquidity-provider-com" title="WEB: liquidity-provider.com">[W]</a></sup>
+- Maintain bid or offer at NBBO for ≥ 10% of trading day per assigned security
+- ADV &gt; 10 million shares across all assigned securities per month
+- Must add displayed liquidity (no hidden-only participation)</p>
+<p><strong>Privileges</strong>:
+- Financial rebates: ~$0.0020 per executed share (meeting all requirements) <sup class="cite"><a href="#web-sec-gov-slp" title="WEB: sec.gov/slp">[W]</a></sup>
+- Three consecutive months of non-compliance → loss of SLP status</p>
+<h3 id="93-retail-liquidity-program-ref1">9.3 Retail Liquidity Program <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Incentivizes retail-friendly pricing via RPI orders</li>
+<li>Providers offer price improvement ≥$0.001 better than PBBO</li>
+<li>NYSE publishes Retail Liquidity Indicator when better prices available</li>
+</ul>
+<hr />
+<h2 id="10-source-bibliography">10. Source Bibliography</h2>
+<h3 id="reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</h3>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> NYSE, "NYSE Market Model", <a href="https://www.nyse.com/market-model" target="_blank">https://www.nyse.com/market-model</a></p>
+<p><span id="ref-2"><strong>[REF:#2]</strong></span> NYSE, "NYSE Trading Information", <a href="https://www.nyse.com/markets/nyse/trading-info" target="_blank">https://www.nyse.com/markets/nyse/trading-info</a></p>
+<p><span id="ref-3"><strong>[REF:#3]</strong></span> NYSE, "Rule Interpretations — Rule 104 (DMM)", <a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/rule-interpretations/2014/14-2.pdf" target="_blank">https://www.nyse.com/publicdocs/nyse/markets/nyse/rule-interpretations/2014/14-2.pdf</a></p>
+<p><span id="ref-4"><strong>[REF:#4]</strong></span> NYSE, "NYSE Pillar Gateway FIX Protocol Specification (PDF)", <a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_FIX_Protocol_Specification.pdf" target="_blank">https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_FIX_Protocol_Specification.pdf</a></p>
+<p><span id="ref-5"><strong>[REF:#5]</strong></span> NYSE, "NYSE Pillar Gateway Binary Protocol Specification (PDF)", <a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_Binary_Protocol_Specification.pdf" target="_blank">https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Gateway_Binary_Protocol_Specification.pdf</a></p>
+<p><span id="ref-6"><strong>[REF:#6]</strong></span> NYSE, "Pillar Order Type Differences (PDF)", <a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Differences.pdf" target="_blank">https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Differences.pdf</a></p>
+<p><span id="ref-7"><strong>[REF:#7]</strong></span> NYSE, "NYSE Pillar Risk Controls (PDF)", <a href="https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Risk_Controls.pdf" target="_blank">https://www.nyse.com/publicdocs/nyse/NYSE_Pillar_Risk_Controls.pdf</a></p>
+<p><span id="ref-8"><strong>[REF:#8]</strong></span> NYSE, "Functional Differences NYSE Pillar (PDF)", <a href="https://www.nyse.com/publicdocs/nyse/markets/nyse/Functional_Differences_NYSE_Pillar.pdf" target="_blank">https://www.nyse.com/publicdocs/nyse/markets/nyse/Functional_Differences_NYSE_Pillar.pdf</a></p>
+<h3 id="web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</h3>
+<p><span id="web-nyse-com-market-model"><strong>[WEB:nyse.com/market-model]</strong></span> NYSE Market Model overview, <a href="https://www.nyse.com/market-model" target="_blank">https://www.nyse.com/market-model</a> Accessed 2026-03-27</p>
+<p><span id="web-nyse-com-closing-auction"><strong>[WEB:nyse.com/closing-auction]</strong></span> "An Insider's Guide to the NYSE Closing Auction", <a href="https://www.nyse.com/article/nyse-closing-auction-insiders-guide" target="_blank">https://www.nyse.com/article/nyse-closing-auction-insiders-guide</a> Accessed 2026-03-27</p>
+<p><span id="web-nyse-com-d-orders"><strong>[WEB:nyse.com/d-orders]</strong></span> "Getting to know D Orders", NYSE Data Insights, <a href="https://www.nyse.com/data-insights/getting-to-know-d-orders-a-unique-execution-tool-for-nyse-floor-brokers" target="_blank">https://www.nyse.com/data-insights/getting-to-know-d-orders-a-unique-execution-tool-for-nyse-floor-brokers</a> Accessed 2026-03-27</p>
+<p><span id="web-nyse-com-auction"><strong>[WEB:nyse.com/auction]</strong></span> "NYSE Auction Tool", <a href="https://www.nyse.com/data-insights/nyse-introduces-the-enhanced-nyse-auction-tool-with-opening-imbalance-history" target="_blank">https://www.nyse.com/data-insights/nyse-introduces-the-enhanced-nyse-auction-tool-with-opening-imbalance-history</a> Accessed 2026-03-27</p>
+<p><span id="web-wikipedia"><strong>[WEB:wikipedia]</strong></span> New York Stock Exchange — Wikipedia, <a href="https://en.wikipedia.org/wiki/New_York_Stock_Exchange" target="_blank">https://en.wikipedia.org/wiki/New_York_Stock_Exchange</a> Accessed 2026-03-27</p>
+<p><span id="web-investor-gov"><strong>[WEB:investor.gov]</strong></span> "Stock Market Circuit Breakers", Investor.gov, <a href="https://www.investor.gov/introduction-investing/investing-basics/glossary/stock-market-circuit-breakers" target="_blank">https://www.investor.gov/introduction-investing/investing-basics/glossary/stock-market-circuit-breakers</a> Accessed 2026-03-27</p>
+<p><span id="web-luldplan-com"><strong>[WEB:luldplan.com]</strong></span> "Limit Up Limit Down", <a href="https://www.luldplan.com/" target="_blank">https://www.luldplan.com/</a> Accessed 2026-03-27</p>
+<p><span id="web-liquidity-provider-com"><strong>[WEB:liquidity-provider.com]</strong></span> "What is the Role of SLP on NYSE?", <a href="https://liquidity-provider.com/articles/what-is-a-supplemental-liquidity-provider-slp-on-the-nyse/" target="_blank">https://liquidity-provider.com/articles/what-is-a-supplemental-liquidity-provider-slp-on-the-nyse/</a> Accessed 2026-03-27</p>
+<p><span id="web-sec-gov-rule104"><strong>[WEB:sec.gov/rule104]</strong></span> SEC Filing — NYSE Rule 104, <a href="https://www.sec.gov/files/rules/sro/nyse/2019/34-87056.pdf" target="_blank">https://www.sec.gov/files/rules/sro/nyse/2019/34-87056.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-sec-gov-slp"><strong>[WEB:sec.gov/slp]</strong></span> SEC Filing — NYSE Rule 107B SLP, <a href="https://www.sec.gov/files/rules/sro/nyse/2012/34-66821-ex5.pdf" target="_blank">https://www.sec.gov/files/rules/sro/nyse/2012/34-66821-ex5.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-bestbrokers"><strong>[WEB:bestbrokers]</strong></span> "Stock Market Trading Statistics 2026", <a href="https://www.bestbrokers.com/stock-trading/stock-trading-market-statistics/" target="_blank">https://www.bestbrokers.com/stock-trading/stock-trading-market-statistics/</a> Accessed 2026-03-27</p>
+<p><span id="web-statista"><strong>[WEB:statista]</strong></span> "NYSE and Nasdaq: market cap comparison 2025", <a href="https://www.statista.com/statistics/1277195/nyse-nasdaq-comparison-market-capitalization-listed-companies/" target="_blank">https://www.statista.com/statistics/1277195/nyse-nasdaq-comparison-market-capitalization-listed-companies/</a> Accessed 2026-03-27</p>
+<p><span id="web-cnbc-com"><strong>[WEB:cnbc.com]</strong></span> "S&amp;P 500 circuit breaker on tariff worries", CNBC, <a href="https://www.cnbc.com/2025/04/06/sp-500-circuit-breaker-on-tariff-worries-what-that-means.html" target="_blank">https://www.cnbc.com/2025/04/06/sp-500-circuit-breaker-on-tariff-worries-what-that-means.html</a> Accessed 2026-03-27</p>
+<hr />
+<p><em>Report version: 1.0 | Batch: 1 | Created: 2026-03-27 | Language: English</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

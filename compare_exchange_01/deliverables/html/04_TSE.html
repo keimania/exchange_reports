@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TSE / JPX (Tokyo Stock Exchange) — Exchange Report</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1-exchange-overview">1. Exchange Overview</a></li>
+<li><a href="#2-institutional-philosophy">2. Institutional Philosophy</a></li>
+<li><a href="#3-order-types-basic">3. Order Types — Basic</a></li>
+<li class="h3"><a href="#31-limit-order-ref2-ref3">3.1 Limit Order (指値注文) [2] [3]</a></li>
+<li class="h3"><a href="#32-market-order-ref2-ref3">3.2 Market Order (成行注文) [2] [3]</a></li>
+<li class="h3"><a href="#33-market-on-open-webppro8wiki">3.3 Market-on-Open (寄付注文) [W]</a></li>
+<li class="h3"><a href="#34-market-on-close-webppro8wiki">3.4 Market-on-Close (引け注文) [W]</a></li>
+<li class="h3"><a href="#35-limit-on-open-loo-webppro8wiki">3.5 Limit-on-Open (LOO) [W]</a></li>
+<li class="h3"><a href="#36-limit-on-close-loc-webppro8wiki">3.6 Limit-on-Close (LOC) [W]</a></li>
+<li><a href="#4-order-types-advanced">4. Order Types — Advanced</a></li>
+<li class="h3"><a href="#41-ioc-immediate-or-cancel-ref3-webppro8wiki">4.1 IOC (Immediate-or-Cancel) [3] [W]</a></li>
+<li class="h3"><a href="#42-fok-fill-or-kill-ref3">4.2 FOK (Fill-or-Kill) [3]</a></li>
+<li class="h3"><a href="#43-conditional-orders-ref1">4.3 Conditional Orders [1]</a></li>
+<li class="h3"><a href="#44-time-in-force-ref3">4.4 Time-in-Force [3]</a></li>
+<li><a href="#5-order-types-exchange-specific">5. Order Types — Exchange-Specific</a></li>
+<li class="h3"><a href="#51-funari-order-ref2-webppro8wiki">5.1 Funari Order (引成注文) [2] [W]</a></li>
+<li class="h3"><a href="#52-conditional-limit-at-close-ref1">5.2 Conditional Limit at Close [1]</a></li>
+<li class="h3"><a href="#53-special-quote-tokubetsu-kehai-webwikipedia-webnberorg">5.3 Special Quote (特別気配, Tokubetsu Kehai) [W] [W]</a></li>
+<li><a href="#6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</a></li>
+<li class="h3"><a href="#trading-system-arrowhead-40-ref8-ref9-webfujitsucom">Trading System: arrowhead 4.0 [8] [9] [W]</a></li>
+<li class="h3"><a href="#matching-algorithm-ref2">Matching Algorithm [2]</a></li>
+<li class="h3"><a href="#opening-price-itayose-at-0900-ref2">Opening Price (Itayose at 09:00) [2]</a></li>
+<li class="h3"><a href="#closing-price-closing-auction-session-cas-webjpxcojp-webglobaltradingnet">Closing Price — Closing Auction Session (CAS) [W] [W]</a></li>
+<li class="h3"><a href="#tick-size-regime-ref4-webjpxcojptick-size">Tick Size Regime [4] [W]</a></li>
+<li class="h3"><a href="#lot-size-trading-unit-ref1-webjpxcojpunit">Lot Size (Trading Unit) [1] [W]</a></li>
+<li><a href="#7-safeguard-mechanisms">7. Safeguard Mechanisms</a></li>
+<li class="h3"><a href="#71-daily-price-limits-ref4-webjpxcojpprice-limits">7.1 Daily Price Limits (値幅制限) [4] [W]</a></li>
+<li class="h3"><a href="#72-special-quote-system-tokubetsu-kehai-webwikipedia-webnberorg">7.2 Special Quote System (特別気配, Tokubetsu Kehai) [W] [W]</a></li>
+<li class="h3"><a href="#73-circuit-breakers-derivatives-webjpxcojpcb">7.3 Circuit Breakers (Derivatives) [W]</a></li>
+<li class="h3"><a href="#74-trading-halts-ref1">7.4 Trading Halts [1]</a></li>
+<li><a href="#8-special-sessions">8. Special Sessions</a></li>
+<li class="h3"><a href="#81-pre-opening-08000900-ref1">8.1 Pre-Opening (08:00–09:00) [1]</a></li>
+<li class="h3"><a href="#82-morning-session-09001130-ref1">8.2 Morning Session (09:00–11:30) [1]</a></li>
+<li class="h3"><a href="#83-lunch-break-11301230-ref1">8.3 Lunch Break (11:30–12:30) [1]</a></li>
+<li class="h3"><a href="#84-afternoon-session-12301525-ref1">8.4 Afternoon Session (12:30–15:25) [1]</a></li>
+<li class="h3"><a href="#85-closing-auction-session-cas-new-webjpxcojp-webglobaltradingnet">8.5 Closing Auction Session (CAS) — NEW [W] [W]</a></li>
+<li class="h3"><a href="#86-tostnet-off-auction-trading-webclearstreamcom-webfinextracom">8.6 ToSTNeT (Off-Auction Trading) [W] [W]</a></li>
+<li class="h3"><a href="#87-dark-pool-activity-webjpxcojpdark-pools">8.7 Dark Pool Activity [W]</a></li>
+<li><a href="#9-lp-market-maker-obligations">9. LP / Market Maker Obligations</a></li>
+<li class="h3"><a href="#91-etf-market-making-incentive-scheme-webjpxcojpetf-mm">9.1 ETF Market Making Incentive Scheme [W]</a></li>
+<li class="h3"><a href="#92-equity-market-makers-ref1">9.2 Equity Market Makers [1]</a></li>
+<li class="h3"><a href="#93-comparison-with-batch-1-exchanges">9.3 Comparison with Batch 1 Exchanges</a></li>
+<li><a href="#10-source-bibliography">10. Source Bibliography</a></li>
+<li class="h3"><a href="#reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</a></li>
+<li class="h3"><a href="#web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="tse-jpx-tokyo-stock-exchange-exchange-report">TSE / JPX (Tokyo Stock Exchange) — Exchange Report</h1>
+<hr />
+<h2 id="1-exchange-overview">1. Exchange Overview</h2>
+<p><strong>Full Legal Name</strong>: Tokyo Stock Exchange, Inc. (株式会社東京証券取引所)
+<strong>Country</strong>: Japan
+<strong>Founding Year</strong>: 1878 (original); re-established 1949; merged into JPX 2013 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>Parent Group</strong>: Japan Exchange Group, Inc. (JPX) — formed 2013 by merger of TSE and Osaka Securities Exchange (OSE) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>Market Model</strong>: Pure order-driven market with Itayose (call auction) + Zaraba (continuous) dual mechanism <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></p>
+<p><strong>Asset Classes Traded</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-jpx-co-jp" title="WEB: jpx.co.jp">[W]</a></sup>
+- Equities (Prime, Standard, Growth, TOKYO PRO Market)
+- ETFs, ETNs, REITs, Infrastructure Funds
+- Derivatives (via OSE — Nikkei 225 futures/options, TOPIX futures, JGB futures)
+- Bonds (via OSE)</p>
+<p><strong>Regular Trading Hours (JST, UTC+9)</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-market-clock-com" title="WEB: market-clock.com">[W]</a></sup>
+- Morning session: 09:00–11:30
+- Lunch break: 11:30–12:30
+- Afternoon session: 12:30–15:25 (Zaraba)
+- <strong>Closing Auction Session (CAS)</strong>: 15:25–15:30 (NEW — arrowhead 4.0)
+- Order acceptance: from 08:00 (morning) and 12:05 (afternoon)</p>
+<p><strong>Key Statistics</strong>: <sup class="cite"><a href="#web-jpx-co-jp" title="WEB: jpx.co.jp">[W]</a></sup> <sup class="cite"><a href="#web-statista" title="WEB: statista">[W]</a></sup>
+- Listed companies: ~3,945 (Prime: 1,599, Standard: 1,569, Growth: 614, PRO: 163) as of 2025
+- Annual trading value (2025): ¥1,419.6 trillion (record high — Prime domestic common stocks) <sup class="cite"><a href="#web-jpx-co-jp-trading-overview" title="WEB: jpx.co.jp/trading-overview">[W]</a></sup>
+- Market capitalization: ~¥900+ trillion (third largest globally)</p>
+<p><strong>Recent Major Changes</strong>: <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup> <sup class="cite"><a href="#web-jpx-co-jp" title="WEB: jpx.co.jp">[W]</a></sup>
+- 2024.11.05: arrowhead 4.0 launched — fourth-generation trading system
+- 2024.11.05: Trading hours extended by 30 min (afternoon close: 15:25→15:30 with CAS)
+- 2024.11.05: Closing Auction Session (CAS) introduced
+- 2022.04: Market restructuring — First/Second/Mothers/JASDAQ → Prime/Standard/Growth</p>
+<hr />
+<h2 id="2-institutional-philosophy">2. Institutional Philosophy</h2>
+<p><strong>Primary Market Model</strong>: Pure order-driven, auction-based with dual mechanism <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup>
+- <strong>Itayose (板寄せ, Call Auction)</strong>: Used for opening, closing, and post-halt price determination
+- <strong>Zaraba (ザラバ, Continuous Trading)</strong>: Used during regular intraday trading
+- No designated market maker for general equities <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>Design Rationale</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Japanese exchange tradition emphasizing order-book transparency and fairness
+- Dual mechanism combines: batch processing for equilibrium prices (Itayose) + continuous matching for real-time price discovery (Zaraba)
+- No floor brokers or human intermediaries — all electronic via arrowhead <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup>
+- Market maker programs limited to ETFs (incentive-based, not mandatory for stocks) <sup class="cite"><a href="#web-jpx-co-jp-etf-mm" title="WEB: jpx.co.jp/etf-mm">[W]</a></sup></p>
+<p><strong>Evolution</strong>: Physical floor (1878) → electronic (1999 system upgrade) → arrowhead 1.0 (2010) → 2.0 (2015) → 3.0 (2019) → <strong>4.0 (2024.11)</strong> <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></p>
+<hr />
+<h2 id="3-order-types-basic">3. Order Types — Basic</h2>
+<h3 id="31-limit-order-ref2-ref3">3.1 Limit Order (指値注文) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li>Specifies price, quantity, and side (buy/sell)</li>
+<li>Rests on order book if not immediately matchable</li>
+<li>Time-in-force: Day (default — expires at session end)</li>
+<li>Available in all sessions</li>
+</ul>
+<h3 id="32-market-order-ref2-ref3">3.2 Market Order (成行注文) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li>No price specified; executes at best available price</li>
+<li>In Itayose: treated as willing to trade at any price within daily limits <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></li>
+<li>In Zaraba: sweeps order book at available prices <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></li>
+<li>Available in all sessions</li>
+</ul>
+<h3 id="33-market-on-open-webppro8wiki">3.3 Market-on-Open (寄付注文) <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<ul>
+<li>Market order targeting opening Itayose price</li>
+<li>Executes only at opening price determination</li>
+</ul>
+<h3 id="34-market-on-close-webppro8wiki">3.4 Market-on-Close (引け注文) <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<ul>
+<li>Market order targeting closing Itayose/CAS price</li>
+<li>Executes only at closing price determination</li>
+</ul>
+<h3 id="35-limit-on-open-loo-webppro8wiki">3.5 Limit-on-Open (LOO) <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<ul>
+<li>Limit order for opening auction only</li>
+</ul>
+<h3 id="36-limit-on-close-loc-webppro8wiki">3.6 Limit-on-Close (LOC) <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<ul>
+<li>Limit order for closing auction only</li>
+</ul>
+<hr />
+<h2 id="4-order-types-advanced">4. Order Types — Advanced</h2>
+<h3 id="41-ioc-immediate-or-cancel-ref3-webppro8wiki">4.1 IOC (Immediate-or-Cancel) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<ul>
+<li>Executes immediately against available liquidity; unfilled portion cancelled</li>
+<li>Available for both limit and market orders</li>
+<li>Used during Zaraba session</li>
+</ul>
+<h3 id="42-fok-fill-or-kill-ref3">4.2 FOK (Fill-or-Kill) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li>Must fill entirely or cancel completely</li>
+<li>Available during Zaraba session</li>
+</ul>
+<h3 id="43-conditional-orders-ref1">4.3 Conditional Orders <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Stop orders converted to market/limit upon trigger price being reached</li>
+<li>Used for risk management and algorithmic strategies</li>
+</ul>
+<h3 id="44-time-in-force-ref3">4.4 Time-in-Force <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li><strong>Day</strong>: Default — expires at end of trading day</li>
+<li><strong>IOC</strong>: Immediate or cancel</li>
+<li><strong>FOK</strong>: Fill or kill</li>
+<li>Note: TSE does not offer GTC for equities — all orders are day orders</li>
+</ul>
+<hr />
+<h2 id="5-order-types-exchange-specific">5. Order Types — Exchange-Specific</h2>
+<h3 id="51-funari-order-ref2-webppro8wiki">5.1 Funari Order (引成注文) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#web-ppro8wiki" title="WEB: ppro8wiki">[W]</a></sup></h3>
+<ul>
+<li><strong>TSE-unique</strong>: Limit order during Zaraba that automatically converts to market order for closing Itayose/CAS</li>
+<li>If executed during continuous trading: behaves as standard limit</li>
+<li>If unexecuted at session close: becomes market order for closing auction <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></li>
+<li>Closest analog: KRX's 조건부지정가호가 (Conditional Limit Order)</li>
+<li>Rationale: Combines intraday limit discipline with guaranteed closing participation</li>
+</ul>
+<h3 id="52-conditional-limit-at-close-ref1">5.2 Conditional Limit at Close <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Variant of closing participation order with price constraint</li>
+<li>Participates in closing auction only if price is within specified range</li>
+</ul>
+<h3 id="53-special-quote-tokubetsu-kehai-webwikipedia-webnberorg">5.3 Special Quote (特別気配, Tokubetsu Kehai) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#web-nber-org" title="WEB: nber.org">[W]</a></sup></h3>
+<ul>
+<li><strong>TSE-unique mechanism</strong>: Not an order type but a system-generated indicative quote</li>
+<li>Issued when order imbalance prevents normal price discovery at open or during trading</li>
+<li>Flags transient order imbalances to attract counterparty orders</li>
+<li>Moves in increments until sufficient counter-orders arrive</li>
+<li>Functions as a "slow-motion auction" — unique alternative to hard trading halts</li>
+<li>Effectively a volatility management tool integrated into price formation</li>
+</ul>
+<hr />
+<h2 id="6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</h2>
+<h3 id="trading-system-arrowhead-40-ref8-ref9-webfujitsucom">Trading System: arrowhead 4.0 <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup> <sup class="cite"><a href="#ref-9" title="REF #9">[9]</a></sup> <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Launch</strong>: November 5, 2024 (fourth generation since 2010) <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></li>
+<li><strong>Developer</strong>: Fujitsu <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></li>
+<li><strong>Infrastructure</strong>: 462 Fujitsu PRIMERGY RX2540 M6 x86 servers <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></li>
+<li><strong>Software</strong>: Fujitsu Software Primesoft Server — ultra-high-speed in-memory data management <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></li>
+<li><strong>Latency</strong>: Microsecond-level order processing (exact figure not disclosed; prior gen: ~0.5 ms) <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></li>
+<li><strong>Reliability</strong>: Triple memory replication of trading data; parallel server operation; sub-second failover with zero data loss <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></li>
+<li><strong>New features (4.0)</strong>: Closing Auction Session, 30-min trading hours extension, per-order market information distribution, bulk order cancellation <sup class="cite"><a href="#web-fujitsu-com" title="WEB: fujitsu.com">[W]</a></sup></li>
+</ul>
+<h3 id="matching-algorithm-ref2">Matching Algorithm <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<p><strong>Itayose (板寄せ, Call Auction)</strong>: <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup>
+1. All accumulated orders treated as simultaneous (no time priority)
+2. Single price determined to: maximize traded volume, minimize untraded volume
+3. All sell orders above the price and all buy orders below execute
+4. Used for: opening, closing (CAS), post-halt reopening</p>
+<p><strong>Zaraba (ザラバ, Continuous Trading)</strong>: <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup>
+1. Price-time priority matching
+2. Incoming order matches against resting orders at best available price
+3. Execution when lowest ask ≤ highest bid
+4. Unmatched portion rests on book</p>
+<h3 id="opening-price-itayose-at-0900-ref2">Opening Price (Itayose at 09:00) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Orders accumulate from 08:00</li>
+<li>At 09:00: Itayose determines single opening price</li>
+<li>If insufficient orders: Special Quote (Tokubetsu Kehai) issued</li>
+</ul>
+<h3 id="closing-price-closing-auction-session-cas-webjpxcojp-webglobaltradingnet">Closing Price — Closing Auction Session (CAS) <sup class="cite"><a href="#web-jpx-co-jp" title="WEB: jpx.co.jp">[W]</a></sup> <sup class="cite"><a href="#web-globaltrading-net" title="WEB: globaltrading.net">[W]</a></sup></h3>
+<ul>
+<li><strong>15:25</strong>: Zaraba ends; pre-closing order acceptance period begins</li>
+<li>During pre-closing (15:25–15:30): orders accepted but no trades executed</li>
+<li>Funari orders and on-close orders registered in order book <sup class="cite"><a href="#web-medium-com-tokyo-fintech" title="WEB: medium.com/tokyo-fintech">[W]</a></sup></li>
+<li><strong>15:30</strong>: Itayose determines closing price</li>
+<li>CAS introduced November 2024 to improve transparency of closing price formation <sup class="cite"><a href="#web-jpx-co-jp-closing-auction" title="WEB: jpx.co.jp/closing-auction">[W]</a></sup></li>
+</ul>
+<h3 id="tick-size-regime-ref4-webjpxcojptick-size">Tick Size Regime <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup> <sup class="cite"><a href="#web-jpx-co-jp-tick-size" title="WEB: jpx.co.jp/tick-size">[W]</a></sup></h3>
+<p>TSE uses tiered tick sizes by price level. For <strong>TOPIX 500 constituents</strong> (narrower ticks):</p>
+<table>
+<thead>
+<tr>
+<th>Price Range (¥)</th>
+<th>Tick Size (¥)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 1,000</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>1,000–2,999</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>3,000–4,999</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5,000–9,999</td>
+<td>5</td>
+</tr>
+<tr>
+<td>10,000–29,999</td>
+<td>5</td>
+</tr>
+<tr>
+<td>30,000–49,999</td>
+<td>10</td>
+</tr>
+<tr>
+<td>50,000–99,999</td>
+<td>50</td>
+</tr>
+<tr>
+<td>≥ 100,000</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+<p>For <strong>other stocks</strong>: wider tick sizes (e.g., ¥1 for &lt;3,000; ¥5 for 3,000–5,000; ¥10 for 5,000–30,000; ¥100 for 30,000–50,000, etc.) <sup class="cite"><a href="#web-jpx-co-jp-tick-size" title="WEB: jpx.co.jp/tick-size">[W]</a></sup></p>
+<h3 id="lot-size-trading-unit-ref1-webjpxcojpunit">Lot Size (Trading Unit) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-jpx-co-jp-unit" title="WEB: jpx.co.jp/unit">[W]</a></sup></h3>
+<ul>
+<li><strong>Standardized at 100 shares</strong> for all domestic stocks (since October 2018)</li>
+<li>Previously varied (1, 10, 50, 100, 500, 1000 shares)</li>
+</ul>
+<hr />
+<h2 id="7-safeguard-mechanisms">7. Safeguard Mechanisms</h2>
+<h3 id="71-daily-price-limits-ref4-webjpxcojpprice-limits">7.1 Daily Price Limits (値幅制限) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup> <sup class="cite"><a href="#web-jpx-co-jp-price-limits" title="WEB: jpx.co.jp/price-limits">[W]</a></sup></h3>
+<ul>
+<li>Absolute yen-denominated limits set by base price level (NOT percentage-based like KRX)</li>
+<li>Base price = previous day's closing price</li>
+<li>Example: Base price ¥1,000–1,499 → daily limit ±¥300 <sup class="cite"><a href="#web-futunn-com" title="WEB: futunn.com">[W]</a></sup></li>
+<li>Limits widen with higher price levels</li>
+<li>Can be broadened for individual issues experiencing sustained limit-hits <sup class="cite"><a href="#web-jpx-co-jp-broadened" title="WEB: jpx.co.jp/broadened">[W]</a></sup></li>
+</ul>
+<h3 id="72-special-quote-system-tokubetsu-kehai-webwikipedia-webnberorg">7.2 Special Quote System (特別気配, Tokubetsu Kehai) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#web-nber-org" title="WEB: nber.org">[W]</a></sup></h3>
+<ul>
+<li>When opening/intraday order imbalance prevents normal matching:</li>
+<li>Exchange issues special indicative quote (not a trade)</li>
+<li>Quote moves in preset increments toward equilibrium</li>
+<li>Attracts counter-orders gradually</li>
+<li>Functions as a <strong>soft circuit breaker</strong> — slows rather than halts price discovery</li>
+<li>Unique to TSE — other exchanges use hard halts for similar situations</li>
+</ul>
+<h3 id="73-circuit-breakers-derivatives-webjpxcojpcb">7.3 Circuit Breakers (Derivatives) <sup class="cite"><a href="#web-jpx-co-jp-cb" title="WEB: jpx.co.jp/cb">[W]</a></sup></h3>
+<ul>
+<li>Nikkei 225 / TOPIX futures: ~8% decline triggers 10-minute halt</li>
+<li>April 2025: Nikkei 225 futures circuit breaker triggered on tariff concerns <sup class="cite"><a href="#web-forexfactory-com" title="WEB: forexfactory.com">[W]</a></sup></li>
+<li>Note: Equities on TSE do NOT have market-wide circuit breakers — they use daily price limits + special quotes instead</li>
+</ul>
+<h3 id="74-trading-halts-ref1">7.4 Trading Halts <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Individual stock halts for material information dissemination</li>
+<li>Resume via Itayose (call auction) mechanism</li>
+</ul>
+<hr />
+<h2 id="8-special-sessions">8. Special Sessions</h2>
+<h3 id="81-pre-opening-08000900-ref1">8.1 Pre-Opening (08:00–09:00) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Order acceptance period — no matching</li>
+<li>All order types accepted</li>
+<li>Orders accumulate for opening Itayose at 09:00</li>
+</ul>
+<h3 id="82-morning-session-09001130-ref1">8.2 Morning Session (09:00–11:30) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Opening: Itayose at 09:00</li>
+<li>09:00–11:30: Zaraba (continuous trading)</li>
+<li>Closing: Itayose at 11:30</li>
+</ul>
+<h3 id="83-lunch-break-11301230-ref1">8.3 Lunch Break (11:30–12:30) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>No trading</li>
+<li>Order acceptance resumes at 12:05</li>
+</ul>
+<h3 id="84-afternoon-session-12301525-ref1">8.4 Afternoon Session (12:30–15:25) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Opening: Itayose at 12:30</li>
+<li>12:30–15:25: Zaraba (continuous trading)</li>
+</ul>
+<h3 id="85-closing-auction-session-cas-new-webjpxcojp-webglobaltradingnet">8.5 Closing Auction Session (CAS) — NEW <sup class="cite"><a href="#web-jpx-co-jp" title="WEB: jpx.co.jp">[W]</a></sup> <sup class="cite"><a href="#web-globaltrading-net" title="WEB: globaltrading.net">[W]</a></sup></h3>
+<ul>
+<li><strong>15:25–15:30</strong>: Pre-closing order acceptance (no trading)</li>
+<li>Funari orders convert to market orders</li>
+<li>On-close orders registered</li>
+<li><strong>15:30</strong>: Closing Itayose — single price determination</li>
+<li>Introduced November 5, 2024 with arrowhead 4.0</li>
+<li>Rationale: Improve transparency and fairness of closing price discovery</li>
+</ul>
+<h3 id="86-tostnet-off-auction-trading-webclearstreamcom-webfinextracom">8.6 ToSTNeT (Off-Auction Trading) <sup class="cite"><a href="#web-clearstream-com" title="WEB: clearstream.com">[W]</a></sup> <sup class="cite"><a href="#web-finextra-com" title="WEB: finextra.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Hours</strong>: Up to 08:20–18:00 (outside regular auction hours)</li>
+<li><strong>ToSTNeT-1</strong>: Single-issue transactions at closing price ± price limit</li>
+<li><strong>ToSTNeT-2</strong>: Basket trading (portfolio-level)</li>
+<li><strong>ToSTNeT-3</strong>: Own-share repurchase system <sup class="cite"><a href="#web-recruit-holdings-com" title="WEB: recruit-holdings.com">[W]</a></sup></li>
+<li>Used for: block trades, basket rebalancing, share buybacks</li>
+<li>Not anonymous — requires pre-arrangement between parties</li>
+</ul>
+<h3 id="87-dark-pool-activity-webjpxcojpdark-pools">8.7 Dark Pool Activity <sup class="cite"><a href="#web-jpx-co-jp-dark-pools" title="WEB: jpx.co.jp/dark-pools">[W]</a></sup></h3>
+<ul>
+<li>Japan has growing dark pool (PTS: Proprietary Trading System) activity</li>
+<li>JPX publishes monthly dark pool trading value data</li>
+<li>As of 2025: PTS/dark pool share growing but TSE lit market remains dominant</li>
+</ul>
+<hr />
+<h2 id="9-lp-market-maker-obligations">9. LP / Market Maker Obligations</h2>
+<h3 id="91-etf-market-making-incentive-scheme-webjpxcojpetf-mm">9.1 ETF Market Making Incentive Scheme <sup class="cite"><a href="#web-jpx-co-jp-etf-mm" title="WEB: jpx.co.jp/etf-mm">[W]</a></sup></h3>
+<p><strong>Structure</strong>: <sup class="cite"><a href="#web-jpx-co-jp-etf-mm" title="WEB: jpx.co.jp/etf-mm">[W]</a></sup>
+- TSE designates market makers for ETF issues based on applications
+- Incentive-based program (not mandatory for all participants)
+- Introduced: July 2, 2018</p>
+<p><strong>Obligations</strong>: <sup class="cite"><a href="#web-jpx-co-jp-etf-mm" title="WEB: jpx.co.jp/etf-mm">[W]</a></sup>
+- Quote in at least 5 ETF issues
+- Maintain quotes for ≥ 80% of continuous auction time
+- Version 2.0 (2026): Display continuous quotes of ~¥100 million
+- Exempt during trading halts or special quote periods</p>
+<p><strong>Incentives</strong>: <sup class="cite"><a href="#web-jpx-co-jp-etf-mm" title="WEB: jpx.co.jp/etf-mm">[W]</a></sup>
+- Fee rebates / reduced trading fees
+- Quarterly performance evaluation
+- Tiered incentive structure based on quoting quality</p>
+<h3 id="92-equity-market-makers-ref1">9.2 Equity Market Makers <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>TSE does <strong>not</strong> have a mandatory market maker program for general equities</li>
+<li>No DMM-style exclusive assignment (unlike NYSE)</li>
+<li>No competitive MM quoting obligations (unlike NASDAQ)</li>
+<li>Liquidity in equities relies entirely on natural order flow and institutional participants</li>
+<li>Rationale: Japanese market tradition of order-driven purity; ETF MM scheme added only due to specific ETF liquidity concerns</li>
+</ul>
+<h3 id="93-comparison-with-batch-1-exchanges">9.3 Comparison with Batch 1 Exchanges</h3>
+<ul>
+<li><strong>vs. KRX</strong>: KRX has both LP program (ETF/ELW) AND MM program (low-liquidity stocks); TSE only has ETF MM</li>
+<li><strong>vs. NYSE</strong>: NYSE has exclusive DMM + SLP; TSE has no equivalent</li>
+<li><strong>vs. NASDAQ</strong>: NASDAQ has competitive MMs; TSE has no general equity MMs</li>
+</ul>
+<hr />
+<h2 id="10-source-bibliography">10. Source Bibliography</h2>
+<h3 id="reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</h3>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> JPX, "Overview of Domestic Stock Trading Rules", <a href="https://www.jpx.co.jp/english/equities/trading/domestic/index.html" target="_blank">https://www.jpx.co.jp/english/equities/trading/domestic/index.html</a></p>
+<p><span id="ref-2"><strong>[REF:#2]</strong></span> JPX, "Transaction Methods (Itayose &amp; Zaraba)", <a href="https://www.jpx.co.jp/english/equities/trading/domestic/04.html" target="_blank">https://www.jpx.co.jp/english/equities/trading/domestic/04.html</a></p>
+<p><span id="ref-3"><strong>[REF:#3]</strong></span> JPX, "Equity Trading Guide 2024 (PDF)", <a href="https://www.jpx.co.jp/english/equities/trading/domestic/tvdivq000000tpfi-att/eg.pdf" target="_blank">https://www.jpx.co.jp/english/equities/trading/domestic/tvdivq000000tpfi-att/eg.pdf</a></p>
+<p><span id="ref-4"><strong>[REF:#4]</strong></span> JPX, "Daily Price Limits", <a href="https://www.jpx.co.jp/english/equities/trading/domestic/06.html" target="_blank">https://www.jpx.co.jp/english/equities/trading/domestic/06.html</a></p>
+<p><span id="ref-5"><strong>[REF:#5]</strong></span> JPX, "Derivatives Trading Methods", <a href="https://www.jpx.co.jp/english/derivatives/rules/trading-methods/index.html" target="_blank">https://www.jpx.co.jp/english/derivatives/rules/trading-methods/index.html</a></p>
+<p><span id="ref-6"><strong>[REF:#6]</strong></span> JPX, "Derivatives Trading Methods Detail (PDF)", <a href="https://www.jpx.co.jp/english/derivatives/rules/trading-methods/tvdivq0000004h12-att/tvdivq000000ueul.pdf" target="_blank">https://www.jpx.co.jp/english/derivatives/rules/trading-methods/tvdivq0000004h12-att/tvdivq000000ueul.pdf</a></p>
+<p><span id="ref-7"><strong>[REF:#7]</strong></span> JPX, "Other Derivatives Trading Rules", <a href="https://www.jpx.co.jp/english/derivatives/rules/others/01.html" target="_blank">https://www.jpx.co.jp/english/derivatives/rules/others/01.html</a></p>
+<p><span id="ref-8"><strong>[REF:#8]</strong></span> JPX, "Arrowhead System Overview", <a href="https://www.jpx.co.jp/english/systems/equities-trading/01.html" target="_blank">https://www.jpx.co.jp/english/systems/equities-trading/01.html</a></p>
+<p><span id="ref-9"><strong>[REF:#9]</strong></span> JPX, "Equities Trading Services", <a href="https://www.jpx.co.jp/english/systems/equities-trading/index.html" target="_blank">https://www.jpx.co.jp/english/systems/equities-trading/index.html</a></p>
+<p><span id="ref-10"><strong>[REF:#10]</strong></span> JPX, "Learning Resources", <a href="https://www.jpx.co.jp/english/corporate/learning/resources/index.html" target="_blank">https://www.jpx.co.jp/english/corporate/learning/resources/index.html</a></p>
+<h3 id="web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</h3>
+<p><span id="web-fujitsu-com"><strong>[WEB:fujitsu.com]</strong></span> Fujitsu, "arrowhead4.0 press release", <a href="https://www.fujitsu.com/global/about/resources/news/press-releases/2024/1105-01.html" target="_blank">https://www.fujitsu.com/global/about/resources/news/press-releases/2024/1105-01.html</a> Accessed 2026-03-27</p>
+<p><span id="web-wikipedia"><strong>[WEB:wikipedia]</strong></span> Tokyo Stock Exchange — Wikipedia, <a href="https://en.wikipedia.org/wiki/Tokyo_Stock_Exchange" target="_blank">https://en.wikipedia.org/wiki/Tokyo_Stock_Exchange</a> Accessed 2026-03-27</p>
+<p><span id="web-jpx-co-jp"><strong>[WEB:jpx.co.jp]</strong></span> Japan Exchange Group main, <a href="https://www.jpx.co.jp/english/" target="_blank">https://www.jpx.co.jp/english/</a> Accessed 2026-03-27</p>
+<p><span id="web-jpx-co-jp-trading-overview"><strong>[WEB:jpx.co.jp/trading-overview]</strong></span> "Trading Overview in Year 2025", <a href="https://www.jpx.co.jp/english/corporate/news/news-releases/0063/20251230-01.html" target="_blank">https://www.jpx.co.jp/english/corporate/news/news-releases/0063/20251230-01.html</a> Accessed 2026-03-27</p>
+<p><span id="web-jpx-co-jp-etf-mm"><strong>[WEB:jpx.co.jp/etf-mm]</strong></span> "ETF Market Making Incentive Scheme", <a href="https://www.jpx.co.jp/english/equities/products/etfs/market-making/" target="_blank">https://www.jpx.co.jp/english/equities/products/etfs/market-making/</a> Accessed 2026-03-27</p>
+<p><span id="web-jpx-co-jp-tick-size"><strong>[WEB:jpx.co.jp/tick-size]</strong></span> "Tick Size", <a href="https://www.jpx.co.jp/english/equities/trading/domestic/07.html" target="_blank">https://www.jpx.co.jp/english/equities/trading/domestic/07.html</a> Accessed 2026-03-27</p>
+<p><span id="web-jpx-co-jp-unit"><strong>[WEB:jpx.co.jp/unit]</strong></span> "Standardization of Trading Unit", <a href="https://www.jpx.co.jp/english/equities/improvements/unit/index.html" target="_blank">https://www.jpx.co.jp/english/equities/improvements/unit/index.html</a> Accessed 2026-03-27</p>
+<p><span id="web-jpx-co-jp-price-limits"><strong>[WEB:jpx.co.jp/price-limits]</strong></span> "Daily Price Limits", <a href="https://www.jpx.co.jp/english/equities/trading/domestic/06.html" target="_blank">https://www.jpx.co.jp/english/equities/trading/domestic/06.html</a> Accessed 2026-03-27</p>
+<p><span id="web-jpx-co-jp-closing-auction"><strong>[WEB:jpx.co.jp/closing-auction]</strong></span> "Extension of Trading Hours and CAS", <a href="https://www.jpx.co.jp/english/news/1030/20230920-01.html" target="_blank">https://www.jpx.co.jp/english/news/1030/20230920-01.html</a> Accessed 2026-03-27</p>
+<p><span id="web-globaltrading-net"><strong>[WEB:globaltrading.net]</strong></span> "TSE updates trading system as closing auction demand soars", <a href="https://www.globaltrading.net/tse-updates-trading-system-as-closing-auction-demand-soars/" target="_blank">https://www.globaltrading.net/tse-updates-trading-system-as-closing-auction-demand-soars/</a> Accessed 2026-03-27</p>
+<p><span id="web-medium-com-tokyo-fintech"><strong>[WEB:medium.com/tokyo-fintech]</strong></span> "TSE extends trading hours by 30 minutes", <a href="https://medium.com/tokyo-fintech/tse-extends-trading-hours-by-30-minutes-44b84fe12a36" target="_blank">https://medium.com/tokyo-fintech/tse-extends-trading-hours-by-30-minutes-44b84fe12a36</a> Accessed 2026-03-27</p>
+<p><span id="web-ppro8wiki"><strong>[WEB:ppro8wiki]</strong></span> "Tokyo Stock Exchange — Order Types", <a href="https://www.ppro8wiki.com/doku.php?id=tokyo_stock_exchange" target="_blank">https://www.ppro8wiki.com/doku.php?id=tokyo_stock_exchange</a> Accessed 2026-03-27</p>
+<p><span id="web-statista"><strong>[WEB:statista]</strong></span> "Japan: number of listed companies by market division 2025", <a href="https://www.statista.com/statistics/1336987/japan-number-listed-companies-tse-by-market-division/" target="_blank">https://www.statista.com/statistics/1336987/japan-number-listed-companies-tse-by-market-division/</a> Accessed 2026-03-27</p>
+<p><span id="web-market-clock-com"><strong>[WEB:market-clock.com]</strong></span> "Tokyo Stock Exchange — Market Clock", <a href="https://www.market-clock.com/markets/jpx/tse/equities/" target="_blank">https://www.market-clock.com/markets/jpx/tse/equities/</a> Accessed 2026-03-27</p>
+<p><span id="web-nber-org"><strong>[WEB:nber.org]</strong></span> "Market Structure and Liquidity on the TSE", <a href="https://www.nber.org/system/files/chapters/c8108/c8108.pdf" target="_blank">https://www.nber.org/system/files/chapters/c8108/c8108.pdf</a> Accessed 2026-03-27</p>
+<hr />
+<p><em>Report version: 1.0 | Batch: 2 | Created: 2026-03-27 | Language: English</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

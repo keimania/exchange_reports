@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NASDAQ — Exchange Report</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1-exchange-overview">1. Exchange Overview</a></li>
+<li><a href="#2-institutional-philosophy">2. Institutional Philosophy</a></li>
+<li><a href="#3-order-types-basic">3. Order Types — Basic</a></li>
+<li class="h3"><a href="#31-market-order-ref1">3.1 Market Order [1]</a></li>
+<li class="h3"><a href="#32-limit-order-ref1">3.2 Limit Order [1]</a></li>
+<li class="h3"><a href="#33-market-on-open-moo-ref7-ref8">3.3 Market-on-Open (MOO) [7] [8]</a></li>
+<li class="h3"><a href="#34-limit-on-open-loo-ref7-ref8">3.4 Limit-on-Open (LOO) [7] [8]</a></li>
+<li class="h3"><a href="#35-market-on-close-moc-ref7-ref8">3.5 Market-on-Close (MOC) [7] [8]</a></li>
+<li class="h3"><a href="#36-limit-on-close-loc-ref7-ref8">3.6 Limit-on-Close (LOC) [7] [8]</a></li>
+<li><a href="#4-order-types-advanced">4. Order Types — Advanced</a></li>
+<li class="h3"><a href="#41-reserve-iceberg-order-ref1">4.1 Reserve (Iceberg) Order [1]</a></li>
+<li class="h3"><a href="#42-pegged-orders-ref1-webnasdaqtradercom">4.2 Pegged Orders [1] [W]</a></li>
+<li class="h3"><a href="#43-post-only-order-ref1">4.3 Post-Only Order [1]</a></li>
+<li class="h3"><a href="#44-intermarket-sweep-order-iso-ref1">4.4 Intermarket Sweep Order (ISO) [1]</a></li>
+<li class="h3"><a href="#45-imbalance-only-io-orders-ref7">4.5 Imbalance-Only (IO) Orders [7]</a></li>
+<li class="h3"><a href="#46-non-displayed-order-ref1">4.6 Non-Displayed Order [1]</a></li>
+<li class="h3"><a href="#47-time-in-force-options-ref1-ref3">4.7 Time-in-Force Options [1] [3]</a></li>
+<li><a href="#5-order-types-exchange-specific">5. Order Types — Exchange-Specific</a></li>
+<li class="h3"><a href="#51-midpoint-extended-life-order-m-elo-webnasdaqcommelo-webnasdaqtradercommelo">5.1 Midpoint Extended Life Order (M-ELO) [W] [W]</a></li>
+<li class="h3"><a href="#52-dynamic-m-elo-webnasdaqcomdynamic-melo">5.2 Dynamic M-ELO [W]</a></li>
+<li class="h3"><a href="#53-m-elocb-m-elo-plus-continuous-book-webnasdaqcommelo">5.3 M-ELO+CB (M-ELO Plus Continuous Book) [W]</a></li>
+<li class="h3"><a href="#54-midpoint-peg-post-only-mppo-order-webnasdaqtradercommppo">5.4 Midpoint Peg Post-Only (MPPO) Order [W]</a></li>
+<li class="h3"><a href="#55-market-maker-peg-order-webnasdaqtradercommmpeg">5.5 Market Maker Peg Order [W]</a></li>
+<li class="h3"><a href="#56-openingclosing-cross-ref7-ref8">5.6 Opening/Closing Cross [7] [8]</a></li>
+<li><a href="#6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</a></li>
+<li class="h3"><a href="#trading-system-inet-ref2-ref3-webnasdaqcommatching">Trading System: INET [2] [3] [W]</a></li>
+<li class="h3"><a href="#protocols-ref2-ref3-ref4">Protocols [2] [3] [4]</a></li>
+<li class="h3"><a href="#matching-algorithm-price-time-priority-ref2">Matching Algorithm: Price-Time Priority [2]</a></li>
+<li class="h3"><a href="#opening-cross-ref7-ref8">Opening Cross [7] [8]</a></li>
+<li class="h3"><a href="#closing-cross-ref7-ref8">Closing Cross [7] [8]</a></li>
+<li class="h3"><a href="#tick-size">Tick Size</a></li>
+<li class="h3"><a href="#lot-size">Lot Size</a></li>
+<li><a href="#7-safeguard-mechanisms">7. Safeguard Mechanisms</a></li>
+<li class="h3"><a href="#71-market-wide-circuit-breakers-mwcb-webnasdaqtradercomcb">7.1 Market-Wide Circuit Breakers (MWCB) [W]</a></li>
+<li class="h3"><a href="#72-limit-up-limit-down-luld-webluldplancom">7.2 Limit Up-Limit Down (LULD) [W]</a></li>
+<li class="h3"><a href="#73-clearly-erroneous-execution-cee-ref1">7.3 Clearly Erroneous Execution (CEE) [1]</a></li>
+<li class="h3"><a href="#74-regulatory-trading-halts-ref1">7.4 Regulatory Trading Halts [1]</a></li>
+<li class="h3"><a href="#75-pre-trade-risk-controls-ref2">7.5 Pre-Trade Risk Controls [2]</a></li>
+<li><a href="#8-special-sessions">8. Special Sessions</a></li>
+<li class="h3"><a href="#81-pre-market-session-webtradinghourscom">8.1 Pre-Market Session [W]</a></li>
+<li class="h3"><a href="#82-opening-cross-ref7-ref8">8.2 Opening Cross [7] [8]</a></li>
+<li class="h3"><a href="#83-core-trading-session-ref1">8.3 Core Trading Session [1]</a></li>
+<li class="h3"><a href="#84-closing-cross-ref7-ref8">8.4 Closing Cross [7] [8]</a></li>
+<li class="h3"><a href="#85-after-hours-session-webtradinghourscom">8.5 After-Hours Session [W]</a></li>
+<li class="h3"><a href="#86-halt-cross-ref1">8.6 Halt Cross [1]</a></li>
+<li class="h3"><a href="#87-ipo-cross-webnasdaqcom">8.7 IPO Cross [W]</a></li>
+<li><a href="#9-lp-market-maker-obligations">9. LP / Market Maker Obligations</a></li>
+<li class="h3"><a href="#91-nasdaq-market-makers-competitive-model-ref1-webfederalregistergovrule4613">9.1 Nasdaq Market Makers (Competitive Model) [1] [W]</a></li>
+<li class="h3"><a href="#92-fee-structure-incentives-webnasdaqcom">9.2 Fee Structure / Incentives [W]</a></li>
+<li class="h3"><a href="#93-comparison-with-nyse-dmm-ref1">9.3 Comparison with NYSE DMM [1]</a></li>
+<li><a href="#10-source-bibliography">10. Source Bibliography</a></li>
+<li class="h3"><a href="#reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</a></li>
+<li class="h3"><a href="#web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="nasdaq-exchange-report">NASDAQ — Exchange Report</h1>
+<hr />
+<h2 id="1-exchange-overview">1. Exchange Overview</h2>
+<p><strong>Full Legal Name</strong>: The Nasdaq Stock Market LLC
+<strong>Country</strong>: United States of America
+<strong>Founding Year</strong>: 1971 (first electronic stock market); became registered exchange 2006 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>Parent Group</strong>: Nasdaq, Inc. <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup></p>
+<p><strong>Market Model</strong>: Pure electronic order-driven market with competitive market makers <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>Asset Classes Traded</strong>: <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup>
+- Equities (Nasdaq, Nasdaq BX, Nasdaq PSX)
+- Options (Nasdaq Options Market, Nasdaq ISE, Nasdaq GEMX, Nasdaq MRX, Nasdaq PHLX)
+- ETFs, ETNs</p>
+<p><strong>Regular Trading Hours (ET, UTC−5/−4)</strong>: <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup>
+- Pre-market: 04:00–09:30
+- Core trading: 09:30–16:00
+- After-hours: 16:00–20:00
+- <strong>Proposed</strong>: 23-hour trading (9:00 PM–8:00 PM ET) filed Dec 2025 <sup class="cite"><a href="#web-federalregister-gov" title="WEB: federalregister.gov">[W]</a></sup></p>
+<p><strong>Key Statistics</strong>: <sup class="cite"><a href="#web-marketcap-company" title="WEB: marketcap.company">[W]</a></sup> <sup class="cite"><a href="#web-bestbrokers" title="WEB: bestbrokers">[W]</a></sup>
+- Listed companies: ~4,000–4,278
+- Market capitalization: ~$28+ trillion
+- Average daily volume: ~4+ billion shares</p>
+<p><strong>Recent Major Changes</strong>: <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup>
+- 2023: Dynamic M-ELO with AI/ML-adjusted holding periods <sup class="cite"><a href="#web-federalregister-gov-melo" title="WEB: federalregister.gov/melo">[W]</a></sup>
+- 2025.12: Filed for 23-hour weekday trading expansion <sup class="cite"><a href="#web-federalregister-gov" title="WEB: federalregister.gov">[W]</a></sup>
+- FPGA technology implementation for deterministic matching behavior <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></p>
+<hr />
+<h2 id="2-institutional-philosophy">2. Institutional Philosophy</h2>
+<p><strong>Primary Market Model</strong>: Pure electronic, order-driven, no physical trading floor <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></p>
+<p><strong>Design Rationale</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Founded as the world's first electronic stock market (1971) — designed from inception for speed and technology
+- No floor, no specialists, no human intermediaries in execution — all matching is algorithmic
+- Emphasizes low-latency access, transparent price discovery, and protocol efficiency (OUCH/ITCH)
+- Competitive market maker model rather than exclusive DMM assignment <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>Role of Intermediaries</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-finra-org" title="WEB: finra.org">[W]</a></sup>
+- <strong>Registered Market Makers</strong>: Multiple MMs per security (competitive model, not exclusive)
+- Must maintain continuous two-sided quotes at designated percentage <sup class="cite"><a href="#web-federalregister-gov-rule4613" title="WEB: federalregister.gov/rule4613">[W]</a></sup>
+- Execute orders at displayed quotation (firm quote rule) <sup class="cite"><a href="#web-finra-org" title="WEB: finra.org">[W]</a></sup>
+- No special information advantages — operate on same electronic platform as all participants</p>
+<p><strong>Evolution</strong>: Electronic quotation system (1971) → ECN integration → INET matching engine (2006 Instinet acquisition) → Global technology provider (Nasdaq OMX) → Fintech platform (2025+) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<hr />
+<h2 id="3-order-types-basic">3. Order Types — Basic</h2>
+<h3 id="31-market-order-ref1">3.1 Market Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Executes immediately at best available price</li>
+<li>Available: All sessions</li>
+<li>Time-in-force: Day (immediate execution or cancel)</li>
+</ul>
+<h3 id="32-limit-order-ref1">3.2 Limit Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Specifies maximum buy / minimum sell price</li>
+<li>If not immediately filled, rests on limit order book</li>
+<li>Time-in-force: Day, GTC, IOC, FOK, Extended Hours, System Hours</li>
+</ul>
+<h3 id="33-market-on-open-moo-ref7-ref8">3.3 Market-on-Open (MOO) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li>Market order for Opening Cross only</li>
+<li>Entered starting 04:00 ET; executes at 09:30 opening price</li>
+</ul>
+<h3 id="34-limit-on-open-loo-ref7-ref8">3.4 Limit-on-Open (LOO) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li>Limit order for Opening Cross only</li>
+<li>Participates at opening price if within limit</li>
+</ul>
+<h3 id="35-market-on-close-moc-ref7-ref8">3.5 Market-on-Close (MOC) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li>Market order for Closing Cross only</li>
+<li>Entered during trading day; executes at 16:00 closing price</li>
+</ul>
+<h3 id="36-limit-on-close-loc-ref7-ref8">3.6 Limit-on-Close (LOC) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li>Limit order for Closing Cross only</li>
+<li>Participates at closing price if within limit</li>
+</ul>
+<hr />
+<h2 id="4-order-types-advanced">4. Order Types — Advanced</h2>
+<h3 id="41-reserve-iceberg-order-ref1">4.1 Reserve (Iceberg) Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Partially displayed; hidden reserve replenishes displayed quantity</li>
+<li>Price-time priority: displayed portion gets time priority; reserve gets new timestamp on replenishment</li>
+</ul>
+<h3 id="42-pegged-orders-ref1-webnasdaqtradercom">4.2 Pegged Orders <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-nasdaqtrader-com" title="WEB: nasdaqtrader.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Primary Peg</strong>: Pegged to same-side inside quote</li>
+<li><strong>Market Peg</strong>: Pegged to contra-side inside quote</li>
+<li><strong>Midpoint Peg</strong>: Pegged to NBBO midpoint</li>
+<li>Optional offset from peg reference price</li>
+</ul>
+<h3 id="43-post-only-order-ref1">4.3 Post-Only Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Posts to book only; will not remove liquidity</li>
+<li>If would lock/cross, cancels or reprices (depending on configuration)</li>
+<li>Used for maker rebate capture</li>
+</ul>
+<h3 id="44-intermarket-sweep-order-iso-ref1">4.4 Intermarket Sweep Order (ISO) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Sweeps multiple price levels on Nasdaq</li>
+<li>Sender handles Reg NMS away-market protection</li>
+</ul>
+<h3 id="45-imbalance-only-io-orders-ref7">4.5 Imbalance-Only (IO) Orders <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li><strong>IO Open</strong>: Priced limit order to offset opening imbalance</li>
+<li><strong>IO Close</strong>: Priced limit order to offset closing imbalance</li>
+<li>Must be limit-priced (no market IO orders) <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></li>
+</ul>
+<h3 id="46-non-displayed-order-ref1">4.6 Non-Displayed Order <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Hidden order not visible in displayed book</li>
+<li>Executes at midpoint or better</li>
+<li>Lower priority than displayed orders at same price</li>
+</ul>
+<h3 id="47-time-in-force-options-ref1-ref3">4.7 Time-in-Force Options <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li><strong>Day</strong>: Expires at 16:00 (or 20:00 for extended hours)</li>
+<li><strong>GTC</strong>: Good until cancelled</li>
+<li><strong>IOC</strong>: Immediate or cancel</li>
+<li><strong>FOK</strong>: Fill or kill</li>
+<li><strong>Extended Hours</strong>: Active 04:00–20:00</li>
+<li><strong>System Hours</strong>: Active for all Nasdaq sessions</li>
+<li><strong>Market Hours</strong>: Active 09:30–16:00 only</li>
+</ul>
+<hr />
+<h2 id="5-order-types-exchange-specific">5. Order Types — Exchange-Specific</h2>
+<h3 id="51-midpoint-extended-life-order-m-elo-webnasdaqcommelo-webnasdaqtradercommelo">5.1 Midpoint Extended Life Order (M-ELO) <sup class="cite"><a href="#web-nasdaq-com-melo" title="WEB: nasdaq.com/melo">[W]</a></sup> <sup class="cite"><a href="#web-nasdaqtrader-com-melo" title="WEB: nasdaqtrader.com/melo">[W]</a></sup></h3>
+<ul>
+<li><strong>Nasdaq-unique</strong>: Non-displayed midpoint order with mandatory holding period</li>
+<li>Minimum holding period: 0.5 seconds from acceptance before eligible for execution <sup class="cite"><a href="#web-nasdaqtrader-com-melo" title="WEB: nasdaqtrader.com/melo">[W]</a></sup></li>
+<li>Designed to reduce information leakage and protect against adverse selection</li>
+<li>Executes only against other M-ELOs or M-ELO+CB orders</li>
+<li>Rationale: Provides safer midpoint execution for institutional investors by filtering latency-sensitive flow</li>
+</ul>
+<h3 id="52-dynamic-m-elo-webnasdaqcomdynamic-melo">5.2 Dynamic M-ELO <sup class="cite"><a href="#web-nasdaq-com-dynamic-melo" title="WEB: nasdaq.com/dynamic-melo">[W]</a></sup></h3>
+<ul>
+<li>Enhanced M-ELO with AI/ML-adjusted holding periods</li>
+<li>Holding period recalculated every 30 seconds based on real-time market conditions <sup class="cite"><a href="#web-federalregister-gov-melo" title="WEB: federalregister.gov/melo">[W]</a></sup></li>
+<li>Shorter hold during stable markets, longer during volatile conditions</li>
+<li>SEC-approved September 2023 <sup class="cite"><a href="#web-federalregister-gov-melo" title="WEB: federalregister.gov/melo">[W]</a></sup></li>
+</ul>
+<h3 id="53-m-elocb-m-elo-plus-continuous-book-webnasdaqcommelo">5.3 M-ELO+CB (M-ELO Plus Continuous Book) <sup class="cite"><a href="#web-nasdaq-com-melo" title="WEB: nasdaq.com/melo">[W]</a></sup></h3>
+<ul>
+<li>Combines M-ELO with continuous book interaction</li>
+<li>May execute against M-ELOs AND against non-displayed midpoint/MPPO orders</li>
+<li>Broader execution opportunity while retaining holding period protection</li>
+</ul>
+<h3 id="54-midpoint-peg-post-only-mppo-order-webnasdaqtradercommppo">5.4 Midpoint Peg Post-Only (MPPO) Order <sup class="cite"><a href="#web-nasdaqtrader-com-mppo" title="WEB: nasdaqtrader.com/mppo">[W]</a></sup></h3>
+<ul>
+<li>Non-displayed, priced at NBBO midpoint</li>
+<li>Post-only: executes on entry only when economically beneficial</li>
+<li>No holding period (unlike M-ELO)</li>
+<li>Rationale: Passive midpoint liquidity provision without adverse selection timer</li>
+</ul>
+<h3 id="55-market-maker-peg-order-webnasdaqtradercommmpeg">5.5 Market Maker Peg Order <sup class="cite"><a href="#web-nasdaqtrader-com-mmpeg" title="WEB: nasdaqtrader.com/mmpeg">[W]</a></sup></h3>
+<ul>
+<li>Exclusive to registered Nasdaq market makers</li>
+<li>Automatically re-prices to maintain compliance with quoting obligations</li>
+<li>Reduces manual monitoring burden for competitive MMs</li>
+</ul>
+<h3 id="56-openingclosing-cross-ref7-ref8">5.6 Opening/Closing Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li><strong>Opening Cross</strong>: 09:28–09:30 ET with Net Order Imbalance Indicator (NOII) dissemination from 09:25</li>
+<li><strong>Closing Cross</strong>: 15:50–16:00 ET with NOII from 15:50</li>
+<li>All nationally-listed securities eligible <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></li>
+<li>Single-price execution maximizing matched volume</li>
+</ul>
+<hr />
+<h2 id="6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</h2>
+<h3 id="trading-system-inet-ref2-ref3-webnasdaqcommatching">Trading System: INET <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-nasdaq-com-matching" title="WEB: nasdaq.com/matching">[W]</a></sup></h3>
+<ul>
+<li><strong>Origin</strong>: Acquired via Instinet (2006), originally Island ECN technology <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></li>
+<li><strong>Architecture</strong>: Horizontally scalable matching engine on commodity hardware <sup class="cite"><a href="#web-nasdaq-com-matching" title="WEB: nasdaq.com/matching">[W]</a></sup></li>
+<li><strong>Latency</strong>: Sub-40 microseconds; collocated OUCH: &lt;25μs, FIX: &lt;80μs <sup class="cite"><a href="#web-nasdaqtrader-com-latency" title="WEB: nasdaqtrader.com/latency">[W]</a></sup></li>
+<li><strong>Enhancement</strong>: FPGA technology for deterministic peak-time behavior <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></li>
+<li><strong>Network</strong>: 40 Gbps infrastructure <sup class="cite"><a href="#web-tradersmagazine-com" title="WEB: tradersmagazine.com">[W]</a></sup></li>
+</ul>
+<h3 id="protocols-ref2-ref3-ref4">Protocols <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li><strong>OUCH 5.0</strong>: Low-latency order entry protocol (inbound) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></li>
+<li>Supports limit orders, IoC, DAY, GTC, extended hours <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></li>
+<li>Binary protocol for minimal overhead</li>
+<li><strong>ITCH 5.0</strong>: Market data feed protocol (outbound) <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup> <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></li>
+<li>Full order book depth (TotalView-ITCH)</li>
+<li>System events, stock directory, trading action messages</li>
+<li><strong>FIX</strong>: Industry-standard order entry (higher latency alternative to OUCH)</li>
+</ul>
+<h3 id="matching-algorithm-price-time-priority-ref2">Matching Algorithm: Price-Time Priority <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ol>
+<li><strong>Price priority</strong>: Best price first</li>
+<li><strong>Time priority</strong>: Among same-price orders, earliest order first</li>
+<li><strong>Display priority</strong>: Displayed orders prioritized over non-displayed at same price</li>
+<li>Pure algorithmic matching — no human discretion or parity allocation</li>
+</ol>
+<h3 id="opening-cross-ref7-ref8">Opening Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li><strong>04:00 ET</strong>: Order entry opens</li>
+<li><strong>09:25 ET</strong>: NOII dissemination begins (imbalance direction, quantity, indicative price)</li>
+<li><strong>09:30 ET</strong>: Opening Cross executes — single price maximizing matched volume</li>
+<li>Order participation: MOO, LOO, IO Open, regular limit/market orders</li>
+</ul>
+<h3 id="closing-cross-ref7-ref8">Closing Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li><strong>15:50 ET</strong>: NOII dissemination begins</li>
+<li><strong>16:00 ET</strong>: Closing Cross executes — single price maximizing matched volume</li>
+<li>Order participation: MOC, LOC, IO Close, regular limit orders</li>
+<li>~15% of daily volume in some securities <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup></li>
+</ul>
+<h3 id="tick-size">Tick Size</h3>
+<ul>
+<li>Standard: $0.01 for stocks priced &gt;$1.00</li>
+<li>Sub-penny: $0.0001 for stocks priced &lt;$1.00</li>
+<li>Midpoint executions at half-penny ($0.005) increments</li>
+</ul>
+<h3 id="lot-size">Lot Size</h3>
+<ul>
+<li>Standard lot: 100 shares (round lot)</li>
+<li>Odd lots (&lt;100 shares) fully supported on Nasdaq's electronic platform</li>
+</ul>
+<hr />
+<h2 id="7-safeguard-mechanisms">7. Safeguard Mechanisms</h2>
+<h3 id="71-market-wide-circuit-breakers-mwcb-webnasdaqtradercomcb">7.1 Market-Wide Circuit Breakers (MWCB) <sup class="cite"><a href="#web-nasdaqtrader-com-cb" title="WEB: nasdaqtrader.com/cb">[W]</a></sup></h3>
+<ul>
+<li>Same rules as NYSE (national regulation):</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Trigger (S&amp;P 500 decline)</th>
+<th>Duration</th>
+<th>Time Restriction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level 1</td>
+<td>≥ 7%</td>
+<td>15-min halt</td>
+<td>Before 3:25 PM ET</td>
+</tr>
+<tr>
+<td>Level 2</td>
+<td>≥ 13%</td>
+<td>15-min halt</td>
+<td>Before 3:25 PM ET</td>
+</tr>
+<tr>
+<td>Level 3</td>
+<td>≥ 20%</td>
+<td>Remainder of day</td>
+<td>Anytime</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-limit-up-limit-down-luld-webluldplancom">7.2 Limit Up-Limit Down (LULD) <sup class="cite"><a href="#web-luldplan-com" title="WEB: luldplan.com">[W]</a></sup></h3>
+<ul>
+<li>Same national plan as NYSE (see NYSE §7.2 for full band details)</li>
+<li>Nasdaq-specific implementation:</li>
+<li>Trading Pause: If stock remains at LULD band for 15 seconds → 5-minute pause</li>
+<li>Re-opening: Via Nasdaq Halt Cross mechanism</li>
+</ul>
+<h3 id="73-clearly-erroneous-execution-cee-ref1">7.3 Clearly Erroneous Execution (CEE) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Executions at prices significantly away from prevailing market</li>
+<li>Review request within 30 minutes</li>
+<li>Thresholds based on reference price percentage deviation</li>
+</ul>
+<h3 id="74-regulatory-trading-halts-ref1">7.4 Regulatory Trading Halts <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>T1 (Halt News Pending)</strong>: Material news dissemination pending</li>
+<li><strong>T2 (Halt News Dissemination)</strong>: News being disseminated</li>
+<li><strong>T12 (Halt IPO Issue)</strong>: IPO not yet released for trading</li>
+<li><strong>LUDP</strong>: LULD pause</li>
+<li>Resume via Nasdaq Halt Cross (IPO/Halt Cross mechanism)</li>
+</ul>
+<h3 id="75-pre-trade-risk-controls-ref2">7.5 Pre-Trade Risk Controls <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li><strong>Order price reasonability</strong>: Orders outside bands rejected</li>
+<li><strong>Maximum order size limits</strong>: Configurable</li>
+<li><strong>Risk management gateway</strong>: Pre-trade checks before matching engine</li>
+<li><strong>Kill Switch</strong>: Cancel all open orders functionality</li>
+<li><strong>Drop Copy</strong>: Real-time execution copies for risk monitoring</li>
+</ul>
+<hr />
+<h2 id="8-special-sessions">8. Special Sessions</h2>
+<h3 id="81-pre-market-session-webtradinghourscom">8.1 Pre-Market Session <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Hours</strong>: 04:00–09:30 ET</li>
+<li><strong>Mechanism</strong>: Continuous electronic matching</li>
+<li><strong>Order types</strong>: Limit orders with Extended Hours TIF</li>
+<li>No Opening/Closing Cross orders accepted during pre-market continuous</li>
+</ul>
+<h3 id="82-opening-cross-ref7-ref8">8.2 Opening Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li><strong>NOII period</strong>: 09:25–09:30 ET</li>
+<li><strong>Execution</strong>: 09:30 ET</li>
+<li><strong>Mechanism</strong>: Single-price auction (Cross)</li>
+<li><strong>Order types</strong>: MOO, LOO, IO Open, limit, market</li>
+<li>New listings: activate on first trading day <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></li>
+</ul>
+<h3 id="83-core-trading-session-ref1">8.3 Core Trading Session <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>Hours</strong>: 09:30–16:00 ET</li>
+<li><strong>Mechanism</strong>: Continuous price-time priority matching via INET</li>
+<li>All order types available including M-ELO, MPPO, pegged orders</li>
+</ul>
+<h3 id="84-closing-cross-ref7-ref8">8.4 Closing Cross <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup> <sup class="cite"><a href="#ref-8" title="REF #8">[8]</a></sup></h3>
+<ul>
+<li><strong>NOII period</strong>: 15:50–16:00 ET</li>
+<li><strong>Execution</strong>: 16:00 ET</li>
+<li><strong>Mechanism</strong>: Single-price auction (Cross)</li>
+<li><strong>Order types</strong>: MOC, LOC, IO Close, limit</li>
+</ul>
+<h3 id="85-after-hours-session-webtradinghourscom">8.5 After-Hours Session <sup class="cite"><a href="#web-tradinghours-com" title="WEB: tradinghours.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Hours</strong>: 16:00–20:00 ET</li>
+<li><strong>Mechanism</strong>: Continuous electronic matching</li>
+<li><strong>Order types</strong>: Limit orders with Extended Hours TIF</li>
+<li>No market orders; reduced liquidity typical</li>
+</ul>
+<h3 id="86-halt-cross-ref1">8.6 Halt Cross <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Used to reopen trading after regulatory halts or LULD pauses</li>
+<li>Similar mechanics to Opening Cross</li>
+<li>NOII published during 5-minute quote-only period before cross</li>
+</ul>
+<h3 id="87-ipo-cross-webnasdaqcom">8.7 IPO Cross <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup></h3>
+<ul>
+<li>Specific mechanism for first-day trading of new listings</li>
+<li>NOII disseminated during price discovery period</li>
+<li>DMM-free: entirely electronic, no floor broker involvement</li>
+</ul>
+<hr />
+<h2 id="9-lp-market-maker-obligations">9. LP / Market Maker Obligations</h2>
+<h3 id="91-nasdaq-market-makers-competitive-model-ref1-webfederalregistergovrule4613">9.1 Nasdaq Market Makers (Competitive Model) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-federalregister-gov-rule4613" title="WEB: federalregister.gov/rule4613">[W]</a></sup></h3>
+<p><strong>Structure</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- <strong>Multiple market makers per security</strong> (competitive, not exclusive)
+- Any registered broker-dealer may register as Nasdaq MM in one or more securities
+- No exclusive assignment — contrasts with NYSE's DMM model</p>
+<p><strong>Quoting Obligations (Rule 4613)</strong>: <sup class="cite"><a href="#web-federalregister-gov-rule4613" title="WEB: federalregister.gov/rule4613">[W]</a></sup>
+- Maintain continuous two-sided quotes during market hours
+- Price bid/offer at Designated Percentage (set by Nasdaq per security tier)
+- Execute at displayed quotation for at least one normal unit of trading (100 shares)
+- If unable to fill full displayed size: must update to inferior quote <sup class="cite"><a href="#web-finra-org" title="WEB: finra.org">[W]</a></sup></p>
+<p><strong>Firm Quote Rule</strong>: <sup class="cite"><a href="#web-finra-org" title="WEB: finra.org">[W]</a></sup>
+- MM must honor displayed quotes — execute at displayed price and size
+- Applies to all interactions with other FINRA members</p>
+<p><strong>Tools</strong>: <sup class="cite"><a href="#web-nasdaqtrader-com-mmpeg" title="WEB: nasdaqtrader.com/mmpeg">[W]</a></sup>
+- Market Maker Peg Order: Auto-reprices to maintain compliance
+- Reduces operational burden of manual quote maintenance</p>
+<h3 id="92-fee-structure-incentives-webnasdaqcom">9.2 Fee Structure / Incentives <sup class="cite"><a href="#web-nasdaq-com" title="WEB: nasdaq.com">[W]</a></sup></h3>
+<ul>
+<li><strong>Maker-taker model</strong>: Rebate for adding displayed liquidity; fee for removing</li>
+<li>Typical rebate: ~$0.002–0.003 per share for adding liquidity</li>
+<li>Tiered pricing based on volume thresholds</li>
+<li>MMs receive incremental benefits for meeting quoting obligations</li>
+</ul>
+<h3 id="93-comparison-with-nyse-dmm-ref1">9.3 Comparison with NYSE DMM <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>NYSE</strong>: Exclusive 1:1 DMM per security, obligations + privileges</li>
+<li><strong>Nasdaq</strong>: Many MMs per security, competitive quoting, no exclusive rights</li>
+<li><strong>Result</strong>: NYSE has deeper guaranteed liquidity per stock; Nasdaq has broader competitive pressure</li>
+</ul>
+<hr />
+<h2 id="10-source-bibliography">10. Source Bibliography</h2>
+<h3 id="reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</h3>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> Nasdaq, "NASDAQ Rule Book", <a href="https://listingcenter.nasdaq.com/rulebook/nasdaq/rules" target="_blank">https://listingcenter.nasdaq.com/rulebook/nasdaq/rules</a></p>
+<p><span id="ref-2"><strong>[REF:#2]</strong></span> Nasdaq, "OUCH Overview", <a href="https://www.nasdaqtrader.com/Trader.aspx?id=OUCH" target="_blank">https://www.nasdaqtrader.com/Trader.aspx?id=OUCH</a></p>
+<p><span id="ref-3"><strong>[REF:#3]</strong></span> Nasdaq, "OUCH 5.0 Specification (PDF)", <a href="https://nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/Ouch5.0.pdf" target="_blank">https://nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/Ouch5.0.pdf</a></p>
+<p><span id="ref-4"><strong>[REF:#4]</strong></span> Nasdaq, "OUCH 5.0 FAQ (PDF)", <a href="https://nasdaqtrader.com/content/productsservices/trading/OUCH_5.0_FAQ.pdf" target="_blank">https://nasdaqtrader.com/content/productsservices/trading/OUCH_5.0_FAQ.pdf</a></p>
+<p><span id="ref-5"><strong>[REF:#5]</strong></span> Nasdaq, "Nordic Equity TotalView-ITCH 3.04.X (PDF)", <a href="https://www.nasdaq.com/docs/2025/11/13/Nordic-Equity-TotalView-ITCH-3.04.X.pdf" target="_blank">https://www.nasdaq.com/docs/2025/11/13/Nordic-Equity-TotalView-ITCH-3.04.X.pdf</a></p>
+<p><span id="ref-6"><strong>[REF:#6]</strong></span> Nasdaq, "NASDAQ TotalView", <a href="https://data.nasdaq.com/databases/NTV" target="_blank">https://data.nasdaq.com/databases/NTV</a></p>
+<p><span id="ref-7"><strong>[REF:#7]</strong></span> Nasdaq, "Opening and Closing Crosses", <a href="https://nasdaqtrader.com/Trader.aspx?id=OpenClose" target="_blank">https://nasdaqtrader.com/Trader.aspx?id=OpenClose</a></p>
+<p><span id="ref-8"><strong>[REF:#8]</strong></span> Nasdaq, "Opening/Closing Cross FAQ (PDF)", <a href="https://nasdaqtrader.com/content/productsservices/trading/crosses/openclose_faqs.pdf" target="_blank">https://nasdaqtrader.com/content/productsservices/trading/crosses/openclose_faqs.pdf</a></p>
+<p><span id="ref-9"><strong>[REF:#9]</strong></span> Nasdaq, "Order Types &amp; Routing Strategies (PDF)", <a href="https://www.nasdaqtrader.com/content/marketregulation/regnms/rash_strategy.pdf" target="_blank">https://www.nasdaqtrader.com/content/marketregulation/regnms/rash_strategy.pdf</a></p>
+<p><span id="ref-10"><strong>[REF:#10]</strong></span> Nasdaq, "NASDAQ TotalView Solutions", <a href="https://www.nasdaq.com/solutions/data/equities/nasdaq-totalview" target="_blank">https://www.nasdaq.com/solutions/data/equities/nasdaq-totalview</a></p>
+<p><span id="ref-11"><strong>[REF:#11]</strong></span> Nasdaq, "TotalView-ITCH Help Center", <a href="https://help.data.nasdaq.com/category/970-nasdaq-totalview-itch" target="_blank">https://help.data.nasdaq.com/category/970-nasdaq-totalview-itch</a></p>
+<p><span id="ref-12"><strong>[REF:#12]</strong></span> Nasdaq, "OUCH 4.2 Specification (PDF)", <a href="https://www.nasdaqtrader.com/content/technicalsupport/specifications/tradingproducts/ouch4.2.pdf" target="_blank">https://www.nasdaqtrader.com/content/technicalsupport/specifications/tradingproducts/ouch4.2.pdf</a></p>
+<p><span id="ref-13"><strong>[REF:#13]</strong></span> Nasdaq, "INET Nordic Protocol Specifications", <a href="https://www.nasdaq.com/solutions/inet-nordic-protocol-specifications" target="_blank">https://www.nasdaq.com/solutions/inet-nordic-protocol-specifications</a></p>
+<h3 id="web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</h3>
+<p><span id="web-wikipedia"><strong>[WEB:wikipedia]</strong></span> NASDAQ — Wikipedia, <a href="https://en.wikipedia.org/wiki/Nasdaq" target="_blank">https://en.wikipedia.org/wiki/Nasdaq</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaq-com"><strong>[WEB:nasdaq.com]</strong></span> Nasdaq main, <a href="https://www.nasdaq.com/" target="_blank">https://www.nasdaq.com/</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaq-com-melo"><strong>[WEB:nasdaq.com/melo]</strong></span> "Midpoint Extended Life Order (M-ELO)", <a href="https://www.nasdaq.com/solutions/dynamic-m-elo" target="_blank">https://www.nasdaq.com/solutions/dynamic-m-elo</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaq-com-matching"><strong>[WEB:nasdaq.com/matching]</strong></span> "Exchange Matching Engine", <a href="https://www.nasdaq.com/solutions/fintech/nasdaq-eqlipse/trading-technology/exchange-matching" target="_blank">https://www.nasdaq.com/solutions/fintech/nasdaq-eqlipse/trading-technology/exchange-matching</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaqtrader-com-melo"><strong>[WEB:nasdaqtrader.com/melo]</strong></span> "M-ELO FAQs (PDF)", <a href="https://www.nasdaqtrader.com/Content/ProductsServices/TRADING/M-ELO-FAQs.pdf" target="_blank">https://www.nasdaqtrader.com/Content/ProductsServices/TRADING/M-ELO-FAQs.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaqtrader-com-mppo"><strong>[WEB:nasdaqtrader.com/mppo]</strong></span> "Midpoint Peg Post-Only Factsheet", <a href="https://www.nasdaqtrader.com/content/productsservices/trading/MPPO_factsheet.pdf" target="_blank">https://www.nasdaqtrader.com/content/productsservices/trading/MPPO_factsheet.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaqtrader-com-mmpeg"><strong>[WEB:nasdaqtrader.com/mmpeg]</strong></span> "Market Maker PEG Order Factsheet", <a href="https://www.nasdaqtrader.com/content/productsservices/trading/mmpegorder_factsheet.pdf" target="_blank">https://www.nasdaqtrader.com/content/productsservices/trading/mmpegorder_factsheet.pdf</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaqtrader-com-latency"><strong>[WEB:nasdaqtrader.com/latency]</strong></span> "OUCH Latency Measurements", <a href="https://www.nasdaqtrader.com/snippets/inet2.html" target="_blank">https://www.nasdaqtrader.com/snippets/inet2.html</a> Accessed 2026-03-27</p>
+<p><span id="web-nasdaqtrader-com-cb"><strong>[WEB:nasdaqtrader.com/cb]</strong></span> "Circuit Breaker", <a href="https://www.nasdaqtrader.com/trader.aspx?id=CircuitBreaker" target="_blank">https://www.nasdaqtrader.com/trader.aspx?id=CircuitBreaker</a> Accessed 2026-03-27</p>
+<p><span id="web-tradinghours-com"><strong>[WEB:tradinghours.com]</strong></span> "NASDAQ Market Hours 2026", <a href="https://www.tradinghours.com/markets/nasdaq" target="_blank">https://www.tradinghours.com/markets/nasdaq</a> Accessed 2026-03-27</p>
+<p><span id="web-federalregister-gov"><strong>[WEB:federalregister.gov]</strong></span> "NASDAQ 23-Hour Trading Proposal", <a href="https://www.federalregister.gov/documents/2026/01/13/2026-00416/" target="_blank">https://www.federalregister.gov/documents/2026/01/13/2026-00416/</a> Accessed 2026-03-27</p>
+<p><span id="web-federalregister-gov-melo"><strong>[WEB:federalregister.gov/melo]</strong></span> "Dynamic M-ELO Approval", <a href="https://www.federalregister.gov/documents/2023/09/13/2023-19728/" target="_blank">https://www.federalregister.gov/documents/2023/09/13/2023-19728/</a> Accessed 2026-03-27</p>
+<p><span id="web-federalregister-gov-rule4613"><strong>[WEB:federalregister.gov/rule4613]</strong></span> "Rule 4613 Amendment", <a href="https://www.federalregister.gov/documents/2020/11/17/2020-25270/" target="_blank">https://www.federalregister.gov/documents/2020/11/17/2020-25270/</a> Accessed 2026-03-27</p>
+<p><span id="web-finra-org"><strong>[WEB:finra.org]</strong></span> "Rule 4613A Character of Quotations", <a href="https://www.finra.org/rules-guidance/rulebooks/retired-rules/4613a" target="_blank">https://www.finra.org/rules-guidance/rulebooks/retired-rules/4613a</a> Accessed 2026-03-27</p>
+<p><span id="web-marketcap-company"><strong>[WEB:marketcap.company]</strong></span> "NASDAQ Exchange Market Capitalization", <a href="https://marketcap.company/stock-exchanges/nasdaq-nasdaq-exchange-market-capitalization/" target="_blank">https://marketcap.company/stock-exchanges/nasdaq-nasdaq-exchange-market-capitalization/</a> Accessed 2026-03-27</p>
+<p><span id="web-bestbrokers"><strong>[WEB:bestbrokers]</strong></span> "Stock Market Trading Statistics 2026", <a href="https://www.bestbrokers.com/stock-trading/stock-trading-market-statistics/" target="_blank">https://www.bestbrokers.com/stock-trading/stock-trading-market-statistics/</a> Accessed 2026-03-27</p>
+<p><span id="web-luldplan-com"><strong>[WEB:luldplan.com]</strong></span> "Limit Up Limit Down", <a href="https://www.luldplan.com/" target="_blank">https://www.luldplan.com/</a> Accessed 2026-03-27</p>
+<hr />
+<p><em>Report version: 1.0 | Batch: 1 | Created: 2026-03-27 | Language: English</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

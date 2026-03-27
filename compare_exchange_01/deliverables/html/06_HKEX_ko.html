@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HKEX (홍콩거래소) — 거래소 보고서</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1">1. 거래소 개요</a></li>
+<li><a href="#2">2. 제도적 철학</a></li>
+<li><a href="#3">3. 주문유형 — 기본</a></li>
+<li class="h3"><a href="#31-limit-order-ref1">3.1 지정가 주문 (Limit Order) [1]</a></li>
+<li class="h3"><a href="#32-enhanced-limit-order-ref1">3.2 증강지정가 주문 (Enhanced Limit Order, 增強限價盤) [1]</a></li>
+<li class="h3"><a href="#33-special-limit-order-ref1">3.3 특별지정가 주문 (Special Limit Order, 特別限價盤) [1]</a></li>
+<li><a href="#4">4. 주문유형 — 고급</a></li>
+<li class="h3"><a href="#41-at-auction-order-ref1">4.1 경매주문 (At-Auction Order, 競價盤) [1]</a></li>
+<li class="h3"><a href="#42-at-auction-limit-order-ref1">4.2 경매지정가 주문 (At-Auction Limit Order, 競價限價盤) [1]</a></li>
+<li class="h3"><a href="#43-day-gtc-pos">4.3 유효기간: Day(기본) — GTC 미지원; POS 경매지정가 → 연속매매 이월 가능</a></li>
+<li class="h3"><a href="#44-odd-lot-1-d">4.4 단주(Odd Lot) 매매: 1보드롯 미만; 별도 처리 (표기 "D")</a></li>
+<li><a href="#5">5. 주문유형 — 거래소 고유</a></li>
+<li class="h3"><a href="#51-ref1">5.1 증강지정가 주문 (增強限價盤) [1]</a></li>
+<li class="h3"><a href="#52-ref1">5.2 특별지정가 주문 (特別限價盤) [1]</a></li>
+<li class="h3"><a href="#53-ref1">5.3 경매주문 (競價盤) / 경매지정가 주문 (競價限價盤) [1]</a></li>
+<li class="h3"><a href="#54-9-ref1">5.4 9배 가격편차 규칙 [1]</a></li>
+<li><a href="#6">6. 매칭엔진 및 가격 발견</a></li>
+<li class="h3"><a href="#orion-trading-platform-otp-ref5-ref6">매매시스템: Orion Trading Platform (OTP) [5] [6]</a></li>
+<li class="h3"><a href="#ref1">매칭 알고리즘 [1]</a></li>
+<li class="h3"><a href="#cas-ref2-webhkexcomhkcas">종가 결정 — CAS [2] [W]</a></li>
+<li class="h3"><a href="#tick-size-webhkexcomhkspread">호가단위 (Tick Size) [W]</a></li>
+<li class="h3"><a href="#board-lot-10100000-webscmp">매매수량단위 (Board Lot): 종목별 상이 (10주~100,000주); 표준화 제안 중 [W]</a></li>
+<li><a href="#7">7. 안전장치 메커니즘</a></li>
+<li class="h3"><a href="#71-vcm-ref3-ref4">7.1 변동성완화장치 (VCM) [3] [4]</a></li>
+<li class="h3"><a href="#72-cas-5-ref2">7.2 CAS 가격 제한: 참조가 ±5% [2]</a></li>
+<li class="h3"><a href="#73-9-9-ref1">7.3 9배 규칙: 공칭가 대비 9배 이상 이탈 불가 [1]</a></li>
+<li class="h3"><a href="#74-71320">7.4 시장 전체 서킷브레이커 없음 (미국식 7%/13%/20% 없음)</a></li>
+<li><a href="#8">8. 특별 세션</a></li>
+<li class="h3"><a href="#81-pos-09000930-iep">8.1 개장전 세션(POS) (09:00–09:30): IEP 단일가 경매</a></li>
+<li class="h3"><a href="#82-09301200-12001300-13001600">8.2 전장 (09:30–12:00) / 점심 휴장 (12:00–13:00) / 후장 (13:00–16:00)</a></li>
+<li class="h3"><a href="#83-cas-16001610-4">8.3 종가매매세션(CAS) (16:00–16:10): 4단계 경매 → 무작위 종료</a></li>
+<li class="h3"><a href="#84-stock-connect-hk-a-hk-etf-connect">8.4 Stock Connect: 북향(HK→본토 A주), 남향(본토→HK) 채널; ETF/채권/스왑 Connect</a></li>
+<li><a href="#9">9. 유동성공급자 / 시장조성자 의무</a></li>
+<li class="h3"><a href="#91-pmm-gmm">9.1 파생상품 시장조성자: PMM(주요) + GMM(일반) — 연속호가 + 호가요청 응대</a></li>
+<li class="h3"><a href="#92-etp-etfetp">9.2 ETP 지정전문가: ETF/ETP 시장조성</a></li>
+<li class="h3"><a href="#93-stock-connect">9.3 증권시장: 일반 주식 시장조성자 프로그램 없음 — 자연 주문 흐름 + Stock Connect 유동성</a></li>
+<li class="h3"><a href="#tse-etp-mm-nyse-dmm-nasdaq-mm">비교: TSE와 유사 (파생상품/ETP만 MM); NYSE DMM, NASDAQ 경쟁 MM과 대조</a></li>
+<li><a href="#10">10. 출처 목록</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="hkex">HKEX (홍콩거래소) — 거래소 보고서</h1>
+<hr />
+<h2 id="1">1. 거래소 개요</h2>
+<p><strong>정식 법인명</strong>: Hong Kong Exchanges and Clearing Limited (홍콩거래소 및 결제)
+<strong>국가</strong>: 홍콩 특별행정구, 중국
+<strong>설립연도</strong>: 1891년 (원래); 2000년 HKEX 법인화 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>모기관</strong>: 자체 상장 공개 회사 (HKEX: 0388.HK) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>시장 모델</strong>: 주문주도형 + VCM 안전장치 + CAS 종가 메커니즘 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>거래 자산 유형</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- 증권 (Main Board, GEM)
+- 파생상품 (선물, 옵션 — HKFE 경유)
+- 상품 (LME — 런던금속거래소, 2012년 인수)
+- 채권, ETF, REIT, 워런트, CBBC</p>
+<p><strong>정규 매매시간 (HKT, UTC+8)</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- 개장전 세션(POS): 09:00–09:30
+- 전장: 09:30–12:00 | 점심 휴장: 12:00–13:00
+- 후장: 13:00–16:00
+- 종가매매세션(CAS): 16:00–16:08/16:10 (무작위 종료)</p>
+<p><strong>주요 통계</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#web-grokipedia" title="WEB: grokipedia">[W]</a></sup>
+- 상장기업 수: 약 2,673개 (2026년 2월)
+- 시가총액: HK$48.5조 / US$6.2조 (세계 6위)
+- 2025년: 기록적 매출 (+33% YoY), 글로벌 IPO 1위 <sup class="cite"><a href="#web-scmp" title="WEB: scmp">[W]</a></sup>
+- Stock Connect: 홍콩-중국 본토 시장 핵심 연결 통로</p>
+<hr />
+<h2 id="2">2. 제도적 철학</h2>
+<p><strong>기본 시장 모델</strong>: 구조화된 안전장치가 있는 주문주도형 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- 연속 매매 시 가격·시간 우선원칙 전자 주문장
+- POS 및 CAS에서 단일가 경매 메커니즘 사용
+- VCM으로 극단적 변동성 대비 냉각 보호 제공
+- 일반 주식에 대한 지정 시장조성자 없음</p>
+<p><strong>설계 근거</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- 국제 자본과 중국 본토 간 관문 (Stock Connect)
+- 투자자 보호 메커니즘(VCM, CAS 가격 제한)이 강한 주문주도형 핵심
+- 종가 무결성 중시 (CAS ±5% 가격대)</p>
+<p><strong>발전 과정</strong>: 복수 지역 거래소 → 통합 SEHK(1986) → 주식회사화 HKEX(2000) → LME 인수(2012) → Stock Connect(2014) → VCM/CAS 도입(2016) → ODP 개발(2025+) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<hr />
+<h2 id="3">3. 주문유형 — 기본</h2>
+<h3 id="31-limit-order-ref1">3.1 지정가 주문 (Limit Order) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>가격·수량 지정; 지정가에서만 체결 (가격 개선 없음)</li>
+<li>매수호가 최우선매도호가 초과 불가; 매도호가 최우선매수호가 미달 불가</li>
+</ul>
+<h3 id="32-enhanced-limit-order-ref1">3.2 증강지정가 주문 (Enhanced Limit Order, 增強限價盤) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>최대 10개 호가 단계</strong> 관통 매칭 (지정가 이상/이하)</li>
+<li>미체결분 주문장에 입력가로 잔류</li>
+<li>현재 최우선호가에서 10 스프레드 이내에서만 입력 가능</li>
+</ul>
+<h3 id="33-special-limit-order-ref1">3.3 특별지정가 주문 (Special Limit Order, 特別限價盤) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>최대 10개 호가 단계</strong> 관통; 입력가 제한 없음 (편차 규칙 내)</li>
+<li><strong>미체결분 자동 취소</strong> (증강지정가와 차이)</li>
+<li>IOC + 다단계 관통과 유사</li>
+</ul>
+<hr />
+<h2 id="4">4. 주문유형 — 고급</h2>
+<h3 id="41-at-auction-order-ref1">4.1 경매주문 (At-Auction Order, 競價盤) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>가격 미지정; 참고균형가격(IEP)으로 체결</li>
+<li>경매 주문유형 중 <strong>최고 매칭 우선순위</strong></li>
+<li>POS 및 CAS에서만 사용 가능</li>
+</ul>
+<h3 id="42-at-auction-limit-order-ref1">4.2 경매지정가 주문 (At-Auction Limit Order, 競價限價盤) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>가격 지정; IEP에서 경쟁력 있으면 체결</li>
+<li>POS 미체결분 → 연속 매매로 이월 (당일 내)</li>
+<li>CAS: 참조가 ±5% 이내 <sup class="cite"><a href="#web-hkex-com-hk-cas" title="WEB: hkex.com.hk/cas">[W]</a></sup></li>
+</ul>
+<h3 id="43-day-gtc-pos">4.3 유효기간: Day(기본) — GTC 미지원; POS 경매지정가 → 연속매매 이월 가능</h3>
+<h3 id="44-odd-lot-1-d">4.4 단주(Odd Lot) 매매: 1보드롯 미만; 별도 처리 (표기 "D")</h3>
+<hr />
+<h2 id="5">5. 주문유형 — 거래소 고유</h2>
+<h3 id="51-ref1">5.1 증강지정가 주문 (增強限價盤) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>HKEX 고유</strong>: 10단계 다단계 매칭 + 잔량 주문장 잔류</li>
+<li>시장가 공격성과 지정가 잔류성 결합 — 타 거래소에 동일 유형 없음</li>
+</ul>
+<h3 id="52-ref1">5.2 특별지정가 주문 (特別限價盤) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>HKEX 고유</strong>: 10단계 관통 + 잔량 자동 취소</li>
+<li>즉시 최대 체결 원하되 잔류 주문 원치 않는 투자자용</li>
+</ul>
+<h3 id="53-ref1">5.3 경매주문 (競價盤) / 경매지정가 주문 (競價限價盤) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>HKEX 고유 명명 및 우선순위</strong>: IEP 메커니즘 전용 설계</li>
+<li>미국 MOO/MOC와 구별: HKEX 경매 세션 구조에 특화</li>
+</ul>
+<h3 id="54-9-ref1">5.4 9배 가격편차 규칙 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>연속매매 중 주문 가격이 공칭가 대비 9배 이상 이탈 불가</li>
+<li>HKEX 고유 주문 검증 안전장치</li>
+</ul>
+<hr />
+<h2 id="6">6. 매칭엔진 및 가격 발견</h2>
+<h3 id="orion-trading-platform-otp-ref5-ref6">매매시스템: Orion Trading Platform (OTP) <sup class="cite"><a href="#ref-5" title="REF #5">[5]</a></sup> <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li><strong>OTP-C</strong>: 증권시장 | <strong>OTP-D</strong>: 파생상품시장 | <strong>OTP-CSC</strong>: Stock Connect</li>
+<li><strong>접속</strong>: Orion Central Gateway (OCG) — Binary + FIX 프로토콜</li>
+<li><strong>시장 데이터</strong>: OMD-C(증권), OMD-D(파생상품)</li>
+<li><strong>지연시간</strong>: 비공개</li>
+</ul>
+<h3 id="ref1">매칭 알고리즘 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>연속 매매</strong>: 가격·시간 우선원칙 (엄격)</li>
+<li><strong>경매(POS/CAS)</strong>: 주문유형 우선(경매주문 &gt; 경매지정가) → 가격 → 시간</li>
+<li>최대 주문 규모: 3,000 보드롯; 가격 대기열 최대 40,000건</li>
+</ul>
+<h3 id="cas-ref2-webhkexcomhkcas">종가 결정 — CAS <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#web-hkex-com-hk-cas" title="WEB: hkex.com.hk/cas">[W]</a></sup></h3>
+<ul>
+<li>16:00–16:01: 참조가 확정 (최종 1분간 5개 가격 중위수)</li>
+<li>16:01–16:06: 주문 입력 (±5% 이내)</li>
+<li>16:06–16:08: 취소 불가 | 16:08–16:10: 무작위 종료</li>
+<li>최종 IEP로 매칭; IEP 미결정 시 참조가가 종가</li>
+</ul>
+<h3 id="tick-size-webhkexcomhkspread">호가단위 (Tick Size) <sup class="cite"><a href="#web-hkex-com-hk-spread" title="WEB: hkex.com.hk/spread">[W]</a></sup></h3>
+<table>
+<thead>
+<tr>
+<th>가격 범위 (HK$)</th>
+<th>호가단위 (HK$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.01–0.25</td>
+<td>0.001</td>
+</tr>
+<tr>
+<td>0.25–0.50</td>
+<td>0.005</td>
+</tr>
+<tr>
+<td>0.50–10.00</td>
+<td>0.010</td>
+</tr>
+<tr>
+<td>10.00–20.00</td>
+<td>0.010 (2025년 중 축소)</td>
+</tr>
+<tr>
+<td>20.00–50.00</td>
+<td>0.020 (2025년 중 축소)</td>
+</tr>
+<tr>
+<td>50.00–100.00</td>
+<td>0.050</td>
+</tr>
+<tr>
+<td>≥ 100.00</td>
+<td>0.100–2.000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="board-lot-10100000-webscmp">매매수량단위 (Board Lot): 종목별 상이 (10주~100,000주); 표준화 제안 중 <sup class="cite"><a href="#web-scmp" title="WEB: scmp">[W]</a></sup></h3>
+<hr />
+<h2 id="7">7. 안전장치 메커니즘</h2>
+<h3 id="71-vcm-ref3-ref4">7.1 변동성완화장치 (VCM) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<p><strong>증권시장</strong>: <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup>
+- 발동: 5분 전 직전 체결가 대비 ≥ ±10% 이탈
+- 조치: 5분 냉각기간 — ±10% 범위 내에서 <strong>매매 지속</strong> (매매정지 아님)
+- 무제한 발동 가능</p>
+<p><strong>파생상품시장</strong>: <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup>
+- 발동: ±5% | 조치: 5분 냉각기간 ±5% 범위 내</p>
+<h3 id="72-cas-5-ref2">7.2 CAS 가격 제한: 참조가 ±5% <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<h3 id="73-9-9-ref1">7.3 9배 규칙: 공칭가 대비 9배 이상 이탈 불가 <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<h3 id="74-71320">7.4 시장 전체 서킷브레이커 없음 (미국식 7%/13%/20% 없음)</h3>
+<hr />
+<h2 id="8">8. 특별 세션</h2>
+<h3 id="81-pos-09000930-iep">8.1 개장전 세션(POS) (09:00–09:30): IEP 단일가 경매</h3>
+<h3 id="82-09301200-12001300-13001600">8.2 전장 (09:30–12:00) / 점심 휴장 (12:00–13:00) / 후장 (13:00–16:00)</h3>
+<h3 id="83-cas-16001610-4">8.3 종가매매세션(CAS) (16:00–16:10): 4단계 경매 → 무작위 종료</h3>
+<h3 id="84-stock-connect-hk-a-hk-etf-connect">8.4 Stock Connect: 북향(HK→본토 A주), 남향(본토→HK) 채널; ETF/채권/스왑 Connect</h3>
+<hr />
+<h2 id="9">9. 유동성공급자 / 시장조성자 의무</h2>
+<h3 id="91-pmm-gmm">9.1 파생상품 시장조성자: PMM(주요) + GMM(일반) — 연속호가 + 호가요청 응대</h3>
+<h3 id="92-etp-etfetp">9.2 ETP 지정전문가: ETF/ETP 시장조성</h3>
+<h3 id="93-stock-connect">9.3 증권시장: 일반 주식 시장조성자 프로그램 <strong>없음</strong> — 자연 주문 흐름 + Stock Connect 유동성</h3>
+<h3 id="tse-etp-mm-nyse-dmm-nasdaq-mm">비교: TSE와 유사 (파생상품/ETP만 MM); NYSE DMM, NASDAQ 경쟁 MM과 대조</h3>
+<hr />
+<h2 id="10">10. 출처 목록</h2>
+<p>[REF:#1–10] 영문 보고서 §10 참조 (HKEX 공식 소스 10개)
+[WEB 출처] 영문 보고서 §10 참조 (11개 웹 소스)</p>
+<hr />
+<p><em>보고서 버전: 1.0 | 배치: 2 | 작성일: 2026-03-27 | 언어: 한국어</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

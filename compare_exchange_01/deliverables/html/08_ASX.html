@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASX (Australian Securities Exchange) — Exchange Report</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1-exchange-overview">1. Exchange Overview</a></li>
+<li><a href="#2-institutional-philosophy">2. Institutional Philosophy</a></li>
+<li><a href="#3-order-types-basic">3. Order Types — Basic</a></li>
+<li class="h3"><a href="#31-limit-order-ref4-webasxcomau">3.1 Limit Order [4] [W]</a></li>
+<li class="h3"><a href="#32-market-to-limit-order-webasx-game-webcommseccomau">3.2 Market-to-Limit Order [W] [W]</a></li>
+<li class="h3"><a href="#33-fill-or-kill-fok-ref4">3.3 Fill-or-Kill (FOK) [4]</a></li>
+<li class="h3"><a href="#34-fill-and-kill-fak-ioc-ref4">3.4 Fill-and-Kill (FAK / IOC) [4]</a></li>
+<li><a href="#4-order-types-advanced">4. Order Types — Advanced</a></li>
+<li class="h3"><a href="#41-iceberg-order-ref4">4.1 Iceberg Order [4]</a></li>
+<li class="h3"><a href="#42-good-till-cancel-gtc-ref4">4.2 Good-Till-Cancel (GTC) [4]</a></li>
+<li class="h3"><a href="#43-centre-point-orders-ref3-webasxcomaucentre-point">4.3 Centre Point Orders [3] [W]</a></li>
+<li class="h3"><a href="#44-unintentional-crossing-prevention-ucp-ref1">4.4 Unintentional Crossing Prevention (UCP) [1]</a></li>
+<li><a href="#5-order-types-exchange-specific">5. Order Types — Exchange-Specific</a></li>
+<li class="h3"><a href="#51-centre-point-order-ref3-webasxcomaucentre-point">5.1 Centre Point Order [3] [W]</a></li>
+<li class="h3"><a href="#52-asx-sweep-order-webasxcomaucentre-point">5.2 ASX Sweep Order [W]</a></li>
+<li class="h3"><a href="#53-market-to-limit-default-webcommseccomau">5.3 Market-to-Limit Default [W]</a></li>
+<li class="h3"><a href="#54-centre-point-block-with-maq-ref3">5.4 Centre Point Block with MAQ [3]</a></li>
+<li><a href="#6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</a></li>
+<li class="h3"><a href="#trading-system-asx-trade-ref1">Trading System: ASX Trade [1]</a></li>
+<li class="h3"><a href="#matching-algorithm-ref1">Matching Algorithm [1]</a></li>
+<li class="h3"><a href="#opening-auction-webasxcomautrading-hours">Opening Auction [W]</a></li>
+<li class="h3"><a href="#closing-auction-webasxcomautrading-hours">Closing Auction [W]</a></li>
+<li class="h3"><a href="#tick-size-price-steps-ref1">Tick Size (Price Steps) [1]</a></li>
+<li class="h3"><a href="#lot-size">Lot Size</a></li>
+<li><a href="#7-safeguard-mechanisms">7. Safeguard Mechanisms</a></li>
+<li class="h3"><a href="#71-anomalous-order-thresholds-aot-webasxcomauorder-controls">7.1 Anomalous Order Thresholds (AOT) [W]</a></li>
+<li class="h3"><a href="#72-extreme-trade-range-etr-webasxcomauorder-controls">7.2 Extreme Trade Range (ETR) [W]</a></li>
+<li class="h3"><a href="#73-no-market-wide-circuit-breaker">7.3 No Market-Wide Circuit Breaker</a></li>
+<li class="h3"><a href="#74-meaningful-price-improvement-rule-asic-webmarketsmediacom">7.4 "Meaningful Price Improvement" Rule (ASIC) [W]</a></li>
+<li><a href="#8-special-sessions">8. Special Sessions</a></li>
+<li class="h3"><a href="#81-pre-opening-07001000-webasxcomautrading-hours">8.1 Pre-Opening (07:00–~10:00) [W]</a></li>
+<li class="h3"><a href="#82-normal-trading-10001600-ref1">8.2 Normal Trading (10:00–16:00) [1]</a></li>
+<li class="h3"><a href="#83-pre-closing-closing-auction-16001612-webasxcomautrading-hours">8.3 Pre-Closing / Closing Auction (16:00–16:12) [W]</a></li>
+<li class="h3"><a href="#84-centre-point-dark-ref3">8.4 Centre Point (Dark) [3]</a></li>
+<li class="h3"><a href="#85-trade-reporting-facility-trf-ref1">8.5 Trade Reporting Facility (TRF) [1]</a></li>
+<li><a href="#9-lp-market-maker-obligations">9. LP / Market Maker Obligations</a></li>
+<li class="h3"><a href="#91-eto-exchange-traded-options-market-makers-webasxcomaumm">9.1 ETO (Exchange Traded Options) Market Makers [W]</a></li>
+<li class="h3"><a href="#92-etp-market-makers-webasxcomaumm-etp">9.2 ETP Market Makers [W]</a></li>
+<li class="h3"><a href="#93-equity-market-no-mm-program">9.3 Equity Market — No MM Program</a></li>
+<li><a href="#10-source-bibliography">10. Source Bibliography</a></li>
+<li class="h3"><a href="#reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</a></li>
+<li class="h3"><a href="#web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="asx-australian-securities-exchange-exchange-report">ASX (Australian Securities Exchange) — Exchange Report</h1>
+<hr />
+<h2 id="1-exchange-overview">1. Exchange Overview</h2>
+<p><strong>Full Legal Name</strong>: ASX Limited (Australian Securities Exchange)
+<strong>Country</strong>: Australia
+<strong>Founding Year</strong>: 1987 (merger of six state exchanges); demutualized 1998 <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>Parent Group</strong>: ASX Limited (self-listed: ASX.AX) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>Market Model</strong>: Order-driven with integrated dark pool (Centre Point) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>Asset Classes Traded</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Equities (ASX main board)
+- ETFs, ETPs, managed funds
+- Derivatives (equity options, index futures, interest rate)
+- Fixed income (government bonds, corporate bonds)
+- Warrants</p>
+<p><strong>Regular Trading Hours (AEST/AEDT, UTC+10/+11)</strong>: <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#web-asx-com-au-trading-hours" title="WEB: asx.com.au/trading-hours">[W]</a></sup>
+- Pre-opening: 07:00–10:00 (staggered open from ~09:59)
+- Normal trading: 10:00–16:00
+- Pre-closing: 16:00–16:10
+- Closing auction: 16:10–16:12
+- Post-trading: after 16:12</p>
+<p><strong>Key Statistics</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#web-asx-com-au-blog" title="WEB: asx.com.au/blog">[W]</a></sup>
+- Listed companies: ~2,200+
+- Market capitalization: ~A$2.8 trillion / ~US$1.8 trillion
+- Average daily turnover: ~A$4.685 billion
+- 2025: 92 new listings (+37% vs 2024), adding A$38.8 billion market cap <sup class="cite"><a href="#web-asx-com-au-blog" title="WEB: asx.com.au/blog">[W]</a></sup></p>
+<hr />
+<h2 id="2-institutional-philosophy">2. Institutional Philosophy</h2>
+<p><strong>Primary Market Model</strong>: Order-driven with integrated dark pool <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Lit market (order book) + Centre Point (dark midpoint) on single platform
+- Unique integration: dark and lit operate together, not as separate venues
+- Price-time priority on lit; midpoint matching on dark <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></p>
+<p><strong>Design Rationale</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Single-exchange market for Australian equities (no competing exchanges until Cboe Australia 2011)
+- Centre Point provides institutional-grade dark liquidity without fragmenting the market
+- "Meaningful price improvement" rule: dark trades must execute at NBBO midpoint or better (ASIC regulation) <sup class="cite"><a href="#web-marketsmedia-com" title="WEB: marketsmedia.com">[W]</a></sup>
+- Emphasis on market integrity — ASIC Market Integrity Rules govern all venues</p>
+<p><strong>Role of Intermediaries</strong>: <sup class="cite"><a href="#web-asx-com-au-mm" title="WEB: asx.com.au/mm">[W]</a></sup>
+- <strong>ETO Market Makers</strong>: Contractual for equity options (quoting obligations)
+- <strong>ETP Market Makers</strong>: For ETFs/ETPs
+- <strong>No mandatory equity market makers</strong> — lit market relies on natural order flow
+- Market-to-limit default for "market orders" provides implicit price protection <sup class="cite"><a href="#web-commsec-com-au" title="WEB: commsec.com.au">[W]</a></sup></p>
+<p><strong>Evolution</strong>: Six state exchanges → ASX (1987) → demutualized (1998) → ASX Trade platform → Centre Point dark pool → CHESS replacement project (ongoing) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<hr />
+<h2 id="3-order-types-basic">3. Order Types — Basic</h2>
+<h3 id="31-limit-order-ref4-webasxcomau">3.1 Limit Order <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup> <sup class="cite"><a href="#web-asx-com-au" title="WEB: asx.com.au">[W]</a></sup></h3>
+<ul>
+<li>Specifies maximum buy / minimum sell price</li>
+<li>Available in lit market, auctions, and Centre Point</li>
+<li>Time-in-force: Day (GFD), GTC</li>
+</ul>
+<h3 id="32-market-to-limit-order-webasx-game-webcommseccomau">3.2 Market-to-Limit Order <sup class="cite"><a href="#web-asx-game" title="WEB: asx-game">[W]</a></sup> <sup class="cite"><a href="#web-commsec-com-au" title="WEB: commsec.com.au">[W]</a></sup></h3>
+<ul>
+<li>ASX's default "market order" implementation</li>
+<li>Fills at best available price; remainder converts to limit at last execution price</li>
+<li>Prevents adverse multi-level sweep — built-in price protection</li>
+</ul>
+<h3 id="33-fill-or-kill-fok-ref4">3.3 Fill-or-Kill (FOK) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>Must fill entirely or cancel completely</li>
+<li>Immediate execution required</li>
+</ul>
+<h3 id="34-fill-and-kill-fak-ioc-ref4">3.4 Fill-and-Kill (FAK / IOC) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>Fills available quantity immediately; cancels remainder</li>
+</ul>
+<hr />
+<h2 id="4-order-types-advanced">4. Order Types — Advanced</h2>
+<h3 id="41-iceberg-order-ref4">4.1 Iceberg Order <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>Large order split into smaller child orders</li>
+<li>Only current child visible in order book</li>
+<li>Price-time priority applies to each displayed child</li>
+<li>Reserve replenishes automatically</li>
+</ul>
+<h3 id="42-good-till-cancel-gtc-ref4">4.2 Good-Till-Cancel (GTC) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>Persistent order — remains active across trading days until filled or cancelled</li>
+<li>Available on ASX (unlike KRX, TSE, HKEX which are day-only)</li>
+</ul>
+<h3 id="43-centre-point-orders-ref3-webasxcomaucentre-point">4.3 Centre Point Orders <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-asx-com-au-centre-point" title="WEB: asx.com.au/centre-point">[W]</a></sup></h3>
+<ul>
+<li><strong>Centre Point Limit</strong>: Dark order at midpoint or better</li>
+<li><strong>Centre Point Block</strong>: Minimum quantity required; midpoint only; single fill</li>
+<li><strong>Any Price Block</strong>: Block order with minimum acceptable quantity (MAQ)</li>
+<li><strong>ASX Sweep</strong>: Sweeps Centre Point first, then lit market — integrated dark-lit routing</li>
+</ul>
+<h3 id="44-unintentional-crossing-prevention-ucp-ref1">4.4 Unintentional Crossing Prevention (UCP) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Optional service preventing self-trades</li>
+<li>Available via OMNet, FIX, or OUCH protocols</li>
+</ul>
+<hr />
+<h2 id="5-order-types-exchange-specific">5. Order Types — Exchange-Specific</h2>
+<h3 id="51-centre-point-order-ref3-webasxcomaucentre-point">5.1 Centre Point Order <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup> <sup class="cite"><a href="#web-asx-com-au-centre-point" title="WEB: asx.com.au/centre-point">[W]</a></sup></h3>
+<ul>
+<li><strong>ASX-unique</strong>: Integrated exchange-operated dark pool orders</li>
+<li>Anonymous midpoint matching — all dark trades execute at NBBO midpoint</li>
+<li>Off-tick execution permitted (4 decimal places) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></li>
+<li>30-second activity window after cross initiation <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></li>
+<li>CXXT trade code for Centre Point crosses <sup class="cite"><a href="#web-commsec-com-au" title="WEB: commsec.com.au">[W]</a></sup></li>
+<li>Rationale: Provides institutional price improvement without market fragmentation</li>
+</ul>
+<h3 id="52-asx-sweep-order-webasxcomaucentre-point">5.2 ASX Sweep Order <sup class="cite"><a href="#web-asx-com-au-centre-point" title="WEB: asx.com.au/centre-point">[W]</a></sup></h3>
+<ul>
+<li><strong>ASX-unique</strong>: Integrated dark-then-lit routing</li>
+<li>First attempts Centre Point midpoint fill; remainder routes to lit order book</li>
+<li>Single order achieves best execution across both venues</li>
+<li>No equivalent on exchanges that don't operate integrated dark pools</li>
+</ul>
+<h3 id="53-market-to-limit-default-webcommseccomau">5.3 Market-to-Limit Default <sup class="cite"><a href="#web-commsec-com-au" title="WEB: commsec.com.au">[W]</a></sup></h3>
+<ul>
+<li>ASX's "market order" is actually market-to-limit by default</li>
+<li>Unique implicit price protection — prevents full sweep of order book</li>
+<li>Different from pure market orders on KRX, NYSE, NASDAQ, TSE</li>
+</ul>
+<h3 id="54-centre-point-block-with-maq-ref3">5.4 Centre Point Block with MAQ <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li>Minimum Acceptable Quantity (MAQ) prevents partial fills on large orders</li>
+<li>Anti-gaming: protects against "pinging" (small orders probing dark liquidity)</li>
+</ul>
+<hr />
+<h2 id="6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</h2>
+<h3 id="trading-system-asx-trade-ref1">Trading System: ASX Trade <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Integrated platform for lit markets, Centre Point, and auctions</li>
+<li>Protocols: OMNet, FIX, <strong>OUCH</strong> (low-latency, similar to NASDAQ) <sup class="cite"><a href="#web-asx-ouch" title="WEB: asx-ouch">[W]</a></sup></li>
+<li>CHESS: Clearing House Electronic Sub-register System (settlement infrastructure)</li>
+<li>CHESS replacement project ongoing (distributed ledger technology exploration)</li>
+</ul>
+<h3 id="matching-algorithm-ref1">Matching Algorithm <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li><strong>Lit market</strong>: Price-time priority</li>
+<li><strong>Centre Point</strong>: Midpoint price matching; priority by time of entry</li>
+<li><strong>Auctions</strong>: Single-price equilibrium (maximize volume)</li>
+</ul>
+<h3 id="opening-auction-webasxcomautrading-hours">Opening Auction <sup class="cite"><a href="#web-asx-com-au-trading-hours" title="WEB: asx.com.au/trading-hours">[W]</a></sup></h3>
+<ul>
+<li><strong>07:00–~10:00</strong>: Pre-opening order accumulation (no matching)</li>
+<li><strong>~09:59 + random 15 sec</strong>: Staggered opening — securities open alphabetically over ~10 minutes</li>
+<li>Single-price auction per security at opening</li>
+</ul>
+<h3 id="closing-auction-webasxcomautrading-hours">Closing Auction <sup class="cite"><a href="#web-asx-com-au-trading-hours" title="WEB: asx.com.au/trading-hours">[W]</a></sup></h3>
+<ul>
+<li><strong>16:00–16:10</strong>: Pre-closing (order accumulation)</li>
+<li><strong>16:10–16:12</strong>: Closing single-price auction</li>
+<li>Sets official closing price for index calculation</li>
+</ul>
+<h3 id="tick-size-price-steps-ref1">Tick Size (Price Steps) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<table>
+<thead>
+<tr>
+<th>Price Range (A$)</th>
+<th>Tick Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Up to $0.10</td>
+<td>$0.001</td>
+</tr>
+<tr>
+<td>$0.10–$2.00</td>
+<td>$0.005</td>
+</tr>
+<tr>
+<td>≥ $2.00</td>
+<td>$0.01</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lot-size">Lot Size</h3>
+<ul>
+<li>Standard: 1 share (no minimum lot for most securities)</li>
+<li>Odd lots: Supported</li>
+</ul>
+<hr />
+<h2 id="7-safeguard-mechanisms">7. Safeguard Mechanisms</h2>
+<h3 id="71-anomalous-order-thresholds-aot-webasxcomauorder-controls">7.1 Anomalous Order Thresholds (AOT) <sup class="cite"><a href="#web-asx-com-au-order-controls" title="WEB: asx.com.au/order-controls">[W]</a></sup></h3>
+<ul>
+<li>ASIC Market Integrity Rule — applied to all Australian markets</li>
+<li>Reference price: VWAP of previous 2 minutes, updated every minute</li>
+<li>Orders &gt; <strong>±10% from reference price</strong> rejected as anomalous</li>
+<li>Prevents fat-finger errors and extreme mis-pricing</li>
+</ul>
+<h3 id="72-extreme-trade-range-etr-webasxcomauorder-controls">7.2 Extreme Trade Range (ETR) <sup class="cite"><a href="#web-asx-com-au-order-controls" title="WEB: asx.com.au/order-controls">[W]</a></sup></h3>
+<ul>
+<li>If trade would execute outside extreme range: <strong>2-minute trading pause</strong></li>
+<li>Individual security level (not market-wide)</li>
+<li>Brief cooling-off for price discovery correction</li>
+</ul>
+<h3 id="73-no-market-wide-circuit-breaker">7.3 No Market-Wide Circuit Breaker</h3>
+<ul>
+<li>Australia does NOT have US-style market-wide circuit breakers</li>
+<li>Individual security controls via AOT and ETR</li>
+<li>ASIC can suspend trading in individual securities or market-wide as regulator</li>
+</ul>
+<h3 id="74-meaningful-price-improvement-rule-asic-webmarketsmediacom">7.4 "Meaningful Price Improvement" Rule (ASIC) <sup class="cite"><a href="#web-marketsmedia-com" title="WEB: marketsmedia.com">[W]</a></sup></h3>
+<ul>
+<li>Dark pool trades below A$200,000: Must execute at NBBO midpoint or with ≥1 tick improvement</li>
+<li>Ensures dark trading provides genuine price improvement</li>
+<li>Unique Australian regulatory approach to dark pool governance</li>
+</ul>
+<hr />
+<h2 id="8-special-sessions">8. Special Sessions</h2>
+<h3 id="81-pre-opening-07001000-webasxcomautrading-hours">8.1 Pre-Opening (07:00–~10:00) <sup class="cite"><a href="#web-asx-com-au-trading-hours" title="WEB: asx.com.au/trading-hours">[W]</a></sup></h3>
+<ul>
+<li>Order entry from 07:00; no matching</li>
+<li>Staggered opening: securities open alphabetically from ~09:59 + random 15 sec</li>
+</ul>
+<h3 id="82-normal-trading-10001600-ref1">8.2 Normal Trading (10:00–16:00) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Continuous matching: lit market + Centre Point</li>
+<li>All order types available</li>
+</ul>
+<h3 id="83-pre-closing-closing-auction-16001612-webasxcomautrading-hours">8.3 Pre-Closing / Closing Auction (16:00–16:12) <sup class="cite"><a href="#web-asx-com-au-trading-hours" title="WEB: asx.com.au/trading-hours">[W]</a></sup></h3>
+<ul>
+<li>16:00–16:10: Pre-closing order accumulation</li>
+<li>16:10–16:12: Single-price closing auction</li>
+</ul>
+<h3 id="84-centre-point-dark-ref3">8.4 Centre Point (Dark) <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></h3>
+<ul>
+<li>Operates during normal trading hours</li>
+<li>Midpoint matching at NBBO mid</li>
+<li>Centre Point Block, Centre Point Limit, ASX Sweep order types</li>
+<li>Australia's largest dark pool <sup class="cite"><a href="#ref-3" title="REF #3">[3]</a></sup></li>
+</ul>
+<h3 id="85-trade-reporting-facility-trf-ref1">8.5 Trade Reporting Facility (TRF) <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup></h3>
+<ul>
+<li>Off-market and administrative trades</li>
+<li>Block trades, portfolio trades, late/out-of-hours trades</li>
+<li>Reported post-trade</li>
+</ul>
+<hr />
+<h2 id="9-lp-market-maker-obligations">9. LP / Market Maker Obligations</h2>
+<h3 id="91-eto-exchange-traded-options-market-makers-webasxcomaumm">9.1 ETO (Exchange Traded Options) Market Makers <sup class="cite"><a href="#web-asx-com-au-mm" title="WEB: asx.com.au/mm">[W]</a></sup></h3>
+<ul>
+<li>Contractual arrangements with ASX</li>
+<li>Quoting obligations: minimum 50% on each benchmark, combined 70% average</li>
+<li>Continuous quotes + response to quote requests</li>
+<li>Minimum time-in-market and liquidity requirements</li>
+<li>Maximum bid-ask spread limits</li>
+<li>Nov 2025: Updated quoting obligations and special size levels <sup class="cite"><a href="#web-asxonline-com" title="WEB: asxonline.com">[W]</a></sup></li>
+</ul>
+<h3 id="92-etp-market-makers-webasxcomaumm-etp">9.2 ETP Market Makers <sup class="cite"><a href="#web-asx-com-au-mm-etp" title="WEB: asx.com.au/mm-etp">[W]</a></sup></h3>
+<ul>
+<li>Similar structure to ETO MMs</li>
+<li>Quoting obligations for ETFs and exchange-traded products</li>
+<li>Ensures liquidity in index tracking products</li>
+</ul>
+<h3 id="93-equity-market-no-mm-program">9.3 Equity Market — No MM Program</h3>
+<ul>
+<li>No mandatory market maker for general equities</li>
+<li>Lit market liquidity from natural order flow</li>
+<li>Centre Point provides additional anonymous dark liquidity</li>
+<li>Similar to TSE, HKEX approach</li>
+</ul>
+<hr />
+<h2 id="10-source-bibliography">10. Source Bibliography</h2>
+<h3 id="reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</h3>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> ASX, "ASX Equities Trading", <a href="https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading.html" target="_blank">https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading.html</a>
+<span id="ref-2"><strong>[REF:#2]</strong></span> ASX, "Order Controls", <a href="https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/order-controls" target="_blank">https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/order-controls</a>
+<span id="ref-3"><strong>[REF:#3]</strong></span> ASX, "ASX Centre Point", <a href="https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/asx-centre-point.html" target="_blank">https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/asx-centre-point.html</a>
+<span id="ref-4"><strong>[REF:#4]</strong></span> ASX, "ASX Trade New Order Types (PDF)", <a href="https://www.asx.com.au/documents/resources/asx_trade_new_order_types.pdf" target="_blank">https://www.asx.com.au/documents/resources/asx_trade_new_order_types.pdf</a>
+<span id="ref-5"><strong>[REF:#5]</strong></span> ASX, "Operating Rules Procedures — Draft (PDF)", <a href="https://www.asx.com.au/documents/rules/Draft_ASX_Operating_Rules_procedures.pdf" target="_blank">https://www.asx.com.au/documents/rules/Draft_ASX_Operating_Rules_procedures.pdf</a>
+<span id="ref-6"><strong>[REF:#6]</strong></span> ASX, "Operating Rules Procedures — 2010 (PDF)", <a href="https://www.asx.com.au/documents/rules/asx_or_procedures.pdf" target="_blank">https://www.asx.com.au/documents/rules/asx_or_procedures.pdf</a></p>
+<h3 id="web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</h3>
+<p><span id="web-wikipedia"><strong>[WEB:wikipedia]</strong></span> Australian Securities Exchange — Wikipedia, <a href="https://en.wikipedia.org/wiki/Australian_Securities_Exchange" target="_blank">https://en.wikipedia.org/wiki/Australian_Securities_Exchange</a> Accessed 2026-03-27
+<span id="web-asx-com-au-trading-hours"><strong>[WEB:asx.com.au/trading-hours]</strong></span> "Cash Market Trading Hours", <a href="https://www.asx.com.au/markets/market-resources/trading-hours-calendar/cash-market-trading-hours" target="_blank">https://www.asx.com.au/markets/market-resources/trading-hours-calendar/cash-market-trading-hours</a> Accessed 2026-03-27
+<span id="web-asx-com-au-centre-point"><strong>[WEB:asx.com.au/centre-point]</strong></span> "ASX Centre Point", <a href="https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/asx-centre-point" target="_blank">https://www.asx.com.au/markets/trade-our-cash-market/asx-equities-trading/asx-centre-point</a> Accessed 2026-03-27
+<span id="web-asx-com-au-mm"><strong>[WEB:asx.com.au/mm]</strong></span> "Market Maker Arrangements", <a href="https://www.asx.com.au/markets/market-resources/market-maker-arrangements" target="_blank">https://www.asx.com.au/markets/market-resources/market-maker-arrangements</a> Accessed 2026-03-27
+<span id="web-asx-com-au-blog"><strong>[WEB:asx.com.au/blog]</strong></span> "ASX Capital Markets: 2025 Year in Review", <a href="https://www.asx.com.au/blog/listed-at-asx/asx-capital-markets-2025-year-in-review-and-2026-outlook" target="_blank">https://www.asx.com.au/blog/listed-at-asx/asx-capital-markets-2025-year-in-review-and-2026-outlook</a> Accessed 2026-03-27
+<span id="web-marketsmedia-com"><strong>[WEB:marketsmedia.com]</strong></span> "A Deep Dive into Public Dark Pool Trading in Australia", <a href="https://www.marketsmedia.com/a-deep-dive-into-public-dark-pool-trading-in-australia/" target="_blank">https://www.marketsmedia.com/a-deep-dive-into-public-dark-pool-trading-in-australia/</a> Accessed 2026-03-27
+<span id="web-commsec-com-au"><strong>[WEB:commsec.com.au]</strong></span> "What do CX, CXXT mean?", <a href="https://www.commsec.com.au/support/help-centre/About-the-sharemarket/what-do-cx-cxxt-and-nxxt-mean.html" target="_blank">https://www.commsec.com.au/support/help-centre/About-the-sharemarket/what-do-cx-cxxt-and-nxxt-mean.html</a> Accessed 2026-03-27
+<span id="web-asx-ouch"><strong>[WEB:asx-ouch]</strong></span> "ASX Trade OUCH Message Specification (Apr 2025)", <a href="https://www.asxonline.com/content/dam/asxonline/public/documents/asx-trade-refresh-manuals/asx-trade-ouch-message-specification.pdf" target="_blank">https://www.asxonline.com/content/dam/asxonline/public/documents/asx-trade-refresh-manuals/asx-trade-ouch-message-specification.pdf</a> Accessed 2026-03-27</p>
+<hr />
+<p><em>Report version: 1.0 | Batch: 3 | Created: 2026-03-27 | Language: English</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>

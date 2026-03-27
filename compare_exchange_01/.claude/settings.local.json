@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "WebFetch(domain:global.krx.co.kr)",
+      "WebFetch(domain:www.koscom.co.kr)",
+      "WebSearch",
+      "WebFetch(domain:www.nyse.com)",
+      "WebFetch(domain:nasdaqtrader.com)",
+      "WebFetch(domain:www.jpx.co.jp)",
+      "WebFetch(domain:www.fujitsu.com)",
+      "WebFetch(domain:www.ppro8wiki.com)",
+      "WebFetch(domain:www.londonstockexchange.com)",
+      "WebFetch(domain:www.hkex.com.hk)",
+      "WebFetch(domain:www.eurex.com)",
+      "WebFetch(domain:www.asx.com.au)",
+      "Bash(pip3 list:*)",
+      "Bash(python3 build_reports.py --html)",
+      "Bash(python3 build_reports.py --docx)",
+      "Bash(python3 build_reports.py --index)",
+      "Bash(python3 build_reports.py --qa)",
+      "Bash(ls -la deliverables/docx/*.docx)",
+      "Bash(python3 build_reports.py)"
+    ]
+  }
+}

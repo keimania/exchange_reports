@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>9대 거래소 시장 미시구조 비교</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+
+aside#sidebar{display:none}
+main#content{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin:1.2rem 0}
+.card{background:#fafbfc;border:1px solid var(--border);border-radius:8px;padding:.9rem;text-align:center}
+.card .n{font-size:1.9rem;font-weight:700;color:var(--accent)}
+.card .l{font-size:.82rem;color:#666}
+</style></head><body><div class="page-wrap"><main id="content">
+<h1>9대 거래소 시장 미시구조 비교</h1>
+<p style="color:#555">KRX &middot; NYSE &middot; NASDAQ &middot; TSE &middot; LSE &middot; HKEX &middot; Eurex &middot; ASX &middot; SGX</p>
+<div class="cards">
+<div class="card"><div class="n">9</div><div class="l">거래소</div></div>
+<div class="card"><div class="n">140</div><div class="l">용어</div></div>
+<div class="card"><div class="n">~197</div><div class="l">출처</div></div>
+<div class="card"><div class="n">20</div><div class="l">보고서</div></div>
+</div>
+<h2>종합비교</h2>
+<table><tr><th>보고서</th><th>DOCX</th></tr>
+<tr><td><a href="html/00_종합비교.html">00_종합비교</a></td><td><a href="docx/00_종합비교.docx">DOCX</a></td></tr></table>
+<h2>용어집</h2>
+<table><tr><th>보고서</th><th>DOCX</th></tr><tr><td><a href="html/glossary.html">Glossary / 용어집 (140 terms)</a></td><td><a href="docx/glossary.docx">DOCX</a></td></tr></table>
+<h2>한국어 보고서</h2>
+<table><tr><th>보고서</th><th>DOCX</th></tr>
+<tr><td><a href="html/01_KRX_ko.html">01_KRX_ko</a></td><td><a href="docx/01_KRX_ko.docx">DOCX</a></td></tr><tr><td><a href="html/02_NYSE_ko.html">02_NYSE_ko</a></td><td><a href="docx/02_NYSE_ko.docx">DOCX</a></td></tr><tr><td><a href="html/03_NASDAQ_ko.html">03_NASDAQ_ko</a></td><td><a href="docx/03_NASDAQ_ko.docx">DOCX</a></td></tr><tr><td><a href="html/04_TSE_ko.html">04_TSE_ko</a></td><td><a href="docx/04_TSE_ko.docx">DOCX</a></td></tr><tr><td><a href="html/05_LSE_ko.html">05_LSE_ko</a></td><td><a href="docx/05_LSE_ko.docx">DOCX</a></td></tr><tr><td><a href="html/06_HKEX_ko.html">06_HKEX_ko</a></td><td><a href="docx/06_HKEX_ko.docx">DOCX</a></td></tr><tr><td><a href="html/07_Eurex_ko.html">07_Eurex_ko</a></td><td><a href="docx/07_Eurex_ko.docx">DOCX</a></td></tr><tr><td><a href="html/08_ASX_ko.html">08_ASX_ko</a></td><td><a href="docx/08_ASX_ko.docx">DOCX</a></td></tr><tr><td><a href="html/09_SGX_ko.html">09_SGX_ko</a></td><td><a href="docx/09_SGX_ko.docx">DOCX</a></td></tr></table>
+<h2>English Reports</h2>
+<table><tr><th>Report</th><th>DOCX</th></tr>
+<tr><td><a href="html/01_KRX.html">01_KRX</a></td><td><a href="docx/01_KRX.docx">DOCX</a></td></tr><tr><td><a href="html/02_NYSE.html">02_NYSE</a></td><td><a href="docx/02_NYSE.docx">DOCX</a></td></tr><tr><td><a href="html/03_NASDAQ.html">03_NASDAQ</a></td><td><a href="docx/03_NASDAQ.docx">DOCX</a></td></tr><tr><td><a href="html/04_TSE.html">04_TSE</a></td><td><a href="docx/04_TSE.docx">DOCX</a></td></tr><tr><td><a href="html/05_LSE.html">05_LSE</a></td><td><a href="docx/05_LSE.docx">DOCX</a></td></tr><tr><td><a href="html/06_HKEX.html">06_HKEX</a></td><td><a href="docx/06_HKEX.docx">DOCX</a></td></tr><tr><td><a href="html/07_Eurex.html">07_Eurex</a></td><td><a href="docx/07_Eurex.docx">DOCX</a></td></tr><tr><td><a href="html/08_ASX.html">08_ASX</a></td><td><a href="docx/08_ASX.docx">DOCX</a></td></tr><tr><td><a href="html/09_SGX.html">09_SGX</a></td><td><a href="docx/09_SGX.docx">DOCX</a></td></tr></table>
+<footer>Project compare_exchange_01 &middot; Generated 2026-03-27</footer>
+</main></div></body></html>

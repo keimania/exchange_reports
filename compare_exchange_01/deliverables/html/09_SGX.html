@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SGX (Singapore Exchange) — Exchange Report</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a2e;--accent:#0f3460;--border:#ddd;
+  --th:#0f3460;--thf:#fff;--stripe:#f5f7fa;--link:#1565c0;--code:#f4f4f4;--side:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,sans-serif;color:var(--fg);background:var(--bg);line-height:1.72}
+.page-wrap{display:flex;min-height:100vh}
+aside#sidebar{
+  width:var(--side);min-width:var(--side);position:sticky;top:0;height:100vh;
+  overflow-y:auto;border-right:1px solid var(--border);padding:1.2rem .8rem;
+  background:#fafbfc;font-size:.82rem;flex-shrink:0;
+}
+aside#sidebar h3{font-size:.9rem;color:var(--accent);margin:0 0 .6rem;
+  padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+aside#sidebar ul{list-style:none;padding:0}
+aside#sidebar li{margin:.15rem 0}
+aside#sidebar li.h3{padding-left:.8rem;font-size:.78rem}
+aside#sidebar a{color:#333;text-decoration:none;display:block;padding:2px 4px;border-radius:3px}
+aside#sidebar a:hover,aside#sidebar a.active{background:var(--accent);color:#fff}
+aside#sidebar .home-link{display:block;margin-top:1rem;padding-top:.6rem;
+  border-top:1px solid var(--border);font-weight:600;color:var(--accent)}
+main#content{flex:1;max-width:780px;padding:2rem 2.5rem 4rem}
+h1{font-size:1.85rem;border-bottom:3px solid var(--accent);padding-bottom:.4rem;margin:1.5rem 0 1rem}
+h2{font-size:1.4rem;color:var(--accent);margin:1.6rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.2rem}
+h3{font-size:1.12rem;margin:1.1rem 0 .35rem}
+h4{font-size:1rem;margin:.9rem 0 .25rem}
+p{margin:.45rem 0}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:1.4rem 0}
+code{background:var(--code);padding:2px 5px;border-radius:3px;font-size:.9em}
+pre{background:var(--code);padding:1rem;border-radius:6px;overflow-x:auto;margin:.7rem 0}
+pre code{background:none;padding:0}
+blockquote{border-left:4px solid var(--accent);padding:.4rem 1rem;margin:.7rem 0;color:#555;background:#f9f9fb}
+ul,ol{margin:.35rem 0 .35rem 1.5rem}li{margin:.12rem 0}
+strong{color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:.7rem 0;font-size:.86rem}
+th{background:var(--th);color:var(--thf);padding:.45rem .55rem;text-align:left;font-weight:600}
+td{padding:.4rem .55rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--stripe)}
+sup.cite{font-size:.72em;vertical-align:super;margin-left:1px}
+sup.cite a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px dotted var(--accent)}
+sup.cite a:hover{color:var(--link);border-bottom-style:solid}
+footer{margin-top:2rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.78rem;color:#999}
+@media(max-width:860px){aside#sidebar{display:none}main#content{max-width:100%;padding:1.2rem}}
+@media print{aside#sidebar{display:none}main#content{max-width:100%;padding:1cm}
+  sup.cite a{color:#000;border:none}a{color:var(--fg);text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<aside id="sidebar">
+  <h3>Contents</h3>
+  <ul><li><a href="#1-exchange-overview">1. Exchange Overview</a></li>
+<li><a href="#2-institutional-philosophy">2. Institutional Philosophy</a></li>
+<li><a href="#3-order-types-basic">3. Order Types — Basic</a></li>
+<li class="h3"><a href="#31-limit-order-ref2-ref4">3.1 Limit Order [2] [4]</a></li>
+<li class="h3"><a href="#32-market-order-fill-and-kill-mkt-ref4">3.2 Market Order (Fill and Kill / MKT) [4]</a></li>
+<li class="h3"><a href="#33-stop-order-stp-fill-and-kill-ref4">3.3 Stop Order (STP — Fill and Kill) [4]</a></li>
+<li class="h3"><a href="#34-stop-limit-order-stp-limit-ref4">3.4 Stop-Limit Order (STP Limit) [4]</a></li>
+<li><a href="#4-order-types-advanced">4. Order Types — Advanced</a></li>
+<li class="h3"><a href="#41-time-in-force-options-ref2">4.1 Time-in-Force Options [2]</a></li>
+<li class="h3"><a href="#42-pre-open-closing-orders-websgx-overview">4.2 Pre-Open / Closing Orders [W]</a></li>
+<li class="h3"><a href="#43-negotiated-large-trade-nlt-websgxcomnlt">4.3 Negotiated Large Trade (NLT) [W]</a></li>
+<li><a href="#5-order-types-exchange-specific">5. Order Types — Exchange-Specific</a></li>
+<li class="h3"><a href="#51-market-order-as-fak-ref4">5.1 Market Order as FAK [4]</a></li>
+<li class="h3"><a href="#52-trading-at-close-tac-session-websgx-overview">5.2 Trading-at-Close (TAC) Session [W]</a></li>
+<li class="h3"><a href="#53-nlt-negotiated-large-trade-websgxcomnlt">5.3 NLT (Negotiated Large Trade) [W]</a></li>
+<li class="h3"><a href="#54-quest-order-types-websgx-overview">5.4 QUEST Order Types [W]</a></li>
+<li><a href="#6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</a></li>
+<li class="h3"><a href="#trading-systems-ref11-ref12-ref13">Trading Systems [11] [12] [13]</a></li>
+<li class="h3"><a href="#matching-algorithms-websgx-overview">Matching Algorithms [W]</a></li>
+<li class="h3"><a href="#opening-price-websgx-overview">Opening Price [W]</a></li>
+<li class="h3"><a href="#closing-routine-websgx-overview">Closing Routine [W]</a></li>
+<li class="h3"><a href="#tick-size-websgx-overview">Tick Size [W]</a></li>
+<li class="h3"><a href="#lot-size-websgx-overview">Lot Size [W]</a></li>
+<li><a href="#7-safeguard-mechanisms">7. Safeguard Mechanisms</a></li>
+<li class="h3"><a href="#71-circuit-breaker-websgxcomcb-websgx-practice-note">7.1 Circuit Breaker [W] [W]</a></li>
+<li class="h3"><a href="#72-unusual-trading-activity-monitoring-ref6">7.2 Unusual Trading Activity Monitoring [6]</a></li>
+<li class="h3"><a href="#73-market-manipulation-rules-ref7">7.3 Market Manipulation Rules [7]</a></li>
+<li class="h3"><a href="#74-error-trade-policy-websgxcom">7.4 Error Trade Policy [W]</a></li>
+<li><a href="#8-special-sessions">8. Special Sessions</a></li>
+<li class="h3"><a href="#81-pre-open-08300900-websgx-overview">8.1 Pre-Open (08:30–09:00) [W]</a></li>
+<li class="h3"><a href="#82-continuous-trading-09001700-ref2">8.2 Continuous Trading (09:00–17:00) [2]</a></li>
+<li class="h3"><a href="#83-pre-close-closing-routine-17001706-websgx-overview">8.3 Pre-Close / Closing Routine (17:00–17:06) [W]</a></li>
+<li class="h3"><a href="#84-trading-at-close-tac-17061716-websgx-overview">8.4 Trading-at-Close (TAC) (17:06–17:16) [W]</a></li>
+<li class="h3"><a href="#85-derivatives-extended-hours-ref13-websgxcomplatforms">8.5 Derivatives Extended Hours [13] [W]</a></li>
+<li class="h3"><a href="#86-nlt-facility-websgxcomnlt">8.6 NLT Facility [W]</a></li>
+<li><a href="#9-lp-market-maker-obligations">9. LP / Market Maker Obligations</a></li>
+<li class="h3"><a href="#91-designated-market-makers-securities-ref2-websgxcomdmm">9.1 Designated Market Makers — Securities [2] [W]</a></li>
+<li class="h3"><a href="#92-derivatives-market-makers-websgxcomtrading">9.2 Derivatives Market Makers [W]</a></li>
+<li class="h3"><a href="#93-comparison">9.3 Comparison</a></li>
+<li><a href="#10-source-bibliography">10. Source Bibliography</a></li>
+<li class="h3"><a href="#reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</a></li>
+<li class="h3"><a href="#web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</a></li></ul>
+  <a class="home-link" href="../index.html">&#8592; Index</a>
+</aside>
+<main id="content">
+<h1 id="sgx-singapore-exchange-exchange-report">SGX (Singapore Exchange) — Exchange Report</h1>
+<hr />
+<h2 id="1-exchange-overview">1. Exchange Overview</h2>
+<p><strong>Full Legal Name</strong>: Singapore Exchange Limited (SGX Group)
+<strong>Country</strong>: Singapore
+<strong>Founding Year</strong>: 1999 (merger of Stock Exchange of Singapore and SIMEX) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+<strong>Parent Group</strong>: SGX Group (self-listed: SGX: S68) <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<p><strong>Market Model</strong>: Order-driven (securities via SGX-ST); derivatives hub via Titan system <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup> <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></p>
+<p><strong>Asset Classes Traded</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#web-sgx-com" title="WEB: sgx.com">[W]</a></sup>
+- Securities (SGX-ST: equities, REITs, ETFs, fixed income)
+- Derivatives (SGX-DT: equity index, FX, interest rate, commodity futures/options)
+- OTC derivatives (via Titan OTC)</p>
+<p><strong>Regular Trading Hours (SGT, UTC+8)</strong>: <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup> <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Pre-open: 08:30–09:00 (securities)
+- Continuous trading: 09:00–17:00 (securities)
+- Pre-close: 17:00–17:04/05
+- Closing routine (TAC): 17:06–17:16
+- Derivatives: extended hours (varies by product, including overnight sessions)</p>
+<p><strong>Key Statistics</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup> <sup class="cite"><a href="#web-ceicdata-com" title="WEB: ceicdata.com">[W]</a></sup>
+- Listed companies: ~700+ (SGX-ST)
+- Market capitalization: ~US$824 billion (Dec 2025)
+- Revenue split: Securities 75%, Derivatives 25% <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Key position: Asia's derivatives hub; gateway for China/India/ASEAN risk management</p>
+<p><strong>Recent Major Changes</strong>: <sup class="cite"><a href="#web-sgx-com" title="WEB: sgx.com">[W]</a></sup>
+- 2025.12: Streamlined ETF Designated Market-Maker obligations <sup class="cite"><a href="#web-allenandgledhill-com" title="WEB: allenandgledhill.com">[W]</a></sup>
+- Circuit breaker scope expanded to broader securities</p>
+<hr />
+<h2 id="2-institutional-philosophy">2. Institutional Philosophy</h2>
+<p><strong>Primary Market Model</strong>: Electronic order-driven (securities) + derivatives-focused hub <sup class="cite"><a href="#ref-1" title="REF #1">[1]</a></sup>
+- Securities traded via QUEST electronic platform <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup>
+- Derivatives on Titan system (ITCH/GLIMPSE for market data) <sup class="cite"><a href="#ref-11" title="REF #11">[11]</a></sup> <sup class="cite"><a href="#ref-12" title="REF #12">[12]</a></sup>
+- Strong Asia-centric derivatives franchise (Nikkei 225, MSCI Asia indices, iron ore)</p>
+<p><strong>Design Rationale</strong>: <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup>
+- Small domestic equity market → strategic pivot to Asia's multi-asset derivatives hub
+- Connect Asia's risk management needs with global capital
+- Competitive positioning: 24-hour derivatives access via extended trading hours
+- Dual-platform approach: QUEST (cash) + Titan (derivatives)</p>
+<p><strong>Role of Intermediaries</strong>: <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#web-sgx-com-dmm" title="WEB: sgx.com/dmm">[W]</a></sup>
+- <strong>Designated Market Makers (DMMs)</strong>: For ETFs and selected securities
+- <strong>Derivatives Market Makers</strong>: For futures/options products
+- <strong>No general equity MM program</strong> — relies on natural order flow for common stocks</p>
+<p><strong>Evolution</strong>: SES + SIMEX → SGX (1999) → demutualized → SGX AsiaClear (OTC clearing) → Titan system → SGX Group restructuring <sup class="cite"><a href="#web-wikipedia" title="WEB: wikipedia">[W]</a></sup></p>
+<hr />
+<h2 id="3-order-types-basic">3. Order Types — Basic</h2>
+<h3 id="31-limit-order-ref2-ref4">3.1 Limit Order <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>Specifies price and quantity</li>
+<li>Rests on order book if not immediately matched</li>
+<li>Available in all sessions</li>
+</ul>
+<h3 id="32-market-order-fill-and-kill-mkt-ref4">3.2 Market Order (Fill and Kill / MKT) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>No price specified</li>
+<li>Fills at best available price(s); <strong>unfilled portion cancelled</strong> (FAK-style)</li>
+<li>SGX market orders are effectively IOC — do NOT rest on book</li>
+</ul>
+<h3 id="33-stop-order-stp-fill-and-kill-ref4">3.3 Stop Order (STP — Fill and Kill) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>Triggered at stop price → becomes market order (FAK-style)</li>
+<li>Unfilled remainder cancelled after trigger</li>
+</ul>
+<h3 id="34-stop-limit-order-stp-limit-ref4">3.4 Stop-Limit Order (STP Limit) <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li>Triggered at stop price → becomes limit order</li>
+</ul>
+<hr />
+<h2 id="4-order-types-advanced">4. Order Types — Advanced</h2>
+<h3 id="41-time-in-force-options-ref2">4.1 Time-in-Force Options <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li><strong>Day (GFD)</strong>: Default — expires at session end</li>
+<li><strong>GTC</strong>: Good till cancelled</li>
+<li><strong>IOC</strong>: Immediate or cancel</li>
+<li><strong>FOK</strong>: Fill or kill</li>
+</ul>
+<h3 id="42-pre-open-closing-orders-websgx-overview">4.2 Pre-Open / Closing Orders <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Orders entered during pre-open: participate in opening auction</li>
+<li>Pre-close / TAC orders: participate in closing routine</li>
+<li>Opening: single-price algorithm at 09:00</li>
+<li>Closing: Trading-at-Close (TAC) session 17:06–17:16</li>
+</ul>
+<h3 id="43-negotiated-large-trade-nlt-websgxcomnlt">4.3 Negotiated Large Trade (NLT) <sup class="cite"><a href="#web-sgx-com-nlt" title="WEB: sgx.com/nlt">[W]</a></sup></h3>
+<ul>
+<li>Off-book facility for large trades</li>
+<li>Minimum volume thresholds per contract type <sup class="cite"><a href="#web-sgx-com-nlt" title="WEB: sgx.com/nlt">[W]</a></sup></li>
+<li>Notification and registration procedures required</li>
+<li>Price within daily price limits</li>
+</ul>
+<hr />
+<h2 id="5-order-types-exchange-specific">5. Order Types — Exchange-Specific</h2>
+<h3 id="51-market-order-as-fak-ref4">5.1 Market Order as FAK <sup class="cite"><a href="#ref-4" title="REF #4">[4]</a></sup></h3>
+<ul>
+<li><strong>SGX-unique implementation</strong>: Market orders are Fill-and-Kill (unfilled cancelled)</li>
+<li>Most exchanges' market orders sweep full book then rest as limit; SGX cancels remainder</li>
+<li>Provides implicit protection against adverse execution</li>
+</ul>
+<h3 id="52-trading-at-close-tac-session-websgx-overview">5.2 Trading-at-Close (TAC) Session <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li><strong>SGX-unique</strong>: Extended closing session (17:06–17:16)</li>
+<li>Orders matched at closing price determined by closing routine</li>
+<li>Allows post-close execution at official closing price</li>
+<li>Longer than most exchanges' closing mechanisms</li>
+</ul>
+<h3 id="53-nlt-negotiated-large-trade-websgxcomnlt">5.3 NLT (Negotiated Large Trade) <sup class="cite"><a href="#web-sgx-com-nlt" title="WEB: sgx.com/nlt">[W]</a></sup></h3>
+<ul>
+<li>SGX's block trade facility for derivatives</li>
+<li>Pre-negotiated between parties; reported to exchange</li>
+<li>Minimum volume thresholds vary by product</li>
+<li>Similar to: KRX 대량매매, Eurex block trades</li>
+</ul>
+<h3 id="54-quest-order-types-websgx-overview">5.4 QUEST Order Types <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>SGX's securities electronic trading platform</li>
+<li>Members access via OMS integration</li>
+<li>Support for standard limit, market (FAK), stop types</li>
+</ul>
+<hr />
+<h2 id="6-matching-engine-price-discovery">6. Matching Engine &amp; Price Discovery</h2>
+<h3 id="trading-systems-ref11-ref12-ref13">Trading Systems <sup class="cite"><a href="#ref-11" title="REF #11">[11]</a></sup> <sup class="cite"><a href="#ref-12" title="REF #12">[12]</a></sup> <sup class="cite"><a href="#ref-13" title="REF #13">[13]</a></sup></h3>
+<ul>
+<li><strong>QUEST</strong>: Securities market electronic platform <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></li>
+<li><strong>Titan DT/DC</strong>: Derivatives trading and clearing <sup class="cite"><a href="#ref-11" title="REF #11">[11]</a></sup></li>
+<li><strong>Titan OTC</strong>: OTC derivatives <sup class="cite"><a href="#ref-12" title="REF #12">[12]</a></sup></li>
+<li><strong>Protocols</strong>:</li>
+<li>ITCH: Outbound market data feed (Titan) <sup class="cite"><a href="#ref-11" title="REF #11">[11]</a></sup></li>
+<li>GLIMPSE: Point-to-point order book snapshot (Titan) <sup class="cite"><a href="#ref-11" title="REF #11">[11]</a></sup></li>
+<li>FIX: Standard order entry (Titan OTC) <sup class="cite"><a href="#ref-12" title="REF #12">[12]</a></sup></li>
+<li>OMAPI: Order entry (QUEST) <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></li>
+</ul>
+<h3 id="matching-algorithms-websgx-overview">Matching Algorithms <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li><strong>Price/Time Priority</strong>: Default for most products</li>
+<li><strong>Price Point Maker (PPM)</strong>: Alternative algorithm</li>
+<li><strong>Market Maker (MM)</strong>: For designated MM products</li>
+<li><strong>Pro-Rata</strong>: For selected products (e.g., certain interest rate futures)</li>
+</ul>
+<h3 id="opening-price-websgx-overview">Opening Price <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Pre-open: 08:30–09:00 (order accumulation)</li>
+<li>Non-cancellation: 08:59–09:00</li>
+<li>Single-price algorithm at 09:00 sets opening price</li>
+</ul>
+<h3 id="closing-routine-websgx-overview">Closing Routine <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Pre-close: 17:00–17:04/05 (order accumulation)</li>
+<li>Closing auction: Determines closing price</li>
+<li>TAC session: 17:06–17:16 (trading at closing price)</li>
+</ul>
+<h3 id="tick-size-websgx-overview">Tick Size <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Securities: Varies by price level (similar tiered structure)</li>
+<li>Derivatives: Per contract specification</li>
+</ul>
+<h3 id="lot-size-websgx-overview">Lot Size <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Securities: Varies by security (commonly 100 shares per lot)</li>
+<li>Board lots defined per security</li>
+</ul>
+<hr />
+<h2 id="7-safeguard-mechanisms">7. Safeguard Mechanisms</h2>
+<h3 id="71-circuit-breaker-websgxcomcb-websgx-practice-note">7.1 Circuit Breaker <sup class="cite"><a href="#web-sgx-com-cb" title="WEB: sgx.com/cb">[W]</a></sup> <sup class="cite"><a href="#web-sgx-practice-note" title="WEB: sgx-practice-note">[W]</a></sup></h3>
+<p><strong>Scope</strong>: STI and MSCI Singapore Free Index components, related ETFs, Extended Settlement Contracts; securities with reference price ≥ S$0.50</p>
+<p><strong>Mechanism</strong>: <sup class="cite"><a href="#web-sgx-com-cb" title="WEB: sgx.com/cb">[W]</a></sup>
+- Reference price: last traded price at least 5 minutes ago
+- <strong>Trigger</strong>: Incoming order would trade outside ±10% of reference price
+- <strong>Action</strong>: Order rejected; 5-minute cooling-off period
+- During cooling-off: trading continues within ±10% band
+- <strong>NOT a halt</strong>: Similar to HKEX VCM — trading restricted, not stopped</p>
+<p><strong>Operating hours</strong>: 09:00–17:00 (continuous trading only — not during opening/closing)</p>
+<h3 id="72-unusual-trading-activity-monitoring-ref6">7.2 Unusual Trading Activity Monitoring <sup class="cite"><a href="#ref-6" title="REF #6">[6]</a></sup></h3>
+<ul>
+<li>Practice Note 7B: SGX monitors for unusual trading activity</li>
+<li>Can query listed companies, trading participants</li>
+<li>May impose trading halts for investigation</li>
+</ul>
+<h3 id="73-market-manipulation-rules-ref7">7.3 Market Manipulation Rules <sup class="cite"><a href="#ref-7" title="REF #7">[7]</a></sup></h3>
+<ul>
+<li>Practice Note 13.8.1: Market manipulation and false market provisions</li>
+<li>SGX RegCo enforcement</li>
+</ul>
+<h3 id="74-error-trade-policy-websgxcom">7.4 Error Trade Policy <sup class="cite"><a href="#web-sgx-com" title="WEB: sgx.com">[W]</a></sup></h3>
+<ul>
+<li>Revised error trade policy alongside circuit breaker introduction</li>
+<li>Provides framework for handling clearly erroneous executions</li>
+</ul>
+<hr />
+<h2 id="8-special-sessions">8. Special Sessions</h2>
+<h3 id="81-pre-open-08300900-websgx-overview">8.1 Pre-Open (08:30–09:00) <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Order accumulation; no matching</li>
+<li>Non-cancellation period: 08:59–09:00</li>
+<li>Opening price determined by single-price algorithm at 09:00</li>
+</ul>
+<h3 id="82-continuous-trading-09001700-ref2">8.2 Continuous Trading (09:00–17:00) <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup></h3>
+<ul>
+<li>Price-time priority matching (securities)</li>
+<li>All order types available</li>
+<li>Circuit breakers active</li>
+</ul>
+<h3 id="83-pre-close-closing-routine-17001706-websgx-overview">8.3 Pre-Close / Closing Routine (17:00–17:06) <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Pre-close: 17:00–17:04/05 (order accumulation)</li>
+<li>Closing price determination</li>
+</ul>
+<h3 id="84-trading-at-close-tac-17061716-websgx-overview">8.4 Trading-at-Close (TAC) (17:06–17:16) <sup class="cite"><a href="#web-sgx-overview" title="WEB: sgx-overview">[W]</a></sup></h3>
+<ul>
+<li>Post-close session trading at official closing price</li>
+<li>10-minute window for closing price execution</li>
+<li>Longer than most exchanges' closing mechanisms</li>
+</ul>
+<h3 id="85-derivatives-extended-hours-ref13-websgxcomplatforms">8.5 Derivatives Extended Hours <sup class="cite"><a href="#ref-13" title="REF #13">[13]</a></sup> <sup class="cite"><a href="#web-sgx-com-platforms" title="WEB: sgx.com/platforms">[W]</a></sup></h3>
+<ul>
+<li>Multiple sessions including overnight (varies by product)</li>
+<li>Key products: Nikkei 225 (T+1 session), MSCI indices, iron ore</li>
+<li>Extended hours critical for Asia-Pacific time zone coverage</li>
+</ul>
+<h3 id="86-nlt-facility-websgxcomnlt">8.6 NLT Facility <sup class="cite"><a href="#web-sgx-com-nlt" title="WEB: sgx.com/nlt">[W]</a></sup></h3>
+<ul>
+<li>Off-book negotiated large trades</li>
+<li>Derivatives and selected securities</li>
+<li>Minimum volume thresholds; registration required</li>
+</ul>
+<hr />
+<h2 id="9-lp-market-maker-obligations">9. LP / Market Maker Obligations</h2>
+<h3 id="91-designated-market-makers-securities-ref2-websgxcomdmm">9.1 Designated Market Makers — Securities <sup class="cite"><a href="#ref-2" title="REF #2">[2]</a></sup> <sup class="cite"><a href="#web-sgx-com-dmm" title="WEB: sgx.com/dmm">[W]</a></sup></h3>
+<p><strong>ETF DMMs</strong>: <sup class="cite"><a href="#web-sgx-com-dmm" title="WEB: sgx.com/dmm">[W]</a></sup> <sup class="cite"><a href="#web-allenandgledhill-com" title="WEB: allenandgledhill.com">[W]</a></sup>
+- Must publish competitive bid/offer quotations on continuous basis
+- Recent (Dec 2025): Streamlined obligations — removed administrative notification requirements for cease/resume
+- Quoting obligations: minimum spread, minimum size, time-in-market</p>
+<p><strong>General Equities</strong>: No mandatory MM program</p>
+<h3 id="92-derivatives-market-makers-websgxcomtrading">9.2 Derivatives Market Makers <sup class="cite"><a href="#web-sgx-com-trading" title="WEB: sgx.com/trading">[W]</a></sup></h3>
+<ul>
+<li>Designated for specific futures/options products</li>
+<li>Continuous quoting and quote request obligations</li>
+<li>Fee rebate incentives</li>
+<li>Critical for SGX's Asia derivatives franchise</li>
+</ul>
+<h3 id="93-comparison">9.3 Comparison</h3>
+<ul>
+<li><strong>vs. HKEX</strong>: Both have securities DMMs for ETFs only; both are Asia derivatives hubs</li>
+<li><strong>vs. ASX</strong>: Both lack general equity MMs; ASX has Centre Point dark pool (SGX does not)</li>
+<li><strong>vs. Eurex</strong>: Both derivatives-focused with tiered MM programs; Eurex more granular (RMM/PMM/AMM)</li>
+</ul>
+<hr />
+<h2 id="10-source-bibliography">10. Source Bibliography</h2>
+<h3 id="reference-sources-priority-1-readme_linksmd">Reference Sources (Priority 1 — README_LINKS.md)</h3>
+<p><span id="ref-1"><strong>[REF:#1]</strong></span> SGX, "SGX Rulebook Portal", <a href="https://rulebook.sgx.com/" target="_blank">https://rulebook.sgx.com/</a>
+<span id="ref-2"><strong>[REF:#2]</strong></span> SGX, "SGX-ST Rules", <a href="https://rulebook.sgx.com/rulebook/sgx-st-rules-0" target="_blank">https://rulebook.sgx.com/rulebook/sgx-st-rules-0</a>
+<span id="ref-3"><strong>[REF:#3]</strong></span> SGX, "SGX-ST Rules Clean Version (PDF)", <a href="https://rulebook.sgx.com/sites/default/files/net_file_store/SGX_ST_June_3_2019_Clean_Version.pdf" target="_blank">https://rulebook.sgx.com/sites/default/files/net_file_store/SGX_ST_June_3_2019_Clean_Version.pdf</a>
+<span id="ref-4"><strong>[REF:#4]</strong></span> SGX, "Chapter 13 — Trading Practices and Conduct", <a href="https://rulebook.sgx.com/rulebook/chapter-13-trading-practices-and-conduct-0" target="_blank">https://rulebook.sgx.com/rulebook/chapter-13-trading-practices-and-conduct-0</a>
+<span id="ref-5"><strong>[REF:#5]</strong></span> SGX, "SGX Rulebooks Overview", <a href="https://rulebook.sgx.com/rulebook/sgx-rulebooks" target="_blank">https://rulebook.sgx.com/rulebook/sgx-rulebooks</a>
+<span id="ref-6"><strong>[REF:#6]</strong></span> SGX, "Practice Note 7B — Unusual Trading Activity", <a href="https://rulebook.sgx.com/rulebook/practice-note-7b-monitoring-and-querying-unusual-trading-activity" target="_blank">https://rulebook.sgx.com/rulebook/practice-note-7b-monitoring-and-querying-unusual-trading-activity</a>
+<span id="ref-7"><strong>[REF:#7]</strong></span> SGX, "Practice Note 13.8.1 — Market Manipulation", <a href="https://rulebook.sgx.com/rulebook/practice-note-1381-market-manipulation-and-false-market" target="_blank">https://rulebook.sgx.com/rulebook/practice-note-1381-market-manipulation-and-false-market</a>
+[REF:#8–10] SGX, "Practice Notes", Titan DT/DC Portal, Titan OTC Portal
+<span id="ref-11"><strong>[REF:#11]</strong></span> SGX, "Titan ITCH &amp; GLIMPSE Protocol Specs (PDF)", <a href="https://api2.sgx.com/sites/default/files/2018-09/Titan%20ITCH%20&amp;%20GLIMPSE%20Protocol%20Specifications.pdf" target="_blank">https://api2.sgx.com/sites/default/files/2018-09/Titan%20ITCH%20&amp;%20GLIMPSE%20Protocol%20Specifications.pdf</a>
+<span id="ref-12"><strong>[REF:#12]</strong></span> SGX, "Titan OTC FIX API Specs (PDF)", <a href="https://api2.sgx.com/sites/default/files/2019-12/SGX%20-%20FIX%20Specification%20-%20v1%205%205.pdf" target="_blank">https://api2.sgx.com/sites/default/files/2019-12/SGX%20-%20FIX%20Specification%20-%20v1%205%205.pdf</a>
+<span id="ref-13"><strong>[REF:#13]</strong></span> SGX, "Derivatives Platforms", <a href="https://www.sgx.com/derivatives/platforms" target="_blank">https://www.sgx.com/derivatives/platforms</a>
+<span id="ref-14"><strong>[REF:#14]</strong></span> SGX, "Market Access", <a href="https://www.sgx.com/data-connectivity/market-access" target="_blank">https://www.sgx.com/data-connectivity/market-access</a></p>
+<h3 id="web-sources-priority-3-gap-fill">Web Sources (Priority 3 — Gap Fill)</h3>
+<p><span id="web-wikipedia"><strong>[WEB:wikipedia]</strong></span> Singapore Exchange — Wikipedia, <a href="https://en.wikipedia.org/wiki/Singapore_Exchange" target="_blank">https://en.wikipedia.org/wiki/Singapore_Exchange</a> Accessed 2026-03-27
+<span id="web-sgx-overview"><strong>[WEB:sgx-overview]</strong></span> "SGX Overview", Trading Technologies, <a href="https://library.tradingtechnologies.com/user-setup/sgx-overview.html" target="_blank">https://library.tradingtechnologies.com/user-setup/sgx-overview.html</a> Accessed 2026-03-27
+<span id="web-sgx-com-nlt"><strong>[WEB:sgx.com/nlt]</strong></span> "Negotiated Large Trade", <a href="https://www.sgx.com/derivatives/negotiated-large-trade-nlt" target="_blank">https://www.sgx.com/derivatives/negotiated-large-trade-nlt</a> Accessed 2026-03-27
+<span id="web-sgx-com-dmm"><strong>[WEB:sgx.com/dmm]</strong></span> "Directive No. 3 — DMM Obligations", <a href="https://rulebook.sgx.com/rulebook/directive-no-3-obligations-designated-market-maker" target="_blank">https://rulebook.sgx.com/rulebook/directive-no-3-obligations-designated-market-maker</a> Accessed 2026-03-27
+<span id="web-sgx-com-cb"><strong>[WEB:sgx.com/cb]</strong></span> "Circuit Breaker", <a href="https://rulebook.sgx.com/rulebook/practice-note-810a-circuit-breaker" target="_blank">https://rulebook.sgx.com/rulebook/practice-note-810a-circuit-breaker</a> Accessed 2026-03-27
+<span id="web-sgx-practice-note"><strong>[WEB:sgx-practice-note]</strong></span> "Regulatory Notice 8.14.1 — Circuit Breaker", <a href="https://rulebook.sgx.com/rulebook/regulatory-notice-8141-circuit-breaker" target="_blank">https://rulebook.sgx.com/rulebook/regulatory-notice-8141-circuit-breaker</a> Accessed 2026-03-27
+<span id="web-allenandgledhill-com"><strong>[WEB:allenandgledhill.com]</strong></span> "SGX streamlines ETF DMM obligations", <a href="https://www.allenandgledhill.com/sg/publication/articles/32174/" target="_blank">https://www.allenandgledhill.com/sg/publication/articles/32174/</a> Accessed 2026-03-27
+<span id="web-ceicdata-com"><strong>[WEB:ceicdata.com]</strong></span> "Singapore Market Capitalization", <a href="https://www.ceicdata.com/en/indicator/singapore/market-capitalization" target="_blank">https://www.ceicdata.com/en/indicator/singapore/market-capitalization</a> Accessed 2026-03-27</p>
+<hr />
+<p><em>Report version: 1.0 | Batch: 3 | Created: 2026-03-27 | Language: English</em></p>
+<footer>
+  Generated 2026-03-27 19:11 &middot;
+  Project compare_exchange_01 &middot;
+  <a href="../index.html">Back to Index</a>
+</footer>
+</main>
+</div>
+</body>
+</html>
