@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Exchange Reports Dashboard | 글로벌 거래소 조사 리포트 포털</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      --shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0f19;
+        --card-bg: #131c2e;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --border: #1e293b;
+        --primary-light: #1e293b;
+      }
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 80px;
+    }
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      color: white;
+      padding: 50px 20px 40px;
+      text-align: center;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .header-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto 24px;
+    }
+    .header-stats {
+      display: inline-flex;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 10px 24px;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .search-box {
+      margin-bottom: 40px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    .search-box input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 10px;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    .category-section {
+      margin-bottom: 48px;
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+    }
+    .category-icon {
+      font-size: 2rem;
+    }
+    .category-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .category-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .badge {
+      display: inline-block;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .report-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+    .report-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary);
+    }
+    .card-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .card-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-path {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-arrow {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      transition: transform 0.2s;
+    }
+    .report-card:hover .card-arrow {
+      color: var(--primary);
+      transform: translateX(4px);
+    }
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>🌐 글로벌 거래소 조사 리포트 포털</h1>
+      <p>글로벌 증권거래소 24시간 거래 체제, 청산결제 인프라, 규정 및 호가 매칭 로직 비교 분석 아카이브</p>
+      <div class="header-stats">
+        <span>총 리포트: 62건</span>
+        <span>•</span>
+        <span>5개 테마 섹션</span>
+        <span>•</span>
+        <span>Interactive Web Viewer</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="search-box">
+      <span style="font-size: 1.2rem; margin-right: 8px;">🔍</span>
+      <input type="text" id="searchInput" placeholder="거래소명, 키워드 검색 (예: NYSE, 24시간, 청산결제, 매칭, Eurex 등)..." onkeyup="filterReports()">
+    </div>
+
+    
+    <section class="category-section" id="24hours_03">
+      <div class="category-header">
+        <span class="category-icon">⚡</span>
+        <div>
+          <h2>글로벌 거래소 24시간·연장 거래 심층 분석 (3차) <span class="badge">9건</span></h2>
+          <p class="category-desc">NYSE Arca 22시간, NASDAQ 23.5시간, 24X, CME Globex 등 최신 24시간 거래 및 결제 체제 심층 비교</p>
+        </div>
+      </div>
+      <div class="cards-grid">
+        
+        <a href="24hours_03/deliverables/html/00_종합비교_요약.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 24시간 거래 도입 전략: 글로벌 비교 종합 분석</h3>
+            <span class="card-path">24hours_03/deliverables/html/00_종합비교_요약.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/01_NYSE_Arca_22시간_분석.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">NYSE Arca 22시간 거래 체제 분석</h3>
+            <span class="card-path">24hours_03/deliverables/html/01_NYSE_Arca_22시간_분석.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/02_NASDAQ_23_5_분석.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">NASDAQ 23/5 글로벌 거래 생태계 분석</h3>
+            <span class="card-path">24hours_03/deliverables/html/02_NASDAQ_23_5_분석.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/03_24X_National_Exchange_분석.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">24X National Exchange 23/5 거래 체제 분석</h3>
+            <span class="card-path">24hours_03/deliverables/html/03_24X_National_Exchange_분석.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/04_CME_Globex_24시간_분석.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">CME Globex 24시간 거래 인프라 분석</h3>
+            <span class="card-path">24hours_03/deliverables/html/04_CME_Globex_24시간_분석.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/05_DTCC_24_5_청산결제_분석.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">DTCC 24/5 청산결제 로드맵 분석</h3>
+            <span class="card-path">24hours_03/deliverables/html/05_DTCC_24_5_청산결제_분석.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/06_TSE_JPX_JSCC_분석.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">TSE-JPX 및 JSCC 거래·청산 인프라 분석</h3>
+            <span class="card-path">24hours_03/deliverables/html/06_TSE_JPX_JSCC_분석.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/07_KRX_규정_분석.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 유가증권시장 규정 분석 및 24시간 전환 규정 개정안</h3>
+            <span class="card-path">24hours_03/deliverables/html/07_KRX_규정_분석.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_03/deliverables/html/index.html" class="report-card">
+          <div class="card-icon">⚡</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 24시간 거래 도입 전략 - 리포트 인덱스</h3>
+            <span class="card-path">24hours_03/deliverables/html/index.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+      </div>
+    </section>
+    
+    <section class="category-section" id="24hours_01">
+      <div class="category-header">
+        <span class="category-icon">🌐</span>
+        <div>
+          <h2>24시간 거래 체제 종합 분석 리포트 (1차) <span class="badge">12건</span></h2>
+          <p class="category-desc">KRX, NYSE, NASDAQ, 24X, CME, DTCC, LSE, JPX, Blue Ocean 등 주요 기관별 거래 체제 분석</p>
+        </div>
+      </div>
+      <div class="cards-grid">
+        
+        <a href="24hours_01/output/html/00_종합비교_요약.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">종합 비교 요약</h3>
+            <span class="card-path">24hours_01/output/html/00_종합비교_요약.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/01_KRX_한국거래소.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 한국거래소</h3>
+            <span class="card-path">24hours_01/output/html/01_KRX_한국거래소.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/02_NYSE_뉴욕증권거래소.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">NYSE 뉴욕증권거래소</h3>
+            <span class="card-path">24hours_01/output/html/02_NYSE_뉴욕증권거래소.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/03_NASDAQ_나스닥.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">NASDAQ 나스닥</h3>
+            <span class="card-path">24hours_01/output/html/03_NASDAQ_나스닥.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/04_24X_Exchange.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">24X Exchange</h3>
+            <span class="card-path">24hours_01/output/html/04_24X_Exchange.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/05_CME_Group.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">CME Group</h3>
+            <span class="card-path">24hours_01/output/html/05_CME_Group.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/06_DTCC_청산결제.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">DTCC 청산결제</h3>
+            <span class="card-path">24hours_01/output/html/06_DTCC_청산결제.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/07_LSE_런던증권거래소.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">LSE 런던증권거래소</h3>
+            <span class="card-path">24hours_01/output/html/07_LSE_런던증권거래소.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/08_JPX_도쿄증권거래소.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">JPX 도쿄증권거래소</h3>
+            <span class="card-path">24hours_01/output/html/08_JPX_도쿄증권거래소.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/09_Blue_Ocean_ATS.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">Blue Ocean ATS</h3>
+            <span class="card-path">24hours_01/output/html/09_Blue_Ocean_ATS.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/10_유럽거래소_Eurex_Euronext.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">유럽거래소 Eurex/Euronext</h3>
+            <span class="card-path">24hours_01/output/html/10_유럽거래소_Eurex_Euronext.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_01/output/html/index.html" class="report-card">
+          <div class="card-icon">🌐</div>
+          <div class="card-content">
+            <h3 class="card-title">24시간 거래 체제 비교 분석 리포트</h3>
+            <span class="card-path">24hours_01/output/html/index.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+      </div>
+    </section>
+    
+    <section class="category-section" id="24hours_02">
+      <div class="category-header">
+        <span class="category-icon">🏛️</span>
+        <div>
+          <h2>글로벌 거래소 및 청산결제기관 분석 (2차) <span class="badge">14건</span></h2>
+          <p class="category-desc">주요 글로벌 거래소(NYSE, Nasdaq, CME, Eurex, HKEX, JPX, LSE, SGX) 및 청산결제기관(DTCC, OCC)</p>
+        </div>
+      </div>
+      <div class="cards-grid">
+        
+        <a href="24hours_02/output/html/24X_Exchange_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">24X_Exchange_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/24X_Exchange_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/Blue_Ocean_ATS_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">Blue_Ocean_ATS_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/Blue_Ocean_ATS_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/CME_Group_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">CME_Group_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/CME_Group_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/DTCC_NSCC_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">DTCC_NSCC_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/DTCC_NSCC_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/Eurex_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">Eurex_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/Eurex_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/JSCC_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">JSCC_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/JSCC_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/KRX_Current_System_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX_Current_System_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/KRX_Current_System_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/LSE_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">LSE_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/LSE_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/Master_KRX_24H_Transition_Strategy.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">Master_KRX_24H_Transition_Strategy</h3>
+            <span class="card-path">24hours_02/output/html/Master_KRX_24H_Transition_Strategy.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/NASDAQ_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">NASDAQ_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/NASDAQ_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/NYSE_Arca_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">NYSE_Arca_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/NYSE_Arca_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/TSE_JPX_Analysis.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">TSE_JPX_Analysis</h3>
+            <span class="card-path">24hours_02/output/html/TSE_JPX_Analysis.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/html/index.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 24시간 거래 전환 전략 - 리포트 인덱스</h3>
+            <span class="card-path">24hours_02/output/html/index.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="24hours_02/output/templates/template.html" class="report-card">
+          <div class="card-icon">🏛️</div>
+          <div class="card-content">
+            <h3 class="card-title">$title$</h3>
+            <span class="card-path">24hours_02/output/templates/template.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+      </div>
+    </section>
+    
+    <section class="category-section" id="compare_exchange_01">
+      <div class="category-header">
+        <span class="category-icon">📊</span>
+        <div>
+          <h2>글로벌 주요 거래소 비교 분석 (국문 / 영문) <span class="badge">21건</span></h2>
+          <p class="category-desc">KRX 대비 해외 주요 10대 거래소 체계 종합 비교 (한글/영어 대역 리포트 포함)</p>
+        </div>
+      </div>
+      <div class="cards-grid">
+        
+        <a href="compare_exchange_01/deliverables/html/00_종합비교.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">9대 거래소 종합비교 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/00_종합비교.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/01_KRX.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX (한국거래소) — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/01_KRX.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/01_KRX_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX (한국거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/01_KRX_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/02_NYSE.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">NYSE (New York Stock Exchange) — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/02_NYSE.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/02_NYSE_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">NYSE (뉴욕증권거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/02_NYSE_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/03_NASDAQ.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">NASDAQ — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/03_NASDAQ.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/03_NASDAQ_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">NASDAQ (나스닥) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/03_NASDAQ_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/04_TSE.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">TSE / JPX (Tokyo Stock Exchange) — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/04_TSE.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/04_TSE_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">TSE / JPX (도쿄증권거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/04_TSE_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/05_LSE.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">LSE (London Stock Exchange) — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/05_LSE.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/05_LSE_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">LSE (런던증권거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/05_LSE_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/06_HKEX.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">HKEX (Hong Kong Exchanges and Clearing) — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/06_HKEX.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/06_HKEX_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">HKEX (홍콩거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/06_HKEX_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/07_Eurex.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">Eurex Exchange — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/07_Eurex.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/07_Eurex_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">Eurex (유렉스 거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/07_Eurex_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/08_ASX.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">ASX (Australian Securities Exchange) — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/08_ASX.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/08_ASX_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">ASX (호주증권거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/08_ASX_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/09_SGX.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">SGX (Singapore Exchange) — Exchange Report</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/09_SGX.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/09_SGX_ko.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">SGX (싱가포르거래소) — 거래소 보고서</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/09_SGX_ko.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/html/glossary.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">Glossary — Market Structure Terms (English / Korean)</h3>
+            <span class="card-path">compare_exchange_01/deliverables/html/glossary.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="compare_exchange_01/deliverables/index.html" class="report-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <h3 class="card-title">9대 거래소 시장 미시구조 비교</h3>
+            <span class="card-path">compare_exchange_01/deliverables/index.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+      </div>
+    </section>
+    
+    <section class="category-section" id="test_case_01">
+      <div class="category-header">
+        <span class="category-icon">🧪</span>
+        <div>
+          <h2>KRX 규정 및 매칭 로직 시각화 도구 <span class="badge">4건</span></h2>
+          <p class="category-desc">KRX 업무규정 시각화, 호가 매칭 가격 로직, 조합 테스트 케이스 및 커버리지 매트릭스 뷰어</p>
+        </div>
+      </div>
+      <div class="cards-grid">
+        
+        <a href="test_case_01/src/krx_combinatorial_viewer.html" class="report-card">
+          <div class="card-icon">🧪</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 단일호가 전차원 교차조합 테스트 커버리지</h3>
+            <span class="card-path">test_case_01/src/krx_combinatorial_viewer.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="test_case_01/src/krx_matching_price_logic.html" class="report-card">
+          <div class="card-icon">🧪</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 단일가매매 합치가격 산출 로직 & 예시</h3>
+            <span class="card-path">test_case_01/src/krx_matching_price_logic.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="test_case_01/src/krx_regulation_viewer.html" class="report-card">
+          <div class="card-icon">🧪</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 유가증권시장 매매거래 규정 뷰어</h3>
+            <span class="card-path">test_case_01/src/krx_regulation_viewer.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="test_case_01/src/krx_test_coverage_matrix.html" class="report-card">
+          <div class="card-icon">🧪</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 단일호가 테스트 커버리지 매트릭스</h3>
+            <span class="card-path">test_case_01/src/krx_test_coverage_matrix.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+      </div>
+    </section>
+    
+    <section class="category-section" id="others">
+      <div class="category-header">
+        <span class="category-icon">📁</span>
+        <div>
+          <h2>기타 자료 <span class="badge">2건</span></h2>
+          <p class="category-desc">참고 자료 및 원본 파일</p>
+        </div>
+      </div>
+      <div class="cards-grid">
+        
+        <a href="references/index.html" class="report-card">
+          <div class="card-icon">📁</div>
+          <div class="card-content">
+            <h3 class="card-title">거래소 레퍼런스 및 기술 사양</h3>
+            <span class="card-path">references/index.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+        <a href="test_case_original/src/krx_regulation_viewer.html" class="report-card">
+          <div class="card-icon">📁</div>
+          <div class="card-content">
+            <h3 class="card-title">KRX 유가증권시장 매매거래 규정 뷰어</h3>
+            <span class="card-path">test_case_original/src/krx_regulation_viewer.html</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+        
+      </div>
+    </section>
+    
+
+    <footer>
+      <p>Source Repository: <a href="https://github.com/keimania/exchange_reports" style="color: var(--primary);">github.com/keimania/exchange_reports</a></p>
+      <p style="margin-top: 6px;">Generated automatically for GitHub Pages</p>
+    </footer>
+  </div>
+
+  <script>
+    function filterReports() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.report-card');
+      const sections = document.querySelectorAll('.category-section');
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(query)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      sections.forEach(section => {
+        const visibleCards = section.querySelectorAll('.report-card[style="display: flex;"]');
+        if (query && visibleCards.length === 0) {
+          section.style.display = 'none';
+        } else {
+          section.style.display = 'block';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
